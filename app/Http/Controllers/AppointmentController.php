@@ -36,7 +36,7 @@ class AppointmentController extends Controller
             default => collect([])
         };
 
-        return Inertia::render('Appointments/Index', [
+        return Inertia::render('appointments/Index', [
             'appointments' => $appointments,
         ]);
     }
@@ -50,7 +50,7 @@ class AppointmentController extends Controller
             ->select('id', 'name', 'email')
             ->get();
 
-        return Inertia::render('Appointments/Create', [
+        return Inertia::render('appointments/Create', [
             'providers' => $providers,
         ]);
     }
@@ -85,7 +85,7 @@ class AppointmentController extends Controller
 
         $appointment->load(['user', 'provider']);
 
-        return Inertia::render('Appointments/Show', [
+        return Inertia::render('appointments/Show', [
             'appointment' => $appointment,
         ]);
     }
@@ -99,8 +99,13 @@ class AppointmentController extends Controller
 
         $appointment->load(['user', 'provider']);
 
-        return Inertia::render('Appointments/Edit', [
+        $providers = User::where('role', 'provider')
+            ->select('id', 'name', 'email')
+            ->get();
+
+        return Inertia::render('appointments/Edit', [
             'appointment' => $appointment,
+            'providers' => $providers,
         ]);
     }
 
