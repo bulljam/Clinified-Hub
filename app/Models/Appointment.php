@@ -32,6 +32,11 @@ class Appointment extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function provider(): BelongsTo
     {
         return $this->belongsTo(User::class, 'provider_id');
