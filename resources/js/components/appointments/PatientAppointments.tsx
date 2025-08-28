@@ -18,7 +18,7 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
       return 'warning';
@@ -31,7 +31,7 @@ const getStatusColor = (status) => {
   }
 };
 
-const getPaymentStatusColor = (paymentStatus) => {
+const getPaymentStatusColor = (paymentStatus: string) => {
   switch (paymentStatus) {
     case 'pending':
       return 'warning';
@@ -42,15 +42,42 @@ const getPaymentStatusColor = (paymentStatus) => {
   }
 };
 
-export default function PatientAppointments({ appointments }) {
-  const handleDelete = (appointmentId) => {
+interface Appointment {
+  id: number;
+  date: string;
+  time: string;
+  status: string;
+  payment_status: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  provider: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
+interface PatientAppointmentsProps {
+  appointments: {
+    data: Appointment[];
+    from?: number;
+    to?: number;
+    total?: number;
+  };
+}
+
+export default function PatientAppointments({ appointments }: PatientAppointmentsProps) {
+  const handleDelete = (appointmentId: number) => {
     if (confirm('Are you sure you want to cancel this appointment?')) {
-      router.delete(route('appointments.destroy', appointmentId));
+      router.delete(`/appointments/${appointmentId}`);
     }
   };
 
-  const handleMarkAsPaid = (appointmentId) => {
-    router.patch(route('appointments.update', appointmentId), {
+  const handleMarkAsPaid = (appointmentId: number) => {
+    router.patch(`/appointments/${appointmentId}`, {
       payment_status: 'paid',
     });
   };
@@ -64,7 +91,7 @@ export default function PatientAppointments({ appointments }) {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => router.visit(route('appointments.create'))}
+          onClick={() => router.visit('/appointments/create')}
         >
           Book New Appointment
         </Button>
@@ -80,7 +107,7 @@ export default function PatientAppointments({ appointments }) {
               variant="contained"
               color="primary"
               sx={{ mt: 2 }}
-              onClick={() => router.visit(route('appointments.create'))}
+              onClick={() => router.visit('/appointments/create')}
             >
               Book Appointment
             </Button>
@@ -148,7 +175,7 @@ export default function PatientAppointments({ appointments }) {
                     <Box display="flex" gap={1}>
                       <IconButton
                         size="small"
-                        onClick={() => router.visit(route('appointments.show', appointment.id))}
+                        onClick={() => router.visit(`/appointments/${appointment.id}`)}
                       >
                         <EditIcon fontSize="small" />
                       </IconButton>

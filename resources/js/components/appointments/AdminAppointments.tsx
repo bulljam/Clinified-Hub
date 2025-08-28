@@ -59,7 +59,7 @@ export default function AdminAppointments({ appointments, filters = {} }) {
   const [dateFilter, setDateFilter] = useState(filters.date || '');
 
   const handleFilterChange = () => {
-    router.get(route('appointments.index'), {
+    router.get('/appointments', {
       status: statusFilter,
       payment_status: paymentFilter,
       provider_id: providerFilter,
@@ -69,16 +69,16 @@ export default function AdminAppointments({ appointments, filters = {} }) {
 
   const handleDelete = (appointmentId) => {
     if (confirm('Are you sure you want to delete this appointment?')) {
-      router.delete(route('appointments.destroy', appointmentId));
+      router.delete(`/appointments/${appointmentId}`);
     }
   };
 
   const handleQuickStatusUpdate = (appointmentId, status) => {
-    router.patch(route('appointments.update', appointmentId), { status });
+    router.patch(`/appointments/${appointmentId}`, { status });
   };
 
   const handlePaymentStatusUpdate = (appointmentId, paymentStatus) => {
-    router.patch(route('appointments.update', appointmentId), {
+    router.patch(`/appointments/${appointmentId}`, {
       payment_status: paymentStatus,
     });
   };
@@ -88,7 +88,7 @@ export default function AdminAppointments({ appointments, filters = {} }) {
     setPaymentFilter('');
     setProviderFilter('');
     setDateFilter('');
-    router.get(route('appointments.index'));
+    router.get('/appointments');
   };
 
   return (
@@ -100,7 +100,7 @@ export default function AdminAppointments({ appointments, filters = {} }) {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => router.visit(route('appointments.create'))}
+          onClick={() => router.visit('/appointments/create')}
         >
           Create Appointment
         </Button>
@@ -252,13 +252,13 @@ export default function AdminAppointments({ appointments, filters = {} }) {
                     <Box display="flex" gap={1}>
                       <IconButton
                         size="small"
-                        onClick={() => router.visit(route('appointments.show', appointment.id))}
+                        onClick={() => router.visit(`/appointments/${appointment.id}`)}
                       >
                         <ViewIcon fontSize="small" />
                       </IconButton>
                       <IconButton
                         size="small"
-                        onClick={() => router.visit(route('appointments.edit', appointment.id))}
+                        onClick={() => router.visit(`/appointments/${appointment.id}/edit`)}
                       >
                         <EditIcon fontSize="small" />
                       </IconButton>

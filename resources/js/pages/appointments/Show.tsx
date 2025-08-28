@@ -69,7 +69,7 @@ export default function Show({ auth, appointment }) {
             <Box mb={3}>
               <Button
                 startIcon={<BackIcon />}
-                onClick={() => router.visit(route('appointments.index'))}
+                onClick={() => router.visit('/appointments')}
               >
                 Back to Appointments
               </Button>
@@ -98,7 +98,7 @@ export default function Show({ auth, appointment }) {
                     <Button
                       variant="contained"
                       startIcon={<EditIcon />}
-                      onClick={() => router.visit(route('appointments.edit', appointment.id))}
+                      onClick={() => router.visit(`/appointments/${appointment.id}/edit`)}
                     >
                       Edit
                     </Button>

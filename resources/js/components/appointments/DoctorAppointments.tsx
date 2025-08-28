@@ -65,7 +65,7 @@ export default function DoctorAppointments({ appointments }) {
 
   const handleUpdateSubmit = () => {
     if (selectedAppointment) {
-      router.patch(route('appointments.update', selectedAppointment.id), {
+      router.patch(`/appointments/${selectedAppointment.id}`, {
         status: newStatus,
         payment_status: newPaymentStatus,
       });
@@ -74,11 +74,11 @@ export default function DoctorAppointments({ appointments }) {
   };
 
   const handleQuickAction = (appointmentId, status) => {
-    router.patch(route('appointments.update', appointmentId), { status });
+    router.patch(`/appointments/${appointmentId}`, { status });
   };
 
   const handleMarkAsPaid = (appointmentId) => {
-    router.patch(route('appointments.update', appointmentId), {
+    router.patch(`/appointments/${appointmentId}`, {
       payment_status: 'paid',
     });
   };

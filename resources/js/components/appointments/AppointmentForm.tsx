@@ -16,14 +16,45 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { router, useForm } from '@inertiajs/react';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 import { useEffect } from 'react';
+
+interface Provider {
+  id: number;
+  name: string;
+  email: string;
+}
+
+interface Appointment {
+  id: number;
+  provider_id: number;
+  date: string;
+  time: string;
+  status: string;
+  payment_status: string;
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
+interface AppointmentFormProps {
+  appointment?: Appointment | null;
+  providers?: Provider[];
+  isEdit?: boolean;
+}
 
 export default function AppointmentForm({ 
   appointment = null, 
   providers = [], 
   isEdit = false 
-}) {
-  const { data, setData, post, patch, processing, errors, reset } = useForm({
+}: AppointmentFormProps) {
+  const { data, setData, post, patch, processing, errors, reset, transform } = useForm({
     provider_id: appointment?.provider_id || '',
     date: appointment?.date ? dayjs(appointment.date) : null,
     time: appointment?.time ? dayjs(appointment.time, 'HH:mm:ss') : null,
@@ -31,35 +62,42 @@ export default function AppointmentForm({
     payment_status: appointment?.payment_status || 'pending',
   });
 
-  const handleSubmit = (e) => {
+  // Transform data before submission
+  transform((data) => ({
+    ...data,
+    date: data.date ? data.date.format('YYYY-MM-DD') : '',
+    time: data.time ? data.time.format('HH:mm') : '',
+  }));
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const formData = {
-      provider_id: data.provider_id,
-      date: data.date ? data.date.format('YYYY-MM-DD') : null,
-      time: data.time ? data.time.format('HH:mm') : null,
-    };
+    console.log('Raw form data:', data);
+    console.log('Time object:', data.time);
 
     if (isEdit) {
-      formData.status = data.status;
-      formData.payment_status = data.payment_status;
-      patch(route('appointments.update', appointment.id), {
+      patch(`/appointments/${appointment.id}`, {
         onSuccess: () => {
-          router.visit(route('appointments.index'));
+          router.visit('/appointments');
+        },
+        onError: (errors) => {
+          console.error('Patch errors:', errors);
         }
       });
     } else {
-      post(route('appointments.store'), {
-        data: formData,
+      post('/appointments', {
         onSuccess: () => {
-          router.visit(route('appointments.index'));
+          router.visit('/appointments');
+        },
+        onError: (errors) => {
+          console.error('Post errors:', errors);
         }
       });
     }
   };
 
   const handleCancel = () => {
-    router.visit(route('appointments.index'));
+    router.visit('/appointments');
   };
 
   const today = dayjs();
@@ -122,21 +160,43 @@ export default function AppointmentForm({
                 }}
               />
 
-              <TimePicker
-                label="Appointment Time"
-                value={data.time}
-                onChange={(newValue) => setData('time', newValue)}
-                minTime={dayjs().set('hour', 8).set('minute', 0)}
-                maxTime={dayjs().set('hour', 17).set('minute', 0)}
-                minutesStep={30}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    error: !!errors.time,
-                    helperText: errors.time || 'Available times: 8:00 AM - 5:00 PM',
-                  },
-                }}
-              />
+              <FormControl fullWidth error={!!errors.time}>
+                <InputLabel>Appointment Time</InputLabel>
+                <Select
+                  value={data.time ? data.time.format('HH:mm') : ''}
+                  label="Appointment Time"
+                  onChange={(e) => {
+                    const timeStr = e.target.value;
+                    if (timeStr) {
+                      const [hours, minutes] = timeStr.split(':');
+                      const timeObj = dayjs().hour(parseInt(hours)).minute(parseInt(minutes));
+                      setData('time', timeObj);
+                    } else {
+                      setData('time', null);
+                    }
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>Select a time...</em>
+                  </MenuItem>
+                  {Array.from({ length: 18 }, (_, i) => {
+                    const hour = 8 + Math.floor(i / 2);
+                    const minute = (i % 2) * 30;
+                    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    const displayTime = `${timeStr} (${hour > 12 ? hour - 12 : hour === 0 ? 12 : hour}:${minute.toString().padStart(2, '0')} ${hour >= 12 ? 'PM' : 'AM'})`;
+                    return (
+                      <MenuItem key={timeStr} value={timeStr}>
+                        {displayTime}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+                {errors.time && (
+                  <Typography variant="caption" color="error" sx={{ mt: 0.5, mx: 1.75 }}>
+                    {errors.time}
+                  </Typography>
+                )}
+              </FormControl>
 
               {isEdit && (
                 <>
