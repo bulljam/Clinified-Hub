@@ -10,6 +10,8 @@ import {
   MenuItem,
   Paper,
   Select,
+  Tab,
+  Tabs,
   Table,
   TableBody,
   TableCell,
@@ -23,10 +25,14 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   Visibility as ViewIcon,
+  CalendarMonth as CalendarIcon,
+  List as ListIcon,
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import AppointmentCalendar from '../calendar/AppointmentCalendar';
+import '../calendar/calendar.css';
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -53,10 +59,15 @@ const getPaymentStatusColor = (paymentStatus) => {
 };
 
 export default function AdminAppointments({ appointments, filters = {} }) {
+  const [activeTab, setActiveTab] = useState(0);
   const [statusFilter, setStatusFilter] = useState(filters.status || '');
   const [paymentFilter, setPaymentFilter] = useState(filters.payment_status || '');
   const [providerFilter, setProviderFilter] = useState(filters.provider_id || '');
   const [dateFilter, setDateFilter] = useState(filters.date || '');
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
 
   const handleFilterChange = () => {
     router.get('/appointments', {
@@ -159,6 +170,23 @@ export default function AdminAppointments({ appointments, filters = {} }) {
         </CardContent>
       </Card>
 
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs value={activeTab} onChange={handleTabChange} aria-label="appointment view tabs">
+          <Tab
+            icon={<ListIcon />}
+            label="List View"
+            iconPosition="start"
+            sx={{ textTransform: 'none' }}
+          />
+          <Tab
+            icon={<CalendarIcon />}
+            label="Calendar View"
+            iconPosition="start"
+            sx={{ textTransform: 'none' }}
+          />
+        </Tabs>
+      </Box>
+
       {appointments.data.length === 0 ? (
         <Card>
           <CardContent sx={{ textAlign: 'center', py: 4 }}>
@@ -168,7 +196,9 @@ export default function AdminAppointments({ appointments, filters = {} }) {
           </CardContent>
         </Card>
       ) : (
-        <TableContainer component={Paper}>
+        <Box>
+          {activeTab === 0 && (
+            <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -274,8 +304,17 @@ export default function AdminAppointments({ appointments, filters = {} }) {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
-        </TableContainer>
+            </Table>
+            </TableContainer>
+          )}
+
+          {activeTab === 1 && (
+            <AppointmentCalendar
+              appointments={appointments.data}
+              view="month"
+            />
+          )}
+        </Box>
       )}
 
       {appointments.data.length > 0 && (

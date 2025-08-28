@@ -6,6 +6,8 @@ import {
   Chip,
   IconButton,
   Paper,
+  Tab,
+  Tabs,
   Table,
   TableBody,
   TableCell,
@@ -14,9 +16,17 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import {
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  CalendarMonth as CalendarIcon,
+  List as ListIcon,
+} from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
+import { useState } from 'react';
+import AppointmentCalendar from '../calendar/AppointmentCalendar';
+import '../calendar/calendar.css';
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -70,6 +80,8 @@ interface PatientAppointmentsProps {
 }
 
 export default function PatientAppointments({ appointments }: PatientAppointmentsProps) {
+  const [activeTab, setActiveTab] = useState(0);
+
   const handleDelete = (appointmentId: number) => {
     if (confirm('Are you sure you want to cancel this appointment?')) {
       router.delete(`/appointments/${appointmentId}`);
@@ -80,6 +92,10 @@ export default function PatientAppointments({ appointments }: PatientAppointment
     router.patch(`/appointments/${appointmentId}`, {
       payment_status: 'paid',
     });
+  };
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
   };
 
   return (
@@ -95,6 +111,23 @@ export default function PatientAppointments({ appointments }: PatientAppointment
         >
           Book New Appointment
         </Button>
+      </Box>
+
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs value={activeTab} onChange={handleTabChange} aria-label="appointment view tabs">
+          <Tab
+            icon={<ListIcon />}
+            label="List View"
+            iconPosition="start"
+            sx={{ textTransform: 'none' }}
+          />
+          <Tab
+            icon={<CalendarIcon />}
+            label="Calendar View"
+            iconPosition="start"
+            sx={{ textTransform: 'none' }}
+          />
+        </Tabs>
       </Box>
 
       {appointments.data.length === 0 ? (
@@ -114,7 +147,9 @@ export default function PatientAppointments({ appointments }: PatientAppointment
           </CardContent>
         </Card>
       ) : (
-        <TableContainer component={Paper}>
+        <Box>
+          {activeTab === 0 && (
+            <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -193,8 +228,17 @@ export default function PatientAppointments({ appointments }: PatientAppointment
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
-        </TableContainer>
+            </Table>
+            </TableContainer>
+          )}
+
+          {activeTab === 1 && (
+            <AppointmentCalendar
+              appointments={appointments.data}
+              view="month"
+            />
+          )}
+        </Box>
       )}
     </Box>
   );

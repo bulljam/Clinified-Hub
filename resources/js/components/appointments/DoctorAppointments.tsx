@@ -13,6 +13,8 @@ import {
   MenuItem,
   Paper,
   Select,
+  Tab,
+  Tabs,
   Table,
   TableBody,
   TableCell,
@@ -21,10 +23,17 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { CheckCircle as ConfirmIcon, Cancel as CancelIcon } from '@mui/icons-material';
+import {
+  CheckCircle as ConfirmIcon,
+  Cancel as CancelIcon,
+  CalendarMonth as CalendarIcon,
+  List as ListIcon,
+} from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import AppointmentCalendar from '../calendar/AppointmentCalendar';
+import '../calendar/calendar.css';
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -51,10 +60,15 @@ const getPaymentStatusColor = (paymentStatus) => {
 };
 
 export default function DoctorAppointments({ appointments }) {
+  const [activeTab, setActiveTab] = useState(0);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [newStatus, setNewStatus] = useState('');
   const [newPaymentStatus, setNewPaymentStatus] = useState('');
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
 
   const handleUpdateClick = (appointment) => {
     setSelectedAppointment(appointment);
@@ -89,6 +103,23 @@ export default function DoctorAppointments({ appointments }) {
         My Assigned Appointments
       </Typography>
 
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs value={activeTab} onChange={handleTabChange} aria-label="appointment view tabs">
+          <Tab
+            icon={<ListIcon />}
+            label="List View"
+            iconPosition="start"
+            sx={{ textTransform: 'none' }}
+          />
+          <Tab
+            icon={<CalendarIcon />}
+            label="Calendar View"
+            iconPosition="start"
+            sx={{ textTransform: 'none' }}
+          />
+        </Tabs>
+      </Box>
+
       {appointments.data.length === 0 ? (
         <Card>
           <CardContent sx={{ textAlign: 'center', py: 4 }}>
@@ -98,7 +129,9 @@ export default function DoctorAppointments({ appointments }) {
           </CardContent>
         </Card>
       ) : (
-        <TableContainer component={Paper}>
+        <Box>
+          {activeTab === 0 && (
+            <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -194,8 +227,17 @@ export default function DoctorAppointments({ appointments }) {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
-        </TableContainer>
+            </Table>
+            </TableContainer>
+          )}
+
+          {activeTab === 1 && (
+            <AppointmentCalendar
+              appointments={appointments.data}
+              view="week"
+            />
+          )}
+        </Box>
       )}
 
       <Dialog
