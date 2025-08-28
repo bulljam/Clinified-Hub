@@ -17,6 +17,7 @@ class Appointment extends Model
         'time',
         'status',
         'payment_status',
+        'notes',
     ];
 
     protected function casts(): array

@@ -44,6 +44,7 @@ class AppointmentPolicy
         return match ($user->role) {
             'admin' => true,
             'provider' => $appointment->provider_id === $user->id,
+            'client' => $appointment->user_id === $user->id && $appointment->status === 'pending',
             default => false
         };
     }

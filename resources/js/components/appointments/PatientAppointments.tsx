@@ -26,6 +26,7 @@ import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import AppointmentCalendar from '../calendar/AppointmentCalendar';
+import PatientAppointmentForm from './PatientAppointmentForm';
 import '../calendar/calendar.css';
 
 const getStatusColor = (status: string) => {
@@ -54,10 +55,12 @@ const getPaymentStatusColor = (paymentStatus: string) => {
 
 interface Appointment {
   id: number;
+  provider_id: number;
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   payment_status: 'pending' | 'paid';
+  notes?: string;
   user: {
     id: number;
     name: string;
@@ -81,6 +84,7 @@ interface PatientAppointmentsProps {
 
 export default function PatientAppointments({ appointments }: PatientAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
+  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
 
   const handleDelete = (appointmentId: number) => {
     if (confirm('Are you sure you want to cancel this appointment?')) {
@@ -88,11 +92,6 @@ export default function PatientAppointments({ appointments }: PatientAppointment
     }
   };
 
-  const handleMarkAsPaid = (appointmentId: number) => {
-    router.patch(`/appointments/${appointmentId}`, {
-      payment_status: 'paid',
-    });
-  };
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -188,29 +187,17 @@ export default function PatientAppointments({ appointments }: PatientAppointment
                     />
                   </TableCell>
                   <TableCell>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Chip
-                        label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
-                        color={getPaymentStatusColor(appointment.payment_status)}
-                        size="small"
-                      />
-                      {appointment.payment_status === 'pending' && (
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          color="success"
-                          onClick={() => handleMarkAsPaid(appointment.id)}
-                        >
-                          Mark as Paid
-                        </Button>
-                      )}
-                    </Box>
+                    <Chip
+                      label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
+                      color={getPaymentStatusColor(appointment.payment_status)}
+                      size="small"
+                    />
                   </TableCell>
                   <TableCell align="right">
                     <Box display="flex" gap={1}>
                       <IconButton
                         size="small"
-                        onClick={() => router.visit(`/appointments/${appointment.id}`)}
+                        onClick={() => setEditingAppointment(appointment)}
                       >
                         <EditIcon fontSize="small" />
                       </IconButton>
@@ -239,6 +226,14 @@ export default function PatientAppointments({ appointments }: PatientAppointment
             />
           )}
         </Box>
+      )}
+
+      {editingAppointment && (
+        <PatientAppointmentForm
+          appointment={editingAppointment}
+          open={!!editingAppointment}
+          onClose={() => setEditingAppointment(null)}
+        />
       )}
     </Box>
   );

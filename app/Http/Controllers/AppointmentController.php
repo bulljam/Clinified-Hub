@@ -146,6 +146,43 @@ class AppointmentController extends Controller
     }
 
     /**
+     * Update appointment fields that patients are allowed to modify.
+     */
+    public function updatePatient(Request $request, Appointment $appointment): RedirectResponse
+    {
+        $this->authorize('update', $appointment);
+
+        if ($appointment->status !== 'pending') {
+            return redirect()->back()
+                ->withErrors(['appointment' => 'Only pending appointments can be modified.']);
+        }
+
+        $validated = $request->validate([
+            'date' => 'required|date|after:today',
+            'time' => 'required|date_format:H:i',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $query = Appointment::where('provider_id', $appointment->provider_id)
+            ->where('date', '=', $validated['date'])
+            ->where('time', $validated['time'].':00')
+            ->where('id', '!=', $appointment->id)
+            ->where('status', '!=', 'cancelled');
+
+        $existingAppointment = $query->exists();
+
+        if ($existingAppointment) {
+            return redirect()->back()
+                ->withErrors(['time' => 'This time slot is already booked with the selected provider.']);
+        }
+
+        $appointment->update($validated);
+
+        return redirect()->route('appointments.index')
+            ->with('success', 'Appointment updated successfully.');
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Appointment $appointment): RedirectResponse
