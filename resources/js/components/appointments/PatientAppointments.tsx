@@ -56,8 +56,8 @@ interface Appointment {
   id: number;
   date: string;
   time: string;
-  status: string;
-  payment_status: string;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  payment_status: 'pending' | 'paid';
   user: {
     id: number;
     name: string;
@@ -235,7 +235,6 @@ export default function PatientAppointments({ appointments }: PatientAppointment
           {activeTab === 1 && (
             <AppointmentCalendar
               appointments={appointments.data}
-              view="month"
             />
           )}
         </Box>

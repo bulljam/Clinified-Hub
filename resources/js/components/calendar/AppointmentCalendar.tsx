@@ -8,8 +8,6 @@ const localizer = momentLocalizer(moment);
 
 interface Appointment {
   id: number;
-  user_id: number;
-  provider_id: number;
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
@@ -34,10 +32,12 @@ interface CalendarEvent {
   resource: Appointment;
 }
 
+type CalendarView = 'month' | 'week' | 'day' | 'work_week' | 'agenda';
+
 interface AppointmentCalendarProps {
   appointments: Appointment[];
   onSelectEvent?: (event: CalendarEvent) => void;
-  view?: 'month' | 'week' | 'day';
+  view?: CalendarView;
 }
 
 
@@ -47,11 +47,21 @@ export default function AppointmentCalendar({
   onSelectEvent,
   view: initialView = 'month',
 }: AppointmentCalendarProps) {
-  const [currentView, setCurrentView] = useState(initialView);
+  const [currentView, setCurrentView] = useState<CalendarView>(initialView);
 
 
-  // Remove events display - only show background highlighting
-  const events: CalendarEvent[] = [];
+  const events: CalendarEvent[] = appointments.map(appointment => {
+    const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
+    const endDate = new Date(appointmentDate.getTime() + 30 * 60 * 1000);
+    
+    return {
+      id: appointment.id,
+      title: `${appointment.user.name} - ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}`,
+      start: appointmentDate,
+      end: endDate,
+      resource: appointment,
+    };
+  });
 
 
   // Create sets of appointment days and exact time slots for efficient lookup
@@ -65,7 +75,6 @@ export default function AppointmentCalendar({
   appointments.forEach(appointment => {
     // Extract date and parse appointment datetime
     const dateOnly = appointment.date.split('T')[0];
-    const appointmentDate = new Date(`${dateOnly}T${appointment.time}`);
     
     // For day-level highlighting (month view): store just the date string
     appointmentDays.add(dateOnly); // e.g., "2025-08-31"
@@ -118,7 +127,8 @@ export default function AppointmentCalendar({
     // Since appointments are typically 30 minutes, check if this slot falls within any appointment's time range
     let withinAppointmentWindow = false;
     for (const appointmentSlot of appointmentSlots) {
-      const [appointmentDate, appointmentTime] = appointmentSlot.split('T');
+      const appointmentSlotStr = String(appointmentSlot);
+      const [appointmentDate, appointmentTime] = appointmentSlotStr.split('T');
       if (appointmentDate === `${year}-${month}-${day}`) {
         const [appointmentHours, appointmentMinutes] = appointmentTime.split(':').map(Number);
         const appointmentStart = appointmentHours * 60 + appointmentMinutes;
@@ -143,12 +153,38 @@ export default function AppointmentCalendar({
     return {};
   };
 
+  const eventStyleGetter = (event: CalendarEvent) => {
+    const appointment = event.resource;
+    let backgroundColor = '#3174ad';
+    
+    if (appointment.status === 'confirmed') {
+      backgroundColor = '#4caf50';
+    } else if (appointment.status === 'cancelled') {
+      backgroundColor = '#f44336';
+    } else if (appointment.status === 'pending') {
+      backgroundColor = '#ff9800';
+    }
+    
+    return {
+      style: {
+        backgroundColor,
+        borderRadius: '4px',
+        opacity: 0.8,
+        color: 'white',
+        border: '0px',
+        display: 'block',
+        fontSize: '12px',
+        padding: '2px 4px'
+      }
+    };
+  };
+
   return (
     <Box>
-      {events.length === 0 && (
+      {appointments.length === 0 && (
         <Box mb={2} p={2} bgcolor="info.light" borderRadius={1}>
           <Typography variant="body2">
-            No appointments found for the current filters. Events: {events.length}
+            No appointments found for the current filters.
           </Typography>
         </Box>
       )}
@@ -160,11 +196,13 @@ export default function AppointmentCalendar({
           startAccessor="start"
           endAccessor="end"
           style={{ height: 550 }}
-          view={currentView as any}
+          view={currentView}
           onView={(newView) => setCurrentView(newView)}
           views={[Views.MONTH, Views.WEEK, Views.DAY]}
           dayPropGetter={dayPropGetter}
           slotPropGetter={slotPropGetter}
+          eventPropGetter={eventStyleGetter}
+          onSelectEvent={onSelectEvent}
           formats={{
             timeGutterFormat: 'h:mm A',
             eventTimeRangeFormat: ({ start, end }) => 

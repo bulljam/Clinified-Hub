@@ -34,7 +34,7 @@ import { useState } from 'react';
 import AppointmentCalendar from '../calendar/AppointmentCalendar';
 import '../calendar/calendar.css';
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
       return 'warning';
@@ -47,7 +47,7 @@ const getStatusColor = (status) => {
   }
 };
 
-const getPaymentStatusColor = (paymentStatus) => {
+const getPaymentStatusColor = (paymentStatus: string) => {
   switch (paymentStatus) {
     case 'pending':
       return 'warning';
@@ -58,7 +58,40 @@ const getPaymentStatusColor = (paymentStatus) => {
   }
 };
 
-export default function AdminAppointments({ appointments, filters = {} }) {
+interface Appointment {
+  id: number;
+  date: string;
+  time: string;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  payment_status: 'pending' | 'paid';
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  provider: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
+interface AdminAppointmentsProps {
+  appointments: {
+    data: Appointment[];
+    from?: number;
+    to?: number;
+    total?: number;
+  };
+  filters?: {
+    status?: string;
+    payment_status?: string;
+    provider_id?: string;
+    date?: string;
+  };
+}
+
+export default function AdminAppointments({ appointments, filters = {} }: AdminAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [statusFilter, setStatusFilter] = useState(filters.status || '');
   const [paymentFilter, setPaymentFilter] = useState(filters.payment_status || '');
@@ -78,17 +111,17 @@ export default function AdminAppointments({ appointments, filters = {} }) {
     }, { preserveState: true });
   };
 
-  const handleDelete = (appointmentId) => {
+  const handleDelete = (appointmentId: number) => {
     if (confirm('Are you sure you want to delete this appointment?')) {
       router.delete(`/appointments/${appointmentId}`);
     }
   };
 
-  const handleQuickStatusUpdate = (appointmentId, status) => {
+  const handleQuickStatusUpdate = (appointmentId: number, status: string) => {
     router.patch(`/appointments/${appointmentId}`, { status });
   };
 
-  const handlePaymentStatusUpdate = (appointmentId, paymentStatus) => {
+  const handlePaymentStatusUpdate = (appointmentId: number, paymentStatus: string) => {
     router.patch(`/appointments/${appointmentId}`, {
       payment_status: paymentStatus,
     });
@@ -309,17 +342,9 @@ export default function AdminAppointments({ appointments, filters = {} }) {
           )}
 
           {activeTab === 1 && (
-            <>
-              <div style={{ padding: '10px', backgroundColor: '#f0f0f0', marginBottom: '10px' }}>
-                <strong>Debug Info:</strong><br />
-                Appointments data length: {appointments?.data?.length || 0}<br />
-                First appointment: {JSON.stringify(appointments?.data?.[0] || 'None')}
-              </div>
-              <AppointmentCalendar
-                appointments={appointments.data || []}
-                view="month"
-              />
-            </>
+            <AppointmentCalendar
+              appointments={appointments.data || []}
+            />
           )}
         </Box>
       )}

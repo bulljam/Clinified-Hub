@@ -35,7 +35,7 @@ import { useState } from 'react';
 import AppointmentCalendar from '../calendar/AppointmentCalendar';
 import '../calendar/calendar.css';
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
       return 'warning';
@@ -48,7 +48,7 @@ const getStatusColor = (status) => {
   }
 };
 
-const getPaymentStatusColor = (paymentStatus) => {
+const getPaymentStatusColor = (paymentStatus: string) => {
   switch (paymentStatus) {
     case 'pending':
       return 'warning';
@@ -59,10 +59,37 @@ const getPaymentStatusColor = (paymentStatus) => {
   }
 };
 
-export default function DoctorAppointments({ appointments }) {
+interface Appointment {
+  id: number;
+  date: string;
+  time: string;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  payment_status: 'pending' | 'paid';
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  provider: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
+interface DoctorAppointmentsProps {
+  appointments: {
+    data: Appointment[];
+    from?: number;
+    to?: number;
+    total?: number;
+  };
+}
+
+export default function DoctorAppointments({ appointments }: DoctorAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [newStatus, setNewStatus] = useState('');
   const [newPaymentStatus, setNewPaymentStatus] = useState('');
 
@@ -70,7 +97,7 @@ export default function DoctorAppointments({ appointments }) {
     setActiveTab(newValue);
   };
 
-  const handleUpdateClick = (appointment) => {
+  const handleUpdateClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setNewStatus(appointment.status);
     setNewPaymentStatus(appointment.payment_status);
@@ -87,11 +114,11 @@ export default function DoctorAppointments({ appointments }) {
     }
   };
 
-  const handleQuickAction = (appointmentId, status) => {
+  const handleQuickAction = (appointmentId: number, status: string) => {
     router.patch(`/appointments/${appointmentId}`, { status });
   };
 
-  const handleMarkAsPaid = (appointmentId) => {
+  const handleMarkAsPaid = (appointmentId: number) => {
     router.patch(`/appointments/${appointmentId}`, {
       payment_status: 'paid',
     });
@@ -234,7 +261,6 @@ export default function DoctorAppointments({ appointments }) {
           {activeTab === 1 && (
             <AppointmentCalendar
               appointments={appointments.data}
-              view="month"
             />
           )}
         </Box>
