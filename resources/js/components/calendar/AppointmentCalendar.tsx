@@ -1,9 +1,8 @@
 import { Box, Paper, Typography } from '@mui/material';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useState } from 'react';
-import AppointmentModal from './AppointmentModal';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
 
@@ -42,95 +41,106 @@ interface AppointmentCalendarProps {
 }
 
 
-const EventComponent = ({ event }: { event: CalendarEvent }) => {
-  const { user, provider, status, payment_status } = event.resource;
-  
-  let backgroundColor = '#9e9e9e';
-  let borderColor = '#757575';
-  
-  switch (status) {
-    case 'pending':
-      backgroundColor = '#ffc107';
-      borderColor = '#ff8f00';
-      break;
-    case 'confirmed':
-      backgroundColor = '#4caf50';
-      borderColor = '#2e7d32';
-      break;
-    case 'cancelled':
-      backgroundColor = '#f44336';
-      borderColor = '#c62828';
-      break;
-  }
-  
-  return (
-    <div 
-      style={{
-        backgroundColor,
-        border: `2px solid ${borderColor}`,
-        borderRadius: '4px',
-        color: 'white',
-        fontSize: '11px',
-        fontWeight: 'bold',
-        padding: '2px 4px',
-        lineHeight: 1.2,
-        height: '100%',
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-      }}
-    >
-      <div style={{ fontWeight: 'bold' }}>
-        {user.name}
-      </div>
-      <div style={{ fontSize: '10px', opacity: 0.9 }}>
-        Dr. {provider.name}
-      </div>
-      {payment_status === 'paid' && (
-        <div style={{ fontSize: '9px', opacity: 0.9 }}>
-          ✓ Paid
-        </div>
-      )}
-    </div>
-  );
-};
 
 export default function AppointmentCalendar({
   appointments,
   onSelectEvent,
-  view = 'month',
+  view: initialView = 'month',
 }: AppointmentCalendarProps) {
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [currentView, setCurrentView] = useState(initialView);
 
 
-  const events: CalendarEvent[] = (appointments || []).map((appointment) => {
-    // Extract just the date part (YYYY-MM-DD) from the datetime string
+  // Remove events display - only show background highlighting
+  const events: CalendarEvent[] = [];
+
+
+  // Create sets of appointment days and exact time slots for efficient lookup
+  const appointmentDays = new Set();
+  const appointmentSlots = new Set();
+  
+  // Add hardcoded test appointment: August 25, 2025 at 10:00 AM
+  appointmentDays.add('2025-08-25');
+  appointmentSlots.add('2025-08-25T10:00');
+  
+  appointments.forEach(appointment => {
+    // Extract date and parse appointment datetime
     const dateOnly = appointment.date.split('T')[0];
-    const dateTimeString = `${dateOnly}T${appointment.time}`;
+    const appointmentDate = new Date(`${dateOnly}T${appointment.time}`);
     
-    const start = new Date(dateTimeString);
-    const end = new Date(start.getTime() + 30 * 60000);
-
-    return {
-      id: appointment.id,
-      title: `${appointment.provider.name} – ${appointment.user.name}`,
-      start: start,
-      end: end,
-      resource: appointment,
-    };
+    // For day-level highlighting (month view): store just the date string
+    appointmentDays.add(dateOnly); // e.g., "2025-08-31"
+    
+    // For slot-level highlighting (week/day views): store full datetime string
+    const slotKey = `${dateOnly}T${appointment.time.substring(0, 5)}`; // e.g., "2025-08-31T09:30"
+    appointmentSlots.add(slotKey);
   });
-
-  const handleSelectEvent = (event: CalendarEvent) => {
-    setSelectedEvent(event);
-    setModalOpen(true);
-    onSelectEvent?.(event);
+  
+  const dayPropGetter = (date: Date) => {
+    // Only highlight in month view - show days that have appointments
+    if (currentView !== 'month') {
+      return {};
+    }
+    
+    // Use local date string instead of UTC to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
+    if (appointmentDays.has(dateString)) {
+      return {
+        style: {
+          backgroundColor: '#e6f3ff',
+        }
+      };
+    }
+    return {};
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedEvent(null);
+  const slotPropGetter = (date: Date) => {
+    // For week/day views: highlight specific time slots with appointments
+    if (currentView === 'month') {
+      return {};
+    }
+    
+    // Use local date string instead of UTC to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const slotKey = `${year}-${month}-${day}T${hours}:${minutes}`;
+    
+    // Check for exact match and also check the 30-minute slot that contains this time
+    const exactMatch = appointmentSlots.has(slotKey);
+    
+    // Also check if this slot is within a 30-minute appointment window
+    // Since appointments are typically 30 minutes, check if this slot falls within any appointment's time range
+    let withinAppointmentWindow = false;
+    for (const appointmentSlot of appointmentSlots) {
+      const [appointmentDate, appointmentTime] = appointmentSlot.split('T');
+      if (appointmentDate === `${year}-${month}-${day}`) {
+        const [appointmentHours, appointmentMinutes] = appointmentTime.split(':').map(Number);
+        const appointmentStart = appointmentHours * 60 + appointmentMinutes;
+        const appointmentEnd = appointmentStart + 30; // 30-minute appointments
+        
+        const slotTime = parseInt(hours) * 60 + parseInt(minutes);
+        
+        if (slotTime >= appointmentStart && slotTime < appointmentEnd) {
+          withinAppointmentWindow = true;
+          break;
+        }
+      }
+    }
+      
+    if (exactMatch || withinAppointmentWindow) {
+      return {
+        style: {
+          backgroundColor: '#e6f3ff',
+        }
+      };
+    }
+    return {};
   };
 
   return (
@@ -150,12 +160,11 @@ export default function AppointmentCalendar({
           startAccessor="start"
           endAccessor="end"
           style={{ height: 550 }}
-          defaultView={view as any}
+          view={currentView as any}
+          onView={(newView) => setCurrentView(newView)}
           views={[Views.MONTH, Views.WEEK, Views.DAY]}
-          onSelectEvent={handleSelectEvent}
-          components={{
-            event: EventComponent,
-          }}
+          dayPropGetter={dayPropGetter}
+          slotPropGetter={slotPropGetter}
           formats={{
             timeGutterFormat: 'h:mm A',
             eventTimeRangeFormat: ({ start, end }) => 
@@ -169,12 +178,6 @@ export default function AppointmentCalendar({
           showMultiDayTimes={true}
         />
       </Paper>
-
-      <AppointmentModal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        appointment={selectedEvent?.resource || null}
-      />
     </Box>
   );
 }

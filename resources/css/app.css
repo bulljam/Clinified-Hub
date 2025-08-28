@@ -147,10 +147,13 @@
 
 .rbc-event {
     padding: 0 !important;
+    margin: 1px !important;
     border: none !important;
+    border-radius: 0 !important;
     background: transparent !important;
     background-color: transparent !important;
     background-image: none !important;
+    box-shadow: none !important;
 }
 
 .rbc-event-content {
@@ -159,14 +162,23 @@
     white-space: normal !important;
     margin: 0 !important;
     padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .rbc-addons-dnd .rbc-event {
     z-index: 2 !important;
 }
 
-.rbc-event.rbc-event-allday {
-    min-height: 20px !important;
+/* Month view - events should fit within their day cell */
+.rbc-month-view .rbc-event {
+    margin: 1px !important;
+    min-height: 18px !important;
+}
+
+/* Week/Day view - events should fit within their time slot */
+.rbc-time-view .rbc-event {
+    margin: 1px 2px !important;
 }
 
 .rbc-off-range-bg {
@@ -185,4 +197,5 @@
     outline: none !important;
     background: transparent !important;
     background-color: transparent !important;
+    box-shadow: none !important;
 }

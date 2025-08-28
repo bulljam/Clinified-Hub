@@ -234,7 +234,7 @@ export default function DoctorAppointments({ appointments }) {
           {activeTab === 1 && (
             <AppointmentCalendar
               appointments={appointments.data}
-              view="week"
+              view="month"
             />
           )}
         </Box>
