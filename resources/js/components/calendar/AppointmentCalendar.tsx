@@ -122,7 +122,7 @@ export default function AppointmentCalendar({
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    const slotKey = `${year}-${month}-${day}T${hours}:${minutes}`;
+  
     
     // Find appointment that matches this time slot
     let matchingAppointment = null;
@@ -215,14 +215,30 @@ export default function AppointmentCalendar({
   return (
     <Box>
       <style>{`
-        .appointment-slot-with-content::before {
+        .rbc-time-slot:has(.rbc-label) {
+          background-color: transparent !important;
+          color: inherit !important;
+          font-weight: inherit !important;
+          font-size: inherit !important;
+          padding: inherit !important;
+          border-radius: inherit !important;
+          position: inherit !important;
+          text-align: inherit !important;
+          display: flex !important;
+          flex-direction: inherit !important;
+          justify-content: center !important;
+          align-items: center !important;
+          line-height: inherit !important;
+        }
+        
+        .appointment-slot-with-content:not(:has(.rbc-label))::before {
           content: var(--appointment-name);
           display: block;
           font-size: 10px;
           font-weight: bold;
           line-height: 1.1;
         }
-        .appointment-slot-with-content::after {
+        .appointment-slot-with-content:not(:has(.rbc-label))::after {
           content: var(--appointment-status);
           display: block;
           font-size: 8px;
@@ -260,9 +276,9 @@ export default function AppointmentCalendar({
               `${moment(start).format('h:mm A')} - ${moment(end).format('h:mm A')}`,
           }}
           step={30}
-          timeslots={2}
-          min={moment().set({ hour: 6, minute: 0 }).toDate()}
-          max={moment().set({ hour: 20, minute: 0 }).toDate()}
+          timeslots={1}
+          min={moment().set({ hour: 8, minute: 0 }).toDate()}
+          max={moment().set({ hour: 18, minute: 30 }).toDate()}
           popup={true}
           showMultiDayTimes={true}
         />
