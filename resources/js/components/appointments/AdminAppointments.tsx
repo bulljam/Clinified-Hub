@@ -344,6 +344,7 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
           {activeTab === 1 && (
             <AppointmentCalendar
               appointments={appointments.data || []}
+              userRole="admin"
             />
           )}
         </Box>

@@ -1,7 +1,7 @@
 import { Box, Paper, Typography } from '@mui/material';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
@@ -38,6 +38,7 @@ interface AppointmentCalendarProps {
   appointments: Appointment[];
   onSelectEvent?: (event: CalendarEvent) => void;
   view?: CalendarView;
+  userRole?: 'admin' | 'provider' | 'client';
 }
 
 
@@ -46,6 +47,7 @@ export default function AppointmentCalendar({
   appointments,
   onSelectEvent,
   view: initialView = 'month',
+  userRole = 'admin',
 }: AppointmentCalendarProps) {
   const [currentView, setCurrentView] = useState<CalendarView>(initialView);
 
@@ -54,9 +56,15 @@ export default function AppointmentCalendar({
     const appointmentDate = new Date(`${appointment.date}T${appointment.time}`);
     const endDate = new Date(appointmentDate.getTime() + 30 * 60 * 1000);
     
+    const displayName = userRole === 'client' 
+      ? `Dr. ${appointment.provider.name}` 
+      : appointment.user.name;
+    
+    const statusText = appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1);
+    
     return {
       id: appointment.id,
-      title: `${appointment.user.name} - ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}`,
+      title: `${displayName} - ${statusText}`,
       start: appointmentDate,
       end: endDate,
       resource: appointment,
@@ -67,10 +75,6 @@ export default function AppointmentCalendar({
   // Create sets of appointment days and exact time slots for efficient lookup
   const appointmentDays = new Set();
   const appointmentSlots = new Set();
-  
-  // Add hardcoded test appointment: August 25, 2025 at 10:00 AM
-  appointmentDays.add('2025-08-25');
-  appointmentSlots.add('2025-08-25T10:00');
   
   appointments.forEach(appointment => {
     // Extract date and parse appointment datetime
@@ -120,36 +124,65 @@ export default function AppointmentCalendar({
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const slotKey = `${year}-${month}-${day}T${hours}:${minutes}`;
     
-    // Check for exact match and also check the 30-minute slot that contains this time
-    const exactMatch = appointmentSlots.has(slotKey);
+    // Find appointment that matches this time slot
+    let matchingAppointment = null;
     
-    // Also check if this slot is within a 30-minute appointment window
-    // Since appointments are typically 30 minutes, check if this slot falls within any appointment's time range
-    let withinAppointmentWindow = false;
-    for (const appointmentSlot of appointmentSlots) {
-      const appointmentSlotStr = String(appointmentSlot);
-      const [appointmentDate, appointmentTime] = appointmentSlotStr.split('T');
+    for (const appointment of appointments) {
+      // Handle both date formats - with or without time component
+      const appointmentDate = appointment.date.includes('T') 
+        ? appointment.date.split('T')[0] 
+        : appointment.date;
+      
+      // Extract time - handle both HH:MM:SS and HH:MM formats
+      const timeStr = appointment.time.includes(':') 
+        ? appointment.time.split(':').slice(0, 2).join(':')
+        : appointment.time;
+      
       if (appointmentDate === `${year}-${month}-${day}`) {
-        const [appointmentHours, appointmentMinutes] = appointmentTime.split(':').map(Number);
+        const [appointmentHours, appointmentMinutes] = timeStr.split(':').map(Number);
         const appointmentStart = appointmentHours * 60 + appointmentMinutes;
-        const appointmentEnd = appointmentStart + 30; // 30-minute appointments
+        const appointmentEnd = appointmentStart + 30; // 30-minute slots
         
-        const slotTime = parseInt(hours) * 60 + parseInt(minutes);
+        const currentSlot = parseInt(hours) * 60 + parseInt(minutes);
         
-        if (slotTime >= appointmentStart && slotTime < appointmentEnd) {
-          withinAppointmentWindow = true;
+        // Check if this slot falls within the appointment time window
+        if (currentSlot >= appointmentStart && currentSlot < appointmentEnd) {
+          matchingAppointment = appointment;
           break;
         }
       }
     }
+    
+    if (matchingAppointment) {
+      const displayName = userRole === 'client' 
+        ? `Dr. ${matchingAppointment.provider.name}` 
+        : `${matchingAppointment.user.name}`;
       
-    if (exactMatch || withinAppointmentWindow) {
+      const statusColor = matchingAppointment.status === 'confirmed' ? '#4caf50' : 
+                         matchingAppointment.status === 'cancelled' ? '#f44336' : '#ff9800';
+      
       return {
         style: {
-          backgroundColor: '#e6f3ff',
-        }
+          backgroundColor: statusColor,
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '10px',
+          padding: '2px',
+          borderRadius: '3px',
+          position: 'relative',
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          lineHeight: '1.2',
+          '--appointment-name': `"${displayName}"`,
+          '--appointment-status': `"${matchingAppointment.status.toUpperCase()}"`,
+        } as React.CSSProperties & { '--appointment-name': string; '--appointment-status': string },
+        className: 'appointment-slot-with-content',
       };
     }
+    
     return {};
   };
 
@@ -181,6 +214,24 @@ export default function AppointmentCalendar({
 
   return (
     <Box>
+      <style>{`
+        .appointment-slot-with-content::before {
+          content: var(--appointment-name);
+          display: block;
+          font-size: 10px;
+          font-weight: bold;
+          line-height: 1.1;
+        }
+        .appointment-slot-with-content::after {
+          content: var(--appointment-status);
+          display: block;
+          font-size: 8px;
+          opacity: 0.9;
+          line-height: 1.1;
+          margin-top: 1px;
+        }
+      `}</style>
+      
       {appointments.length === 0 && (
         <Box mb={2} p={2} bgcolor="info.light" borderRadius={1}>
           <Typography variant="body2">

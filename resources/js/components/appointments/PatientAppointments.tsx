@@ -235,6 +235,7 @@ export default function PatientAppointments({ appointments }: PatientAppointment
           {activeTab === 1 && (
             <AppointmentCalendar
               appointments={appointments.data}
+              userRole="client"
             />
           )}
         </Box>

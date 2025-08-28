@@ -261,6 +261,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
           {activeTab === 1 && (
             <AppointmentCalendar
               appointments={appointments.data}
+              userRole="provider"
             />
           )}
         </Box>
