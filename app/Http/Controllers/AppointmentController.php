@@ -21,23 +21,41 @@ class AppointmentController extends Controller
     {
         $user = $request->user();
 
-        $appointments = match ($user->role) {
-            'admin' => Appointment::with(['user', 'provider'])
-                ->latest()
-                ->paginate(15),
+        $query = match ($user->role) {
+            'admin' => Appointment::with(['user', 'provider']),
             'provider' => Appointment::with(['user', 'provider'])
-                ->where('provider_id', $user->id)
-                ->latest()
-                ->paginate(15),
+                ->where('provider_id', $user->id),
             'client' => Appointment::with(['user', 'provider'])
-                ->where('user_id', $user->id)
-                ->latest()
-                ->paginate(15),
-            default => collect([])
+                ->where('user_id', $user->id),
+            default => Appointment::query()->whereNull('id')
         };
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('payment_status')) {
+            $query->where('payment_status', $request->payment_status);
+        }
+
+        if ($request->filled('provider_id')) {
+            $query->where('provider_id', $request->provider_id);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->date);
+        }
+
+        $appointments = $query->latest()->paginate(15);
 
         return Inertia::render('appointments/Index', [
             'appointments' => $appointments,
+            'filters' => [
+                'status' => $request->status,
+                'payment_status' => $request->payment_status,
+                'provider_id' => $request->provider_id,
+                'date' => $request->date,
+            ],
         ]);
     }
 

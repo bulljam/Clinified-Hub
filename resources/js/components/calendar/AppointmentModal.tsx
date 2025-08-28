@@ -118,7 +118,7 @@ export default function AppointmentModal({
             <Box display="flex" alignItems="center" gap={1} mb={2}>
               <TimeIcon color="action" />
               <Typography variant="body1" fontWeight="medium">
-                {dayjs(appointment.time, 'HH:mm:ss').format('h:mm A')}
+                {appointment.time ? dayjs(`1970-01-01 ${appointment.time}`).format('h:mm A') : 'N/A'}
               </Typography>
             </Box>
           </Grid>

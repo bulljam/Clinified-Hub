@@ -139,3 +139,50 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* React Big Calendar custom styles */
+.rbc-calendar {
+    font-family: inherit !important;
+}
+
+.rbc-event {
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+.rbc-event-content {
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.rbc-addons-dnd .rbc-event {
+    z-index: 2 !important;
+}
+
+.rbc-event.rbc-event-allday {
+    min-height: 20px !important;
+}
+
+.rbc-off-range-bg {
+    background: #f7f7f7 !important;
+}
+
+.rbc-today {
+    background-color: #e6f3ff !important;
+}
+
+/* Remove default RBC event styles completely */
+.rbc-event:focus,
+.rbc-event.rbc-selected,
+.rbc-selected.rbc-event,
+.rbc-event:hover {
+    outline: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+}

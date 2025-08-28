@@ -151,7 +151,7 @@ export default function DoctorAppointments({ appointments }) {
                         {dayjs(appointment.date).format('MMM D, YYYY')}
                       </Typography>
                       <Typography variant="caption" color="textSecondary">
-                        {dayjs(appointment.time, 'HH:mm:ss').format('h:mm A')}
+                        {appointment.time ? dayjs(`1970-01-01 ${appointment.time}`).format('h:mm A') : 'N/A'}
                       </Typography>
                     </Box>
                   </TableCell>
@@ -256,7 +256,7 @@ export default function DoctorAppointments({ appointments }) {
                 </Typography>
                 <Typography variant="subtitle2" color="textSecondary">
                   Date: {dayjs(selectedAppointment.date).format('MMM D, YYYY')} at{' '}
-                  {dayjs(selectedAppointment.time, 'HH:mm:ss').format('h:mm A')}
+                  {selectedAppointment.time ? dayjs(`1970-01-01 ${selectedAppointment.time}`).format('h:mm A') : 'N/A'}
                 </Typography>
               </Box>
             )}

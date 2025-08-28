@@ -41,8 +41,9 @@ interface AppointmentCalendarProps {
   view?: 'month' | 'week' | 'day';
 }
 
-const getEventStyle = (event: CalendarEvent) => {
-  const { status, payment_status } = event.resource;
+
+const EventComponent = ({ event }: { event: CalendarEvent }) => {
+  const { user, provider, status, payment_status } = event.resource;
   
   let backgroundColor = '#9e9e9e';
   let borderColor = '#757575';
@@ -61,37 +62,37 @@ const getEventStyle = (event: CalendarEvent) => {
       borderColor = '#c62828';
       break;
   }
-
-  return {
-    style: {
-      backgroundColor,
-      borderColor,
-      border: `2px solid ${borderColor}`,
-      borderRadius: '4px',
-      color: 'white',
-      fontSize: '12px',
-      padding: '2px 4px',
-    },
-  };
-};
-
-const EventComponent = ({ event }: { event: CalendarEvent }) => {
-  const { user, provider, status, payment_status } = event.resource;
   
   return (
-    <Box sx={{ fontSize: '11px', lineHeight: 1.2 }}>
-      <Typography variant="caption" display="block" sx={{ fontWeight: 'bold' }}>
+    <div 
+      style={{
+        backgroundColor,
+        border: `2px solid ${borderColor}`,
+        borderRadius: '4px',
+        color: 'white',
+        fontSize: '11px',
+        fontWeight: 'bold',
+        padding: '2px 4px',
+        lineHeight: 1.2,
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+    >
+      <div style={{ fontWeight: 'bold' }}>
         {user.name}
-      </Typography>
-      <Typography variant="caption" display="block">
+      </div>
+      <div style={{ fontSize: '10px', opacity: 0.9 }}>
         Dr. {provider.name}
-      </Typography>
+      </div>
       {payment_status === 'paid' && (
-        <Typography variant="caption" display="block" sx={{ opacity: 0.9 }}>
+        <div style={{ fontSize: '9px', opacity: 0.9 }}>
           ✓ Paid
-        </Typography>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };
 
@@ -103,15 +104,20 @@ export default function AppointmentCalendar({
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const events: CalendarEvent[] = appointments.map((appointment) => {
-    const startDateTime = moment(`${appointment.date} ${appointment.time}`).toDate();
-    const endDateTime = moment(startDateTime).add(1, 'hour').toDate();
+
+  const events: CalendarEvent[] = (appointments || []).map((appointment) => {
+    // Extract just the date part (YYYY-MM-DD) from the datetime string
+    const dateOnly = appointment.date.split('T')[0];
+    const dateTimeString = `${dateOnly}T${appointment.time}`;
+    
+    const start = new Date(dateTimeString);
+    const end = new Date(start.getTime() + 30 * 60000);
 
     return {
       id: appointment.id,
-      title: `${appointment.user.name} - Dr. ${appointment.provider.name}`,
-      start: startDateTime,
-      end: endDateTime,
+      title: `${appointment.provider.name} – ${appointment.user.name}`,
+      start: start,
+      end: end,
       resource: appointment,
     };
   });
@@ -129,6 +135,14 @@ export default function AppointmentCalendar({
 
   return (
     <Box>
+      {events.length === 0 && (
+        <Box mb={2} p={2} bgcolor="info.light" borderRadius={1}>
+          <Typography variant="body2">
+            No appointments found for the current filters. Events: {events.length}
+          </Typography>
+        </Box>
+      )}
+      
       <Paper sx={{ p: 2, height: 600 }}>
         <Calendar
           localizer={localizer}
@@ -139,7 +153,6 @@ export default function AppointmentCalendar({
           defaultView={view as any}
           views={[Views.MONTH, Views.WEEK, Views.DAY]}
           onSelectEvent={handleSelectEvent}
-          eventPropGetter={getEventStyle}
           components={{
             event: EventComponent,
           }}
@@ -150,8 +163,10 @@ export default function AppointmentCalendar({
           }}
           step={30}
           timeslots={2}
-          min={moment().set({ hour: 8, minute: 0 }).toDate()}
-          max={moment().set({ hour: 18, minute: 0 }).toDate()}
+          min={moment().set({ hour: 6, minute: 0 }).toDate()}
+          max={moment().set({ hour: 20, minute: 0 }).toDate()}
+          popup={true}
+          showMultiDayTimes={true}
         />
       </Paper>
 

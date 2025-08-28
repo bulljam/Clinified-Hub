@@ -8,7 +8,7 @@ import AdminAppointments from '@/components/appointments/AdminAppointments';
 
 const theme = createTheme();
 
-export default function Index({ auth, appointments }) {
+export default function Index({ auth, appointments, filters }) {
   const userRole = auth.user.role;
 
   const renderAppointmentComponent = () => {
@@ -18,7 +18,7 @@ export default function Index({ auth, appointments }) {
       case 'provider':
         return <DoctorAppointments appointments={appointments} />;
       case 'admin':
-        return <AdminAppointments appointments={appointments} />;
+        return <AdminAppointments appointments={appointments} filters={filters} />;
       default:
         return null;
     }

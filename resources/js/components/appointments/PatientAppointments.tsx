@@ -168,7 +168,7 @@ export default function PatientAppointments({ appointments }: PatientAppointment
                     {dayjs(appointment.date).format('MMM D, YYYY')}
                   </TableCell>
                   <TableCell>
-                    {dayjs(appointment.time, 'HH:mm:ss').format('h:mm A')}
+                    {appointment.time ? dayjs(`1970-01-01 ${appointment.time}`).format('h:mm A') : 'N/A'}
                   </TableCell>
                   <TableCell>
                     <Box>

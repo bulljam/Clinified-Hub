@@ -28,3 +28,4 @@ yarn-error.log
 .github/
 CLAUDE.md
 .mcp.json
+.claude/

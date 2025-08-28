@@ -225,7 +225,7 @@ export default function AdminAppointments({ appointments, filters = {} }) {
                         {dayjs(appointment.date).format('MMM D, YYYY')}
                       </Typography>
                       <Typography variant="caption" color="textSecondary">
-                        {dayjs(appointment.time, 'HH:mm:ss').format('h:mm A')}
+                        {appointment.time ? dayjs(`1970-01-01 ${appointment.time}`).format('h:mm A') : 'N/A'}
                       </Typography>
                     </Box>
                   </TableCell>
@@ -309,10 +309,17 @@ export default function AdminAppointments({ appointments, filters = {} }) {
           )}
 
           {activeTab === 1 && (
-            <AppointmentCalendar
-              appointments={appointments.data}
-              view="month"
-            />
+            <>
+              <div style={{ padding: '10px', backgroundColor: '#f0f0f0', marginBottom: '10px' }}>
+                <strong>Debug Info:</strong><br />
+                Appointments data length: {appointments?.data?.length || 0}<br />
+                First appointment: {JSON.stringify(appointments?.data?.[0] || 'None')}
+              </div>
+              <AppointmentCalendar
+                appointments={appointments.data || []}
+                view="month"
+              />
+            </>
           )}
         </Box>
       )}
