@@ -1,8 +1,6 @@
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   TextField,
   Typography,
   Alert,
@@ -54,19 +52,12 @@ export default function PatientAppointmentForm({
   open, 
   onClose 
 }: PatientAppointmentFormProps) {
-  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   
-  const { data, setData, patch, processing, errors, transform } = useForm({
-    date: appointment?.date ? dayjs(appointment.date) : null,
-    time: appointment?.time ? dayjs(appointment.time, 'HH:mm:ss') : null,
+  const { data, setData, patch, processing, errors } = useForm({
+    date: appointment?.date || '',
+    time: appointment?.time ? appointment.time.substring(0, 5) : '',
     notes: appointment?.notes || '',
   });
-
-  transform((data) => ({
-    ...data,
-    date: data.date ? data.date.format('YYYY-MM-DD') : '',
-    time: data.time ? data.time.format('HH:mm') : '',
-  }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,13 +76,6 @@ export default function PatientAppointmentForm({
     });
   };
 
-  const handleCancel = () => {
-    router.delete(`/appointments/${appointment.id}`, {
-      onSuccess: () => {
-        onClose();
-      }
-    });
-  };
 
   const today = dayjs();
   const minDate = today.add(1, 'day');
@@ -108,7 +92,7 @@ export default function PatientAppointmentForm({
             <Box component="form" onSubmit={handleSubmit} sx={{ pt: 1 }}>
               <Alert severity="info" sx={{ mb: 3 }}>
                 <Typography variant="body2">
-                  <strong>Provider:</strong> {appointment.provider.name} ({appointment.provider.email})
+                  <strong>Provider:</strong> {appointment.provider.name}
                 </Typography>
               </Alert>
 
@@ -121,8 +105,8 @@ export default function PatientAppointmentForm({
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <DatePicker
                   label="Appointment Date"
-                  value={data.date}
-                  onChange={(newValue) => setData('date', newValue)}
+                  value={data.date ? dayjs(data.date) : null}
+                  onChange={(newValue) => setData('date', newValue ? newValue.format('YYYY-MM-DD') : '')}
                   minDate={minDate}
                   disabled={!canEdit}
                   slotProps={{
@@ -138,22 +122,15 @@ export default function PatientAppointmentForm({
                   select
                   fullWidth
                   label="Appointment Time"
-                  value={data.time ? data.time.format('HH:mm') : ''}
-                  onChange={(e) => {
-                    const timeStr = e.target.value;
-                    if (timeStr) {
-                      const [hours, minutes] = timeStr.split(':');
-                      const timeObj = dayjs().hour(parseInt(hours)).minute(parseInt(minutes));
-                      setData('time', timeObj);
-                    } else {
-                      setData('time', null);
-                    }
-                  }}
+                  value={data.time ? data.time.substring(0, 5) : ''}
+                  onChange={(e) => setData('time', e.target.value)}
                   disabled={!canEdit}
                   error={!!errors.time}
                   helperText={errors.time}
-                  SelectProps={{
-                    native: true,
+                  slotProps={{
+                    select: {
+                      native: true,
+                    },
                   }}
                 >
                   <option value="">Select a time...</option>
@@ -196,50 +173,17 @@ export default function PatientAppointmentForm({
           </Button>
           {canEdit && (
             <Button
-              variant="outlined"
-              color="error"
-              onClick={() => setShowCancelConfirm(true)}
-              disabled={processing}
-            >
-              Cancel Appointment
-            </Button>
-          )}
-          {canEdit && (
-            <Button
               type="submit"
               variant="contained"
               disabled={processing || !data.date || !data.time}
               onClick={handleSubmit}
             >
-              {processing ? 'Updating...' : 'Update Appointment'}
+              {processing ? 'Updating...' : 'Update'}
             </Button>
           )}
         </DialogActions>
       </Dialog>
 
-      <Dialog open={showCancelConfirm} onClose={() => setShowCancelConfirm(false)}>
-        <DialogTitle>Confirm Cancellation</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to cancel this appointment? This action cannot be undone.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowCancelConfirm(false)}>
-            Keep Appointment
-          </Button>
-          <Button 
-            color="error" 
-            variant="contained"
-            onClick={() => {
-              setShowCancelConfirm(false);
-              handleCancel();
-            }}
-          >
-            Yes, Cancel Appointment
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 }

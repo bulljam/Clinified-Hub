@@ -4,6 +4,10 @@ import {
   Card,
   CardContent,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Paper,
   Tab,
@@ -24,9 +28,10 @@ import {
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AppointmentCalendar from '../calendar/AppointmentCalendar';
 import PatientAppointmentForm from './PatientAppointmentForm';
+import NewAppointmentModal from './NewAppointmentModal';
 import '../calendar/calendar.css';
 
 const getStatusColor = (status: string) => {
@@ -52,6 +57,12 @@ const getPaymentStatusColor = (paymentStatus: string) => {
       return 'default';
   }
 };
+
+interface Provider {
+  id: number;
+  name: string;
+  email: string;
+}
 
 interface Appointment {
   id: number;
@@ -85,10 +96,38 @@ interface PatientAppointmentsProps {
 export default function PatientAppointments({ appointments }: PatientAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
+  const [deletingAppointment, setDeletingAppointment] = useState<Appointment | null>(null);
+  const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false);
+  const [providers, setProviders] = useState<Provider[]>([]);
 
-  const handleDelete = (appointmentId: number) => {
-    if (confirm('Are you sure you want to cancel this appointment?')) {
-      router.delete(`/appointments/${appointmentId}`);
+  useEffect(() => {
+    // Extract unique providers from existing appointments
+    const uniqueProviders = appointments.data
+      .map(appointment => appointment.provider)
+      .filter((provider, index, self) => 
+        index === self.findIndex(p => p.id === provider.id)
+      );
+    
+    // If no appointments exist, add some default providers
+    if (uniqueProviders.length === 0) {
+      // You can add default providers here or fetch from an API
+      const defaultProviders: Provider[] = [
+        { id: 2, name: 'Dr. John Smith', email: 'john.smith@clinify.com' },
+        { id: 3, name: 'Dr. Sarah Johnson', email: 'sarah.johnson@clinify.com' }
+      ];
+      setProviders(defaultProviders);
+    } else {
+      setProviders(uniqueProviders);
+    }
+  }, [appointments.data]);
+
+  const handleDelete = () => {
+    if (deletingAppointment) {
+      router.delete(`/appointments/${deletingAppointment.id}`, {
+        onSuccess: () => {
+          setDeletingAppointment(null);
+        }
+      });
     }
   };
 
@@ -106,7 +145,7 @@ export default function PatientAppointments({ appointments }: PatientAppointment
         <Button
           variant="contained"
           color="primary"
-          onClick={() => router.visit('/appointments/create')}
+          onClick={() => setShowNewAppointmentModal(true)}
         >
           Book New Appointment
         </Button>
@@ -139,7 +178,7 @@ export default function PatientAppointments({ appointments }: PatientAppointment
               variant="contained"
               color="primary"
               sx={{ mt: 2 }}
-              onClick={() => router.visit('/appointments/create')}
+              onClick={() => setShowNewAppointmentModal(true)}
             >
               Book Appointment
             </Button>
@@ -157,7 +196,7 @@ export default function PatientAppointments({ appointments }: PatientAppointment
                 <TableCell>Provider</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Payment</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -193,7 +232,7 @@ export default function PatientAppointments({ appointments }: PatientAppointment
                       size="small"
                     />
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell>
                     <Box display="flex" gap={1}>
                       <IconButton
                         size="small"
@@ -205,7 +244,7 @@ export default function PatientAppointments({ appointments }: PatientAppointment
                         <IconButton
                           size="small"
                           color="error"
-                          onClick={() => handleDelete(appointment.id)}
+                          onClick={() => setDeletingAppointment(appointment)}
                         >
                           <DeleteIcon fontSize="small" />
                         </IconButton>
@@ -235,6 +274,44 @@ export default function PatientAppointments({ appointments }: PatientAppointment
           onClose={() => setEditingAppointment(null)}
         />
       )}
+
+      <Dialog 
+        open={!!deletingAppointment} 
+        onClose={() => setDeletingAppointment(null)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Cancel Appointment</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to cancel this appointment with{' '}
+            <strong>{deletingAppointment?.provider.name}</strong> on{' '}
+            <strong>{deletingAppointment ? dayjs(deletingAppointment.date).format('MMM D, YYYY') : ''}</strong>?
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeletingAppointment(null)}>
+            Keep Appointment
+          </Button>
+          <Button 
+            variant="contained" 
+            color="error" 
+            onClick={handleDelete}
+          >
+            Yes, Cancel Appointment
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <NewAppointmentModal
+        open={showNewAppointmentModal}
+        onClose={() => setShowNewAppointmentModal(false)}
+        providers={providers}
+        existingAppointments={appointments.data}
+      />
     </Box>
   );
 }

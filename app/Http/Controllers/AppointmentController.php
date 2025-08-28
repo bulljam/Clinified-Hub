@@ -84,7 +84,21 @@ class AppointmentController extends Controller
             'provider_id' => 'required|exists:users,id',
             'date' => 'required|date|after:today',
             'time' => 'required|date_format:H:i',
+            'notes' => 'nullable|string|max:1000',
         ]);
+
+        // Check if the time slot is already booked for this provider on this date
+        $existingAppointment = Appointment::where('provider_id', $validated['provider_id'])
+            ->where('date', $validated['date'])
+            ->where('time', $validated['time'])
+            ->where('status', '!=', 'cancelled')
+            ->first();
+
+        if ($existingAppointment) {
+            return redirect()->back()
+                ->withErrors(['time' => 'This time slot is already booked for the selected provider.'])
+                ->withInput();
+        }
 
         $validated['user_id'] = $request->user()->id;
 
@@ -162,6 +176,20 @@ class AppointmentController extends Controller
             'time' => 'required|date_format:H:i',
             'notes' => 'nullable|string|max:1000',
         ]);
+
+        // Check if the time slot is already booked for this provider on this date (excluding current appointment)
+        $existingAppointment = Appointment::where('provider_id', $appointment->provider_id)
+            ->where('date', $validated['date'])
+            ->where('time', $validated['time'])
+            ->where('status', '!=', 'cancelled')
+            ->where('id', '!=', $appointment->id)
+            ->first();
+
+        if ($existingAppointment) {
+            return redirect()->back()
+                ->withErrors(['time' => 'This time slot is already booked for the selected provider.'])
+                ->withInput();
+        }
 
         $query = Appointment::where('provider_id', $appointment->provider_id)
             ->where('date', '=', $validated['date'])
