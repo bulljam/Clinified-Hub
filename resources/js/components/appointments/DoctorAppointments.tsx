@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Paper,
@@ -21,13 +22,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';      // Confirm
+import CancelIcon from '@mui/icons-material/Cancel';              // Cancel  
+import CreditScoreIcon from '@mui/icons-material/CreditScore';     // Confirm Payment
 import {
-  CheckCircle as ConfirmIcon,
-  Cancel as CancelIcon,
   CalendarMonth as CalendarIcon,
   List as ListIcon,
+  Done as ApproveIcon,
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
@@ -89,9 +93,15 @@ interface DoctorAppointmentsProps {
 export default function DoctorAppointments({ appointments }: DoctorAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [newStatus, setNewStatus] = useState('');
   const [newPaymentStatus, setNewPaymentStatus] = useState('');
+  const [pendingAction, setPendingAction] = useState<{
+    type: 'confirm' | 'cancel' | 'payment' | 'update';
+    title: string;
+    message: string;
+  } | null>(null);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -112,6 +122,57 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
       });
       setUpdateDialogOpen(false);
     }
+  };
+
+  const handleConfirmAction = (appointment: Appointment, type: 'confirm' | 'cancel' | 'payment' | 'update') => {
+    setSelectedAppointment(appointment);
+    
+    let title = '';
+    let message = '';
+    
+    switch (type) {
+      case 'confirm':
+        title = 'Confirm Appointment';
+        message = `Are you sure you want to confirm the appointment with ${appointment.user.name}?`;
+        break;
+      case 'cancel':
+        title = 'Cancel Appointment';
+        message = `Are you sure you want to cancel the appointment with ${appointment.user.name}?`;
+        break;
+      case 'payment':
+        title = 'Mark as Paid';
+        message = `Are you sure you want to mark the payment as received for ${appointment.user.name}?`;
+        break;
+      case 'update':
+        title = 'Update Appointment';
+        message = `Open the update dialog for ${appointment.user.name}'s appointment?`;
+        break;
+    }
+    
+    setPendingAction({ type, title, message });
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDialogSubmit = () => {
+    if (!selectedAppointment || !pendingAction) return;
+    
+    switch (pendingAction.type) {
+      case 'confirm':
+        router.patch(`/appointments/${selectedAppointment.id}`, { status: 'confirmed' });
+        break;
+      case 'cancel':
+        router.patch(`/appointments/${selectedAppointment.id}`, { status: 'cancelled' });
+        break;
+      case 'payment':
+        router.patch(`/appointments/${selectedAppointment.id}`, { payment_status: 'paid' });
+        break;
+      case 'update':
+        setUpdateDialogOpen(true);
+        break;
+    }
+    
+    setConfirmDialogOpen(false);
+    setPendingAction(null);
   };
 
   const handleQuickAction = (appointmentId: number, status: string) => {
@@ -166,7 +227,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                 <TableCell>Patient</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Payment</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -200,55 +261,49 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                     />
                   </TableCell>
                   <TableCell>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Chip
-                        label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
-                        color={getPaymentStatusColor(appointment.payment_status)}
-                        size="small"
-                      />
-                      {appointment.payment_status === 'pending' && (
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          color="success"
-                          onClick={() => handleMarkAsPaid(appointment.id)}
-                        >
-                          Mark as Paid
-                        </Button>
-                      )}
-                    </Box>
+                    <Chip
+                      label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
+                      color={getPaymentStatusColor(appointment.payment_status)}
+                      size="small"
+                    />
                   </TableCell>
-                  <TableCell align="right">
-                    <Box display="flex" gap={1}>
+                  <TableCell>
+                    <Box display="flex" gap={0.5}>
                       {appointment.status === 'pending' && (
                         <>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            color="success"
-                            startIcon={<ConfirmIcon />}
-                            onClick={() => handleQuickAction(appointment.id, 'confirmed')}
-                          >
-                            Confirm
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            color="error"
-                            startIcon={<CancelIcon />}
-                            onClick={() => handleQuickAction(appointment.id, 'cancelled')}
-                          >
-                            Cancel
-                          </Button>
+                          <Tooltip title="Confirm Appointment">
+                            <IconButton
+                              size="small"
+                              color="success"
+                              onClick={() => handleConfirmAction(appointment, 'confirm')}
+                            >
+                              <CheckCircleIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          
+                          <Tooltip title="Cancel Appointment">
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => handleConfirmAction(appointment, 'cancel')}
+                            >
+                              <CancelIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
                         </>
                       )}
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => handleUpdateClick(appointment)}
-                      >
-                        Update
-                      </Button>
+                      
+                      {appointment.payment_status === 'pending' && (
+                        <Tooltip title="Mark as Paid">
+                          <IconButton
+                            size="small"
+                            color="success"
+                            onClick={() => handleConfirmAction(appointment, 'payment')}
+                          >
+                            <CreditScoreIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )}
                     </Box>
                   </TableCell>
                 </TableRow>
@@ -266,6 +321,26 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
           )}
         </Box>
       )}
+
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>{pendingAction?.title}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            {pendingAction?.message}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleConfirmDialogSubmit} variant="contained" color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog
         open={updateDialogOpen}

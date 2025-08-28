@@ -14,7 +14,7 @@ export default function Index({ auth, appointments, allAppointments, filters }) 
   const renderAppointmentComponent = () => {
     switch (userRole) {
       case 'client':
-        return <PatientAppointments appointments={appointments} allAppointments={allAppointments || []} />;
+        return <PatientAppointments appointments={appointments} allAppointments={allAppointments || []} currentUser={auth.user} />;
       case 'provider':
         return <DoctorAppointments appointments={appointments} />;
       case 'admin':

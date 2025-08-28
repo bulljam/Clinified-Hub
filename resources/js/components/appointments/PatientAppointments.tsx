@@ -84,6 +84,13 @@ interface Appointment {
   };
 }
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
 interface PatientAppointmentsProps {
   appointments: {
     data: Appointment[];
@@ -92,9 +99,10 @@ interface PatientAppointmentsProps {
     total?: number;
   };
   allAppointments: Appointment[];
+  currentUser?: User;
 }
 
-export default function PatientAppointments({ appointments, allAppointments }: PatientAppointmentsProps) {
+export default function PatientAppointments({ appointments, allAppointments, currentUser }: PatientAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [deletingAppointment, setDeletingAppointment] = useState<Appointment | null>(null);
@@ -312,6 +320,7 @@ export default function PatientAppointments({ appointments, allAppointments }: P
         onClose={() => setShowNewAppointmentModal(false)}
         providers={providers}
         allAppointments={allAppointments || []}
+        currentUser={currentUser || (appointments.data.length > 0 ? appointments.data[0].user : { id: 0, name: '', email: '', role: 'client' })}
       />
     </Box>
   );

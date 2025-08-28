@@ -19,7 +19,6 @@ import { useForm } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { useEffect, useState } from 'react';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -33,10 +32,18 @@ interface Provider {
 interface Appointment {
   id: number;
   provider_id: number;
+  user_id?: number;
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   payment_status: 'pending' | 'paid';
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
 }
 
 interface NewAppointmentModalProps {
@@ -44,13 +51,15 @@ interface NewAppointmentModalProps {
   onClose: () => void;
   providers: Provider[];
   allAppointments: Appointment[];
+  currentUser: User;
 }
 
 export default function NewAppointmentModal({ 
   open, 
   onClose, 
   providers,
-  allAppointments 
+  allAppointments,
+  currentUser 
 }: NewAppointmentModalProps) {
   const { data, setData, post, processing, errors, reset } = useForm({
     provider_id: '',
@@ -61,6 +70,12 @@ export default function NewAppointmentModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Frontend validation: Check if patient already has appointment with this provider on this date
+    if (hasAppointmentWithProvider(data.provider_id, data.date)) {
+      // This validation should be handled by backend, but we can prevent the request
+      return;
+    }
     
     post('/appointments', {
       onSuccess: () => {
@@ -92,21 +107,68 @@ export default function NewAppointmentModal({
     );
   };
 
-  // Check if a time slot is available for the selected provider and date
+  // Get patient's own appointments for the selected date (to prevent self-conflicts)
+  const getPatientAppointmentsForDate = (date: string): Appointment[] => {
+    if (!date) return [];
+    
+    return allAppointments.filter(appointment => 
+      appointment.user_id === currentUser.id &&
+      appointment.date.substring(0, 10) === date &&
+      appointment.status !== 'cancelled'
+    );
+  };
+
+  // Check if patient already has an appointment with the selected provider on the selected date
+  const hasAppointmentWithProvider = (providerId: string, date: string): boolean => {
+    if (!providerId || !date) return false;
+    
+    return allAppointments.some(appointment => 
+      appointment.user_id === currentUser.id &&
+      appointment.provider_id === parseInt(providerId) &&
+      appointment.date.substring(0, 10) === date &&
+      appointment.status !== 'cancelled'
+    );
+  };
+
+  // Check if a time slot is available for the selected provider and date, and if patient doesn't have conflict
   const isTimeSlotAvailable = (timeStr: string) => {
     if (!data.provider_id || !data.date) return true;
     
+    // Check if provider is already booked at this time
     const providerAppointments = getProviderAppointmentsForDate(data.provider_id, data.date);
-    
-    
-    // Check if this time slot is already booked
-    const isBooked = providerAppointments.some(appointment => {
+    const isProviderBooked = providerAppointments.some(appointment => {
       const appointmentTime = appointment.time ? appointment.time.substring(0, 5) : '';
       return appointmentTime === timeStr;
     });
     
-    return !isBooked;
+    // Check if patient has a conflict (appointment with any provider at this time)
+    const patientAppointments = getPatientAppointmentsForDate(data.date);
+    const hasPatientConflict = patientAppointments.some(appointment => {
+      const appointmentTime = appointment.time ? appointment.time.substring(0, 5) : '';
+      return appointmentTime === timeStr;
+    });
+    
+    return !isProviderBooked && !hasPatientConflict;
   };
+
+  // Generate available time slots
+  const getAvailableTimeSlots = () => {
+    if (!data.provider_id || !data.date) return [];
+    
+    const slots = [];
+    for (let i = 0; i < 18; i++) {
+      const hour = 8 + Math.floor(i / 2);
+      const minute = (i % 2) * 30;
+      const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      
+      if (isTimeSlotAvailable(timeStr)) {
+        slots.push(timeStr);
+      }
+    }
+    
+    return slots;
+  };
+
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -161,49 +223,68 @@ export default function NewAppointmentModal({
                 }}
               />
 
-              <TextField
-                select
-                fullWidth
-                label="Appointment Time"
-                value={data.time}
-                onChange={(e) => setData('time', e.target.value)}
-                error={!!errors.time}
-                helperText={errors.time || (!data.provider_id || !data.date ? 'Please select provider and date first' : '')}
-                disabled={!data.provider_id || !data.date}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                slotProps={{
-                  select: {
-                    native: true,
-                  },
-                }}
-              >
-                <option value="">
-                  {!data.provider_id || !data.date 
-                    ? 'Select provider and date first...' 
-                    : 'Select a time...'
-                  }
-                </option>
-                {data.provider_id && data.date && Array.from({ length: 18 }, (_, i) => {
-                  const hour = 8 + Math.floor(i / 2);
-                  const minute = (i % 2) * 30;
-                  const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-                  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-                  const isAvailable = isTimeSlotAvailable(timeStr);
-                  
-                  // Only return available time slots
-                  if (!isAvailable) return null;
-                  
-                  const displayTime = `${timeStr} (${displayHour}:${minute.toString().padStart(2, '0')} ${hour >= 12 ? 'PM' : 'AM'})`;
-                  
-                  return (
-                    <option key={timeStr} value={timeStr}>
-                      {displayTime}
-                    </option>
-                  );
-                }).filter(Boolean)}
-              </TextField>
+              {data.provider_id && data.date && hasAppointmentWithProvider(data.provider_id, data.date) && (
+                <Alert severity="warning" sx={{ mb: 2 }}>
+                  You already have an appointment with this provider on the selected date. Please choose a different provider or date.
+                </Alert>
+              )}
+
+              <FormControl fullWidth error={!!errors.time}>
+                <InputLabel>Appointment Time</InputLabel>
+                <Select
+                  value={data.time}
+                  label="Appointment Time"
+                  onChange={(e) => setData('time', e.target.value)}
+                  disabled={!data.provider_id || !data.date || hasAppointmentWithProvider(data.provider_id, data.date)}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 300,
+                      },
+                    },
+                  }}
+                >
+                  {!data.provider_id || !data.date ? (
+                    <MenuItem disabled value="">
+                      Select provider and date first
+                    </MenuItem>
+                  ) : hasAppointmentWithProvider(data.provider_id, data.date) ? (
+                    <MenuItem disabled value="">
+                      Cannot book multiple appointments with same provider on same date
+                    </MenuItem>
+                  ) : getAvailableTimeSlots().length === 0 ? (
+                    <MenuItem disabled value="">
+                      No available time slots for selected date
+                    </MenuItem>
+                  ) : (
+                    getAvailableTimeSlots().map((timeStr) => {
+                      const [hours, minutes] = timeStr.split(':');
+                      const hour24 = parseInt(hours);
+                      const hour12 = hour24 > 12 ? hour24 - 12 : hour24 === 0 ? 12 : hour24;
+                      const ampm = hour24 >= 12 ? 'PM' : 'AM';
+                      const displayTime = `${hour12}:${minutes} ${ampm}`;
+                      
+                      return (
+                        <MenuItem key={timeStr} value={timeStr}>
+                          {displayTime}
+                        </MenuItem>
+                      );
+                    })
+                  )}
+                </Select>
+                {(errors.time || 
+                  (!data.provider_id || !data.date) || 
+                  hasAppointmentWithProvider(data.provider_id, data.date) || 
+                  (data.provider_id && data.date && getAvailableTimeSlots().length > 0)) && (
+                  <Box sx={{ mt: 1, fontSize: '0.75rem', color: errors.time ? 'error.main' : 'text.secondary' }}>
+                    {errors.time || 
+                     (!data.provider_id || !data.date ? 'Please select provider and date first' : 
+                      hasAppointmentWithProvider(data.provider_id, data.date) ? 'Cannot book multiple appointments with same provider on same date' : 
+                      getAvailableTimeSlots().length === 0 ? 'No available time slots for selected date' : 
+                      `${getAvailableTimeSlots().length} slot${getAvailableTimeSlots().length !== 1 ? 's' : ''} available`)}
+                  </Box>
+                )}
+              </FormControl>
 
               <TextField
                 label="Notes / Symptoms"
@@ -231,7 +312,7 @@ export default function NewAppointmentModal({
         <Button
           type="submit"
           variant="contained"
-          disabled={processing || !data.provider_id || !data.date || !data.time}
+          disabled={processing || !data.provider_id || !data.date || !data.time || hasAppointmentWithProvider(data.provider_id, data.date)}
           onClick={handleSubmit}
         >
           {processing ? 'Booking...' : 'Book Appointment'}

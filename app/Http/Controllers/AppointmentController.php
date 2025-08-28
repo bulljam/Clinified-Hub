@@ -109,6 +109,19 @@ class AppointmentController extends Controller
                 ->withInput();
         }
 
+        // Check if the patient already has an appointment with this provider on this date
+        $patientExistingAppointment = Appointment::where('user_id', $request->user()->id)
+            ->where('provider_id', $validated['provider_id'])
+            ->where('date', $validated['date'])
+            ->where('status', '!=', 'cancelled')
+            ->first();
+
+        if ($patientExistingAppointment) {
+            return redirect()->back()
+                ->withErrors(['provider_id' => 'You already have an appointment with this provider on this date.'])
+                ->withInput();
+        }
+
         $validated['user_id'] = $request->user()->id;
 
         Appointment::create($validated);
@@ -200,17 +213,19 @@ class AppointmentController extends Controller
                 ->withInput();
         }
 
-        $query = Appointment::where('provider_id', $appointment->provider_id)
-            ->where('date', '=', $validated['date'])
-            ->where('time', $validated['time'].':00')
-            ->where('id', '!=', $appointment->id)
-            ->where('status', '!=', 'cancelled');
+        // Check if the patient already has another appointment with this provider on this date
+        if ($appointment->provider_id === $appointment->provider_id && $appointment->date !== $validated['date']) {
+            $patientExistingAppointment = Appointment::where('user_id', $appointment->user_id)
+                ->where('provider_id', $appointment->provider_id)
+                ->where('date', $validated['date'])
+                ->where('status', '!=', 'cancelled')
+                ->where('id', '!=', $appointment->id)
+                ->first();
 
-        $existingAppointment = $query->exists();
-
-        if ($existingAppointment) {
-            return redirect()->back()
-                ->withErrors(['time' => 'This time slot is already booked with the selected provider.']);
+            if ($patientExistingAppointment) {
+                return redirect()->back()
+                    ->withErrors(['date' => 'You already have an appointment with this provider on this date.']);
+            }
         }
 
         $appointment->update($validated);

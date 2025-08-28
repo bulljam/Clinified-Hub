@@ -103,7 +103,9 @@ export default function AppointmentCalendar({
     if (appointmentDays.has(dateString)) {
       return {
         style: {
-          backgroundColor: '#e6f3ff',
+          backgroundColor: '#f0fdf4',
+          border: '2px solid #bbf7d0',
+          borderRadius: '4px',
         }
       };
     }
