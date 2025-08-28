@@ -48,8 +48,17 @@ class AppointmentController extends Controller
 
         $appointments = $query->latest()->paginate(15);
 
+        // For client users, also provide all appointments for availability checking
+        $allAppointments = [];
+        if ($user->role === 'client') {
+            $allAppointments = Appointment::select('id', 'provider_id', 'date', 'time', 'status', 'payment_status')
+                ->where('status', '!=', 'cancelled')
+                ->get();
+        }
+
         return Inertia::render('appointments/Index', [
             'appointments' => $appointments,
+            'allAppointments' => $allAppointments,
             'filters' => [
                 'status' => $request->status,
                 'payment_status' => $request->payment_status,
@@ -208,6 +217,25 @@ class AppointmentController extends Controller
 
         return redirect()->route('appointments.index')
             ->with('success', 'Appointment updated successfully.');
+    }
+
+    /**
+     * Get available time slots for a provider on a specific date.
+     */
+    public function availability(Request $request)
+    {
+        $request->validate([
+            'provider_id' => 'required|exists:users,id',
+            'date' => 'required|date',
+        ]);
+
+        $appointments = Appointment::where('provider_id', $request->provider_id)
+            ->where('date', $request->date)
+            ->where('status', '!=', 'cancelled')
+            ->select('id', 'provider_id', 'date', 'time', 'status', 'payment_status')
+            ->get();
+
+        return response()->json($appointments);
     }
 
     /**

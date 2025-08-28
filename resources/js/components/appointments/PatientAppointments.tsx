@@ -91,9 +91,10 @@ interface PatientAppointmentsProps {
     to?: number;
     total?: number;
   };
+  allAppointments: Appointment[];
 }
 
-export default function PatientAppointments({ appointments }: PatientAppointmentsProps) {
+export default function PatientAppointments({ appointments, allAppointments }: PatientAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [deletingAppointment, setDeletingAppointment] = useState<Appointment | null>(null);
@@ -310,7 +311,7 @@ export default function PatientAppointments({ appointments }: PatientAppointment
         open={showNewAppointmentModal}
         onClose={() => setShowNewAppointmentModal(false)}
         providers={providers}
-        existingAppointments={appointments.data}
+        allAppointments={allAppointments || []}
       />
     </Box>
   );

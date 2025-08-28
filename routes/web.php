@@ -15,6 +15,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('appointments', AppointmentController::class);
     Route::patch('appointments/{appointment}/patient', [AppointmentController::class, 'updatePatient'])->name('appointments.update-patient');
+    Route::get('api/appointments/availability', [AppointmentController::class, 'availability'])->name('appointments.availability');
 });
 
 require __DIR__.'/settings.php';

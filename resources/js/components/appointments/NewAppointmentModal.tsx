@@ -43,14 +43,14 @@ interface NewAppointmentModalProps {
   open: boolean;
   onClose: () => void;
   providers: Provider[];
-  existingAppointments: Appointment[];
+  allAppointments: Appointment[];
 }
 
 export default function NewAppointmentModal({ 
   open, 
   onClose, 
   providers,
-  existingAppointments 
+  allAppointments 
 }: NewAppointmentModalProps) {
   const { data, setData, post, processing, errors, reset } = useForm({
     provider_id: '',
@@ -81,17 +81,31 @@ export default function NewAppointmentModal({
   const today = dayjs();
   const minDate = today.add(1, 'day');
 
+  // Filter appointments for the selected provider and date
+  const getProviderAppointmentsForDate = (providerId: string, date: string): Appointment[] => {
+    if (!providerId || !date) return [];
+    
+    return allAppointments.filter(appointment => 
+      appointment.provider_id === parseInt(providerId) &&
+      appointment.date.substring(0, 10) === date && // Compare only YYYY-MM-DD part
+      appointment.status !== 'cancelled'
+    );
+  };
+
   // Check if a time slot is available for the selected provider and date
   const isTimeSlotAvailable = (timeStr: string) => {
     if (!data.provider_id || !data.date) return true;
     
-    // Check if this time slot is already booked for the selected provider and date
-    return !existingAppointments.some(appointment => 
-      appointment.provider_id === parseInt(data.provider_id) &&
-      appointment.date === data.date &&
-      appointment.time.substring(0, 5) === timeStr &&
-      appointment.status !== 'cancelled'
-    );
+    const providerAppointments = getProviderAppointmentsForDate(data.provider_id, data.date);
+    
+    
+    // Check if this time slot is already booked
+    const isBooked = providerAppointments.some(appointment => {
+      const appointmentTime = appointment.time ? appointment.time.substring(0, 5) : '';
+      return appointmentTime === timeStr;
+    });
+    
+    return !isBooked;
   };
 
   return (
