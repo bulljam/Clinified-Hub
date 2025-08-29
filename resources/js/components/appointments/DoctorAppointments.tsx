@@ -276,11 +276,11 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
         <CardContent sx={{ p: 4 }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
             <Box display="flex" alignItems="center" gap={2}>
-              <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+              <Avatar sx={{ bgcolor: '#20a09f', width: 56, height: 56 }}>
                 <MedicalIcon sx={{ fontSize: 28 }} />
               </Avatar>
               <Box>
-                <Typography variant="h4" component="h1" fontWeight="bold" color="primary.main">
+                <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f">
                   My Assigned Appointments
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -299,14 +299,14 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
             <CardContent sx={{ p: 3, position: 'relative', overflow: 'hidden' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="primary.main">
+                  <Typography variant="h4" fontWeight="bold" color="#20a09f">
                     {filteredStats.total}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Total Appointments
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
+                <Avatar sx={{ bgcolor: '#20a09f', width: 48, height: 48 }}>
                   <StatsIcon />
                 </Avatar>
               </Box>
@@ -386,8 +386,8 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
         <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ p: 4 }}>
             <Box display="flex" alignItems="center" gap={2} mb={3}>
-              <FilterIcon color="primary" />
-              <Typography variant="h6" fontWeight="600" color="primary.main">
+              <FilterIcon sx={{ color: '#20a09f' }} />
+              <Typography variant="h6" fontWeight="600" color="#20a09f">
                 Filter Patient Appointments
               </Typography>
             </Box>
@@ -446,7 +446,13 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                     px: 4,
                     py: 1.5,
                     textTransform: 'none',
-                    fontWeight: 500
+                    fontWeight: 500,
+                    borderColor: '#20a09f',
+                    color: '#20a09f',
+                    '&:hover': {
+                      borderColor: '#178f8e',
+                      bgcolor: 'rgba(32, 160, 159, 0.08)',
+                    }
                   }}
                 >
                   Clear All
@@ -471,8 +477,8 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                 fontSize: '1rem',
                 py: 2,
                 '&.Mui-selected': {
-                  color: 'primary.main',
-                  bgcolor: 'primary.main',
+                  color: '#20a09f',
+                  bgcolor: '#20a09f',
                   color: 'white',
                   borderRadius: '8px 8px 0 0',
                 }
@@ -537,7 +543,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
               }}>
                 <Table sx={{ minWidth: 1200 }}>
                   <TableHead>
-                    <TableRow sx={{ bgcolor: 'primary.main' }}>
+                    <TableRow sx={{ bgcolor: '#20a09f' }}>
                       <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 180 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <MedicalIcon fontSize="small" />
@@ -600,7 +606,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                           <TableCell sx={{ py: 3, minWidth: 180 }}>
                             <Box display="flex" alignItems="center" gap={2}>
                               <Avatar sx={{ 
-                                bgcolor: 'primary.main', 
+                                bgcolor: '#20a09f', 
                                 width: 32, 
                                 height: 32, 
                                 fontSize: '0.8rem',
@@ -610,7 +616,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                                 <MedicalIcon fontSize="small" />
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" fontFamily="monospace" fontWeight="600" color="primary.main">
+                                <Typography variant="body2" fontFamily="monospace" fontWeight="600" color="#20a09f">
                                   APT-{appointment.id}
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary">
@@ -838,7 +844,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                     count={totalPages}
                     page={currentPage}
                     onChange={(_event, page) => handlePageChange(page)}
-                    color="primary"
+                    sx={{ color: '#20a09f' }}
                     size="large"
                     shape="rounded"
                     showFirstButton
@@ -851,17 +857,17 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                         height: 40,
                         border: '1px solid #e0e0e0',
                         '&:hover': {
-                          bgcolor: 'primary.main',
+                          bgcolor: '#20a09f',
                           color: 'white',
                           transform: 'scale(1.05)',
                           boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
                         },
                         '&.Mui-selected': {
-                          bgcolor: 'primary.main',
+                          bgcolor: '#20a09f',
                           color: 'white',
                           boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
                           '&:hover': {
-                            bgcolor: 'primary.dark',
+                            bgcolor: '#178f8e',
                           },
                         },
                         transition: 'all 0.2s ease',
@@ -892,7 +898,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
             <Typography variant="body2" color="text.secondary">
               Showing <strong>{filteredAppointments.length}</strong> of <strong>{appointments.data.length}</strong> appointments
               {(statusFilter || paymentFilter || dateFilter) && (
-                <Box component="span" sx={{ color: 'primary.main', fontWeight: 600, ml: 1 }}>
+                <Box component="span" sx={{ color: '#20a09f', fontWeight: 600, ml: 1 }}>
                   (filtered)
                 </Box>
               )}
@@ -915,7 +921,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleConfirmDialogSubmit} variant="contained" color="primary">
+          <Button onClick={handleConfirmDialogSubmit} variant="contained" sx={{ bgcolor: '#20a09f', '&:hover': { bgcolor: '#178f8e' } }}>
             Confirm
           </Button>
         </DialogActions>

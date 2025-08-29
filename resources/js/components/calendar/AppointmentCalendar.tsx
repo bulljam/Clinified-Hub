@@ -67,11 +67,11 @@ const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} p={2}>
       <Stack direction="row" spacing={2} alignItems="center">
-        <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
+        <Avatar sx={{ bgcolor: '#20a09f', width: 48, height: 48 }}>
           <CalendarIcon />
         </Avatar>
         <Box>
-          <Typography variant="h5" fontWeight="bold" color="primary.main">
+          <Typography variant="h5" fontWeight="bold" color="#20a09f">
             {label}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -87,9 +87,9 @@ const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
               onClick={() => onNavigate('PREV')}
               sx={{ 
                 borderRadius: '8px 0 0 8px',
-                bgcolor: 'primary.main',
+                bgcolor: '#20a09f',
                 color: 'white',
-                '&:hover': { bgcolor: 'primary.dark' }
+                '&:hover': { bgcolor: '#178f8e' }
               }}
             >
               <PrevIcon />
@@ -99,9 +99,9 @@ const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
             onClick={() => onNavigate('TODAY')}
             sx={{ 
               bgcolor: 'white',
-              color: 'primary.main',
+              color: '#20a09f',
               fontWeight: 600,
-              '&:hover': { bgcolor: 'primary.main', color: 'white' }
+              '&:hover': { bgcolor: '#20a09f', color: 'white' }
             }}
           >
             Today
@@ -111,9 +111,9 @@ const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
               onClick={() => onNavigate('NEXT')}
               sx={{ 
                 borderRadius: '0 8px 8px 0',
-                bgcolor: 'primary.main',
+                bgcolor: '#20a09f',
                 color: 'white',
-                '&:hover': { bgcolor: 'primary.dark' }
+                '&:hover': { bgcolor: '#178f8e' }
               }}
             >
               <NextIcon />
@@ -126,7 +126,19 @@ const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
             onClick={() => onView('month')}
             startIcon={<CalendarIcon />}
             variant={view === 'month' ? 'contained' : 'outlined'}
-            sx={{ textTransform: 'none', fontWeight: 600 }}
+            sx={{ 
+              textTransform: 'none', 
+              fontWeight: 600,
+              ...(view === 'month' ? {
+                bgcolor: '#20a09f',
+                color: 'white',
+                '&:hover': { bgcolor: '#178f8e' }
+              } : {
+                borderColor: '#20a09f',
+                color: '#20a09f',
+                '&:hover': { borderColor: '#178f8e', bgcolor: 'rgba(32, 160, 159, 0.08)' }
+              })
+            }}
           >
             Month
           </Button>
@@ -134,7 +146,19 @@ const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
             onClick={() => onView('week')}
             startIcon={<WeekIcon />}
             variant={view === 'week' ? 'contained' : 'outlined'}
-            sx={{ textTransform: 'none', fontWeight: 600 }}
+            sx={{ 
+              textTransform: 'none', 
+              fontWeight: 600,
+              ...(view === 'week' ? {
+                bgcolor: '#20a09f',
+                color: 'white',
+                '&:hover': { bgcolor: '#178f8e' }
+              } : {
+                borderColor: '#20a09f',
+                color: '#20a09f',
+                '&:hover': { borderColor: '#178f8e', bgcolor: 'rgba(32, 160, 159, 0.08)' }
+              })
+            }}
           >
             Week
           </Button>
@@ -142,7 +166,19 @@ const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
             onClick={() => onView('day')}
             startIcon={<DayIcon />}
             variant={view === 'day' ? 'contained' : 'outlined'}
-            sx={{ textTransform: 'none', fontWeight: 600 }}
+            sx={{ 
+              textTransform: 'none', 
+              fontWeight: 600,
+              ...(view === 'day' ? {
+                bgcolor: '#20a09f',
+                color: 'white',
+                '&:hover': { bgcolor: '#178f8e' }
+              } : {
+                borderColor: '#20a09f',
+                color: '#20a09f',
+                '&:hover': { borderColor: '#178f8e', bgcolor: 'rgba(32, 160, 159, 0.08)' }
+              })
+            }}
           >
             Day
           </Button>
@@ -249,8 +285,8 @@ export default function AppointmentCalendar({
     if (appointmentDays.has(dateString)) {
       return {
         style: {
-          backgroundColor: '#e6fbfb',
-          border: '2px solid #20a09f',
+          backgroundColor: '#fff3e0',
+          border: '2px solid #ff9800',
           borderRadius: '4px',
         }
       };
