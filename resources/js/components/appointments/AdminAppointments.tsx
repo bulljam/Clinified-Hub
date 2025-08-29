@@ -103,9 +103,10 @@ interface AdminAppointmentsProps {
     provider_id?: string;
     date?: string;
   };
+  userRole?: string;
 }
 
-export default function AdminAppointments({ appointments, filters = {} }: AdminAppointmentsProps) {
+export default function AdminAppointments({ appointments, filters = {}, userRole }: AdminAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [statusFilter, setStatusFilter] = useState(filters.status || '');
   const [paymentFilter, setPaymentFilter] = useState(filters.payment_status || '');
@@ -223,26 +224,29 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
                 </Typography>
               </Box>
             </Box>
-            <Button
-              variant="contained"
-              sx={{ bgcolor: '#20a09f', '&:hover': { bgcolor: '#178f8e' } }}
-              size="large"
-              onClick={() => router.visit('/appointments/create')}
-              sx={{ 
-                borderRadius: 3,
-                px: 4,
-                py: 1.5,
-                textTransform: 'none',
-                fontWeight: 600,
-                boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
-                '&:hover': {
-                  boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
-                  transform: 'translateY(-1px)',
-                }
-              }}
-            >
-              + New Appointment
-            </Button>
+            {userRole && !['admin', 'super_admin'].includes(userRole) && (
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => router.visit('/appointments/create')}
+                sx={{ 
+                  bgcolor: '#20a09f',
+                  borderRadius: 3,
+                  px: 4,
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                  '&:hover': {
+                    bgcolor: '#178f8e',
+                    boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+                    transform: 'translateY(-1px)',
+                  }
+                }}
+              >
+                + New Appointment
+              </Button>
+            )}
           </Box>
         </CardContent>
       </Card>
@@ -426,7 +430,6 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
                 fontSize: '1rem',
                 py: 2,
                 '&.Mui-selected': {
-                  color: '#20a09f',
                   bgcolor: '#20a09f',
                   color: 'white',
                   borderRadius: '8px 8px 0 0',
@@ -807,12 +810,12 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
                     count={totalPages}
                     page={currentPage}
                     onChange={(_event, page) => handlePageChange(page)}
-                    sx={{ color: '#20a09f' }}
                     size="large"
                     shape="rounded"
                     showFirstButton
                     showLastButton
                     sx={{
+                      color: '#20a09f',
                       '& .MuiPaginationItem-root': {
                         borderRadius: 2,
                         fontWeight: 600,

@@ -18,7 +18,8 @@ export default function Index({ auth, appointments, allAppointments, filters }) 
       case 'provider':
         return <DoctorAppointments appointments={appointments} />;
       case 'admin':
-        return <AdminAppointments appointments={appointments} filters={filters} />;
+      case 'super_admin':
+        return <AdminAppointments appointments={appointments} filters={filters} userRole={userRole} />;
       default:
         return null;
     }

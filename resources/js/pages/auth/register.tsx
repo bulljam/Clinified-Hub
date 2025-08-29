@@ -1,100 +1,276 @@
 import RegisteredUserController from '@/actions/App/Http/Controllers/Auth/RegisteredUserController';
+import AuthProfessionalLayout from '@/layouts/auth/auth-professional-layout';
 import { login } from '@/routes';
-import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
+import { Form, Head, Link } from '@inertiajs/react';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Divider,
+    InputAdornment,
+    TextField,
+    Typography,
+} from '@mui/material';
+import {
+    Email as EmailIcon,
+    Lock as LockIcon,
+    Person as PersonIcon,
+    PersonAdd as RegisterIcon,
+    Visibility,
+    VisibilityOff,
+} from '@mui/icons-material';
+import { useState } from 'react';
 
 export default function Register() {
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     return (
-        <AuthLayout title="Create an account" description="Enter your details below to create your account">
+        <AuthProfessionalLayout title="Create Account" description="Join Clinify to access our healthcare services">
             <Head title="Register" />
             <Form
                 {...RegisteredUserController.store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
-                className="flex flex-col gap-6"
             >
                 {({ processing, errors }) => (
-                    <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="name"
-                                    name="name"
-                                    placeholder="Full name"
-                                />
-                                <InputError message={errors.name} className="mt-2" />
-                            </div>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        {/* Full Name Field */}
+                        <TextField
+                            fullWidth
+                            label="Full Name"
+                            name="name"
+                            type="text"
+                            required
+                            autoFocus
+                            tabIndex={1}
+                            autoComplete="name"
+                            placeholder="Enter your full name"
+                            error={!!errors.name}
+                            helperText={errors.name}
+                            variant="outlined"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <PersonIcon sx={{ color: '#20a09f' }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '&:hover fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    '&.Mui-focused': {
+                                        color: '#20a09f',
+                                    },
+                                },
+                            }}
+                        />
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="email"
-                                    name="email"
-                                    placeholder="email@example.com"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
+                        {/* Email Field */}
+                        <TextField
+                            fullWidth
+                            label="Email Address"
+                            name="email"
+                            type="email"
+                            required
+                            tabIndex={2}
+                            autoComplete="email"
+                            placeholder="Enter your email address"
+                            error={!!errors.email}
+                            helperText={errors.email}
+                            variant="outlined"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <EmailIcon sx={{ color: '#20a09f' }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '&:hover fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    '&.Mui-focused': {
+                                        color: '#20a09f',
+                                    },
+                                },
+                            }}
+                        />
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="new-password"
-                                    name="password"
-                                    placeholder="Password"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
+                        {/* Password Field */}
+                        <TextField
+                            fullWidth
+                            label="Password"
+                            name="password"
+                            type={showPassword ? 'text' : 'password'}
+                            required
+                            tabIndex={3}
+                            autoComplete="new-password"
+                            placeholder="Create a strong password"
+                            error={!!errors.password}
+                            helperText={errors.password || 'Password must be at least 8 characters long'}
+                            variant="outlined"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <LockIcon sx={{ color: '#20a09f' }} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Button
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            sx={{ 
+                                                minWidth: 'auto', 
+                                                p: 1, 
+                                                color: 'text.secondary',
+                                                '&:hover': { color: '#20a09f' } 
+                                            }}
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </Button>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '&:hover fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    '&.Mui-focused': {
+                                        color: '#20a09f',
+                                    },
+                                },
+                            }}
+                        />
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">Confirm password</Label>
-                                <Input
-                                    id="password_confirmation"
-                                    type="password"
-                                    required
-                                    tabIndex={4}
-                                    autoComplete="new-password"
-                                    name="password_confirmation"
-                                    placeholder="Confirm password"
-                                />
-                                <InputError message={errors.password_confirmation} />
-                            </div>
+                        {/* Confirm Password Field */}
+                        <TextField
+                            fullWidth
+                            label="Confirm Password"
+                            name="password_confirmation"
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            required
+                            tabIndex={4}
+                            autoComplete="new-password"
+                            placeholder="Confirm your password"
+                            error={!!errors.password_confirmation}
+                            helperText={errors.password_confirmation}
+                            variant="outlined"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <LockIcon sx={{ color: '#20a09f' }} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Button
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            sx={{ 
+                                                minWidth: 'auto', 
+                                                p: 1, 
+                                                color: 'text.secondary',
+                                                '&:hover': { color: '#20a09f' } 
+                                            }}
+                                        >
+                                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                        </Button>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '&:hover fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    '&.Mui-focused': {
+                                        color: '#20a09f',
+                                    },
+                                },
+                            }}
+                        />
 
-                            <Button type="submit" className="mt-2 w-full" tabIndex={5}>
-                                {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                Create account
-                            </Button>
-                        </div>
+                        {/* Create Account Button */}
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            size="large"
+                            tabIndex={5}
+                            disabled={processing}
+                            startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <RegisterIcon />}
+                            sx={{
+                                bgcolor: '#20a09f',
+                                py: 1.5,
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                                '&:hover': {
+                                    bgcolor: '#178f8e',
+                                    boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+                                },
+                                '&:disabled': {
+                                    bgcolor: 'rgba(32, 160, 159, 0.6)',
+                                },
+                            }}
+                        >
+                            {processing ? 'Creating account...' : 'Create Account'}
+                        </Button>
 
-                        <div className="text-center text-sm text-muted-foreground">
-                            Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
-                                Log in
-                            </TextLink>
-                        </div>
-                    </>
+                        {/* Divider */}
+                        <Divider sx={{ my: 1 }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', px: 2 }}>
+                                Already a member?
+                            </Typography>
+                        </Divider>
+
+                        {/* Sign In Link */}
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                Already have an account?{' '}
+                                <Link
+                                    href={login()}
+                                    style={{
+                                        color: '#20a09f',
+                                        textDecoration: 'none',
+                                        fontWeight: 600,
+                                    }}
+                                    tabIndex={6}
+                                    onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                >
+                                    Sign in instead
+                                </Link>
+                            </Typography>
+                        </Box>
+                    </Box>
                 )}
             </Form>
-        </AuthLayout>
+        </AuthProfessionalLayout>
     );
 }

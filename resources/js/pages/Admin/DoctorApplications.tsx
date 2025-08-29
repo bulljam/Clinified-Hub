@@ -24,6 +24,7 @@ import {
   Stack,
   Fade,
   Alert,
+  Pagination,
 } from '@mui/material';
 import {
   CheckCircle as ApproveIcon,
@@ -36,6 +37,9 @@ import {
 import { router } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
 import dayjs from 'dayjs';
+import AppLayout from '@/layouts/app-layout';
+import { Head } from '@inertiajs/react';
+import { type BreadcrumbItem } from '@/types';
 
 interface DoctorApplication {
   id: number;
@@ -68,6 +72,17 @@ interface Props {
   applications: DoctorApplication[];
 }
 
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Admin',
+    href: '#',
+  },
+  {
+    title: 'Doctor Applications',
+    href: '/admin/doctor-applications',
+  },
+];
+
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
@@ -84,6 +99,8 @@ const getStatusColor = (status: string) => {
 export default function DoctorApplications({ applications }: Props) {
   const [viewingApplication, setViewingApplication] = useState<DoctorApplication | null>(null);
   const [rejectingApplication, setRejectingApplication] = useState<DoctorApplication | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
   
   const { data, setData, post, processing, errors, reset } = useForm({
     rejection_reason: '',
@@ -113,8 +130,19 @@ export default function DoctorApplications({ applications }: Props) {
     window.open(`/admin/doctor-applications/${applicationId}/credential/${filename}`, '_blank');
   };
 
+  const totalPages = Math.ceil(applications.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedApplications = applications.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
-    <Box sx={{ p: { xs: 2, md: 3 }, minHeight: '100vh', bgcolor: '#fafafa' }}>
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Doctor Applications" />
+      <Box sx={{ p: { xs: 2, md: 3 }, minHeight: '100vh', bgcolor: '#fafafa' }}>
       {/* Header */}
       <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
         <CardContent sx={{ p: 4 }}>
@@ -214,7 +242,7 @@ export default function DoctorApplications({ applications }: Props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {applications.map((application, index) => (
+              {paginatedApplications.map((application, index) => (
                 <Fade in={true} timeout={300 + index * 100} key={application.id}>
                   <TableRow 
                     hover
@@ -358,6 +386,59 @@ export default function DoctorApplications({ applications }: Props) {
             </TableBody>
           </Table>
         </TableContainer>
+        
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            mt: 4, 
+            mb: 2,
+            gap: 2
+          }}>
+            <Typography variant="body2" color="text.secondary">
+              Showing {startIndex + 1}-{Math.min(endIndex, applications.length)} of {applications.length} applications
+            </Typography>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={(_event, page) => handlePageChange(page)}
+              sx={{ color: '#20a09f' }}
+              size="large"
+              shape="rounded"
+              showFirstButton
+              showLastButton
+              sx={{
+                '& .MuiPaginationItem-root': {
+                  borderRadius: 2,
+                  fontWeight: 600,
+                  minWidth: 40,
+                  height: 40,
+                  border: '1px solid #e0e0e0',
+                  '&:hover': {
+                    bgcolor: '#20a09f',
+                    color: 'white',
+                    transform: 'scale(1.05)',
+                    boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
+                  },
+                  '&.Mui-selected': {
+                    bgcolor: '#20a09f',
+                    color: 'white',
+                    boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
+                    '&:hover': {
+                      bgcolor: '#178f8e',
+                    },
+                  },
+                  transition: 'all 0.2s ease',
+                },
+                '& .MuiPaginationItem-ellipsis': {
+                  color: 'text.secondary',
+                },
+              }}
+            />
+          </Box>
+        )}
       </Card>
 
       {/* View Application Dialog */}
@@ -616,6 +697,7 @@ export default function DoctorApplications({ applications }: Props) {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+      </Box>
+    </AppLayout>
   );
 }
