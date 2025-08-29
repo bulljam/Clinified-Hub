@@ -24,6 +24,13 @@ class User extends Authenticatable
         'password',
         'role',
         'photo',
+        'gender',
+        'date_of_birth',
+        'city',
+        'specialty',
+        'years_of_experience',
+        'bio',
+        'phone',
     ];
 
     /**
@@ -46,7 +53,26 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_of_birth' => 'date',
         ];
+    }
+    
+    public function getAgeAttribute(): ?int
+    {
+        if (!$this->date_of_birth) {
+            return null;
+        }
+        
+        return $this->date_of_birth->diffInYears(now());
+    }
+
+    public function getAppointmentsCountAttribute(): int
+    {
+        if ($this->role === 'provider') {
+            return $this->providedAppointments()->count();
+        }
+        
+        return $this->appointments()->count();
     }
 
     public function appointments(): HasMany

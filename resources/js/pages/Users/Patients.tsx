@@ -1,45 +1,77 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import {
     Avatar,
     Box,
+    Button,
     Card,
     CardContent,
     Chip,
+    Collapse,
     Fade,
+    FormControl,
+    Grid,
+    InputAdornment,
+    InputLabel,
+    MenuItem,
     Pagination,
+    Select,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
+    TextField,
     Typography,
     Stack,
-    InputAdornment,
-    TextField,
 } from '@mui/material';
 import {
     People as PeopleIcon,
     Person as PersonIcon,
     Search as SearchIcon,
     Email as EmailIcon,
+    Phone as PhoneIcon,
+    LocationOn as LocationIcon,
+    FilterAlt as FilterIcon,
+    ExpandMore as ExpandMoreIcon,
+    ExpandLess as ExpandLessIcon,
+    Event as EventIcon,
+    Cake as CakeIcon,
 } from '@mui/icons-material';
 import { useState } from 'react';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
-interface User {
+dayjs.extend(relativeTime);
+
+interface Patient {
     id: number;
     name: string;
     email: string;
     photo?: string;
+    gender?: string;
+    city?: string;
+    date_of_birth?: string;
+    phone?: string;
     created_at: string;
+    appointments_count: number;
+    age?: number;
 }
 
 interface PatientsProps {
-    patients: User[];
+    patients: Patient[];
     userRole: string;
+    cities: string[];
+    filters: {
+        gender?: string;
+        city?: string;
+        min_age?: number;
+        max_age?: number;
+        min_appointments?: number;
+        max_appointments?: number;
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -49,14 +81,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Patients({ patients, userRole }: PatientsProps) {
+export default function Patients({ patients, userRole, cities, filters }: PatientsProps) {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
-    const itemsPerPage = 8;
+    const [showFilters, setShowFilters] = useState(false);
+    const [localFilters, setLocalFilters] = useState(filters);
+    const itemsPerPage = 10;
 
     const filteredPatients = patients.filter(patient =>
         patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        patient.email.toLowerCase().includes(searchQuery.toLowerCase())
+        patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (patient.city && patient.city.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
     const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
@@ -68,6 +103,26 @@ export default function Patients({ patients, userRole }: PatientsProps) {
         setCurrentPage(page);
     };
 
+    const handleFilterChange = (key: string, value: string | number) => {
+        setLocalFilters(prev => ({
+            ...prev,
+            [key]: value || undefined
+        }));
+    };
+
+    const applyFilters = () => {
+        const params = new URLSearchParams();
+        Object.entries(localFilters).forEach(([key, value]) => {
+            if (value) params.append(key, value.toString());
+        });
+        router.get(`/patients?${params.toString()}`);
+    };
+
+    const clearFilters = () => {
+        setLocalFilters({});
+        router.get('/patients');
+    };
+
     const getPageDescription = () => {
         switch (userRole) {
             case 'admin':
@@ -77,6 +132,14 @@ export default function Patients({ patients, userRole }: PatientsProps) {
                 return 'View patients you have treated and provided care for';
             default:
                 return 'Patient information';
+        }
+    };
+
+    const getGenderIcon = (gender?: string) => {
+        switch (gender) {
+            case 'male': return '👨';
+            case 'female': return '👩';
+            default: return '👤';
         }
     };
 
@@ -105,40 +168,168 @@ export default function Patients({ patients, userRole }: PatientsProps) {
                     </CardContent>
                 </Card>
 
-                {/* Search Section */}
+                {/* Search and Filter Section */}
                 <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
                     <CardContent sx={{ p: 3 }}>
-                        <TextField
-                            fullWidth
-                            placeholder="Search patients by name or email..."
-                            value={searchQuery}
-                            onChange={(e) => {
-                                setSearchQuery(e.target.value);
-                                setCurrentPage(1);
-                            }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon sx={{ color: '#20a09f' }} />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    '&:hover fieldset': {
-                                        borderColor: '#20a09f',
+                        <Stack spacing={3}>
+                            {/* Search Bar */}
+                            <TextField
+                                fullWidth
+                                placeholder="Search patients by name, email, or city..."
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setCurrentPage(1);
+                                }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon sx={{ color: '#20a09f' }} />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '&:hover fieldset': {
+                                            borderColor: '#20a09f',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#20a09f',
+                                        },
                                     },
-                                    '&.Mui-focused fieldset': {
+                                }}
+                            />
+                            
+                            {/* Filter Toggle */}
+                            <Box display="flex" alignItems="center" gap={2}>
+                                <Button
+                                    startIcon={<FilterIcon />}
+                                    endIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                    onClick={() => setShowFilters(!showFilters)}
+                                    variant="outlined"
+                                    sx={{
                                         borderColor: '#20a09f',
-                                    },
-                                },
-                            }}
-                        />
+                                        color: '#20a09f',
+                                        '&:hover': {
+                                            borderColor: '#178f8e',
+                                            bgcolor: 'rgba(32, 160, 159, 0.04)',
+                                        },
+                                    }}
+                                >
+                                    Advanced Filters
+                                </Button>
+                                {Object.values(localFilters).some(v => v) && (
+                                    <Button
+                                        variant="text"
+                                        color="error"
+                                        onClick={clearFilters}
+                                        size="small"
+                                    >
+                                        Clear All
+                                    </Button>
+                                )}
+                            </Box>
+
+                            {/* Filters */}
+                            <Collapse in={showFilters}>
+                                <Box sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 3 }}>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={12} sm={6} md={3}>
+                                            <FormControl fullWidth>
+                                                <InputLabel>Gender</InputLabel>
+                                                <Select
+                                                    value={localFilters.gender || ''}
+                                                    label="Gender"
+                                                    onChange={(e) => handleFilterChange('gender', e.target.value)}
+                                                >
+                                                    <MenuItem value="">All Genders</MenuItem>
+                                                    <MenuItem value="male">👨 Male</MenuItem>
+                                                    <MenuItem value="female">👩 Female</MenuItem>
+                                                    <MenuItem value="other">👤 Other</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={12} sm={6} md={3}>
+                                            <FormControl fullWidth>
+                                                <InputLabel>City</InputLabel>
+                                                <Select
+                                                    value={localFilters.city || ''}
+                                                    label="City"
+                                                    onChange={(e) => handleFilterChange('city', e.target.value)}
+                                                >
+                                                    <MenuItem value="">All Cities</MenuItem>
+                                                    {cities.map((city) => (
+                                                        <MenuItem key={city} value={city}>
+                                                            {city}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={12} sm={6} md={3}>
+                                            <TextField
+                                                fullWidth
+                                                label="Min Age"
+                                                type="number"
+                                                value={localFilters.min_age || ''}
+                                                onChange={(e) => handleFilterChange('min_age', parseInt(e.target.value))}
+                                                InputProps={{ inputProps: { min: 0, max: 120 } }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6} md={3}>
+                                            <TextField
+                                                fullWidth
+                                                label="Max Age"
+                                                type="number"
+                                                value={localFilters.max_age || ''}
+                                                onChange={(e) => handleFilterChange('max_age', parseInt(e.target.value))}
+                                                InputProps={{ inputProps: { min: 0, max: 120 } }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6} md={3}>
+                                            <TextField
+                                                fullWidth
+                                                label="Min Appointments"
+                                                type="number"
+                                                value={localFilters.min_appointments || ''}
+                                                onChange={(e) => handleFilterChange('min_appointments', parseInt(e.target.value))}
+                                                InputProps={{ inputProps: { min: 0 } }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6} md={3}>
+                                            <TextField
+                                                fullWidth
+                                                label="Max Appointments"
+                                                type="number"
+                                                value={localFilters.max_appointments || ''}
+                                                onChange={(e) => handleFilterChange('max_appointments', parseInt(e.target.value))}
+                                                InputProps={{ inputProps: { min: 0 } }}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                    <Box sx={{ mt: 2, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                                        <Button onClick={clearFilters} variant="outlined">
+                                            Clear
+                                        </Button>
+                                        <Button
+                                            onClick={applyFilters}
+                                            variant="contained"
+                                            sx={{
+                                                bgcolor: '#20a09f',
+                                                '&:hover': { bgcolor: '#178f8e' },
+                                            }}
+                                        >
+                                            Apply Filters
+                                        </Button>
+                                    </Box>
+                                </Box>
+                            </Collapse>
+                        </Stack>
                     </CardContent>
                 </Card>
 
                 {/* Statistics */}
-                <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 1fr)' }} gap={3} mb={4}>
+                <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(3, 1fr)' }} gap={3} mb={4}>
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="h3" fontWeight="bold" color="#20a09f" mb={1}>
@@ -153,192 +344,278 @@ export default function Patients({ patients, userRole }: PatientsProps) {
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="h3" fontWeight="bold" color="success.main" mb={1}>
-                                {patients.length}
+                                {patients.reduce((sum, patient) => sum + patient.appointments_count, 0)}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Active Patients
+                                Total Appointments
+                            </Typography>
+                        </CardContent>
+                    </Card>
+
+                    <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
+                        <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                            <Typography variant="h3" fontWeight="bold" color="info.main" mb={1}>
+                                {cities.length}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Cities
                             </Typography>
                         </CardContent>
                     </Card>
                 </Box>
 
                 {/* Patients Table */}
-                <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-                    <TableContainer sx={{ 
-                        overflowX: 'auto',
-                        width: '100%',
-                        '&::-webkit-scrollbar': {
-                            height: 8,
-                        },
-                        '&::-webkit-scrollbar-track': {
-                            backgroundColor: '#f1f1f1',
-                            borderRadius: 4,
-                        },
-                        '&::-webkit-scrollbar-thumb': {
-                            backgroundColor: '#20a09f',
-                            borderRadius: 4,
-                            '&:hover': {
-                                backgroundColor: '#178f8e',
-                            },
-                        }
-                    }}>
-                        <Table sx={{ minWidth: 800 }}>
-                            <TableHead>
-                                <TableRow sx={{ bgcolor: '#20a09f' }}>
-                                    <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 250 }}>
-                                        <Box display="flex" alignItems="center" gap={1}>
-                                            <PersonIcon fontSize="small" />
-                                            Patient Details
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 200 }}>
-                                        <Box display="flex" alignItems="center" gap={1}>
-                                            <EmailIcon fontSize="small" />
-                                            Contact Information
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 150 }}>
-                                        Registration Date
-                                    </TableCell>
-                                    <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 100 }}>
-                                        Status
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {paginatedPatients.map((patient, index) => (
-                                    <Fade in={true} timeout={300 + index * 100} key={patient.id}>
-                                        <TableRow 
-                                            hover
-                                            sx={{
-                                                '&:hover': {
-                                                    bgcolor: 'rgba(32, 160, 159, 0.08)',
-                                                    transition: 'background-color 0.2s ease',
-                                                },
-                                                '&:nth-of-type(even)': {
-                                                    bgcolor: '#fafafa',
-                                                },
-                                                '&:nth-of-type(odd)': {
-                                                    bgcolor: 'white',
-                                                },
-                                                borderBottom: '1px solid #f0f0f0',
-                                            }}
-                                        >
-                                            <TableCell sx={{ py: 3, minWidth: 250 }}>
-                                                <Box display="flex" alignItems="center" gap={2}>
-                                                    {patient.photo ? (
-                                                        <Avatar 
-                                                            src={`/storage/${patient.photo}`}
-                                                            sx={{ 
-                                                                width: 40, 
-                                                                height: 40,
-                                                                border: '1px solid #20a09f',
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <Avatar sx={{ 
-                                                            bgcolor: '#4caf50', 
-                                                            width: 40, 
-                                                            height: 40,
-                                                            fontSize: '1.1rem',
-                                                            fontWeight: 'bold'
-                                                        }}>
-                                                            {patient.name.charAt(0)}
-                                                        </Avatar>
-                                                    )}
-                                                    <Box>
-                                                        <Typography variant="body2" fontWeight="600" color="text.primary">
-                                                            {patient.name}
-                                                        </Typography>
-                                                        <Typography variant="caption" color="text.secondary">
-                                                            Patient ID: #{patient.id}
-                                                        </Typography>
-                                                    </Box>
+                {filteredPatients.length > 0 ? (
+                    <>
+                        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+                            <TableContainer sx={{ 
+                                overflowX: 'auto',
+                                width: '100%',
+                                '&::-webkit-scrollbar': {
+                                    height: 8,
+                                },
+                                '&::-webkit-scrollbar-track': {
+                                    backgroundColor: '#f1f1f1',
+                                    borderRadius: 4,
+                                },
+                                '&::-webkit-scrollbar-thumb': {
+                                    backgroundColor: '#20a09f',
+                                    borderRadius: 4,
+                                    '&:hover': {
+                                        backgroundColor: '#178f8e',
+                                    },
+                                }
+                            }}>
+                                <Table sx={{ minWidth: 1000 }}>
+                                    <TableHead>
+                                        <TableRow sx={{ bgcolor: '#20a09f' }}>
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 250 }}>
+                                                <Box display="flex" alignItems="center" gap={1}>
+                                                    <PersonIcon fontSize="small" />
+                                                    Patient Details
                                                 </Box>
                                             </TableCell>
-                                            <TableCell sx={{ py: 3, minWidth: 200 }}>
-                                                <Typography variant="body2" fontWeight="500">
-                                                    {patient.email}
-                                                </Typography>
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 200 }}>
+                                                <Box display="flex" alignItems="center" gap={1}>
+                                                    <EmailIcon fontSize="small" />
+                                                    Contact
+                                                </Box>
                                             </TableCell>
-                                            <TableCell sx={{ py: 3, minWidth: 150 }}>
-                                                <Typography variant="body2">
-                                                    {dayjs(patient.created_at).format('MMM D, YYYY')}
-                                                </Typography>
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 150 }}>
+                                                <Box display="flex" alignItems="center" gap={1}>
+                                                    <LocationIcon fontSize="small" />
+                                                    Location
+                                                </Box>
                                             </TableCell>
-                                            <TableCell sx={{ py: 3, minWidth: 100 }}>
-                                                <Chip
-                                                    label="Active"
-                                                    color="success"
-                                                    size="small"
-                                                    sx={{ 
-                                                        fontWeight: 600,
-                                                        minWidth: 70,
-                                                    }}
-                                                />
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 120 }}>
+                                                <Box display="flex" alignItems="center" gap={1}>
+                                                    <CakeIcon fontSize="small" />
+                                                    Age
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 140 }}>
+                                                <Box display="flex" alignItems="center" gap={1}>
+                                                    <EventIcon fontSize="small" />
+                                                    Appointments
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 140 }}>
+                                                Registration
+                                            </TableCell>
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 100 }}>
+                                                Status
                                             </TableCell>
                                         </TableRow>
-                                    </Fade>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                        <Box sx={{ 
-                            display: 'flex', 
-                            justifyContent: 'center', 
-                            alignItems: 'center', 
-                            mt: 4, 
-                            mb: 2,
-                            gap: 2
-                        }}>
-                            <Typography variant="body2" color="text.secondary">
-                                Showing {startIndex + 1}-{Math.min(endIndex, filteredPatients.length)} of {filteredPatients.length} patients
-                            </Typography>
-                            <Pagination
-                                count={totalPages}
-                                page={currentPage}
-                                onChange={(_event, page) => handlePageChange(page)}
-                                size="large"
-                                shape="rounded"
-                                showFirstButton
-                                showLastButton
-                                sx={{
-                                    color: '#20a09f',
-                                    '& .MuiPaginationItem-root': {
-                                        borderRadius: 2,
-                                        fontWeight: 600,
-                                        minWidth: 40,
-                                        height: 40,
-                                        border: '1px solid #e0e0e0',
-                                        '&:hover': {
-                                            bgcolor: '#20a09f',
-                                            color: 'white',
-                                            transform: 'scale(1.05)',
-                                            boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
-                                        },
-                                        '&.Mui-selected': {
-                                            bgcolor: '#20a09f',
-                                            color: 'white',
-                                            boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
-                                            '&:hover': {
-                                                bgcolor: '#178f8e',
+                                    </TableHead>
+                                    <TableBody>
+                                        {paginatedPatients.map((patient, index) => (
+                                            <Fade in={true} timeout={300 + index * 50} key={patient.id}>
+                                                <TableRow 
+                                                    hover
+                                                    sx={{
+                                                        '&:hover': {
+                                                            bgcolor: 'rgba(32, 160, 159, 0.08)',
+                                                            transition: 'background-color 0.2s ease',
+                                                        },
+                                                        '&:nth-of-type(even)': {
+                                                            bgcolor: '#fafafa',
+                                                        },
+                                                        '&:nth-of-type(odd)': {
+                                                            bgcolor: 'white',
+                                                        },
+                                                        borderBottom: '1px solid #f0f0f0',
+                                                    }}
+                                                >
+                                                    <TableCell sx={{ py: 3 }}>
+                                                        <Box display="flex" alignItems="center" gap={2}>
+                                                            {patient.photo ? (
+                                                                <Avatar 
+                                                                    src={`/storage/${patient.photo}`}
+                                                                    sx={{ 
+                                                                        width: 50, 
+                                                                        height: 50,
+                                                                        border: '2px solid #20a09f',
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <Avatar sx={{ 
+                                                                    bgcolor: '#4caf50', 
+                                                                    width: 50, 
+                                                                    height: 50,
+                                                                    fontSize: '1.2rem',
+                                                                    fontWeight: 'bold'
+                                                                }}>
+                                                                    {patient.name.charAt(0)}
+                                                                </Avatar>
+                                                            )}
+                                                            <Box>
+                                                                <Typography variant="body1" fontWeight="600" color="text.primary">
+                                                                    {patient.name}
+                                                                </Typography>
+                                                                <Box display="flex" alignItems="center" gap={1}>
+                                                                    <Typography variant="caption" color="text.secondary">
+                                                                        ID: #{patient.id}
+                                                                    </Typography>
+                                                                    {patient.gender && (
+                                                                        <Chip
+                                                                            label={`${getGenderIcon(patient.gender)} ${patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)}`}
+                                                                            size="small"
+                                                                            variant="outlined"
+                                                                            sx={{
+                                                                                height: 20,
+                                                                                fontSize: '0.7rem',
+                                                                                borderColor: '#20a09f',
+                                                                                color: '#20a09f',
+                                                                            }}
+                                                                        />
+                                                                    )}
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+                                                    </TableCell>
+                                                    <TableCell sx={{ py: 3 }}>
+                                                        <Typography variant="body2" fontWeight="500" mb={0.5}>
+                                                            {patient.email}
+                                                        </Typography>
+                                                        {patient.phone && (
+                                                            <Typography variant="caption" color="text.secondary">
+                                                                📞 {patient.phone}
+                                                            </Typography>
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell sx={{ py: 3 }}>
+                                                        <Typography variant="body2">
+                                                            {patient.city || 'Not specified'}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell sx={{ py: 3 }}>
+                                                        <Typography variant="body2" fontWeight="500">
+                                                            {patient.age !== null && patient.age !== undefined ? `${patient.age} years` : 'N/A'}
+                                                        </Typography>
+                                                        {patient.date_of_birth && (
+                                                            <Typography variant="caption" color="text.secondary" display="block">
+                                                                {dayjs(patient.date_of_birth).format('MMM D, YYYY')}
+                                                            </Typography>
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell sx={{ py: 3 }}>
+                                                        <Box display="flex" alignItems="center" gap={1}>
+                                                            <Chip
+                                                                label={patient.appointments_count}
+                                                                size="small"
+                                                                sx={{
+                                                                    bgcolor: patient.appointments_count > 0 ? '#20a09f' : 'grey.300',
+                                                                    color: patient.appointments_count > 0 ? 'white' : 'grey.600',
+                                                                    fontWeight: 600,
+                                                                    minWidth: 40,
+                                                                }}
+                                                            />
+                                                            <Typography variant="caption" color="text.secondary">
+                                                                visits
+                                                            </Typography>
+                                                        </Box>
+                                                    </TableCell>
+                                                    <TableCell sx={{ py: 3 }}>
+                                                        <Typography variant="body2" fontWeight="500">
+                                                            {dayjs(patient.created_at).format('MMM D, YYYY')}
+                                                        </Typography>
+                                                        <Typography variant="caption" color="text.secondary">
+                                                            {dayjs(patient.created_at).fromNow()}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell sx={{ py: 3 }}>
+                                                        <Chip
+                                                            label="Active"
+                                                            color="success"
+                                                            size="small"
+                                                            sx={{ 
+                                                                fontWeight: 600,
+                                                                minWidth: 70,
+                                                            }}
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            </Fade>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            
+                            {/* Pagination */}
+                            {totalPages > 1 && (
+                                <Box sx={{ 
+                                    display: 'flex', 
+                                    justifyContent: 'center', 
+                                    alignItems: 'center', 
+                                    mt: 4, 
+                                    mb: 2,
+                                    gap: 2
+                                }}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Showing {startIndex + 1}-{Math.min(endIndex, filteredPatients.length)} of {filteredPatients.length} patients
+                                    </Typography>
+                                    <Pagination
+                                        count={totalPages}
+                                        page={currentPage}
+                                        onChange={(_event, page) => handlePageChange(page)}
+                                        size="large"
+                                        shape="rounded"
+                                        showFirstButton
+                                        showLastButton
+                                        sx={{
+                                            color: '#20a09f',
+                                            '& .MuiPaginationItem-root': {
+                                                borderRadius: 2,
+                                                fontWeight: 600,
+                                                minWidth: 40,
+                                                height: 40,
+                                                border: '1px solid #e0e0e0',
+                                                '&:hover': {
+                                                    bgcolor: '#20a09f',
+                                                    color: 'white',
+                                                    transform: 'scale(1.05)',
+                                                    boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
+                                                },
+                                                '&.Mui-selected': {
+                                                    bgcolor: '#20a09f',
+                                                    color: 'white',
+                                                    boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
+                                                    '&:hover': {
+                                                        bgcolor: '#178f8e',
+                                                    },
+                                                },
+                                                transition: 'all 0.2s ease',
                                             },
-                                        },
-                                        transition: 'all 0.2s ease',
-                                    },
-                                    '& .MuiPaginationItem-ellipsis': {
-                                        color: 'text.secondary',
-                                    },
-                                }}
-                            />
-                        </Box>
-                    )}
-                </Card>
-
-                {filteredPatients.length === 0 && (
+                                            '& .MuiPaginationItem-ellipsis': {
+                                                color: 'text.secondary',
+                                            },
+                                        }}
+                                    />
+                                </Box>
+                            )}
+                        </Card>
+                    </>
+                ) : (
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ textAlign: 'center', py: 8 }}>
                             <Avatar sx={{ bgcolor: 'grey.100', width: 80, height: 80, mx: 'auto', mb: 3 }}>
@@ -348,8 +625,8 @@ export default function Patients({ patients, userRole }: PatientsProps) {
                                 No Patients Found
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {searchQuery 
-                                    ? 'Try adjusting your search criteria.' 
+                                {searchQuery || Object.values(localFilters).some(v => v)
+                                    ? 'Try adjusting your search criteria or filters.' 
                                     : userRole === 'provider' 
                                     ? 'You haven\'t treated any patients yet.' 
                                     : 'No patients are currently registered in the system.'
