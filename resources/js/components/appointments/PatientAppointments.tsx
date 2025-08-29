@@ -46,6 +46,8 @@ import {
   Search as SearchIcon,
   FilterAlt as FilterIcon,
 } from '@mui/icons-material';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
 import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import { useState, useEffect } from 'react';
@@ -246,11 +248,11 @@ export default function PatientAppointments({ appointments, allAppointments, cur
         <CardContent sx={{ p: 4 }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
             <Box display="flex" alignItems="center" gap={2}>
-              <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+              <Avatar sx={{ bgcolor: '#20a09f', width: 56, height: 56 }}>
                 <PersonIcon sx={{ fontSize: 28 }} />
               </Avatar>
               <Box>
-                <Typography variant="h4" component="h1" fontWeight="bold" color="primary.main">
+                <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f">
                   My Appointments
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -260,10 +262,10 @@ export default function PatientAppointments({ appointments, allAppointments, cur
             </Box>
             <Button
               variant="contained"
-              color="primary"
               size="large"
               onClick={() => setShowNewAppointmentModal(true)}
               sx={{ 
+                bgcolor: '#20a09f',
                 borderRadius: 3,
                 px: 4,
                 py: 1.5,
@@ -271,6 +273,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                 fontWeight: 600,
                 boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
                 '&:hover': {
+                  bgcolor: '#178f8e',
                   boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
                   transform: 'translateY(-1px)',
                 }
@@ -289,14 +292,14 @@ export default function PatientAppointments({ appointments, allAppointments, cur
             <CardContent sx={{ p: 3, position: 'relative', overflow: 'hidden' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="primary.main">
+                  <Typography variant="h4" fontWeight="bold" color="#20a09f">
                     {filteredStats.total}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Total Appointments
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
+                <Avatar sx={{ bgcolor: '#20a09f', width: 48, height: 48 }}>
                   <StatsIcon />
                 </Avatar>
               </Box>
@@ -376,8 +379,8 @@ export default function PatientAppointments({ appointments, allAppointments, cur
         <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ p: 4 }}>
             <Box display="flex" alignItems="center" gap={2} mb={3}>
-              <FilterIcon color="primary" />
-              <Typography variant="h6" fontWeight="600" color="primary.main">
+              <FilterIcon sx={{ color: '#20a09f' }} />
+              <Typography variant="h6" fontWeight="600" color="#20a09f">
                 Filter My Appointments
               </Typography>
             </Box>
@@ -461,8 +464,8 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                 fontSize: '1rem',
                 py: 2,
                 '&.Mui-selected': {
-                  color: 'primary.main',
-                  bgcolor: 'primary.main',
+                  color: '#20a09f',
+                  bgcolor: '#20a09f',
                   color: 'white',
                   borderRadius: '8px 8px 0 0',
                 }
@@ -515,8 +518,8 @@ export default function PatientAppointments({ appointments, allAppointments, cur
           {activeTab === 0 && (
             <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
               <TableContainer sx={{ 
-                minWidth: 1200, 
                 overflowX: 'auto',
+                width: '100%',
                 '&::-webkit-scrollbar': {
                   height: 8,
                 },
@@ -532,9 +535,9 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                   },
                 }
               }}>
-                <Table>
+                <Table sx={{ minWidth: 1200 }}>
                   <TableHead>
-                    <TableRow sx={{ bgcolor: 'primary.main' }}>
+                    <TableRow sx={{ bgcolor: '#20a09f' }}>
                       <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 180 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <MedicalIcon fontSize="small" />
@@ -553,14 +556,24 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                           Healthcare Provider
                         </Box>
                       </TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 120 }}>Status</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 120 }}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <AccessTimeFilledIcon fontSize="small" />
+                          Status
+                        </Box>
+                      </TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 120 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <PaymentIcon fontSize="small" />
                           Payment
                         </Box>
                       </TableCell>
-                      <TableCell align="right" sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 180 }}>Actions</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 180 }}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <LibraryAddCheckIcon fontSize="small" />
+                          Actions
+                        </Box>
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -587,7 +600,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                           <TableCell sx={{ py: 3, minWidth: 180 }}>
                             <Box display="flex" alignItems="center" gap={2}>
                               <Avatar sx={{ 
-                                bgcolor: 'primary.main', 
+                                bgcolor: '#20a09f', 
                                 width: 32, 
                                 height: 32, 
                                 fontSize: '0.8rem',
@@ -597,7 +610,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                                 <MedicalIcon fontSize="small" />
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" fontFamily="monospace" fontWeight="600" color="primary.main">
+                                <Typography variant="body2" fontFamily="monospace" fontWeight="600" color="#20a09f">
                                   APT-{appointment.id}
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary">
@@ -622,7 +635,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                           <TableCell sx={{ py: 3, minWidth: 200 }}>
                             <Box display="flex" alignItems="center" gap={2}>
                               <Avatar sx={{ 
-                                bgcolor: 'primary.main', 
+                                bgcolor: '#20a09f', 
                                 width: 40, 
                                 height: 40,
                                 boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
@@ -631,7 +644,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                                 <MedicalIcon fontSize="small" />
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" fontWeight="600" color="primary.main">
+                                <Typography variant="body2" fontWeight="600" color="#20a09f">
                                   Dr. {appointment.provider.name}
                                 </Typography>
                                 <Stack direction="row" alignItems="center" spacing={0.5}>
@@ -715,14 +728,14 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                                   size="medium"
                                   onClick={() => setEditingAppointment(appointment)}
                                   sx={{
-                                    bgcolor: 'primary.main',
+                                    bgcolor: '#20a09f',
                                     color: 'white',
                                     width: 36,
                                     height: 36,
                                     borderRadius: 2,
                                     boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
                                     '&:hover': {
-                                      bgcolor: 'primary.dark',
+                                      bgcolor: '#178f8e',
                                       transform: 'scale(1.1) rotate(5deg)',
                                       boxShadow: '0 4px 8px rgba(32, 160, 159, 0.4)',
                                     },
@@ -804,7 +817,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                     count={totalPages}
                     page={currentPage}
                     onChange={(_event, page) => handlePageChange(page)}
-                    color="primary"
+                    sx={{ color: '#20a09f' }}
                     size="large"
                     shape="rounded"
                     showFirstButton
@@ -817,17 +830,17 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                         height: 40,
                         border: '1px solid #e0e0e0',
                         '&:hover': {
-                          bgcolor: 'primary.main',
+                          bgcolor: '#20a09f',
                           color: 'white',
                           transform: 'scale(1.05)',
                           boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
                         },
                         '&.Mui-selected': {
-                          bgcolor: 'primary.main',
+                          bgcolor: '#20a09f',
                           color: 'white',
                           boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
                           '&:hover': {
-                            bgcolor: 'primary.dark',
+                            bgcolor: '#178f8e',
                           },
                         },
                         transition: 'all 0.2s ease',
@@ -858,7 +871,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
             <Typography variant="body2" color="text.secondary">
               Showing <strong>{filteredAppointments.length}</strong> of <strong>{appointments.data.length}</strong> appointments
               {(statusFilter || paymentFilter || dateFilter) && (
-                <Box component="span" sx={{ color: 'primary.main', fontWeight: 600, ml: 1 }}>
+                <Box component="span" sx={{ color: '#20a09f', fontWeight: 600, ml: 1 }}>
                   (filtered)
                 </Box>
               )}

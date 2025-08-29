@@ -539,7 +539,7 @@ export default function AppointmentCalendar({
               step={30}
               timeslots={1}
               min={moment().set({ hour: 8, minute: 0 }).toDate()}
-              max={moment().set({ hour: 18, minute: 30 }).toDate()}
+              max={moment().set({ hour: 17, minute: 0 }).toDate()}
               popup={true}
               showMultiDayTimes={true}
               scrollToTime={moment().set({ hour: 8, minute: 0 }).toDate()}
