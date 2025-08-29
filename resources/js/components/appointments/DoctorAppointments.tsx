@@ -270,27 +270,15 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                   <TableCell>
                     <Box display="flex" gap={0.5}>
                       {appointment.status === 'pending' && (
-                        <>
-                          <Tooltip title="Confirm Appointment">
-                            <IconButton
-                              size="small"
-                              color="success"
-                              onClick={() => handleConfirmAction(appointment, 'confirm')}
-                            >
-                              <CheckCircleIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                          
-                          <Tooltip title="Cancel Appointment">
-                            <IconButton
-                              size="small"
-                              color="error"
-                              onClick={() => handleConfirmAction(appointment, 'cancel')}
-                            >
-                              <CancelIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        </>
+                        <Tooltip title="Confirm Appointment">
+                          <IconButton
+                            size="small"
+                            color="success"
+                            onClick={() => handleConfirmAction(appointment, 'confirm')}
+                          >
+                            <CheckCircleIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
                       )}
                       
                       {appointment.payment_status === 'pending' && (
@@ -301,6 +289,18 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                             onClick={() => handleConfirmAction(appointment, 'payment')}
                           >
                             <CreditScoreIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      
+                      {appointment.status === 'pending' && (
+                        <Tooltip title="Cancel Appointment">
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => handleConfirmAction(appointment, 'cancel')}
+                          >
+                            <CancelIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
                       )}

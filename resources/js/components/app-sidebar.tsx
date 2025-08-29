@@ -5,29 +5,38 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { Calendar, CreditCard, Home, Settings, Stethoscope, Users, UserCheck } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
-        icon: LayoutGrid,
+        icon: Home,
+    },
+    {
+        title: 'Appointments',
+        href: '/appointments',
+        icon: Calendar,
+    },
+    {
+        title: 'Providers',
+        href: '/providers',
+        icon: Stethoscope,
+    },
+    {
+        title: 'Patients',
+        href: '/patients',
+        icon: Users,
+    },
+    {
+        title: 'Payments',
+        href: '/payments',
+        icon: CreditCard,
     },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
+const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
     return (

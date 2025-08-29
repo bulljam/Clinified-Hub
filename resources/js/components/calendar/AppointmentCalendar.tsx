@@ -103,8 +103,8 @@ export default function AppointmentCalendar({
     if (appointmentDays.has(dateString)) {
       return {
         style: {
-          backgroundColor: '#f0fdf4',
-          border: '2px solid #bbf7d0',
+          backgroundColor: '#e6fbfb',
+          border: '2px solid #20a09f',
           borderRadius: '4px',
         }
       };
@@ -160,8 +160,8 @@ export default function AppointmentCalendar({
         ? `Dr. ${matchingAppointment.provider.name}` 
         : `${matchingAppointment.user.name}`;
       
-      const statusColor = matchingAppointment.status === 'confirmed' ? '#4caf50' : 
-                         matchingAppointment.status === 'cancelled' ? '#f44336' : '#ff9800';
+      const statusColor = matchingAppointment.status === 'confirmed' ? '#2ECC71' : 
+                         matchingAppointment.status === 'cancelled' ? '#E74C3C' : '#F39C12';
       
       return {
         style: {
@@ -190,14 +190,14 @@ export default function AppointmentCalendar({
 
   const eventStyleGetter = (event: CalendarEvent) => {
     const appointment = event.resource;
-    let backgroundColor = '#3174ad';
+    let backgroundColor = '#20a09f';
     
     if (appointment.status === 'confirmed') {
-      backgroundColor = '#4caf50';
+      backgroundColor = '#2ECC71';
     } else if (appointment.status === 'cancelled') {
-      backgroundColor = '#f44336';
+      backgroundColor = '#E74C3C';
     } else if (appointment.status === 'pending') {
-      backgroundColor = '#ff9800';
+      backgroundColor = '#F39C12';
     }
     
     return {
