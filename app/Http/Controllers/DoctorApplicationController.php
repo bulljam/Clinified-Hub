@@ -109,4 +109,33 @@ class DoctorApplicationController extends Controller
 
         return redirect()->back()->with('success', 'Doctor application rejected successfully!');
     }
+
+    public function viewCredential(DoctorApplication $application, $filename)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $credentials = $application->credentials ?? [];
+        $filePath = null;
+
+        foreach ($credentials as $credential) {
+            if (basename($credential) === $filename) {
+                $filePath = $credential;
+                break;
+            }
+        }
+
+        if (!$filePath || !file_exists(storage_path('app/public/' . $filePath))) {
+            abort(404, 'File not found');
+        }
+
+        $fullPath = storage_path('app/public/' . $filePath);
+        $mimeType = mime_content_type($fullPath);
+
+        return response()->file($fullPath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+        ]);
+    }
 }

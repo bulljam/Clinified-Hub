@@ -29,7 +29,7 @@ import {
   CheckCircle as ApproveIcon,
   Cancel as RejectIcon,
   Visibility as ViewIcon,
-  GetApp as DownloadIcon,
+  Preview as PreviewIcon,
   LocalHospital as MedicalIcon,
   Person as PersonIcon,
 } from '@mui/icons-material';
@@ -103,8 +103,9 @@ export default function DoctorApplications({ applications }: Props) {
     }
   };
 
-  const downloadCredential = (path: string, filename: string) => {
-    window.open(`/storage/${path}`, '_blank');
+  const previewCredential = (applicationId: number, path: string) => {
+    const filename = path.split('/').pop() || 'document';
+    window.open(`/admin/doctor-applications/${applicationId}/credential/${filename}`, '_blank');
   };
 
   return (
@@ -395,11 +396,19 @@ export default function DoctorApplications({ applications }: Props) {
                       <Button
                         key={index}
                         variant="outlined"
-                        startIcon={<DownloadIcon />}
+                        startIcon={<PreviewIcon />}
                         size="small"
-                        onClick={() => downloadCredential(credential, `credential-${index + 1}`)}
+                        onClick={() => previewCredential(viewingApplication.id, credential)}
+                        sx={{ 
+                          borderColor: '#20a09f',
+                          color: '#20a09f',
+                          '&:hover': {
+                            borderColor: '#178f8e',
+                            bgcolor: 'rgba(32, 160, 159, 0.04)',
+                          }
+                        }}
                       >
-                        Document {index + 1}
+                        Preview Document {index + 1}
                       </Button>
                     ))}
                   </Stack>

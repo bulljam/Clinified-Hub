@@ -7,24 +7,23 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   TextField,
   Typography,
   Alert,
-  Grid,
-  Chip,
   IconButton,
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
+  Stack,
 } from '@mui/material';
 import {
   CloudUpload as UploadIcon,
   Delete as DeleteIcon,
   LocalHospital as MedicalIcon,
   Person as PersonIcon,
+  Work as WorkIcon,
+  UploadFile as FileIcon,
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
@@ -72,17 +71,22 @@ export default function DoctorApplicationCreate() {
   });
 
   const [success, setSuccess] = useState(false);
+  const [fileInputKey, setFileInputKey] = useState(0);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const currentFiles = Array.from(data.credentials);
-    const newFiles = [...currentFiles, ...files].slice(0, 5);
-    setData('credentials', newFiles);
+    if (files.length > 0) {
+      const currentFiles = Array.from(data.credentials);
+      const newFiles = [...currentFiles, ...files].slice(0, 5);
+      setData('credentials', newFiles);
+    }
+    event.target.value = '';
   };
 
   const removeFile = (index: number) => {
     const newFiles = data.credentials.filter((_, i) => i !== index);
     setData('credentials', newFiles);
+    setFileInputKey(prev => prev + 1);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -99,8 +103,7 @@ export default function DoctorApplicationCreate() {
       }
     });
 
-    post('/doctor-application', {
-      data: formData,
+    post('/doctor-application', formData, {
       forceFormData: true,
       onSuccess: () => {
         setSuccess(true);
@@ -114,24 +117,25 @@ export default function DoctorApplicationCreate() {
       <Box
         sx={{
           minHeight: '100vh',
-          bgcolor: '#fafafa',
+          bgcolor: '#f8f9fa',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           p: 3,
         }}
       >
-        <Card sx={{ maxWidth: 600, width: '100%' }}>
-          <CardContent sx={{ p: 6, textAlign: 'center' }}>
+        <Card sx={{ maxWidth: 600, width: '100%', textAlign: 'center' }}>
+          <CardContent sx={{ p: 6 }}>
             <MedicalIcon sx={{ fontSize: 80, color: '#20a09f', mb: 3 }} />
             <Typography variant="h4" fontWeight="bold" color="#20a09f" mb={2}>
               Application Submitted Successfully!
             </Typography>
             <Typography variant="body1" color="text.secondary" mb={4}>
-              Thank you for applying to join our medical team. We will review your application and credentials, then contact you via email with our decision.
+              Thank you for applying to join our medical team. We will review your application and credentials, then contact you via email with our decision within 2-3 business days.
             </Typography>
             <Button
               variant="contained"
+              size="large"
               sx={{ bgcolor: '#20a09f', '&:hover': { bgcolor: '#178f8e' } }}
               onClick={() => router.visit('/')}
             >
@@ -144,56 +148,58 @@ export default function DoctorApplicationCreate() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#fafafa', py: 4 }}>
-      <Box sx={{ maxWidth: 800, mx: 'auto', px: 3 }}>
-        <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-          <CardContent sx={{ p: 4, textAlign: 'center' }}>
-            <MedicalIcon sx={{ fontSize: 60, color: '#20a09f', mb: 2 }} />
-            <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f" mb={1}>
-              Become a Doctor
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Join our healthcare platform and start helping patients
-            </Typography>
-          </CardContent>
-        </Card>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f8f9fa' }}>
+      {/* Header */}
+      <Box sx={{ bgcolor: 'white', borderBottom: '1px solid #e0e0e0', py: 4 }}>
+        <Box sx={{ maxWidth: 900, mx: 'auto', px: 3, textAlign: 'center' }}>
+          <MedicalIcon sx={{ fontSize: 60, color: '#20a09f', mb: 2 }} />
+          <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f" mb={1}>
+            Join Our Medical Team
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
+            Apply to become a healthcare provider on our platform. We'll review your credentials and get back to you within 2-3 business days.
+          </Typography>
+        </Box>
+      </Box>
 
-        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
-          <CardContent sx={{ p: 4 }}>
-            <form onSubmit={handleSubmit}>
-              <Grid container spacing={3}>
-                <Grid xs={12}>
-                  <Typography variant="h6" fontWeight="600" color="#20a09f" mb={2}>
+      {/* Form Container */}
+      <Box sx={{ maxWidth: 900, mx: 'auto', p: 4 }}>
+        <form onSubmit={handleSubmit}>
+          <Stack spacing={4}>
+            {/* Personal Information Section */}
+            <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+              <CardContent sx={{ p: 4 }}>
+                <Box display="flex" alignItems="center" gap={2} mb={3}>
+                  <PersonIcon sx={{ color: '#20a09f' }} />
+                  <Typography variant="h6" fontWeight="600" color="#20a09f">
                     Personal Information
                   </Typography>
-                </Grid>
+                </Box>
+                
+                <Stack spacing={3}>
+                  <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={3}>
+                    <TextField
+                      label="Full Name"
+                      value={data.full_name}
+                      onChange={(e) => setData('full_name', e.target.value)}
+                      fullWidth
+                      required
+                      error={!!errors.full_name}
+                      helperText={errors.full_name}
+                    />
+                    
+                    <TextField
+                      label="Email Address"
+                      type="email"
+                      value={data.email}
+                      onChange={(e) => setData('email', e.target.value)}
+                      fullWidth
+                      required
+                      error={!!errors.email}
+                      helperText={errors.email}
+                    />
+                  </Box>
 
-                <Grid xs={12} sm={6}>
-                  <TextField
-                    label="Full Name"
-                    value={data.full_name}
-                    onChange={(e) => setData('full_name', e.target.value)}
-                    fullWidth
-                    required
-                    error={!!errors.full_name}
-                    helperText={errors.full_name}
-                  />
-                </Grid>
-
-                <Grid xs={12} sm={6}>
-                  <TextField
-                    label="Email Address"
-                    type="email"
-                    value={data.email}
-                    onChange={(e) => setData('email', e.target.value)}
-                    fullWidth
-                    required
-                    error={!!errors.email}
-                    helperText={errors.email}
-                  />
-                </Grid>
-
-                <Grid xs={12} sm={6}>
                   <TextField
                     label="Phone Number"
                     value={data.phone}
@@ -202,50 +208,55 @@ export default function DoctorApplicationCreate() {
                     required
                     error={!!errors.phone}
                     helperText={errors.phone}
+                    sx={{ maxWidth: { sm: '50%' } }}
                   />
-                </Grid>
+                </Stack>
+              </CardContent>
+            </Card>
 
-                <Grid xs={12} sm={6}>
-                  <FormControl fullWidth required error={!!errors.specialty}>
-                    <InputLabel>Medical Specialty</InputLabel>
-                    <Select
-                      value={data.specialty}
-                      label="Medical Specialty"
-                      onChange={(e) => setData('specialty', e.target.value)}
-                    >
-                      {specialties.map((specialty) => (
-                        <MenuItem key={specialty} value={specialty}>
-                          {specialty}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.specialty && (
-                      <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
-                        {errors.specialty}
-                      </Typography>
-                    )}
-                  </FormControl>
-                </Grid>
-
-                <Grid xs={12}>
-                  <Typography variant="h6" fontWeight="600" color="#20a09f" mb={2} mt={2}>
+            {/* Professional Information Section */}
+            <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+              <CardContent sx={{ p: 4 }}>
+                <Box display="flex" alignItems="center" gap={2} mb={3}>
+                  <WorkIcon sx={{ color: '#20a09f' }} />
+                  <Typography variant="h6" fontWeight="600" color="#20a09f">
                     Professional Information
                   </Typography>
-                </Grid>
+                </Box>
+                
+                <Stack spacing={3}>
+                  <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={3}>
+                    <FormControl fullWidth required error={!!errors.specialty}>
+                      <InputLabel>Medical Specialty</InputLabel>
+                      <Select
+                        value={data.specialty}
+                        label="Medical Specialty"
+                        onChange={(e) => setData('specialty', e.target.value)}
+                      >
+                        {specialties.map((specialty) => (
+                          <MenuItem key={specialty} value={specialty}>
+                            {specialty}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {errors.specialty && (
+                        <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 2 }}>
+                          {errors.specialty}
+                        </Typography>
+                      )}
+                    </FormControl>
 
-                <Grid xs={12} sm={6}>
-                  <TextField
-                    label="Medical License Number"
-                    value={data.license_number}
-                    onChange={(e) => setData('license_number', e.target.value)}
-                    fullWidth
-                    required
-                    error={!!errors.license_number}
-                    helperText={errors.license_number}
-                  />
-                </Grid>
+                    <TextField
+                      label="Medical License Number"
+                      value={data.license_number}
+                      onChange={(e) => setData('license_number', e.target.value)}
+                      fullWidth
+                      required
+                      error={!!errors.license_number}
+                      helperText={errors.license_number}
+                    />
+                  </Box>
 
-                <Grid xs={12} sm={6}>
                   <TextField
                     label="Years of Experience"
                     type="number"
@@ -253,13 +264,12 @@ export default function DoctorApplicationCreate() {
                     onChange={(e) => setData('years_of_experience', parseInt(e.target.value) || 0)}
                     fullWidth
                     required
-                    inputProps={{ min: 0, max: 50 }}
+                    slotProps={{ htmlInput: { min: 0, max: 50 } }}
                     error={!!errors.years_of_experience}
                     helperText={errors.years_of_experience}
+                    sx={{ maxWidth: { sm: '50%' } }}
                   />
-                </Grid>
 
-                <Grid xs={12}>
                   <TextField
                     label="Clinic Address (Optional)"
                     value={data.clinic_address}
@@ -270,25 +280,44 @@ export default function DoctorApplicationCreate() {
                     error={!!errors.clinic_address}
                     helperText={errors.clinic_address}
                   />
-                </Grid>
+                </Stack>
+              </CardContent>
+            </Card>
 
-                <Grid xs={12}>
-                  <Typography variant="h6" fontWeight="600" color="#20a09f" mb={2}>
+            {/* Documents & Credentials Section */}
+            <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+              <CardContent sx={{ p: 4 }}>
+                <Box display="flex" alignItems="center" gap={2} mb={3}>
+                  <FileIcon sx={{ color: '#20a09f' }} />
+                  <Typography variant="h6" fontWeight="600" color="#20a09f">
                     Documents & Credentials
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" mb={2}>
-                    Upload your medical license, certificates, or other relevant documents (PDF, JPG, PNG - Max 2MB each, up to 5 files)
-                  </Typography>
-                  
+                </Box>
+                
+                <Typography variant="body2" color="text.secondary" mb={3}>
+                  Upload your medical license, certificates, or other relevant documents. 
+                  Accepted formats: PDF, JPG, PNG (Max 2MB each, up to 5 files)
+                </Typography>
+                
+                <Box>
                   <Button
                     component="label"
                     variant="outlined"
                     startIcon={<UploadIcon />}
-                    sx={{ mb: 2 }}
                     disabled={data.credentials.length >= 5}
+                    sx={{ 
+                      mb: 3,
+                      borderColor: '#20a09f',
+                      color: '#20a09f',
+                      '&:hover': {
+                        borderColor: '#178f8e',
+                        bgcolor: 'rgba(32, 160, 159, 0.04)',
+                      }
+                    }}
                   >
-                    Upload Documents
+                    {data.credentials.length >= 5 ? 'Maximum Files Reached' : 'Upload Documents'}
                     <input
+                      key={fileInputKey}
                       type="file"
                       hidden
                       multiple
@@ -298,21 +327,26 @@ export default function DoctorApplicationCreate() {
                   </Button>
 
                   {data.credentials.length > 0 && (
-                    <List sx={{ bgcolor: '#f5f5f5', borderRadius: 2 }}>
-                      {data.credentials.map((file, index) => (
-                        <ListItem key={index}>
-                          <ListItemText
-                            primary={file.name}
-                            secondary={`${(file.size / 1024 / 1024).toFixed(2)} MB`}
-                          />
-                          <ListItemSecondaryAction>
-                            <IconButton edge="end" onClick={() => removeFile(index)}>
+                    <Box sx={{ bgcolor: '#f8f9fa', borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                      <List>
+                        {data.credentials.map((file, index) => (
+                          <ListItem key={index}>
+                            <ListItemText
+                              primary={file.name}
+                              secondary={`${(file.size / 1024 / 1024).toFixed(2)} MB`}
+                            />
+                            <IconButton 
+                              edge="end" 
+                              onClick={() => removeFile(index)}
+                              color="error"
+                              sx={{ ml: 'auto' }}
+                            >
                               <DeleteIcon />
                             </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Box>
                   )}
 
                   {errors.credentials && (
@@ -320,13 +354,22 @@ export default function DoctorApplicationCreate() {
                       {errors.credentials}
                     </Typography>
                   )}
-                </Grid>
+                </Box>
+              </CardContent>
+            </Card>
 
-                <Grid xs={12}>
-                  <Alert severity="info" sx={{ mb: 3 }}>
-                    After submitting your application, our admin team will review your credentials and contact you via email. If approved, you will receive login credentials to access the platform.
-                  </Alert>
+            {/* Submit Section */}
+            <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+              <CardContent sx={{ p: 4 }}>
+                <Alert severity="info" sx={{ mb: 3 }}>
+                  <Typography variant="body2">
+                    <strong>Next Steps:</strong> After submitting your application, our admin team will review your credentials 
+                    and contact you via email within 2-3 business days. If approved, you will receive login credentials 
+                    to access the platform.
+                  </Typography>
+                </Alert>
 
+                <Box display="flex" justifyContent="center">
                   <Button
                     type="submit"
                     variant="contained"
@@ -335,17 +378,19 @@ export default function DoctorApplicationCreate() {
                     sx={{
                       bgcolor: '#20a09f',
                       '&:hover': { bgcolor: '#178f8e' },
-                      px: 6,
+                      px: 8,
                       py: 1.5,
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
                     }}
                   >
                     {processing ? 'Submitting Application...' : 'Submit Application'}
                   </Button>
-                </Grid>
-              </Grid>
-            </form>
-          </CardContent>
-        </Card>
+                </Box>
+              </CardContent>
+            </Card>
+          </Stack>
+        </form>
       </Box>
     </Box>
   );
