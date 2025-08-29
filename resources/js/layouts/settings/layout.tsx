@@ -2,7 +2,6 @@ import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { appearance } from '@/routes';
 import { edit as editPassword } from '@/routes/password';
 import { edit } from '@/routes/profile';
 import { type NavItem } from '@/types';
@@ -18,11 +17,6 @@ const sidebarNavItems: NavItem[] = [
     {
         title: 'Password',
         href: editPassword(),
-        icon: null,
-    },
-    {
-        title: 'Appearance',
-        href: appearance(),
         icon: null,
     },
 ];
@@ -42,22 +36,29 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             <div className="flex flex-col lg:flex-row lg:space-x-12">
                 <aside className="w-full max-w-xl lg:w-48">
                     <nav className="flex flex-col space-y-1 space-x-0">
-                        {sidebarNavItems.map((item, index) => (
-                            <Button
-                                key={`${typeof item.href === 'string' ? item.href : item.href.url}-${index}`}
-                                size="sm"
-                                variant="ghost"
-                                asChild
-                                className={cn('w-full justify-start', {
-                                    'bg-muted': currentPath === (typeof item.href === 'string' ? item.href : item.href.url),
-                                })}
-                            >
-                                <Link href={item.href} prefetch>
-                                    {item.icon && <item.icon className="h-4 w-4" />}
-                                    {item.title}
-                                </Link>
-                            </Button>
-                        ))}
+                        {sidebarNavItems.map((item, index) => {
+                            const isActive = currentPath === (typeof item.href === 'string' ? item.href : item.href.url);
+                            return (
+                                <Button
+                                    key={`${typeof item.href === 'string' ? item.href : item.href.url}-${index}`}
+                                    size="sm"
+                                    variant="ghost"
+                                    asChild
+                                    className={cn(
+                                        'w-full justify-start transition-colors duration-200 hover:bg-[#20a09f]/10 hover:text-[#20a09f]',
+                                        {
+                                            'bg-[#20a09f]/15 text-[#20a09f] font-medium': isActive,
+                                            'text-gray-700 hover:text-[#20a09f]': !isActive,
+                                        }
+                                    )}
+                                >
+                                    <Link href={item.href} prefetch>
+                                        {item.icon && <item.icon className="h-4 w-4" />}
+                                        {item.title}
+                                    </Link>
+                                </Button>
+                            );
+                        })}
                     </nav>
                 </aside>
 

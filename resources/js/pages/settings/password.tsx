@@ -1,16 +1,21 @@
 import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
-import InputError from '@/components/input-error';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { type BreadcrumbItem } from '@/types';
-import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
 import { useRef } from 'react';
-
-import HeadingSmall from '@/components/heading-small';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Lock, Save, CheckCircle, LockOpen, Security } from '@mui/icons-material';
+import {
+    Box,
+    Card,
+    CardContent,
+    TextField,
+    Button as MuiButton,
+    Typography,
+    Fade,
+    Divider,
+    Stack
+} from '@mui/material';
 import { edit } from '@/routes/password';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -29,93 +34,161 @@ export default function Password() {
             <Head title="Password settings" />
 
             <SettingsLayout>
-                <div className="space-y-6">
-                    <HeadingSmall title="Update password" description="Ensure your account is using a long, random password to stay secure" />
+                <Card 
+                    elevation={2} 
+                    sx={{ 
+                        borderRadius: 3,
+                        border: '1px solid',
+                        borderColor: 'primary.main'
+                    }}
+                >
+                    <CardContent sx={{ p: 4 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                            <Security
+                                sx={{ 
+                                    width: 56, 
+                                    height: 56, 
+                                    mr: 3, 
+                                    p: 1.5,
+                                    bgcolor: 'primary.main',
+                                    color: 'white',
+                                    borderRadius: 2
+                                }}
+                            />
+                            <Box>
+                                <Typography variant="h5" fontWeight="600" color="primary.main">
+                                    Update Password
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Ensure your account is using a long, random password to stay secure
+                                </Typography>
+                            </Box>
+                        </Box>
 
-                    <Form
-                        {...PasswordController.update.form()}
-                        options={{
-                            preserveScroll: true,
-                        }}
-                        resetOnError={['password', 'password_confirmation', 'current_password']}
-                        resetOnSuccess
-                        onError={(errors) => {
-                            if (errors.password) {
-                                passwordInput.current?.focus();
-                            }
+                        <Divider sx={{ mb: 3 }} />
 
-                            if (errors.current_password) {
-                                currentPasswordInput.current?.focus();
-                            }
-                        }}
-                        className="space-y-6"
-                    >
-                        {({ errors, processing, recentlySuccessful }) => (
-                            <>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="current_password">Current password</Label>
+                        <Form
+                            {...PasswordController.update.form()}
+                            options={{
+                                preserveScroll: true,
+                            }}
+                            resetOnError={['password', 'password_confirmation', 'current_password']}
+                            resetOnSuccess
+                            onError={(errors) => {
+                                if (errors.password) {
+                                    passwordInput.current?.focus();
+                                }
 
-                                    <Input
-                                        id="current_password"
-                                        ref={currentPasswordInput}
+                                if (errors.current_password) {
+                                    currentPasswordInput.current?.focus();
+                                }
+                            }}
+                        >
+                            {({ errors, processing, recentlySuccessful }) => (
+                                <Stack spacing={3}>
+                                    <TextField
+                                        fullWidth
+                                        type="password"
+                                        label="Current Password"
                                         name="current_password"
-                                        type="password"
-                                        className="mt-1 block w-full"
+                                        inputRef={currentPasswordInput}
                                         autoComplete="current-password"
-                                        placeholder="Current password"
+                                        error={!!errors.current_password}
+                                        helperText={errors.current_password}
+                                        slotProps={{
+                                            input: {
+                                                startAdornment: <LockOpen sx={{ color: 'action.active', mr: 1 }} />
+                                            }
+                                        }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 2,
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: 'primary.main',
+                                                }
+                                            }
+                                        }}
                                     />
 
-                                    <InputError message={errors.current_password} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password">New password</Label>
-
-                                    <Input
-                                        id="password"
-                                        ref={passwordInput}
+                                    <TextField
+                                        fullWidth
+                                        type="password"
+                                        label="New Password"
                                         name="password"
-                                        type="password"
-                                        className="mt-1 block w-full"
+                                        inputRef={passwordInput}
                                         autoComplete="new-password"
-                                        placeholder="New password"
+                                        error={!!errors.password}
+                                        helperText={errors.password}
+                                        slotProps={{
+                                            input: {
+                                                startAdornment: <Lock sx={{ color: 'action.active', mr: 1 }} />
+                                            }
+                                        }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 2,
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: 'primary.main',
+                                                }
+                                            }
+                                        }}
                                     />
 
-                                    <InputError message={errors.password} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password_confirmation">Confirm password</Label>
-
-                                    <Input
-                                        id="password_confirmation"
+                                    <TextField
+                                        fullWidth
+                                        type="password"
+                                        label="Confirm New Password"
                                         name="password_confirmation"
-                                        type="password"
-                                        className="mt-1 block w-full"
                                         autoComplete="new-password"
-                                        placeholder="Confirm password"
+                                        error={!!errors.password_confirmation}
+                                        helperText={errors.password_confirmation}
+                                        slotProps={{
+                                            input: {
+                                                startAdornment: <Lock sx={{ color: 'action.active', mr: 1 }} />
+                                            }
+                                        }}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 2,
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: 'primary.main',
+                                                }
+                                            }
+                                        }}
                                     />
 
-                                    <InputError message={errors.password_confirmation} />
-                                </div>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, pt: 1 }}>
+                                        <MuiButton
+                                            type="submit"
+                                            variant="contained"
+                                            size="large"
+                                            disabled={processing}
+                                            startIcon={<Save />}
+                                            sx={{ 
+                                                borderRadius: 2,
+                                                px: 4,
+                                                py: 1.5,
+                                                textTransform: 'none',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            {processing ? 'Updating Password...' : 'Update Password'}
+                                        </MuiButton>
 
-                                <div className="flex items-center gap-4">
-                                    <Button disabled={processing}>Save password</Button>
-
-                                    <Transition
-                                        show={recentlySuccessful}
-                                        enter="transition ease-in-out"
-                                        enterFrom="opacity-0"
-                                        leave="transition ease-in-out"
-                                        leaveTo="opacity-0"
-                                    >
-                                        <p className="text-sm text-neutral-600">Saved</p>
-                                    </Transition>
-                                </div>
-                            </>
-                        )}
-                    </Form>
-                </div>
+                                        <Fade in={recentlySuccessful} timeout={300}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', color: 'success.main' }}>
+                                                <CheckCircle sx={{ mr: 1, fontSize: '1.2rem' }} />
+                                                <Typography variant="body2" fontWeight={500}>
+                                                    Password updated successfully
+                                                </Typography>
+                                            </Box>
+                                        </Fade>
+                                    </Box>
+                                </Stack>
+                            )}
+                        </Form>
+                    </CardContent>
+                </Card>
             </SettingsLayout>
         </AppLayout>
     );

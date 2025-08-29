@@ -1,35 +1,101 @@
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import HeadingSmall from '@/components/heading-small';
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Form } from '@inertiajs/react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { Warning, DeleteForever } from '@mui/icons-material';
+import {
+    Card,
+    CardContent,
+    Typography,
+    Button as MuiButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    TextField,
+    Alert,
+    Box,
+    Divider,
+    Stack
+} from '@mui/material';
 
 export default function DeleteUser() {
     const passwordInput = useRef<HTMLInputElement>(null);
+    const [open, setOpen] = useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
-        <div className="space-y-6">
-            <HeadingSmall title="Delete account" description="Delete your account and all of its resources" />
-            <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
-                <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
-                    <p className="font-medium">Warning</p>
-                    <p className="text-sm">Please proceed with caution, this cannot be undone.</p>
-                </div>
+        <Card elevation={2} sx={{ borderRadius: 3, borderColor: 'error.main', borderWidth: 1, borderStyle: 'solid' }}>
+            <CardContent sx={{ p: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
+                    <DeleteForever sx={{ color: 'error.main', mr: 2, mt: 0.5 }} />
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Typography variant="h6" fontWeight="600" color="error.main" gutterBottom>
+                            Delete Account
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Permanently delete your account and all associated data
+                        </Typography>
+                    </Box>
+                </Box>
 
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button variant="destructive">Delete account</Button>
-                    </DialogTrigger>
+                <Divider sx={{ mb: 3 }} />
+
+                <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Warning sx={{ mr: 1 }} />
+                        <Box>
+                            <Typography variant="body2" fontWeight="600">
+                                Warning
+                            </Typography>
+                            <Typography variant="body2">
+                                Please proceed with caution, this cannot be undone.
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Alert>
+
+                <MuiButton
+                    variant="contained"
+                    color="error"
+                    size="large"
+                    startIcon={<DeleteForever />}
+                    onClick={() => setOpen(true)}
+                    sx={{
+                        borderRadius: 2,
+                        px: 3,
+                        py: 1.5,
+                        textTransform: 'none',
+                        fontWeight: 600
+                    }}
+                >
+                    Delete Account
+                </MuiButton>
+
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    maxWidth="sm"
+                    fullWidth
+                    slotProps={{
+                        paper: {
+                            sx: { borderRadius: 3 }
+                        }
+                    }}
+                >
+                    <DialogTitle sx={{ pb: 2 }}>
+                        <Typography variant="h6" fontWeight="600" color="error.main">
+                            Are you sure you want to delete your account?
+                        </Typography>
+                    </DialogTitle>
                     <DialogContent>
-                        <DialogTitle>Are you sure you want to delete your account?</DialogTitle>
-                        <DialogDescription>
-                            Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password
-                            to confirm you would like to permanently delete your account.
-                        </DialogDescription>
+                        <DialogContentText sx={{ mb: 3 }}>
+                            Once your account is deleted, all of its resources and data will also be permanently deleted. 
+                            Please enter your password to confirm you would like to permanently delete your account.
+                        </DialogContentText>
 
                         <Form
                             {...ProfileController.destroy.form()}
@@ -38,44 +104,66 @@ export default function DeleteUser() {
                             }}
                             onError={() => passwordInput.current?.focus()}
                             resetOnSuccess
-                            className="space-y-6"
                         >
                             {({ resetAndClearErrors, processing, errors }) => (
-                                <>
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="password" className="sr-only">
-                                            Password
-                                        </Label>
+                                <Stack spacing={3}>
+                                    <TextField
+                                        fullWidth
+                                        type="password"
+                                        label="Password"
+                                        name="password"
+                                        inputRef={passwordInput}
+                                        autoComplete="current-password"
+                                        error={!!errors.password}
+                                        helperText={errors.password}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 2,
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: 'error.main',
+                                                }
+                                            }
+                                        }}
+                                    />
 
-                                        <Input
-                                            id="password"
-                                            type="password"
-                                            name="password"
-                                            ref={passwordInput}
-                                            placeholder="Password"
-                                            autoComplete="current-password"
-                                        />
-
-                                        <InputError message={errors.password} />
-                                    </div>
-
-                                    <DialogFooter className="gap-2">
-                                        <DialogClose asChild>
-                                            <Button variant="secondary" onClick={() => resetAndClearErrors()}>
-                                                Cancel
-                                            </Button>
-                                        </DialogClose>
-
-                                        <Button variant="destructive" disabled={processing} asChild>
-                                            <button type="submit">Delete account</button>
-                                        </Button>
-                                    </DialogFooter>
-                                </>
+                                    <DialogActions sx={{ px: 0, pb: 0 }}>
+                                        <MuiButton
+                                            variant="outlined"
+                                            onClick={() => {
+                                                resetAndClearErrors();
+                                                handleClose();
+                                            }}
+                                            sx={{
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                fontWeight: 500,
+                                                px: 3
+                                            }}
+                                        >
+                                            Cancel
+                                        </MuiButton>
+                                        <MuiButton
+                                            type="submit"
+                                            variant="contained"
+                                            color="error"
+                                            disabled={processing}
+                                            startIcon={<DeleteForever />}
+                                            sx={{
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                fontWeight: 600,
+                                                px: 3
+                                            }}
+                                        >
+                                            {processing ? 'Deleting...' : 'Delete Account'}
+                                        </MuiButton>
+                                    </DialogActions>
+                                </Stack>
                             )}
                         </Form>
                     </DialogContent>
                 </Dialog>
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }
