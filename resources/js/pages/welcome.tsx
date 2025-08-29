@@ -35,6 +35,12 @@ export default function Welcome() {
                                 >
                                     Register
                                 </Link>
+                                <Link
+                                    href="/doctor-application"
+                                    className="inline-block rounded-sm border border-[#20a09f] bg-[#20a09f] px-5 py-1.5 text-sm leading-normal text-white hover:border-[#178f8e] hover:bg-[#178f8e] dark:border-[#20a09f] dark:bg-[#20a09f] dark:hover:border-[#178f8e] dark:hover:bg-[#178f8e]"
+                                >
+                                    Join as Doctor
+                                </Link>
                             </>
                         )}
                     </nav>

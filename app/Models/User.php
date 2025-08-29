@@ -57,4 +57,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(Appointment::class, 'provider_id');
     }
+
+    public function doctorApplication(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(DoctorApplication::class);
+    }
+
+    public function reviewedApplications(): HasMany
+    {
+        return $this->hasMany(DoctorApplication::class, 'reviewed_by');
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['super_admin', 'admin']);
+    }
+
+    public function isDoctorPending(): bool
+    {
+        return $this->role === 'doctor_pending';
+    }
 }
