@@ -30,6 +30,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Pagination,
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -131,6 +132,8 @@ export default function PatientAppointments({ appointments, allAppointments, cur
   const [paymentFilter, setPaymentFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
 
   useEffect(() => {
     // Extract unique providers from existing appointments
@@ -212,6 +215,16 @@ export default function PatientAppointments({ appointments, allAppointments, cur
     paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
   };
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedAppointments = filteredAppointments.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const handleFilterChange = () => {
     // Filters are applied automatically through filteredAppointments
     console.log('Applying filters:', { statusFilter, paymentFilter, dateFilter });
@@ -221,6 +234,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
     setStatusFilter('');
     setPaymentFilter('');
     setDateFilter('');
+    setCurrentPage(1); // Reset to first page when clearing filters
   };
 
   return (
@@ -367,8 +381,8 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                 Filter My Appointments
               </Typography>
             </Box>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems="center" flexWrap="wrap">
-              <FormControl size="medium" sx={{ minWidth: 220 }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={6} alignItems="center" justifyContent="center" flexWrap="wrap">
+              <FormControl size="medium" sx={{ minWidth: 200 }}>
                 <InputLabel>Appointment Status</InputLabel>
                 <Select
                   value={statusFilter}
@@ -383,7 +397,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                 </Select>
               </FormControl>
 
-              <FormControl size="medium" sx={{ minWidth: 220 }}>
+              <FormControl size="medium" sx={{ minWidth: 180 }}>
                 <InputLabel>Payment Status</InputLabel>
                 <Select
                   value={paymentFilter}
@@ -407,28 +421,12 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                   inputLabel: { shrink: true }
                 }}
                 sx={{ 
-                  minWidth: 220,
+                  minWidth: 170,
                   '& .MuiOutlinedInput-root': { borderRadius: 2 }
                 }}
               />
 
               <Box display="flex" gap={2}>
-                <Button 
-                  variant="contained" 
-                  onClick={handleFilterChange}
-                  startIcon={<SearchIcon />}
-                  size="large"
-                  sx={{ 
-                    borderRadius: 2,
-                    px: 4,
-                    py: 1.5,
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    boxShadow: '0 2px 8px rgba(32, 160, 159, 0.2)'
-                  }}
-                >
-                  Apply Filters
-                </Button>
                 <Button 
                   variant="outlined" 
                   onClick={clearFilters}
@@ -516,49 +514,64 @@ export default function PatientAppointments({ appointments, allAppointments, cur
         <Box>
           {activeTab === 0 && (
             <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-              <TableContainer>
+              <TableContainer sx={{ 
+                minWidth: 1200, 
+                overflowX: 'auto',
+                '&::-webkit-scrollbar': {
+                  height: 8,
+                },
+                '&::-webkit-scrollbar-track': {
+                  backgroundColor: '#f1f1f1',
+                  borderRadius: 4,
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: '#20a09f',
+                  borderRadius: 4,
+                  '&:hover': {
+                    backgroundColor: '#178f8e',
+                  },
+                }
+              }}>
                 <Table>
                   <TableHead>
                     <TableRow sx={{ bgcolor: 'primary.main' }}>
-                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 180 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <MedicalIcon fontSize="small" />
                           Appointment ID
                         </Box>
                       </TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 160 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <TimeIcon fontSize="small" />
                           Date & Time
                         </Box>
                       </TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 200 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <MedicalIcon fontSize="small" />
                           Healthcare Provider
                         </Box>
                       </TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>Status</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 120 }}>Status</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 120 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <PaymentIcon fontSize="small" />
                           Payment
                         </Box>
                       </TableCell>
-                      <TableCell align="right" sx={{ color: 'white', fontWeight: 600, py: 2 }}>Actions</TableCell>
+                      <TableCell align="right" sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 180 }}>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {filteredAppointments.map((appointment, index) => (
+                    {paginatedAppointments.map((appointment, index) => (
                       <Fade in={true} timeout={300 + index * 100} key={appointment.id}>
                         <TableRow 
                           hover
                           sx={{
                             '&:hover': {
-                              bgcolor: 'rgba(32, 160, 159, 0.04)',
-                              transform: 'scale(1.01)',
-                              transition: 'all 0.2s ease',
-                              boxShadow: '0 2px 8px rgba(32, 160, 159, 0.1)',
+                              bgcolor: 'rgba(32, 160, 159, 0.08)',
+                              transition: 'background-color 0.2s ease',
                             },
                             '&:nth-of-type(even)': {
                               bgcolor: '#fafafa',
@@ -571,7 +584,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                             borderBottom: '1px solid #f0f0f0',
                           }}
                         >
-                          <TableCell sx={{ py: 3 }}>
+                          <TableCell sx={{ py: 3, minWidth: 180 }}>
                             <Box display="flex" alignItems="center" gap={2}>
                               <Avatar sx={{ 
                                 bgcolor: 'primary.main', 
@@ -593,7 +606,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                               </Box>
                             </Box>
                           </TableCell>
-                          <TableCell sx={{ py: 3 }}>
+                          <TableCell sx={{ py: 3, minWidth: 160 }}>
                             <Box>
                               <Typography variant="body2" fontWeight="600" color="text.primary">
                                 {dayjs(appointment.date).format('MMM D, YYYY')}
@@ -606,7 +619,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                               </Box>
                             </Box>
                           </TableCell>
-                          <TableCell sx={{ py: 3 }}>
+                          <TableCell sx={{ py: 3, minWidth: 200 }}>
                             <Box display="flex" alignItems="center" gap={2}>
                               <Avatar sx={{ 
                                 bgcolor: 'primary.main', 
@@ -630,7 +643,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                               </Box>
                             </Box>
                           </TableCell>
-                          <TableCell sx={{ py: 3 }}>
+                          <TableCell sx={{ py: 3, minWidth: 120 }}>
                             <Chip
                               label={`${appointment.status === 'confirmed' ? '🟢' : appointment.status === 'pending' ? '🟡' : '🔴'} ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}`}
                               color={getStatusColor(appointment.status)}
@@ -658,7 +671,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                               }}
                             />
                           </TableCell>
-                          <TableCell sx={{ py: 3 }}>
+                          <TableCell sx={{ py: 3, minWidth: 120 }}>
                             <Tooltip title="Click to mark as paid" arrow>
                               <Chip
                                 icon={<PaymentIcon fontSize="small" />}
@@ -695,7 +708,7 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                               />
                             </Tooltip>
                           </TableCell>
-                          <TableCell align="right" sx={{ py: 3 }}>
+                          <TableCell align="right" sx={{ py: 3, minWidth: 180 }}>
                             <Stack direction="row" spacing={1} justifyContent="flex-end">
                               <Tooltip title="View Appointment Details" arrow>
                                 <IconButton
@@ -773,6 +786,59 @@ export default function PatientAppointments({ appointments, allAppointments, cur
                   </TableBody>
                 </Table>
               </TableContainer>
+              
+              {/* Beautiful Pagination */}
+              {totalPages > 1 && (
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center', 
+                  mt: 4, 
+                  mb: 2,
+                  gap: 2
+                }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Showing {startIndex + 1}-{Math.min(endIndex, filteredAppointments.length)} of {filteredAppointments.length} appointments
+                  </Typography>
+                  <Pagination
+                    count={totalPages}
+                    page={currentPage}
+                    onChange={(_event, page) => handlePageChange(page)}
+                    color="primary"
+                    size="large"
+                    shape="rounded"
+                    showFirstButton
+                    showLastButton
+                    sx={{
+                      '& .MuiPaginationItem-root': {
+                        borderRadius: 2,
+                        fontWeight: 600,
+                        minWidth: 40,
+                        height: 40,
+                        border: '1px solid #e0e0e0',
+                        '&:hover': {
+                          bgcolor: 'primary.main',
+                          color: 'white',
+                          transform: 'scale(1.05)',
+                          boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
+                        },
+                        '&.Mui-selected': {
+                          bgcolor: 'primary.main',
+                          color: 'white',
+                          boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
+                          '&:hover': {
+                            bgcolor: 'primary.dark',
+                          },
+                        },
+                        transition: 'all 0.2s ease',
+                      },
+                      '& .MuiPaginationItem-ellipsis': {
+                        color: 'text.secondary',
+                      },
+                    }}
+                  />
+                </Box>
+              )}
             </Card>
           )}
 
