@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DoctorApplicationController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,6 +21,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('appointments', AppointmentController::class);
     Route::patch('appointments/{appointment}/patient', [AppointmentController::class, 'updatePatient'])->name('appointments.update-patient');
     Route::get('api/appointments/availability', [AppointmentController::class, 'availability'])->name('appointments.availability');
+    
+    Route::get('providers', [UserController::class, 'providers'])->name('providers.index');
+    Route::get('patients', [UserController::class, 'patients'])->name('patients.index');
 
     Route::middleware(['can:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('doctor-applications', [DoctorApplicationController::class, 'index'])->name('doctor-applications.index');

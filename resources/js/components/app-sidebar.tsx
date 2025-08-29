@@ -8,7 +8,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { Calendar, CreditCard, Home, Settings, Stethoscope, Users, UserCheck } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const baseNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
@@ -19,6 +19,32 @@ const mainNavItems: NavItem[] = [
         href: '/appointments',
         icon: Calendar,
     },
+];
+
+const adminNavItems: NavItem[] = [
+    {
+        title: 'Providers',
+        href: '/providers',
+        icon: Stethoscope,
+    },
+    {
+        title: 'Patients',
+        href: '/patients',
+        icon: Users,
+    },
+    {
+        title: 'Payments',
+        href: '/payments',
+        icon: CreditCard,
+    },
+    {
+        title: 'Doctor Applications',
+        href: '/admin/doctor-applications',
+        icon: UserCheck,
+    },
+];
+
+const providerNavItems: NavItem[] = [
     {
         title: 'Providers',
         href: '/providers',
@@ -36,23 +62,41 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
+const patientNavItems: NavItem[] = [
+    {
+        title: 'Providers',
+        href: '/providers',
+        icon: Stethoscope,
+    },
+    {
+        title: 'Payments',
+        href: '/payments',
+        icon: CreditCard,
+    },
+];
+
 const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     
-    const adminNavItems: NavItem[] = [
-        {
-            title: 'Doctor Applications',
-            href: '/admin/doctor-applications',
-            icon: UserCheck,
-        },
-    ];
+    const getRoleBasedNavItems = () => {
+        if (!auth.user) return baseNavItems;
+        
+        switch (auth.user.role) {
+            case 'super_admin':
+            case 'admin':
+                return [...baseNavItems, ...adminNavItems];
+            case 'provider':
+                return [...baseNavItems, ...providerNavItems];
+            case 'client':
+                return [...baseNavItems, ...patientNavItems];
+            default:
+                return baseNavItems;
+        }
+    };
 
-    const allNavItems = [
-        ...mainNavItems,
-        ...(auth.user && (auth.user.role === 'super_admin' || auth.user.role === 'admin') ? adminNavItems : []),
-    ];
+    const allNavItems = getRoleBasedNavItems();
 
     return (
         <Sidebar collapsible="icon" variant="inset">
