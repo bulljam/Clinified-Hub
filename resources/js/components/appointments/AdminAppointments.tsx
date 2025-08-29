@@ -117,6 +117,42 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
   };
 
   // Statistics for medical dashboard feel
+  // Filter appointments based on current filter values
+  const filteredAppointments = appointments.data.filter(appointment => {
+    // Status filter
+    if (statusFilter && appointment.status !== statusFilter) {
+      return false;
+    }
+    
+    // Payment filter
+    if (paymentFilter && appointment.payment_status !== paymentFilter) {
+      return false;
+    }
+    
+    // Provider filter
+    if (providerFilter && appointment.provider.id.toString() !== providerFilter) {
+      return false;
+    }
+    
+    // Date filter
+    if (dateFilter) {
+      const appointmentDate = appointment.date.split('T')[0]; // Handle both date formats
+      if (appointmentDate !== dateFilter) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
+
+  // Update stats to use filtered data
+  const filteredStats = {
+    total: filteredAppointments.length,
+    confirmed: filteredAppointments.filter(a => a.status === 'confirmed').length,
+    pending: filteredAppointments.filter(a => a.status === 'pending').length,
+    paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
+  };
+
   const appointmentStats = {
     total: appointments.data.length,
     confirmed: appointments.data.filter(a => a.status === 'confirmed').length,
@@ -125,12 +161,8 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
   };
 
   const handleFilterChange = () => {
-    router.get('/appointments', {
-      status: statusFilter,
-      payment_status: paymentFilter,
-      provider_id: providerFilter,
-      date: dateFilter,
-    }, { preserveState: true });
+    // Filters are applied automatically through filteredAppointments
+    console.log('Applying filters:', { statusFilter, paymentFilter, providerFilter, dateFilter });
   };
 
   const handleDelete = (appointmentId: number) => {
@@ -154,7 +186,6 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
     setPaymentFilter('');
     setProviderFilter('');
     setDateFilter('');
-    router.get('/appointments');
   };
 
   return (
@@ -202,176 +233,186 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
         </CardContent>
       </Card>
 
-      {/* Statistics Cards */}
-      <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={3} mb={4}>
-        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-          <CardContent sx={{ p: 3, position: 'relative', overflow: 'hidden' }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Box>
-                <Typography variant="h4" fontWeight="bold" color="primary.main">
-                  {appointmentStats.total}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Total Appointments
-                </Typography>
+      {/* Statistics Cards - Only show in list view */}
+      {activeTab === 0 && (
+        <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={3} mb={4}>
+          <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+            <CardContent sx={{ p: 3, position: 'relative', overflow: 'hidden' }}>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography variant="h4" fontWeight="bold" color="primary.main">
+                    {filteredStats.total}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Total Appointments
+                  </Typography>
+                </Box>
+                <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
+                  <StatsIcon />
+                </Avatar>
               </Box>
-              <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
-                <StatsIcon />
-              </Avatar>
-            </Box>
-            <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
-              <MedicalIcon sx={{ fontSize: 80 }} />
-            </Box>
-          </CardContent>
-        </Card>
-
-        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-          <CardContent sx={{ p: 3, position: 'relative' }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Box>
-                <Typography variant="h4" fontWeight="bold" color="success.main">
-                  {appointmentStats.confirmed}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Confirmed
-                </Typography>
+              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+                <MedicalIcon sx={{ fontSize: 80 }} />
               </Box>
-              <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
-                <PersonIcon />
-              </Avatar>
-            </Box>
-            <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
-              <PersonIcon sx={{ fontSize: 80 }} />
-            </Box>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-          <CardContent sx={{ p: 3, position: 'relative' }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Box>
-                <Typography variant="h4" fontWeight="bold" color="warning.main">
-                  {appointmentStats.pending}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Pending
-                </Typography>
+          <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+            <CardContent sx={{ p: 3, position: 'relative' }}>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography variant="h4" fontWeight="bold" color="success.main">
+                    {appointmentStats.confirmed}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Confirmed
+                  </Typography>
+                </Box>
+                <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
+                  <PersonIcon />
+                </Avatar>
               </Box>
-              <Avatar sx={{ bgcolor: 'warning.main', width: 48, height: 48 }}>
-                <TimeIcon />
-              </Avatar>
-            </Box>
-            <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
-              <TimeIcon sx={{ fontSize: 80 }} />
-            </Box>
-          </CardContent>
-        </Card>
-
-        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-          <CardContent sx={{ p: 3, position: 'relative' }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Box>
-                <Typography variant="h4" fontWeight="bold" color="success.main">
-                  {appointmentStats.paid}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Paid
-                </Typography>
+              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+                <PersonIcon sx={{ fontSize: 80 }} />
               </Box>
-              <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
-                <PaymentIcon />
-              </Avatar>
+            </CardContent>
+          </Card>
+
+          <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+            <CardContent sx={{ p: 3, position: 'relative' }}>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography variant="h4" fontWeight="bold" color="warning.main">
+                    {appointmentStats.pending}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Pending
+                  </Typography>
+                </Box>
+                <Avatar sx={{ bgcolor: 'warning.main', width: 48, height: 48 }}>
+                  <TimeIcon />
+                </Avatar>
+              </Box>
+              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+                <TimeIcon sx={{ fontSize: 80 }} />
+              </Box>
+            </CardContent>
+          </Card>
+
+          <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+            <CardContent sx={{ p: 3, position: 'relative' }}>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography variant="h4" fontWeight="bold" color="success.main">
+                    {appointmentStats.paid}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Paid
+                  </Typography>
+                </Box>
+                <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
+                  <PaymentIcon />
+                </Avatar>
+              </Box>
+              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+                <PaymentIcon sx={{ fontSize: 80 }} />
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+      )}
+
+      {/* Advanced Filters Section - Only show in list view */}
+      {activeTab === 0 && (
+        <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+          <CardContent sx={{ p: 4 }}>
+            <Box display="flex" alignItems="center" gap={2} mb={3}>
+              <FilterIcon color="primary" />
+              <Typography variant="h6" fontWeight="600" color="primary.main">
+                Advanced Filters
+              </Typography>
             </Box>
-            <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
-              <PaymentIcon sx={{ fontSize: 80 }} />
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems="center" flexWrap="wrap">
+              <FormControl size="medium" sx={{ minWidth: 220 }}>
+                <InputLabel>Appointment Status</InputLabel>
+                <Select
+                  value={statusFilter}
+                  label="Appointment Status"
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  sx={{ borderRadius: 2 }}
+                >
+                  <MenuItem value="">All Status</MenuItem>
+                  <MenuItem value="pending">🟡 Pending</MenuItem>
+                  <MenuItem value="confirmed">🟢 Confirmed</MenuItem>
+                  <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
+                </Select>
+              </FormControl>
 
-      {/* Advanced Filters Section */}
-      <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-        <CardContent sx={{ p: 4 }}>
-          <Box display="flex" alignItems="center" gap={2} mb={3}>
-            <FilterIcon color="primary" />
-            <Typography variant="h6" fontWeight="600" color="primary.main">
-              Advanced Filters
-            </Typography>
-          </Box>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems="center" flexWrap="wrap">
-            <FormControl size="small" sx={{ minWidth: 140 }}>
-              <InputLabel>Appointment Status</InputLabel>
-              <Select
-                value={statusFilter}
-                label="Appointment Status"
-                onChange={(e) => setStatusFilter(e.target.value)}
-                sx={{ borderRadius: 2 }}
-              >
-                <MenuItem value="">All Status</MenuItem>
-                <MenuItem value="pending">🟡 Pending</MenuItem>
-                <MenuItem value="confirmed">🟢 Confirmed</MenuItem>
-                <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
-              </Select>
-            </FormControl>
+              <FormControl size="medium" sx={{ minWidth: 220 }}>
+                <InputLabel>Payment Status</InputLabel>
+                <Select
+                  value={paymentFilter}
+                  label="Payment Status"
+                  onChange={(e) => setPaymentFilter(e.target.value)}
+                  sx={{ borderRadius: 2 }}
+                >
+                  <MenuItem value="">All Payments</MenuItem>
+                  <MenuItem value="pending">🟡 Pending</MenuItem>
+                  <MenuItem value="paid">🟢 Paid</MenuItem>
+                </Select>
+              </FormControl>
 
-            <FormControl size="small" sx={{ minWidth: 140 }}>
-              <InputLabel>Payment Status</InputLabel>
-              <Select
-                value={paymentFilter}
-                label="Payment Status"
-                onChange={(e) => setPaymentFilter(e.target.value)}
-                sx={{ borderRadius: 2 }}
-              >
-                <MenuItem value="">All Payments</MenuItem>
-                <MenuItem value="pending">🟡 Pending</MenuItem>
-                <MenuItem value="paid">🟢 Paid</MenuItem>
-              </Select>
-            </FormControl>
-
-            <TextField
-              size="small"
-              label="Filter by Date"
-              type="date"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              sx={{ 
-                minWidth: 160,
-                '& .MuiOutlinedInput-root': { borderRadius: 2 }
-              }}
-            />
-
-            <Box display="flex" gap={2}>
-              <Button 
-                variant="contained" 
-                onClick={handleFilterChange}
-                startIcon={<SearchIcon />}
-                sx={{ 
-                  borderRadius: 2,
-                  px: 3,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  boxShadow: '0 2px 8px rgba(32, 160, 159, 0.2)'
+              <TextField
+                size="medium"
+                label="Filter by Date"
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                slotProps={{
+                  inputLabel: { shrink: true }
                 }}
-              >
-                Apply Filters
-              </Button>
-              <Button 
-                variant="outlined" 
-                onClick={clearFilters}
                 sx={{ 
-                  borderRadius: 2,
-                  px: 3,
-                  textTransform: 'none',
-                  fontWeight: 500
+                  minWidth: 220,
+                  '& .MuiOutlinedInput-root': { borderRadius: 2 }
                 }}
-              >
-                Clear All
-              </Button>
-            </Box>
-          </Stack>
-        </CardContent>
-      </Card>
+              />
+
+              <Box display="flex" gap={2}>
+                <Button 
+                  variant="contained" 
+                  onClick={handleFilterChange}
+                  startIcon={<SearchIcon />}
+                  size="large"
+                  sx={{ 
+                    borderRadius: 2,
+                    px: 4,
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    boxShadow: '0 2px 8px rgba(32, 160, 159, 0.2)'
+                  }}
+                >
+                  Apply Filters
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  onClick={clearFilters}
+                  size="large"
+                  sx={{ 
+                    borderRadius: 2,
+                    px: 4,
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontWeight: 500
+                  }}
+                >
+                  Clear All
+                </Button>
+              </Box>
+            </Stack>
+          </CardContent>
+        </Card>
+      )}
 
       {/* View Toggle Tabs */}
       <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
@@ -748,33 +789,13 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
         </Box>
       )}
 
-      {/* Pagination Footer */}
-      {appointments.data.length > 0 && (
+      {/* Pagination Footer - Only show in list view */}
+      {appointments.data.length > 0 && activeTab === 0 && (
         <Card elevation={0} sx={{ mt: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ textAlign: 'center', py: 3 }}>
             <Typography variant="body2" color="text.secondary">
               Showing <strong>{appointments.from || 0}-{appointments.to || 0}</strong> of <strong>{appointments.total || 0}</strong> appointments
             </Typography>
-            <Box display="flex" justifyContent="center" alignItems="center" gap={2} mt={2}>
-              <Chip 
-                label={`Total: ${appointmentStats.total}`}
-                color="primary"
-                size="small"
-                sx={{ fontWeight: 600 }}
-              />
-              <Chip 
-                label={`Confirmed: ${appointmentStats.confirmed}`}
-                color="success"
-                size="small"
-                sx={{ fontWeight: 600 }}
-              />
-              <Chip 
-                label={`Pending: ${appointmentStats.pending}`}
-                color="warning"
-                size="small"
-                sx={{ fontWeight: 600 }}
-              />
-            </Box>
           </CardContent>
         </Card>
       )}

@@ -1,7 +1,6 @@
 import { 
   Box, 
   Typography, 
-  Chip, 
   Avatar, 
   Card, 
   CardContent, 
@@ -17,9 +16,6 @@ import moment from 'moment';
 import React, { useState } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import {
-  LocalHospital as MedicalIcon,
-  Person as PersonIcon,
-  AccessTime as TimeIcon,
   CalendarMonth as CalendarIcon,
   ViewWeek as WeekIcon,
   Today as DayIcon,
@@ -462,31 +458,6 @@ export default function AppointmentCalendar({
         }
       `}</style>
       
-      {/* Calendar Statistics Header */}
-      <Card elevation={0} sx={{ mb: 3, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-        <CardContent sx={{ p: 2 }}>
-          <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
-            <Chip 
-              icon={<MedicalIcon />}
-              label={`Total Appointments: ${appointments.length}`}
-              color="primary"
-              sx={{ fontWeight: 600 }}
-            />
-            <Chip 
-              icon={<PersonIcon />}
-              label={`Confirmed: ${appointments.filter(a => a.status === 'confirmed').length}`}
-              color="success"
-              sx={{ fontWeight: 600 }}
-            />
-            <Chip 
-              icon={<TimeIcon />}
-              label={`Pending: ${appointments.filter(a => a.status === 'pending').length}`}
-              color="warning"
-              sx={{ fontWeight: 600 }}
-            />
-          </Stack>
-        </CardContent>
-      </Card>
       
       {appointments.length === 0 ? (
         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
