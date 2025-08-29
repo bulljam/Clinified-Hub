@@ -20,6 +20,12 @@ import {
   TableRow,
   TextField,
   Typography,
+  Avatar,
+  Tooltip,
+  Fade,
+  Stack,
+  Divider,
+  LinearProgress,
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -27,6 +33,13 @@ import {
   Visibility as ViewIcon,
   CalendarMonth as CalendarIcon,
   List as ListIcon,
+  LocalHospital as MedicalIcon,
+  Person as PersonIcon,
+  AccessTime as TimeIcon,
+  AttachMoney as PaymentIcon,
+  TrendingUp as StatsIcon,
+  Search as SearchIcon,
+  FilterAlt as FilterIcon,
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
@@ -97,9 +110,18 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
   const [paymentFilter, setPaymentFilter] = useState(filters.payment_status || '');
   const [providerFilter, setProviderFilter] = useState(filters.provider_id || '');
   const [dateFilter, setDateFilter] = useState(filters.date || '');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
+  };
+
+  // Statistics for medical dashboard feel
+  const appointmentStats = {
+    total: appointments.data.length,
+    confirmed: appointments.data.filter(a => a.status === 'confirmed').length,
+    pending: appointments.data.filter(a => a.status === 'pending').length,
+    paid: appointments.data.filter(a => a.payment_status === 'paid').length,
   };
 
   const handleFilterChange = () => {
@@ -136,37 +158,159 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
   };
 
   return (
-    <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4" component="h1">
-          All Appointments
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => router.visit('/appointments/create')}
-        >
-          Create Appointment
-        </Button>
+    <Box sx={{ p: { xs: 2, md: 3 }, minHeight: '100vh', bgcolor: '#fafafa' }}>
+      {isLoading && <LinearProgress sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }} />}
+      
+      {/* Header Section */}
+      <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+        <CardContent sx={{ p: 4 }}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
+            <Box display="flex" alignItems="center" gap={2}>
+              <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+                <MedicalIcon sx={{ fontSize: 28 }} />
+              </Avatar>
+              <Box>
+                <Typography variant="h4" component="h1" fontWeight="bold" color="primary.main">
+                  Patient Appointments
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Manage and track all patient appointments
+                </Typography>
+              </Box>
+            </Box>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => router.visit('/appointments/create')}
+              sx={{ 
+                borderRadius: 3,
+                px: 4,
+                py: 1.5,
+                textTransform: 'none',
+                fontWeight: 600,
+                boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                '&:hover': {
+                  boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+                  transform: 'translateY(-1px)',
+                }
+              }}
+            >
+              + New Appointment
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Statistics Cards */}
+      <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={3} mb={4}>
+        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+          <CardContent sx={{ p: 3, position: 'relative', overflow: 'hidden' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Box>
+                <Typography variant="h4" fontWeight="bold" color="primary.main">
+                  {appointmentStats.total}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Total Appointments
+                </Typography>
+              </Box>
+              <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
+                <StatsIcon />
+              </Avatar>
+            </Box>
+            <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+              <MedicalIcon sx={{ fontSize: 80 }} />
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+          <CardContent sx={{ p: 3, position: 'relative' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Box>
+                <Typography variant="h4" fontWeight="bold" color="success.main">
+                  {appointmentStats.confirmed}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Confirmed
+                </Typography>
+              </Box>
+              <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
+                <PersonIcon />
+              </Avatar>
+            </Box>
+            <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+              <PersonIcon sx={{ fontSize: 80 }} />
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+          <CardContent sx={{ p: 3, position: 'relative' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Box>
+                <Typography variant="h4" fontWeight="bold" color="warning.main">
+                  {appointmentStats.pending}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Pending
+                </Typography>
+              </Box>
+              <Avatar sx={{ bgcolor: 'warning.main', width: 48, height: 48 }}>
+                <TimeIcon />
+              </Avatar>
+            </Box>
+            <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+              <TimeIcon sx={{ fontSize: 80 }} />
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+          <CardContent sx={{ p: 3, position: 'relative' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Box>
+                <Typography variant="h4" fontWeight="bold" color="success.main">
+                  {appointmentStats.paid}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Paid
+                </Typography>
+              </Box>
+              <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
+                <PaymentIcon />
+              </Avatar>
+            </Box>
+            <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+              <PaymentIcon sx={{ fontSize: 80 }} />
+            </Box>
+          </CardContent>
+        </Card>
       </Box>
 
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Filters
-          </Typography>
-          <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
-            <FormControl size="small" sx={{ minWidth: 120 }}>
-              <InputLabel>Status</InputLabel>
+      {/* Advanced Filters Section */}
+      <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+        <CardContent sx={{ p: 4 }}>
+          <Box display="flex" alignItems="center" gap={2} mb={3}>
+            <FilterIcon color="primary" />
+            <Typography variant="h6" fontWeight="600" color="primary.main">
+              Advanced Filters
+            </Typography>
+          </Box>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems="center" flexWrap="wrap">
+            <FormControl size="small" sx={{ minWidth: 140 }}>
+              <InputLabel>Appointment Status</InputLabel>
               <Select
                 value={statusFilter}
-                label="Status"
+                label="Appointment Status"
                 onChange={(e) => setStatusFilter(e.target.value)}
+                sx={{ borderRadius: 2 }}
               >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="confirmed">Confirmed</MenuItem>
-                <MenuItem value="cancelled">Cancelled</MenuItem>
+                <MenuItem value="">All Status</MenuItem>
+                <MenuItem value="pending">🟡 Pending</MenuItem>
+                <MenuItem value="confirmed">🟢 Confirmed</MenuItem>
+                <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
               </Select>
             </FormControl>
 
@@ -176,169 +320,423 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
                 value={paymentFilter}
                 label="Payment Status"
                 onChange={(e) => setPaymentFilter(e.target.value)}
+                sx={{ borderRadius: 2 }}
               >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="paid">Paid</MenuItem>
+                <MenuItem value="">All Payments</MenuItem>
+                <MenuItem value="pending">🟡 Pending</MenuItem>
+                <MenuItem value="paid">🟢 Paid</MenuItem>
               </Select>
             </FormControl>
 
             <TextField
               size="small"
-              label="Date"
+              label="Filter by Date"
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
               InputLabelProps={{ shrink: true }}
-              sx={{ minWidth: 150 }}
+              sx={{ 
+                minWidth: 160,
+                '& .MuiOutlinedInput-root': { borderRadius: 2 }
+              }}
             />
 
-            <Button variant="contained" onClick={handleFilterChange}>
-              Apply Filters
-            </Button>
-            <Button variant="outlined" onClick={clearFilters}>
-              Clear
-            </Button>
-          </Box>
+            <Box display="flex" gap={2}>
+              <Button 
+                variant="contained" 
+                onClick={handleFilterChange}
+                startIcon={<SearchIcon />}
+                sx={{ 
+                  borderRadius: 2,
+                  px: 3,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  boxShadow: '0 2px 8px rgba(32, 160, 159, 0.2)'
+                }}
+              >
+                Apply Filters
+              </Button>
+              <Button 
+                variant="outlined" 
+                onClick={clearFilters}
+                sx={{ 
+                  borderRadius: 2,
+                  px: 3,
+                  textTransform: 'none',
+                  fontWeight: 500
+                }}
+              >
+                Clear All
+              </Button>
+            </Box>
+          </Stack>
         </CardContent>
       </Card>
 
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs value={activeTab} onChange={handleTabChange} aria-label="appointment view tabs">
-          <Tab
-            icon={<ListIcon />}
-            label="List View"
-            iconPosition="start"
-            sx={{ textTransform: 'none' }}
-          />
-          <Tab
-            icon={<CalendarIcon />}
-            label="Calendar View"
-            iconPosition="start"
-            sx={{ textTransform: 'none' }}
-          />
-        </Tabs>
-      </Box>
+      {/* View Toggle Tabs */}
+      <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs 
+            value={activeTab} 
+            onChange={handleTabChange} 
+            variant="fullWidth"
+            sx={{
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '1rem',
+                py: 2,
+                '&.Mui-selected': {
+                  color: 'primary.main',
+                  bgcolor: 'primary.main',
+                  color: 'white',
+                  borderRadius: '8px 8px 0 0',
+                }
+              },
+              '& .MuiTabs-indicator': {
+                display: 'none'
+              }
+            }}
+          >
+            <Tab
+              icon={<ListIcon />}
+              label="Patient List View"
+              iconPosition="start"
+            />
+            <Tab
+              icon={<CalendarIcon />}
+              label="Calendar Overview"
+              iconPosition="start"
+            />
+          </Tabs>
+        </Box>
+      </Card>
 
       {appointments.data.length === 0 ? (
-        <Card>
-          <CardContent sx={{ textAlign: 'center', py: 4 }}>
-            <Typography variant="body1" color="textSecondary">
-              No appointments found with the current filters.
+        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
+          <CardContent sx={{ textAlign: 'center', py: 8 }}>
+            <Avatar sx={{ bgcolor: 'grey.100', width: 80, height: 80, mx: 'auto', mb: 3 }}>
+              <MedicalIcon sx={{ fontSize: 40, color: 'grey.400' }} />
+            </Avatar>
+            <Typography variant="h6" fontWeight="600" color="text.primary" mb={1}>
+              No Appointments Found
             </Typography>
+            <Typography variant="body2" color="text.secondary" mb={3}>
+              No appointments match your current filter criteria. Try adjusting your filters or create a new appointment.
+            </Typography>
+            <Button 
+              variant="contained"
+              onClick={() => router.visit('/appointments/create')}
+              sx={{ borderRadius: 2, px: 4, textTransform: 'none', fontWeight: 600 }}
+            >
+              Create New Appointment
+            </Button>
           </CardContent>
         </Card>
       ) : (
         <Box>
           {activeTab === 0 && (
-            <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Date & Time</TableCell>
-                <TableCell>Patient</TableCell>
-                <TableCell>Provider</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Payment</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {appointments.data.map((appointment) => (
-                <TableRow key={appointment.id} hover>
-                  <TableCell>
-                    <Typography variant="body2" fontFamily="monospace">
-                      #{appointment.id}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Box>
-                      <Typography variant="body2" fontWeight="medium">
-                        {dayjs(appointment.date).format('MMM D, YYYY')}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {appointment.time ? dayjs(`1970-01-01 ${appointment.time}`).format('h:mm A') : 'N/A'}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box>
-                      <Typography variant="body2" fontWeight="medium">
-                        {appointment.user.name}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {appointment.user.email}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box>
-                      <Typography variant="body2" fontWeight="medium">
-                        {appointment.provider.name}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {appointment.provider.email}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Chip
-                        label={appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
-                        color={getStatusColor(appointment.status)}
-                        size="small"
-                        onClick={() => {
-                          const newStatus = appointment.status === 'pending' ? 'confirmed' : 
-                                          appointment.status === 'confirmed' ? 'cancelled' : 'pending';
-                          handleQuickStatusUpdate(appointment.id, newStatus);
-                        }}
-                        sx={{ cursor: 'pointer' }}
-                      />
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Chip
-                        label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
-                        color={getPaymentStatusColor(appointment.payment_status)}
-                        size="small"
-                        onClick={() => {
-                          const newPaymentStatus = appointment.payment_status === 'pending' ? 'paid' : 'pending';
-                          handlePaymentStatusUpdate(appointment.id, newPaymentStatus);
-                        }}
-                        sx={{ cursor: 'pointer' }}
-                      />
-                    </Box>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Box display="flex" gap={1}>
-                      <IconButton
-                        size="small"
-                        onClick={() => router.visit(`/appointments/${appointment.id}`)}
-                      >
-                        <ViewIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => router.visit(`/appointments/${appointment.id}/edit`)}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDelete(appointment.id)}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            </Table>
-            </TableContainer>
+            <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: 'primary.main' }}>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <MedicalIcon fontSize="small" />
+                          Appointment ID
+                        </Box>
+                      </TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <TimeIcon fontSize="small" />
+                          Date & Time
+                        </Box>
+                      </TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <PersonIcon fontSize="small" />
+                          Patient Details
+                        </Box>
+                      </TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <MedicalIcon fontSize="small" />
+                          Healthcare Provider
+                        </Box>
+                      </TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>Status</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 600, py: 2 }}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <PaymentIcon fontSize="small" />
+                          Payment
+                        </Box>
+                      </TableCell>
+                      <TableCell align="right" sx={{ color: 'white', fontWeight: 600, py: 2 }}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {appointments.data.map((appointment, index) => (
+                      <Fade in={true} timeout={300 + index * 100} key={appointment.id}>
+                        <TableRow 
+                          hover
+                          sx={{
+                            '&:hover': {
+                              bgcolor: 'rgba(32, 160, 159, 0.04)',
+                              transform: 'scale(1.01)',
+                              transition: 'all 0.2s ease',
+                              boxShadow: '0 2px 8px rgba(32, 160, 159, 0.1)',
+                            },
+                            '&:nth-of-type(even)': {
+                              bgcolor: '#fafafa',
+                            },
+                            '&:nth-of-type(odd)': {
+                              bgcolor: 'white',
+                            },
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            borderBottom: '1px solid #f0f0f0',
+                          }}
+                        >
+                          <TableCell sx={{ py: 3 }}>
+                            <Box display="flex" alignItems="center" gap={2}>
+                              <Avatar sx={{ 
+                                bgcolor: 'primary.main', 
+                                width: 32, 
+                                height: 32, 
+                                fontSize: '0.8rem',
+                                boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
+                                border: '2px solid white'
+                              }}>
+                                <MedicalIcon fontSize="small" />
+                              </Avatar>
+                              <Box>
+                                <Typography variant="body2" fontFamily="monospace" fontWeight="600" color="primary.main">
+                                  APT-{appointment.id}
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  ID: #{appointment.id}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ py: 3 }}>
+                            <Box>
+                              <Typography variant="body2" fontWeight="600" color="text.primary">
+                                {dayjs(appointment.date).format('MMM D, YYYY')}
+                              </Typography>
+                              <Box display="flex" alignItems="center" gap={1} mt={0.5}>
+                                <TimeIcon fontSize="small" color="action" />
+                                <Typography variant="caption" color="text.secondary">
+                                  {appointment.time ? dayjs(`1970-01-01 ${appointment.time}`).format('h:mm A') : 'N/A'}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ py: 3 }}>
+                            <Box display="flex" alignItems="center" gap={2}>
+                              <Avatar sx={{ 
+                                bgcolor: '#4caf50', 
+                                width: 40, 
+                                height: 40,
+                                boxShadow: '0 2px 4px rgba(76, 175, 80, 0.3)',
+                                border: '2px solid white',
+                                fontSize: '1.1rem',
+                                fontWeight: 'bold'
+                              }}>
+                                {appointment.user.name.charAt(0)}
+                              </Avatar>
+                              <Box>
+                                <Typography variant="body2" fontWeight="600" color="text.primary">
+                                  {appointment.user.name}
+                                </Typography>
+                                <Stack direction="row" alignItems="center" spacing={0.5}>
+                                  <PersonIcon fontSize="small" color="action" />
+                                  <Typography variant="caption" color="text.secondary">
+                                    Patient • {appointment.user.email}
+                                  </Typography>
+                                </Stack>
+                              </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ py: 3 }}>
+                            <Box display="flex" alignItems="center" gap={2}>
+                              <Avatar sx={{ 
+                                bgcolor: 'primary.main', 
+                                width: 40, 
+                                height: 40,
+                                boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
+                                border: '2px solid white'
+                              }}>
+                                <MedicalIcon fontSize="small" />
+                              </Avatar>
+                              <Box>
+                                <Typography variant="body2" fontWeight="600" color="primary.main">
+                                  Dr. {appointment.provider.name}
+                                </Typography>
+                                <Stack direction="row" alignItems="center" spacing={0.5}>
+                                  <MedicalIcon fontSize="small" color="action" />
+                                  <Typography variant="caption" color="text.secondary">
+                                    Healthcare Provider • {appointment.provider.email}
+                                  </Typography>
+                                </Stack>
+                              </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ py: 3 }}>
+                            <Tooltip title="Click to cycle: Pending → Confirmed → Cancelled" arrow>
+                              <Chip
+                                label={`${appointment.status === 'confirmed' ? '🟢' : appointment.status === 'pending' ? '🟡' : '🔴'} ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}`}
+                                color={getStatusColor(appointment.status)}
+                                size="medium"
+                                onClick={() => {
+                                  const newStatus = appointment.status === 'pending' ? 'confirmed' : 
+                                                  appointment.status === 'confirmed' ? 'cancelled' : 'pending';
+                                  handleQuickStatusUpdate(appointment.id, newStatus);
+                                }}
+                                sx={{ 
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  minWidth: 100,
+                                  height: 32,
+                                  borderRadius: 2,
+                                  '&:hover': {
+                                    transform: 'scale(1.05)',
+                                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                                  },
+                                  transition: 'all 0.2s ease',
+                                  '&.MuiChip-colorWarning': {
+                                    bgcolor: '#fff3cd',
+                                    color: '#856404',
+                                    borderColor: '#ffeaa7',
+                                  },
+                                  '&.MuiChip-colorSuccess': {
+                                    bgcolor: '#d4edda',
+                                    color: '#155724',
+                                    borderColor: '#a7d8a7',
+                                  },
+                                  '&.MuiChip-colorError': {
+                                    bgcolor: '#f8d7da',
+                                    color: '#721c24',
+                                    borderColor: '#f1aeb5',
+                                  }
+                                }}
+                              />
+                            </Tooltip>
+                          </TableCell>
+                          <TableCell sx={{ py: 3 }}>
+                            <Tooltip title="Click to toggle: Pending ↔ Paid" arrow>
+                              <Chip
+                                icon={<PaymentIcon fontSize="small" />}
+                                label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
+                                color={getPaymentStatusColor(appointment.payment_status)}
+                                size="medium"
+                                onClick={() => {
+                                  const newPaymentStatus = appointment.payment_status === 'pending' ? 'paid' : 'pending';
+                                  handlePaymentStatusUpdate(appointment.id, newPaymentStatus);
+                                }}
+                                sx={{ 
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  minWidth: 100,
+                                  height: 32,
+                                  borderRadius: 2,
+                                  '&:hover': {
+                                    transform: 'scale(1.05)',
+                                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                                  },
+                                  transition: 'all 0.2s ease',
+                                  '&.MuiChip-colorWarning': {
+                                    bgcolor: '#fff3cd',
+                                    color: '#856404',
+                                    borderColor: '#ffeaa7',
+                                  },
+                                  '&.MuiChip-colorSuccess': {
+                                    bgcolor: '#d4edda',
+                                    color: '#155724',
+                                    borderColor: '#a7d8a7',
+                                  }
+                                }}
+                              />
+                            </Tooltip>
+                          </TableCell>
+                          <TableCell align="right" sx={{ py: 3 }}>
+                            <Stack direction="row" spacing={1} justifyContent="flex-end">
+                              <Tooltip title="View Patient Details" arrow>
+                                <IconButton
+                                  size="medium"
+                                  onClick={() => router.visit(`/appointments/${appointment.id}`)}
+                                  sx={{
+                                    bgcolor: 'primary.main',
+                                    color: 'white',
+                                    width: 36,
+                                    height: 36,
+                                    borderRadius: 2,
+                                    boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
+                                    '&:hover': {
+                                      bgcolor: 'primary.dark',
+                                      transform: 'scale(1.1) rotate(5deg)',
+                                      boxShadow: '0 4px 8px rgba(32, 160, 159, 0.4)',
+                                    },
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                  }}
+                                >
+                                  <ViewIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Edit Appointment" arrow>
+                                <IconButton
+                                  size="medium"
+                                  onClick={() => router.visit(`/appointments/${appointment.id}/edit`)}
+                                  sx={{
+                                    bgcolor: '#ff9800',
+                                    color: 'white',
+                                    width: 36,
+                                    height: 36,
+                                    borderRadius: 2,
+                                    boxShadow: '0 2px 4px rgba(255, 152, 0, 0.3)',
+                                    '&:hover': {
+                                      bgcolor: '#f57c00',
+                                      transform: 'scale(1.1) rotate(-5deg)',
+                                      boxShadow: '0 4px 8px rgba(255, 152, 0, 0.4)',
+                                    },
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                  }}
+                                >
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Cancel Appointment" arrow>
+                                <IconButton
+                                  size="medium"
+                                  onClick={() => handleDelete(appointment.id)}
+                                  sx={{
+                                    bgcolor: 'error.main',
+                                    color: 'white',
+                                    width: 36,
+                                    height: 36,
+                                    borderRadius: 2,
+                                    boxShadow: '0 2px 4px rgba(244, 67, 54, 0.3)',
+                                    '&:hover': {
+                                      bgcolor: 'error.dark',
+                                      transform: 'scale(1.1)',
+                                      boxShadow: '0 4px 8px rgba(244, 67, 54, 0.4)',
+                                    },
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                  }}
+                                >
+                                  <DeleteIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                      </Fade>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Card>
           )}
 
           {activeTab === 1 && (
@@ -350,12 +748,35 @@ export default function AdminAppointments({ appointments, filters = {} }: AdminA
         </Box>
       )}
 
+      {/* Pagination Footer */}
       {appointments.data.length > 0 && (
-        <Box mt={2} display="flex" justifyContent="center">
-          <Typography variant="body2" color="textSecondary">
-            Showing {appointments.from || 0}-{appointments.to || 0} of {appointments.total || 0} appointments
-          </Typography>
-        </Box>
+        <Card elevation={0} sx={{ mt: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+          <CardContent sx={{ textAlign: 'center', py: 3 }}>
+            <Typography variant="body2" color="text.secondary">
+              Showing <strong>{appointments.from || 0}-{appointments.to || 0}</strong> of <strong>{appointments.total || 0}</strong> appointments
+            </Typography>
+            <Box display="flex" justifyContent="center" alignItems="center" gap={2} mt={2}>
+              <Chip 
+                label={`Total: ${appointmentStats.total}`}
+                color="primary"
+                size="small"
+                sx={{ fontWeight: 600 }}
+              />
+              <Chip 
+                label={`Confirmed: ${appointmentStats.confirmed}`}
+                color="success"
+                size="small"
+                sx={{ fontWeight: 600 }}
+              />
+              <Chip 
+                label={`Pending: ${appointmentStats.pending}`}
+                color="warning"
+                size="small"
+                sx={{ fontWeight: 600 }}
+              />
+            </Box>
+          </CardContent>
+        </Card>
       )}
     </Box>
   );

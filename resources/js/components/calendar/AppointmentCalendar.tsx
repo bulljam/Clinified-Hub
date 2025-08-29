@@ -1,8 +1,31 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { 
+  Box, 
+  Typography, 
+  Chip, 
+  Avatar, 
+  Card, 
+  CardContent, 
+  Fade, 
+  Stack,
+  IconButton,
+  Tooltip,
+  Button,
+  ButtonGroup
+} from '@mui/material';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
 import React, { useState } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import {
+  LocalHospital as MedicalIcon,
+  Person as PersonIcon,
+  AccessTime as TimeIcon,
+  CalendarMonth as CalendarIcon,
+  ViewWeek as WeekIcon,
+  Today as DayIcon,
+  NavigateBefore as PrevIcon,
+  NavigateNext as NextIcon,
+} from '@mui/icons-material';
 
 const localizer = momentLocalizer(moment);
 
@@ -42,6 +65,133 @@ interface AppointmentCalendarProps {
 }
 
 
+
+// Custom Toolbar Component
+const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
+  return (
+    <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} p={2}>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
+          <CalendarIcon />
+        </Avatar>
+        <Box>
+          <Typography variant="h5" fontWeight="bold" color="primary.main">
+            {label}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Healthcare Appointment Schedule
+          </Typography>
+        </Box>
+      </Stack>
+
+      <Stack direction="row" spacing={2} alignItems="center">
+        <ButtonGroup variant="outlined" size="small">
+          <Tooltip title="Previous">
+            <IconButton 
+              onClick={() => onNavigate('PREV')}
+              sx={{ 
+                borderRadius: '8px 0 0 8px',
+                bgcolor: 'primary.main',
+                color: 'white',
+                '&:hover': { bgcolor: 'primary.dark' }
+              }}
+            >
+              <PrevIcon />
+            </IconButton>
+          </Tooltip>
+          <Button 
+            onClick={() => onNavigate('TODAY')}
+            sx={{ 
+              bgcolor: 'white',
+              color: 'primary.main',
+              fontWeight: 600,
+              '&:hover': { bgcolor: 'primary.main', color: 'white' }
+            }}
+          >
+            Today
+          </Button>
+          <Tooltip title="Next">
+            <IconButton 
+              onClick={() => onNavigate('NEXT')}
+              sx={{ 
+                borderRadius: '0 8px 8px 0',
+                bgcolor: 'primary.main',
+                color: 'white',
+                '&:hover': { bgcolor: 'primary.dark' }
+              }}
+            >
+              <NextIcon />
+            </IconButton>
+          </Tooltip>
+        </ButtonGroup>
+
+        <ButtonGroup variant="outlined" size="small">
+          <Button
+            onClick={() => onView('month')}
+            startIcon={<CalendarIcon />}
+            variant={view === 'month' ? 'contained' : 'outlined'}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
+          >
+            Month
+          </Button>
+          <Button
+            onClick={() => onView('week')}
+            startIcon={<WeekIcon />}
+            variant={view === 'week' ? 'contained' : 'outlined'}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
+          >
+            Week
+          </Button>
+          <Button
+            onClick={() => onView('day')}
+            startIcon={<DayIcon />}
+            variant={view === 'day' ? 'contained' : 'outlined'}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
+          >
+            Day
+          </Button>
+        </ButtonGroup>
+      </Stack>
+    </Box>
+  );
+};
+
+// Custom Event Component
+const EventComponent = ({ event }: { event: CalendarEvent }) => {
+  const appointment = event.resource;
+  const isConfirmed = appointment.status === 'confirmed';
+  const isPending = appointment.status === 'pending';
+  
+  return (
+    <Box
+      sx={{
+        p: 0.5,
+        borderRadius: 1,
+        backgroundColor: isConfirmed ? '#2ECC71' : isPending ? '#F39C12' : '#E74C3C',
+        color: 'white',
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0.5,
+        minHeight: '24px',
+        overflow: 'hidden',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: 2,
+        },
+        transition: 'all 0.2s ease',
+      }}
+    >
+      <Avatar sx={{ width: 16, height: 16, fontSize: '0.6rem', bgcolor: 'rgba(255,255,255,0.2)' }}>
+        {event.title.charAt(0)}
+      </Avatar>
+      <Typography variant="caption" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+        {event.title}
+      </Typography>
+    </Box>
+  );
+};
 
 export default function AppointmentCalendar({
   appointments,
@@ -215,8 +365,46 @@ export default function AppointmentCalendar({
   };
 
   return (
-    <Box>
+    <Box sx={{ p: 2 }}>
       <style>{`
+        /* Enhanced React Big Calendar Styling */
+        .rbc-calendar {
+          font-family: 'Roboto', sans-serif !important;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .rbc-header {
+          background: linear-gradient(135deg, #20a09f 0%, #178f8e 100%);
+          color: white !important;
+          font-weight: 600 !important;
+          padding: 12px 8px !important;
+          border: none !important;
+          font-size: 0.9rem !important;
+        }
+        
+        .rbc-month-view {
+          border: none !important;
+        }
+        
+        .rbc-date-cell {
+          padding: 8px !important;
+          border: 1px solid #f0f0f0 !important;
+          transition: all 0.2s ease !important;
+        }
+        
+        .rbc-date-cell:hover {
+          background-color: #f8f9fa !important;
+          transform: scale(1.02);
+        }
+        
+        .rbc-today {
+          background: linear-gradient(135deg, #e6fbfb 0%, #ccf7f7 100%) !important;
+          border: 2px solid #20a09f !important;
+          box-shadow: 0 2px 8px rgba(32, 160, 159, 0.2) !important;
+        }
+        
         .rbc-time-slot:has(.rbc-label) {
           background-color: transparent !important;
           color: inherit !important;
@@ -233,12 +421,20 @@ export default function AppointmentCalendar({
           line-height: inherit !important;
         }
         
+        .rbc-time-gutter .rbc-time-slot {
+          border-right: 2px solid #20a09f !important;
+          background: linear-gradient(90deg, #f8f9fa 0%, #ffffff 100%) !important;
+          font-weight: 500 !important;
+          color: #20a09f !important;
+        }
+        
         .appointment-slot-with-content:not(:has(.rbc-label))::before {
           content: var(--appointment-name);
           display: block;
           font-size: 10px;
           font-weight: bold;
           line-height: 1.1;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .appointment-slot-with-content:not(:has(.rbc-label))::after {
           content: var(--appointment-status);
@@ -248,43 +444,102 @@ export default function AppointmentCalendar({
           line-height: 1.1;
           margin-top: 1px;
         }
+        
+        .rbc-event {
+          border-radius: 8px !important;
+          border: none !important;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+          transition: all 0.2s ease !important;
+        }
+        
+        .rbc-event:hover {
+          transform: scale(1.05) !important;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+        }
+        
+        .rbc-event-content {
+          font-weight: 600 !important;
+        }
       `}</style>
       
-      {appointments.length === 0 && (
-        <Box mb={2} p={2} bgcolor="info.light" borderRadius={1}>
-          <Typography variant="body2">
-            No appointments found for the current filters.
-          </Typography>
-        </Box>
-      )}
+      {/* Calendar Statistics Header */}
+      <Card elevation={0} sx={{ mb: 3, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+        <CardContent sx={{ p: 2 }}>
+          <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+            <Chip 
+              icon={<MedicalIcon />}
+              label={`Total Appointments: ${appointments.length}`}
+              color="primary"
+              sx={{ fontWeight: 600 }}
+            />
+            <Chip 
+              icon={<PersonIcon />}
+              label={`Confirmed: ${appointments.filter(a => a.status === 'confirmed').length}`}
+              color="success"
+              sx={{ fontWeight: 600 }}
+            />
+            <Chip 
+              icon={<TimeIcon />}
+              label={`Pending: ${appointments.filter(a => a.status === 'pending').length}`}
+              color="warning"
+              sx={{ fontWeight: 600 }}
+            />
+          </Stack>
+        </CardContent>
+      </Card>
       
-      <Paper sx={{ p: 2, height: 600 }}>
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 550 }}
-          view={currentView}
-          onView={(newView) => setCurrentView(newView)}
-          views={[Views.MONTH, Views.WEEK, Views.DAY]}
-          dayPropGetter={dayPropGetter}
-          slotPropGetter={slotPropGetter}
-          eventPropGetter={eventStyleGetter}
-          onSelectEvent={onSelectEvent}
-          formats={{
-            timeGutterFormat: 'h:mm A',
-            eventTimeRangeFormat: ({ start, end }) => 
-              `${moment(start).format('h:mm A')} - ${moment(end).format('h:mm A')}`,
-          }}
-          step={30}
-          timeslots={1}
-          min={moment().set({ hour: 8, minute: 0 }).toDate()}
-          max={moment().set({ hour: 18, minute: 30 }).toDate()}
-          popup={true}
-          showMultiDayTimes={true}
-        />
-      </Paper>
+      {appointments.length === 0 ? (
+        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
+          <CardContent sx={{ textAlign: 'center', py: 8 }}>
+            <Avatar sx={{ bgcolor: 'grey.100', width: 80, height: 80, mx: 'auto', mb: 3 }}>
+              <CalendarIcon sx={{ fontSize: 40, color: 'grey.400' }} />
+            </Avatar>
+            <Typography variant="h6" fontWeight="600" color="text.primary" mb={1}>
+              No Appointments Scheduled
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              No appointments found for the current filters. The calendar will display appointments when available.
+            </Typography>
+          </CardContent>
+        </Card>
+      ) : (
+        <Fade in={true} timeout={500}>
+          <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+            <Calendar
+              localizer={localizer}
+              events={events}
+              startAccessor="start"
+              endAccessor="end"
+              style={{ height: 650, fontFamily: 'Roboto' }}
+              view={currentView}
+              onView={(newView) => setCurrentView(newView)}
+              views={[Views.MONTH, Views.WEEK, Views.DAY]}
+              dayPropGetter={dayPropGetter}
+              slotPropGetter={slotPropGetter}
+              eventPropGetter={eventStyleGetter}
+              onSelectEvent={onSelectEvent}
+              components={{
+                toolbar: CustomToolbar,
+                event: EventComponent,
+              }}
+              formats={{
+                timeGutterFormat: 'h:mm A',
+                eventTimeRangeFormat: ({ start, end }) => 
+                  `${moment(start).format('h:mm A')} - ${moment(end).format('h:mm A')}`,
+                dayHeaderFormat: (date) => moment(date).format('dddd, MMM D'),
+                monthHeaderFormat: (date) => moment(date).format('MMMM YYYY'),
+              }}
+              step={30}
+              timeslots={1}
+              min={moment().set({ hour: 8, minute: 0 }).toDate()}
+              max={moment().set({ hour: 18, minute: 30 }).toDate()}
+              popup={true}
+              showMultiDayTimes={true}
+              scrollToTime={moment().set({ hour: 8, minute: 0 }).toDate()}
+            />
+          </Card>
+        </Fade>
+      )}
     </Box>
   );
 }
