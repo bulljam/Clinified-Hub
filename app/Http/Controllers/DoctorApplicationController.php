@@ -25,9 +25,10 @@ class DoctorApplicationController extends Controller
             'specialty' => 'required|string|max:255',
             'license_number' => 'required|string|max:50|unique:doctor_applications,license_number',
             'years_of_experience' => 'required|integer|min:0|max:50',
-            'clinic_address' => 'nullable|string|max:500',
-            'credentials' => 'nullable|array|max:5',
+            'office_address' => 'required|string|max:500',
+            'credentials' => 'required|array|min:1|max:5',
             'credentials.*' => 'file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'photo' => 'required|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $credentialsPaths = [];
@@ -37,6 +38,12 @@ class DoctorApplicationController extends Controller
             }
         }
 
+        // Handle photo upload
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('doctor-photos', 'public');
+        }
+
         $user = User::create([
             'name' => $validated['full_name'],
             'email' => $validated['email'],
@@ -44,7 +51,7 @@ class DoctorApplicationController extends Controller
             'role' => 'doctor_pending',
         ]);
 
-        $doctorApplication = DoctorApplication::create([
+        DoctorApplication::create([
             'user_id' => $user->id,
             'full_name' => $validated['full_name'],
             'email' => $validated['email'],
@@ -52,11 +59,12 @@ class DoctorApplicationController extends Controller
             'specialty' => $validated['specialty'],
             'license_number' => $validated['license_number'],
             'years_of_experience' => $validated['years_of_experience'],
-            'clinic_address' => $validated['clinic_address'],
+            'office_address' => $validated['office_address'],
             'credentials' => $credentialsPaths,
+            'photo' => $photoPath,
         ]);
 
-        return redirect()->back()->with('success', 'Your doctor application has been submitted successfully! We will review your application and notify you via email.');
+        return redirect('/')->with('success', 'Your doctor application has been submitted successfully! We will review your application and notify you via email.');
     }
 
     public function index()
@@ -70,7 +78,7 @@ class DoctorApplicationController extends Controller
         ]);
     }
 
-    public function approve(Request $request, DoctorApplication $application)
+    public function approve(DoctorApplication $application)
     {
         if ($application->status !== 'pending') {
             return redirect()->back()->withErrors(['error' => 'This application has already been reviewed.']);
@@ -82,10 +90,17 @@ class DoctorApplicationController extends Controller
             'reviewed_by' => auth()->id(),
         ]);
 
-        $application->user->update([
+        // Update user role and copy photo to profile
+        $updateData = [
             'role' => 'provider',
             'password' => Hash::make('temporary-password-' . uniqid()),
-        ]);
+        ];
+
+        if ($application->photo) {
+            $updateData['photo'] = $application->photo;
+        }
+
+        $application->user->update($updateData);
 
         return redirect()->back()->with('success', 'Doctor application approved successfully!');
     }

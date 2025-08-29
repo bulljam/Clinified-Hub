@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -16,6 +16,7 @@ import {
   ListItem,
   ListItemText,
   Stack,
+  LinearProgress,
 } from '@mui/material';
 import {
   CloudUpload as UploadIcon,
@@ -35,8 +36,9 @@ interface FormData {
   specialty: string;
   license_number: string;
   years_of_experience: number;
-  clinic_address: string;
+  office_address: string;
   credentials: File[];
+  photo: File | null;
 }
 
 const specialties = [
@@ -66,12 +68,14 @@ export default function DoctorApplicationCreate() {
     specialty: '',
     license_number: '',
     years_of_experience: 0,
-    clinic_address: '',
+    office_address: '',
     credentials: [],
+    photo: null,
   });
 
   const [success, setSuccess] = useState(false);
   const [fileInputKey, setFileInputKey] = useState(0);
+  const [countdown, setCountdown] = useState(3);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -89,28 +93,45 @@ export default function DoctorApplicationCreate() {
     setFileInputKey(prev => prev + 1);
   };
 
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setData('photo', file);
+    }
+  };
+
+  const removePhoto = () => {
+    setData('photo', null);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (key === 'credentials') {
-        data.credentials.forEach((file, index) => {
-          formData.append(`credentials[${index}]`, file);
-        });
-      } else {
-        formData.append(key, data[key as keyof FormData] as string);
-      }
-    });
-
-    post('/doctor-application', formData, {
-      forceFormData: true,
+    post('/doctor-application', {
       onSuccess: () => {
         setSuccess(true);
         reset();
       },
     });
   };
+
+  // Countdown effect for success page
+  useEffect(() => {
+    if (success) {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            router.visit('/');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [success]);
 
   if (success) {
     return (
@@ -133,14 +154,61 @@ export default function DoctorApplicationCreate() {
             <Typography variant="body1" color="text.secondary" mb={4}>
               Thank you for applying to join our medical team. We will review your application and credentials, then contact you via email with our decision within 2-3 business days.
             </Typography>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{ bgcolor: '#20a09f', '&:hover': { bgcolor: '#178f8e' } }}
-              onClick={() => router.visit('/')}
-            >
-              Back to Home
-            </Button>
+            
+            <Alert severity="success" sx={{ mb: 4, textAlign: 'left' }}>
+              <Typography variant="body2" mb={1}>
+                <strong>What happens next:</strong>
+              </Typography>
+              <Typography variant="body2" component="ul" sx={{ mb: 0, pl: 2 }}>
+                <li>Our admin team will review your application</li>
+                <li>We'll verify your credentials and documents</li>
+                <li>You'll receive an email notification with our decision</li>
+                <li>If approved, you'll get login credentials to access the platform</li>
+              </Typography>
+            </Alert>
+
+            <Box mb={3}>
+              <Typography variant="body2" color="text.secondary" mb={1}>
+                Redirecting to home in {countdown} seconds...
+              </Typography>
+              <LinearProgress 
+                variant="determinate" 
+                value={(3 - countdown) * 33.33} 
+                sx={{ 
+                  height: 6, 
+                  borderRadius: 3,
+                  '& .MuiLinearProgress-bar': {
+                    bgcolor: '#20a09f'
+                  }
+                }} 
+              />
+            </Box>
+
+            <Stack direction="row" spacing={2} justifyContent="center">
+              <Button
+                variant="contained"
+                size="large"
+                sx={{ bgcolor: '#20a09f', '&:hover': { bgcolor: '#178f8e' } }}
+                onClick={() => router.visit('/')}
+              >
+                Go to Home Now
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                sx={{ 
+                  borderColor: '#20a09f', 
+                  color: '#20a09f',
+                  '&:hover': { 
+                    borderColor: '#178f8e', 
+                    bgcolor: 'rgba(32, 160, 159, 0.04)' 
+                  } 
+                }}
+                onClick={() => router.visit('/doctor-application')}
+              >
+                Submit Another Application
+              </Button>
+            </Stack>
           </CardContent>
         </Card>
       </Box>
@@ -210,6 +278,82 @@ export default function DoctorApplicationCreate() {
                     helperText={errors.phone}
                     sx={{ maxWidth: { sm: '50%' } }}
                   />
+
+                  {/* Photo Upload Section */}
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight="600" mb={2}>
+                      Profile Photo <span style={{ color: '#d32f2f' }}>*</span>
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" mb={2}>
+                      Upload a professional headshot (JPG, PNG - Max 2MB)
+                    </Typography>
+                    
+                    {data.photo ? (
+                      <Box display="flex" alignItems="center" gap={2} mb={2}>
+                        <Box
+                          sx={{
+                            width: 100,
+                            height: 100,
+                            borderRadius: 2,
+                            overflow: 'hidden',
+                            border: '2px solid #e0e0e0',
+                          }}
+                        >
+                          <img
+                            src={URL.createObjectURL(data.photo)}
+                            alt="Profile preview"
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                        </Box>
+                        <Box>
+                          <Typography variant="body2" fontWeight="500">
+                            {data.photo.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {(data.photo.size / 1024 / 1024).toFixed(2)} MB
+                          </Typography>
+                          <Box mt={1}>
+                            <Button
+                              size="small"
+                              color="error"
+                              onClick={removePhoto}
+                              startIcon={<DeleteIcon />}
+                            >
+                              Remove Photo
+                            </Button>
+                          </Box>
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Button
+                        component="label"
+                        variant="outlined"
+                        startIcon={<UploadIcon />}
+                        sx={{ 
+                          borderColor: '#20a09f',
+                          color: '#20a09f',
+                          '&:hover': {
+                            borderColor: '#178f8e',
+                            bgcolor: 'rgba(32, 160, 159, 0.04)',
+                          }
+                        }}
+                      >
+                        Upload Profile Photo
+                        <input
+                          type="file"
+                          hidden
+                          accept=".jpg,.jpeg,.png"
+                          onChange={handlePhotoUpload}
+                        />
+                      </Button>
+                    )}
+
+                    {errors.photo && (
+                      <Typography variant="caption" color="error" sx={{ mt: 1, display: 'block' }}>
+                        {errors.photo}
+                      </Typography>
+                    )}
+                  </Box>
                 </Stack>
               </CardContent>
             </Card>
@@ -271,14 +415,15 @@ export default function DoctorApplicationCreate() {
                   />
 
                   <TextField
-                    label="Clinic Address (Optional)"
-                    value={data.clinic_address}
-                    onChange={(e) => setData('clinic_address', e.target.value)}
+                    label="Office Address"
+                    value={data.office_address}
+                    onChange={(e) => setData('office_address', e.target.value)}
                     fullWidth
+                    required
                     multiline
                     rows={3}
-                    error={!!errors.clinic_address}
-                    helperText={errors.clinic_address}
+                    error={!!errors.office_address}
+                    helperText={errors.office_address}
                   />
                 </Stack>
               </CardContent>
@@ -296,6 +441,7 @@ export default function DoctorApplicationCreate() {
                 
                 <Typography variant="body2" color="text.secondary" mb={3}>
                   Upload your medical license, certificates, or other relevant documents. 
+                  <span style={{ color: '#d32f2f', fontWeight: 'bold' }}>At least one document is required.</span><br/>
                   Accepted formats: PDF, JPG, PNG (Max 2MB each, up to 5 files)
                 </Typography>
                 

@@ -45,8 +45,9 @@ interface DoctorApplication {
   specialty: string;
   license_number: string;
   years_of_experience: number;
-  clinic_address: string | null;
+  office_address: string | null;
   credentials: string[] | null;
+  photo: string | null;
   status: 'pending' | 'approved' | 'rejected';
   rejection_reason: string | null;
   created_at: string;
@@ -101,6 +102,10 @@ export default function DoctorApplications({ applications }: Props) {
         },
       });
     }
+  };
+
+  const handlePhotoPreview = (photoPath: string) => {
+    window.open(`/storage/${photoPath}`, '_blank');
   };
 
   const previewCredential = (applicationId: number, path: string) => {
@@ -229,15 +234,33 @@ export default function DoctorApplications({ applications }: Props) {
                   >
                     <TableCell sx={{ py: 3, minWidth: 200 }}>
                       <Box display="flex" alignItems="center" gap={2}>
-                        <Avatar sx={{ 
-                          bgcolor: '#20a09f', 
-                          width: 40, 
-                          height: 40,
-                          fontSize: '1.1rem',
-                          fontWeight: 'bold'
-                        }}>
-                          {application.full_name.charAt(0)}
-                        </Avatar>
+                        {application.photo ? (
+                          <Avatar 
+                            src={`/storage/${application.photo}`}
+                            sx={{ 
+                              width: 40, 
+                              height: 40,
+                              border: '1px solid #20a09f',
+                              cursor: 'pointer',
+                              '&:hover': {
+                                opacity: 0.8,
+                                transform: 'scale(1.05)'
+                              },
+                              transition: 'all 0.2s ease-in-out'
+                            }}
+                            onClick={() => handlePhotoPreview(application.photo!)}
+                          />
+                        ) : (
+                          <Avatar sx={{ 
+                            bgcolor: '#20a09f', 
+                            width: 40, 
+                            height: 40,
+                            fontSize: '1.1rem',
+                            fontWeight: 'bold'
+                          }}>
+                            {application.full_name.charAt(0)}
+                          </Avatar>
+                        )}
                         <Box>
                           <Typography variant="body2" fontWeight="600" color="text.primary">
                             {application.full_name}
@@ -338,94 +361,226 @@ export default function DoctorApplications({ applications }: Props) {
       </Card>
 
       {/* View Application Dialog */}
-      <Dialog open={!!viewingApplication} onClose={() => setViewingApplication(null)} maxWidth="md" fullWidth>
-        <DialogTitle>Doctor Application Details</DialogTitle>
-        <DialogContent>
+      <Dialog open={!!viewingApplication} onClose={() => setViewingApplication(null)} maxWidth="lg" fullWidth>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Typography variant="h5" fontWeight="bold">
+              Doctor Application Details
+            </Typography>
+            {viewingApplication && (
+              <Chip
+                label={viewingApplication.status.charAt(0).toUpperCase() + viewingApplication.status.slice(1)}
+                color={getStatusColor(viewingApplication.status)}
+                sx={{ fontWeight: 600, fontSize: '0.875rem' }}
+              />
+            )}
+          </Box>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 2 }}>
           {viewingApplication && (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                {viewingApplication.full_name}
-              </Typography>
-              
-              <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={2} mb={3}>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">Email</Typography>
-                  <Typography variant="body2">{viewingApplication.email}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">Phone</Typography>
-                  <Typography variant="body2">{viewingApplication.phone}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">Specialty</Typography>
-                  <Typography variant="body2">{viewingApplication.specialty}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">License Number</Typography>
-                  <Typography variant="body2">{viewingApplication.license_number}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">Years of Experience</Typography>
-                  <Typography variant="body2">{viewingApplication.years_of_experience} years</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">Status</Typography>
-                  <Chip
-                    label={viewingApplication.status}
-                    color={getStatusColor(viewingApplication.status)}
-                    size="small"
-                    sx={{ mt: 0.5 }}
-                  />
-                </Box>
-              </Box>
-
-              {viewingApplication.clinic_address && (
-                <Box mb={3}>
-                  <Typography variant="caption" color="text.secondary">Clinic Address</Typography>
-                  <Typography variant="body2">{viewingApplication.clinic_address}</Typography>
-                </Box>
-              )}
-
-              {viewingApplication.credentials && viewingApplication.credentials.length > 0 && (
-                <Box mb={3}>
-                  <Typography variant="caption" color="text.secondary" gutterBottom>
-                    Uploaded Credentials
-                  </Typography>
-                  <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-                    {viewingApplication.credentials.map((credential, index) => (
-                      <Button
-                        key={index}
-                        variant="outlined"
-                        startIcon={<PreviewIcon />}
-                        size="small"
-                        onClick={() => previewCredential(viewingApplication.id, credential)}
+            <Stack spacing={4}>
+              {/* Header with doctor info */}
+              <Card elevation={0} sx={{ bgcolor: '#f8f9fa', border: '1px solid #e0e0e0' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box display="flex" alignItems="center" gap={3} mb={2}>
+                    {viewingApplication.photo ? (
+                      <Avatar 
+                        src={`/storage/${viewingApplication.photo}`}
                         sx={{ 
-                          borderColor: '#20a09f',
-                          color: '#20a09f',
+                          width: 64, 
+                          height: 64,
+                          border: '2px solid #20a09f',
+                          cursor: 'pointer',
                           '&:hover': {
-                            borderColor: '#178f8e',
-                            bgcolor: 'rgba(32, 160, 159, 0.04)',
-                          }
+                            opacity: 0.8,
+                            transform: 'scale(1.05)'
+                          },
+                          transition: 'all 0.2s ease-in-out'
+                        }}
+                        onClick={() => handlePhotoPreview(viewingApplication.photo!)}
+                      />
+                    ) : (
+                      <Avatar 
+                        sx={{ 
+                          bgcolor: '#20a09f', 
+                          width: 64, 
+                          height: 64, 
+                          fontSize: '1.5rem',
+                          fontWeight: 'bold'
                         }}
                       >
-                        Preview Document {index + 1}
-                      </Button>
-                    ))}
-                  </Stack>
-                </Box>
+                        {viewingApplication.full_name.charAt(0)}
+                      </Avatar>
+                    )}
+                    <Box>
+                      <Typography variant="h5" fontWeight="bold" color="#20a09f">
+                        Dr. {viewingApplication.full_name}
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary">
+                        {viewingApplication.specialty}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {viewingApplication.years_of_experience} years of experience
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* Application Status & Timeline */}
+                  <Box sx={{ bgcolor: 'white', borderRadius: 2, p: 2, border: '1px solid #e0e0e0' }}>
+                    <Typography variant="subtitle2" fontWeight="600" mb={2}>Application Timeline</Typography>
+                    <Box display="flex" alignItems="center" gap={2} mb={1}>
+                      <Typography variant="body2" color="text.secondary" minWidth="120px">
+                        Submitted:
+                      </Typography>
+                      <Typography variant="body2" fontWeight="500">
+                        {dayjs(viewingApplication.created_at).format('MMM D, YYYY [at] h:mm A')}
+                      </Typography>
+                    </Box>
+                    {viewingApplication.reviewed_at && (
+                      <Box display="flex" alignItems="center" gap={2} mb={1}>
+                        <Typography variant="body2" color="text.secondary" minWidth="120px">
+                          Reviewed:
+                        </Typography>
+                        <Typography variant="body2" fontWeight="500">
+                          {dayjs(viewingApplication.reviewed_at).format('MMM D, YYYY [at] h:mm A')}
+                        </Typography>
+                      </Box>
+                    )}
+                    {viewingApplication.reviewer && (
+                      <Box display="flex" alignItems="center" gap={2}>
+                        <Typography variant="body2" color="text.secondary" minWidth="120px">
+                          Reviewed by:
+                        </Typography>
+                        <Typography variant="body2" fontWeight="500">
+                          {viewingApplication.reviewer.name}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Contact Information */}
+              <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+                    Contact Information
+                  </Typography>
+                  <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Email Address
+                      </Typography>
+                      <Typography variant="body1" fontWeight="500">
+                        {viewingApplication.email}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Phone Number
+                      </Typography>
+                      <Typography variant="body1" fontWeight="500">
+                        {viewingApplication.phone}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Professional Information */}
+              <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+                    Professional Details
+                  </Typography>
+                  <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Medical License Number
+                      </Typography>
+                      <Typography variant="body1" fontWeight="500">
+                        {viewingApplication.license_number}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Medical Specialty
+                      </Typography>
+                      <Typography variant="body1" fontWeight="500">
+                        {viewingApplication.specialty}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  
+                  {viewingApplication.office_address && (
+                    <Box mt={3}>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Office Address
+                      </Typography>
+                      <Typography variant="body1" fontWeight="500">
+                        {viewingApplication.office_address}
+                      </Typography>
+                    </Box>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Credentials Section */}
+              {viewingApplication.credentials && viewingApplication.credentials.length > 0 && (
+                <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                  <CardContent sx={{ p: 3 }}>
+                    <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+                      Uploaded Documents ({viewingApplication.credentials.length})
+                    </Typography>
+                    <Stack direction="row" spacing={2} flexWrap="wrap" gap={2}>
+                      {viewingApplication.credentials.map((credential, index) => (
+                        <Button
+                          key={index}
+                          variant="outlined"
+                          startIcon={<PreviewIcon />}
+                          onClick={() => previewCredential(viewingApplication.id, credential)}
+                          sx={{ 
+                            borderColor: '#20a09f',
+                            color: '#20a09f',
+                            fontWeight: 500,
+                            px: 3,
+                            py: 1.5,
+                            '&:hover': {
+                              borderColor: '#178f8e',
+                              bgcolor: 'rgba(32, 160, 159, 0.04)',
+                            }
+                          }}
+                        >
+                          Document {index + 1}
+                        </Button>
+                      ))}
+                    </Stack>
+                  </CardContent>
+                </Card>
               )}
 
+              {/* Rejection Reason */}
               {viewingApplication.status === 'rejected' && viewingApplication.rejection_reason && (
-                <Alert severity="error">
-                  <Typography variant="subtitle2" gutterBottom>Rejection Reason:</Typography>
-                  {viewingApplication.rejection_reason}
+                <Alert severity="error" sx={{ borderRadius: 2 }}>
+                  <Typography variant="subtitle2" fontWeight="600" gutterBottom>
+                    Rejection Reason
+                  </Typography>
+                  <Typography variant="body2">
+                    {viewingApplication.rejection_reason}
+                  </Typography>
                 </Alert>
               )}
-            </Box>
+            </Stack>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setViewingApplication(null)}>Close</Button>
+        <DialogActions sx={{ p: 3, borderTop: '1px solid #e0e0e0' }}>
+          <Button 
+            onClick={() => setViewingApplication(null)}
+            variant="outlined"
+            sx={{ px: 4 }}
+          >
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
 
