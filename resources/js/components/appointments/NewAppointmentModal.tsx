@@ -190,7 +190,10 @@ export default function NewAppointmentModal({
                     }
                   }}
                 >
-                  {providers.map((provider) => (
+                  <MenuItem value="">
+                    <em>Choose a provider...</em>
+                  </MenuItem>
+                  {providers && providers.length > 0 && providers.map((provider) => (
                     <MenuItem key={provider.id} value={provider.id}>
                       {provider.name}
                     </MenuItem>

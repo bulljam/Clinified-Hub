@@ -48,17 +48,22 @@ class AppointmentController extends Controller
 
         $appointments = $query->latest()->paginate(15);
 
-        // For client users, also provide all appointments for availability checking
+        // For client users, also provide all appointments for availability checking and providers list
         $allAppointments = [];
+        $providers = [];
         if ($user->role === 'client') {
-            $allAppointments = Appointment::select('id', 'provider_id', 'date', 'time', 'status', 'payment_status')
+            $allAppointments = Appointment::select('id', 'user_id', 'provider_id', 'date', 'time', 'status', 'payment_status')
                 ->where('status', '!=', 'cancelled')
+                ->get();
+            $providers = User::where('role', 'provider')
+                ->select('id', 'name', 'email')
                 ->get();
         }
 
         return Inertia::render('appointments/Index', [
             'appointments' => $appointments,
             'allAppointments' => $allAppointments,
+            'providers' => $providers,
             'filters' => [
                 'status' => $request->status,
                 'payment_status' => $request->payment_status,

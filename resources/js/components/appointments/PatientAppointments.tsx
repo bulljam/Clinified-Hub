@@ -121,15 +121,15 @@ interface PatientAppointmentsProps {
     total?: number;
   };
   allAppointments: Appointment[];
+  providers: Provider[];
   currentUser?: User;
 }
 
-export default function PatientAppointments({ appointments, allAppointments, currentUser }: PatientAppointmentsProps) {
+export default function PatientAppointments({ appointments, allAppointments, providers, currentUser }: PatientAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [deletingAppointment, setDeletingAppointment] = useState<Appointment | null>(null);
   const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false);
-  const [providers, setProviders] = useState<Provider[]>([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [paymentFilter, setPaymentFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
@@ -137,26 +137,6 @@ export default function PatientAppointments({ appointments, allAppointments, cur
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
 
-  useEffect(() => {
-    // Extract unique providers from existing appointments
-    const uniqueProviders = appointments.data
-      .map(appointment => appointment.provider)
-      .filter((provider, index, self) => 
-        index === self.findIndex(p => p.id === provider.id)
-      );
-    
-    // If no appointments exist, add some default providers
-    if (uniqueProviders.length === 0) {
-      // You can add default providers here or fetch from an API
-      const defaultProviders: Provider[] = [
-        { id: 2, name: 'Dr. John Smith', email: 'john.smith@clinify.com' },
-        { id: 3, name: 'Dr. Sarah Johnson', email: 'sarah.johnson@clinify.com' }
-      ];
-      setProviders(defaultProviders);
-    } else {
-      setProviders(uniqueProviders);
-    }
-  }, [appointments.data]);
 
   const handleDelete = () => {
     if (deletingAppointment) {
