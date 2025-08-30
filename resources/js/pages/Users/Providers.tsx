@@ -1,5 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
+import ProviderCard from '@/components/ProviderCard';
 import { type BreadcrumbItem } from '@/types';
 import {
     Avatar,
@@ -7,9 +8,7 @@ import {
     Button,
     Card,
     CardContent,
-    Chip,
     Collapse,
-    Fade,
     FormControl,
     Grid,
     InputAdornment,
@@ -19,24 +18,16 @@ import {
     Select,
     TextField,
     Typography,
-    IconButton,
     Stack,
 } from '@mui/material';
 import {
     LocalHospital as MedicalIcon,
-    Person as PersonIcon,
     Search as SearchIcon,
-    Email as EmailIcon,
-    Phone as PhoneIcon,
-    LocationOn as LocationIcon,
-    Work as WorkIcon,
     FilterAlt as FilterIcon,
     ExpandMore as ExpandMoreIcon,
     ExpandLess as ExpandLessIcon,
-    Star as StarIcon,
 } from '@mui/icons-material';
 import { useState } from 'react';
-import dayjs from 'dayjs';
 
 interface Provider {
     id: number;
@@ -54,7 +45,15 @@ interface Provider {
 }
 
 interface ProvidersProps {
-    providers: Provider[];
+    providers: {
+        data: Provider[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        from: number;
+        to: number;
+    };
     userRole: string;
     specialties: string[];
     cities: string[];
@@ -65,6 +64,7 @@ interface ProvidersProps {
         min_experience?: number;
         max_experience?: number;
     };
+    search?: string;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -74,26 +74,40 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Providers({ providers, userRole, specialties, cities, filters }: ProvidersProps) {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [searchQuery, setSearchQuery] = useState('');
+export default function Providers({ providers, userRole, specialties, cities, filters, search }: ProvidersProps) {
+    const [searchQuery, setSearchQuery] = useState(search || '');
     const [showFilters, setShowFilters] = useState(false);
     const [localFilters, setLocalFilters] = useState(filters);
-    const itemsPerPage = 12;
-
-    const filteredProviders = providers.filter(provider =>
-        provider.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (provider.specialty && provider.specialty.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (provider.city && provider.city.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-
-    const totalPages = Math.ceil(filteredProviders.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedProviders = filteredProviders.slice(startIndex, endIndex);
 
     const handlePageChange = (page: number) => {
-        setCurrentPage(page);
+        const params = new URLSearchParams();
+        params.append('page', page.toString());
+        
+        Object.entries(localFilters).forEach(([key, value]) => {
+            if (value) params.append(key, value.toString());
+        });
+        
+        if (searchQuery) params.append('search', searchQuery);
+        
+        router.get(`/providers?${params.toString()}`);
+    };
+
+    const handleSearch = () => {
+        const params = new URLSearchParams();
+        
+        Object.entries(localFilters).forEach(([key, value]) => {
+            if (value) params.append(key, value.toString());
+        });
+        
+        if (searchQuery) params.append('search', searchQuery);
+        
+        router.get(`/providers?${params.toString()}`);
+    };
+
+    const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
     };
 
     const handleFilterChange = (key: string, value: string | number) => {
@@ -113,16 +127,10 @@ export default function Providers({ providers, userRole, specialties, cities, fi
 
     const clearFilters = () => {
         setLocalFilters({});
+        setSearchQuery('');
         router.get('/providers');
     };
 
-    const getGenderIcon = (gender?: string) => {
-        switch (gender) {
-            case 'male': return '👨';
-            case 'female': return '👩';
-            default: return '👤';
-        }
-    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -165,12 +173,29 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                 value={searchQuery}
                                 onChange={(e) => {
                                     setSearchQuery(e.target.value);
-                                    setCurrentPage(1);
                                 }}
+                                onKeyPress={handleSearchKeyPress}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
                                             <SearchIcon sx={{ color: '#20a09f' }} />
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: searchQuery && (
+                                        <InputAdornment position="end">
+                                            <Button
+                                                onClick={handleSearch}
+                                                variant="contained"
+                                                size="small"
+                                                sx={{
+                                                    bgcolor: '#20a09f',
+                                                    '&:hover': { bgcolor: '#178f8e' },
+                                                    minWidth: 'auto',
+                                                    px: 2,
+                                                }}
+                                            >
+                                                Search
+                                            </Button>
                                         </InputAdornment>
                                     ),
                                 }}
@@ -204,7 +229,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                 >
                                     Advanced Filters
                                 </Button>
-                                {Object.values(localFilters).some(v => v) && (
+                                {(Object.values(localFilters).some(v => v) || searchQuery) && (
                                     <Button
                                         variant="text"
                                         color="error"
@@ -226,7 +251,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                     bgcolor: 'rgba(32, 160, 159, 0.02)' 
                                 }}>
                                     <Grid container spacing={3} alignItems="flex-end">
-                                        <Grid item xs={12} sm={6} md={2.4}>
+                                        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                                             <FormControl fullWidth>
                                                 <InputLabel>Specialty</InputLabel>
                                                 <Select
@@ -253,7 +278,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        <Grid item xs={12} sm={6} md={2.4}>
+                                        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                                             <FormControl fullWidth>
                                                 <InputLabel>City</InputLabel>
                                                 <Select
@@ -280,7 +305,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        <Grid item xs={12} sm={6} md={2.4}>
+                                        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                                             <FormControl fullWidth>
                                                 <InputLabel>Gender</InputLabel>
                                                 <Select
@@ -304,7 +329,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        <Grid item xs={12} sm={6} md={2.4}>
+                                        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                                             <TextField
                                                 fullWidth
                                                 label="Min Experience (Years)"
@@ -324,7 +349,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 }}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} sm={6} md={2.4}>
+                                        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                                             <TextField
                                                 fullWidth
                                                 label="Max Experience (Years)"
@@ -394,207 +419,60 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                 </Card>
 
                 {/* Statistics */}
-                <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(3, 1fr)' }} gap={3} mb={4}>
-                    <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
-                        <CardContent sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="h3" fontWeight="bold" color="#20a09f" mb={1}>
-                                {filteredProviders.length}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                {searchQuery ? 'Matching Providers' : 'Total Providers'}
-                            </Typography>
-                        </CardContent>
-                    </Card>
+                <Grid container spacing={3} sx={{ mb: 4 }}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
+                        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
+                            <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                                <Typography variant="h3" fontWeight="bold" color="#20a09f" mb={1}>
+                                    {providers.total}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Total Providers
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
 
-                    <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
-                        <CardContent sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="h3" fontWeight="bold" color="success.main" mb={1}>
-                                {specialties.length}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Specialties
-                            </Typography>
-                        </CardContent>
-                    </Card>
+                    <Grid size={{ xs: 12, sm: 4 }}>
+                        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
+                            <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                                <Typography variant="h3" fontWeight="bold" color="success.main" mb={1}>
+                                    {specialties.length}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Specialties
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
 
-                    <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
-                        <CardContent sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="h3" fontWeight="bold" color="info.main" mb={1}>
-                                {cities.length}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Cities
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                </Box>
+                    <Grid size={{ xs: 12, sm: 4 }}>
+                        <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
+                            <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                                <Typography variant="h3" fontWeight="bold" color="info.main" mb={1}>
+                                    {cities.length}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Cities
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
 
                 {/* Providers Grid */}
-                {filteredProviders.length > 0 ? (
+                {providers.data.length > 0 ? (
                     <>
-                        <Grid container spacing={3} sx={{ mb: 4 }} alignItems="stretch">
-                            {paginatedProviders.map((provider, index) => (
-                                <Grid item xs={12} sm={6} md={4} lg={3} key={provider.id} sx={{ display: 'flex' }}>
-                                    <Fade in={true} timeout={300 + index * 50}>
-                                        <Card
-                                            elevation={0}
-                                            sx={{
-                                                borderRadius: 3,
-                                                border: '1px solid #e0e0e0',
-                                                transition: 'all 0.3s ease',
-                                                '&:hover': {
-                                                    transform: 'translateY(-4px)',
-                                                    boxShadow: '0 8px 25px rgba(32, 160, 159, 0.15)',
-                                                    borderColor: '#20a09f',
-                                                },
-                                                cursor: 'pointer',
-                                                width: '100%',
-                                                height: '100%',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                minHeight: '480px',
-                                            }}
-                                        >
-                                            <CardContent sx={{ p: 3, flexGrow: 1 }}>
-                                                {/* Provider Header */}
-                                                <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
-                                                    {provider.photo ? (
-                                                        <Avatar 
-                                                            src={`/storage/${provider.photo}`}
-                                                            sx={{ 
-                                                                width: 80, 
-                                                                height: 80,
-                                                                border: '3px solid #20a09f',
-                                                                mb: 1,
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <Avatar sx={{ 
-                                                            bgcolor: '#20a09f', 
-                                                            width: 80, 
-                                                            height: 80,
-                                                            fontSize: '2rem',
-                                                            fontWeight: 'bold',
-                                                            mb: 1,
-                                                        }}>
-                                                            {provider.name.charAt(0)}
-                                                        </Avatar>
-                                                    )}
-                                                    
-                                                    <Typography variant="h6" fontWeight="600" textAlign="center" color="#20a09f">
-                                                        Dr. {provider.name}
-                                                    </Typography>
-                                                    
-                                                    {provider.specialty && (
-                                                        <Chip 
-                                                            label={provider.specialty}
-                                                            size="small"
-                                                            sx={{
-                                                                bgcolor: '#20a09f',
-                                                                color: 'white',
-                                                                fontWeight: 500,
-                                                                mb: 1,
-                                                            }}
-                                                        />
-                                                    )}
-                                                </Box>
-
-                                                {/* Provider Details */}
-                                                <Stack spacing={1.5} sx={{ mb: 2 }}>
-                                                    {provider.years_of_experience && (
-                                                        <Box display="flex" alignItems="center" gap={1}>
-                                                            <WorkIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
-                                                            <Typography variant="body2" color="text.secondary">
-                                                                {provider.years_of_experience} years experience
-                                                            </Typography>
-                                                        </Box>
-                                                    )}
-                                                    
-                                                    {provider.city && (
-                                                        <Box display="flex" alignItems="center" gap={1}>
-                                                            <LocationIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
-                                                            <Typography variant="body2" color="text.secondary">
-                                                                {provider.city}
-                                                            </Typography>
-                                                        </Box>
-                                                    )}
-                                                    
-                                                    {provider.gender && (
-                                                        <Box display="flex" alignItems="center" gap={1}>
-                                                            <PersonIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
-                                                            <Typography variant="body2" color="text.secondary">
-                                                                {getGenderIcon(provider.gender)} {provider.gender.charAt(0).toUpperCase() + provider.gender.slice(1)}
-                                                            </Typography>
-                                                        </Box>
-                                                    )}
-
-                                                    <Box display="flex" alignItems="center" gap={1}>
-                                                        <EmailIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
-                                                        <Typography 
-                                                            variant="body2" 
-                                                            color="text.secondary" 
-                                                            sx={{
-                                                                overflow: 'hidden',
-                                                                textOverflow: 'ellipsis',
-                                                                whiteSpace: 'nowrap',
-                                                                maxWidth: '200px',
-                                                            }}
-                                                        >
-                                                            {provider.email}
-                                                        </Typography>
-                                                    </Box>
-
-                                                    {provider.phone && (
-                                                        <Box display="flex" alignItems="center" gap={1}>
-                                                            <PhoneIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
-                                                            <Typography variant="body2" color="text.secondary">
-                                                                {provider.phone}
-                                                            </Typography>
-                                                        </Box>
-                                                    )}
-                                                </Stack>
-
-                                                {provider.bio && (
-                                                    <Box mt={2}>
-                                                        <Typography variant="body2" color="text.secondary" sx={{
-                                                            display: '-webkit-box',
-                                                            WebkitLineClamp: 2,
-                                                            WebkitBoxOrient: 'vertical',
-                                                            overflow: 'hidden',
-                                                        }}>
-                                                            {provider.bio}
-                                                        </Typography>
-                                                    </Box>
-                                                )}
-                                            </CardContent>
-
-                                            {/* Provider Footer */}
-                                            <Box sx={{ 
-                                                px: 3, 
-                                                py: 2, 
-                                                borderTop: '1px solid #f0f0f0',
-                                                bgcolor: 'rgba(32, 160, 159, 0.02)',
-                                            }}>
-                                                <Box display="flex" justifyContent="space-between" alignItems="center">
-                                                    <Box display="flex" alignItems="center" gap={1}>
-                                                        <StarIcon fontSize="small" sx={{ color: '#20a09f' }} />
-                                                        <Typography variant="caption" color="text.secondary">
-                                                            {provider.appointments_count} appointments
-                                                        </Typography>
-                                                    </Box>
-                                                    <Typography variant="caption" color="text.secondary">
-                                                        Since {dayjs(provider.created_at).format('MMM YYYY')}
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                        </Card>
-                                    </Fade>
+                        <Grid container spacing={3} sx={{ mb: 4 }}>
+                            {providers.data.map((provider) => (
+                                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={provider.id}>
+                                    <ProviderCard provider={provider} />
                                 </Grid>
                             ))}
                         </Grid>
 
                         {/* Pagination */}
-                        {totalPages > 1 && (
+                        {providers.last_page > 1 && (
                             <Box sx={{ 
                                 display: 'flex', 
                                 justifyContent: 'center', 
@@ -604,11 +482,11 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                 gap: 2
                             }}>
                                 <Typography variant="body2" color="text.secondary">
-                                    Showing {startIndex + 1}-{Math.min(endIndex, filteredProviders.length)} of {filteredProviders.length} providers
+                                    Showing {providers.from || 0}-{providers.to || 0} of {providers.total} providers
                                 </Typography>
                                 <Pagination
-                                    count={totalPages}
-                                    page={currentPage}
+                                    count={providers.last_page}
+                                    page={providers.current_page}
                                     onChange={(_event, page) => handlePageChange(page)}
                                     size="large"
                                     shape="rounded"
@@ -656,7 +534,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                 No Providers Found
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {searchQuery || Object.values(localFilters).some(v => v) 
+                                {search || Object.values(localFilters).some(v => v) 
                                     ? 'Try adjusting your search criteria or filters.' 
                                     : 'No healthcare providers are currently available.'
                                 }

@@ -16,6 +16,16 @@ class UserController extends Controller
             ->select('id', 'name', 'email', 'photo', 'gender', 'city', 'specialty', 'years_of_experience', 'bio', 'phone', 'created_at')
             ->withCount(['providedAppointments as appointments_count']);
             
+        // Apply search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('specialty', 'like', '%' . $search . '%')
+                  ->orWhere('city', 'like', '%' . $search . '%');
+            });
+        }
+        
         // Apply filters
         if ($request->filled('specialty')) {
             $query->where('specialty', 'like', '%' . $request->specialty . '%');
@@ -37,7 +47,7 @@ class UserController extends Controller
             $query->where('years_of_experience', '<=', $request->max_experience);
         }
         
-        $providers = $query->orderBy('name')->get();
+        $providers = $query->orderBy('name')->paginate(9);
         
         // Get unique values for filters
         $specialties = User::where('role', 'provider')
@@ -62,6 +72,7 @@ class UserController extends Controller
             'specialties' => $specialties,
             'cities' => $cities,
             'filters' => $request->only(['specialty', 'city', 'gender', 'min_experience', 'max_experience']),
+            'search' => $request->search,
         ]);
     }
 
