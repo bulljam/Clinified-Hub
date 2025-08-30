@@ -63,7 +63,7 @@ class User extends Authenticatable
             return null;
         }
         
-        return $this->date_of_birth->diffInYears(now());
+        return (int) $this->date_of_birth->diffInYears(now());
     }
 
     public function getAppointmentsCountAttribute(): int

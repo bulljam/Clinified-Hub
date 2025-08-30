@@ -11,7 +11,6 @@ import {
     Collapse,
     Fade,
     FormControl,
-    Grid,
     InputAdornment,
     InputLabel,
     MenuItem,
@@ -161,6 +160,9 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     setDeleteReason('');
                     setSelectedPatient(null);
                 },
+                onError: (errors) => {
+                    console.error('Delete failed:', errors);
+                },
             });
         }
     };
@@ -275,67 +277,63 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                             {/* Filters */}
                             <Collapse in={showFilters}>
                                 <Box sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 3 }}>
-                                    <Grid container spacing={3}>
-                                        <Grid item xs={12} sm={6} md={3}>
-                                            <FormControl fullWidth variant="outlined">
-                                                <InputLabel shrink>Gender</InputLabel>
-                                                <Select
-                                                    value={localFilters.gender || ''}
-                                                    label="Gender"
-                                                    onChange={(e) => handleFilterChange('gender', e.target.value)}
-                                                    displayEmpty
-                                                    sx={{ minHeight: 56 }}
-                                                >
-                                                    <MenuItem value="">All Genders</MenuItem>
-                                                    <MenuItem value="male">👨 Male</MenuItem>
-                                                    <MenuItem value="female">👩 Female</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={12} sm={6} md={3}>
-                                            <FormControl fullWidth variant="outlined">
-                                                <InputLabel shrink>City</InputLabel>
-                                                <Select
-                                                    value={localFilters.city || ''}
-                                                    label="City"
-                                                    onChange={(e) => handleFilterChange('city', e.target.value)}
-                                                    displayEmpty
-                                                    sx={{ minHeight: 56 }}
-                                                >
-                                                    <MenuItem value="">All Cities</MenuItem>
-                                                    {cities.map((city) => (
-                                                        <MenuItem key={city} value={city}>
-                                                            {city}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={12} sm={6} md={3}>
-                                            <TextField
-                                                fullWidth
-                                                label="Min Age"
-                                                type="number"
-                                                value={localFilters.min_age || ''}
-                                                onChange={(e) => handleFilterChange('min_age', parseInt(e.target.value))}
-                                                InputProps={{ inputProps: { min: 0, max: 120 } }}
-                                                variant="outlined"
-                                                InputLabelProps={{ shrink: true }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={6} md={3}>
-                                            <TextField
-                                                fullWidth
-                                                label="Max Age"
-                                                type="number"
-                                                value={localFilters.max_age || ''}
-                                                onChange={(e) => handleFilterChange('max_age', parseInt(e.target.value))}
-                                                InputProps={{ inputProps: { min: 0, max: 120 } }}
-                                                variant="outlined"
-                                                InputLabelProps={{ shrink: true }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={6} md={3}>
+                                    <Box sx={{ 
+                                        display: 'grid',
+                                        gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+                                        gap: 3
+                                    }}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <InputLabel shrink>Gender</InputLabel>
+                                            <Select
+                                                value={localFilters.gender || ''}
+                                                label="Gender"
+                                                onChange={(e) => handleFilterChange('gender', e.target.value)}
+                                                displayEmpty
+                                                sx={{ minHeight: 56 }}
+                                            >
+                                                <MenuItem value="">All Genders</MenuItem>
+                                                <MenuItem value="male">👨 Male</MenuItem>
+                                                <MenuItem value="female">👩 Female</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl fullWidth variant="outlined">
+                                            <InputLabel shrink>City</InputLabel>
+                                            <Select
+                                                value={localFilters.city || ''}
+                                                label="City"
+                                                onChange={(e) => handleFilterChange('city', e.target.value)}
+                                                displayEmpty
+                                                sx={{ minHeight: 56 }}
+                                            >
+                                                <MenuItem value="">All Cities</MenuItem>
+                                                {cities.map((city) => (
+                                                    <MenuItem key={city} value={city}>
+                                                        {city}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                        <TextField
+                                            fullWidth
+                                            label="Min Age"
+                                            type="number"
+                                            value={localFilters.min_age || ''}
+                                            onChange={(e) => handleFilterChange('min_age', parseInt(e.target.value))}
+                                            InputProps={{ inputProps: { min: 0, max: 120 } }}
+                                            variant="outlined"
+                                            InputLabelProps={{ shrink: true }}
+                                        />
+                                        <TextField
+                                            fullWidth
+                                            label="Max Age"
+                                            type="number"
+                                            value={localFilters.max_age || ''}
+                                            onChange={(e) => handleFilterChange('max_age', parseInt(e.target.value))}
+                                            InputProps={{ inputProps: { min: 0, max: 120 } }}
+                                            variant="outlined"
+                                            InputLabelProps={{ shrink: true }}
+                                        />
+                                        <Box sx={{ gridColumn: { xs: '1', md: '1 / 3' } }}>
                                             <TextField
                                                 fullWidth
                                                 label="Min Appointments"
@@ -347,8 +345,8 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                 InputLabelProps={{ shrink: true }}
                                                 helperText="Minimum number of appointments"
                                             />
-                                        </Grid>
-                                    </Grid>
+                                        </Box>
+                                    </Box>
                                     <Box sx={{ mt: 2, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
                                         <Button onClick={clearFilters} variant="outlined">
                                             Clear
@@ -596,8 +594,8 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                     </TableCell>
                                                     <TableCell sx={{ py: 3 }}>
                                                         <Chip
-                                                            label="Active"
-                                                            color="success"
+                                                            label={patient.appointments_count > 0 ? "Active" : "Idle"}
+                                                            color={patient.appointments_count > 0 ? "success" : "default"}
                                                             size="small"
                                                             sx={{ 
                                                                 fontWeight: 600,
@@ -733,114 +731,165 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                             <CloseIcon />
                         </IconButton>
                     </DialogTitle>
-                    <DialogContent sx={{ p: 4 }}>
+                    <DialogContent sx={{ p: 0 }}>
                         {selectedPatient && (
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={4} display="flex" flexDirection="column" alignItems="center" gap={2}>
+                            <Box>
+                                {/* Header Section with Avatar and Status */}
+                                <Box sx={{ bgcolor: 'rgba(32, 160, 159, 0.05)', p: 4, textAlign: 'center' }}>
                                     {selectedPatient.photo ? (
                                         <Avatar 
                                             src={`/storage/${selectedPatient.photo}`}
-                                            sx={{ width: 120, height: 120, border: '3px solid #20a09f' }}
+                                            sx={{ width: 100, height: 100, mx: 'auto', mb: 2, border: '3px solid #20a09f' }}
                                         />
                                     ) : (
                                         <Avatar sx={{ 
                                             bgcolor: '#4caf50', 
-                                            width: 120, 
-                                            height: 120,
-                                            fontSize: '2.5rem',
-                                            fontWeight: 'bold'
+                                            width: 100, 
+                                            height: 100,
+                                            fontSize: '2rem',
+                                            fontWeight: 'bold',
+                                            mx: 'auto',
+                                            mb: 2
                                         }}>
                                             {selectedPatient.name.charAt(0)}
                                         </Avatar>
                                     )}
+                                    <Typography variant="h4" fontWeight="bold" mb={1}>
+                                        {selectedPatient.name}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" mb={2}>
+                                        Patient ID: #{selectedPatient.id}
+                                    </Typography>
                                     <Chip
-                                        label="Active Patient"
-                                        color="success"
-                                        sx={{ fontWeight: 600 }}
+                                        label={selectedPatient.appointments_count > 0 ? "Active Patient" : "Idle Patient"}
+                                        color={selectedPatient.appointments_count > 0 ? "success" : "default"}
+                                        sx={{ fontWeight: 600, fontSize: '0.875rem' }}
+                                        size="medium"
                                     />
-                                </Grid>
-                                <Grid item xs={12} md={8}>
-                                    <Stack spacing={3}>
+                                </Box>
+
+                                {/* Details Section */}
+                                <Box sx={{ p: 4 }}>
+                                    <Box sx={{ 
+                                        display: 'grid',
+                                        gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                        gap: 4,
+                                        mb: 4
+                                    }}>
+                                        {/* Contact Information */}
                                         <Box>
-                                            <Typography variant="h5" fontWeight="bold" mb={1}>
-                                                {selectedPatient.name}
+                                            <Typography variant="h6" fontWeight="bold" mb={2} color="#20a09f">
+                                                Contact Information
                                             </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                Patient ID: #{selectedPatient.id}
-                                            </Typography>
+                                            <Stack spacing={2}>
+                                                <Box>
+                                                    <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                        <EmailIcon sx={{ fontSize: 16, mr: 1, verticalAlign: 'middle' }} />
+                                                        Email Address
+                                                    </Typography>
+                                                    <Typography variant="body1" fontWeight="500">
+                                                        {selectedPatient.email}
+                                                    </Typography>
+                                                </Box>
+                                                <Box>
+                                                    <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                        <PhoneIcon sx={{ fontSize: 16, mr: 1, verticalAlign: 'middle' }} />
+                                                        Phone Number
+                                                    </Typography>
+                                                    <Typography variant="body1" fontWeight="500">
+                                                        {selectedPatient.phone || 'Not provided'}
+                                                    </Typography>
+                                                </Box>
+                                                <Box>
+                                                    <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                        <LocationIcon sx={{ fontSize: 16, mr: 1, verticalAlign: 'middle' }} />
+                                                        City
+                                                    </Typography>
+                                                    <Typography variant="body1" fontWeight="500">
+                                                        {selectedPatient.city || 'Not specified'}
+                                                    </Typography>
+                                                </Box>
+                                            </Stack>
                                         </Box>
-                                        
-                                        <Divider />
-                                        
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={6}>
-                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
-                                                    Email
+
+                                        {/* Personal Information */}
+                                        <Box>
+                                            <Typography variant="h6" fontWeight="bold" mb={2} color="#20a09f">
+                                                Personal Information
+                                            </Typography>
+                                            <Stack spacing={2}>
+                                                <Box>
+                                                    <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                        <PersonIcon sx={{ fontSize: 16, mr: 1, verticalAlign: 'middle' }} />
+                                                        Gender
+                                                    </Typography>
+                                                    <Typography variant="body1" fontWeight="500">
+                                                        {selectedPatient.gender ? `${getGenderIcon(selectedPatient.gender)} ${selectedPatient.gender.charAt(0).toUpperCase() + selectedPatient.gender.slice(1)}` : 'Not specified'}
+                                                    </Typography>
+                                                </Box>
+                                                <Box>
+                                                    <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                        <CakeIcon sx={{ fontSize: 16, mr: 1, verticalAlign: 'middle' }} />
+                                                        Age
+                                                    </Typography>
+                                                    <Typography variant="body1" fontWeight="500">
+                                                        {selectedPatient.age !== null && selectedPatient.age !== undefined ? `${selectedPatient.age} years old` : 'Not available'}
+                                                    </Typography>
+                                                </Box>
+                                                <Box>
+                                                    <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                        Date of Birth
+                                                    </Typography>
+                                                    <Typography variant="body1" fontWeight="500">
+                                                        {selectedPatient.date_of_birth ? dayjs(selectedPatient.date_of_birth).format('MMMM D, YYYY') : 'Not provided'}
+                                                    </Typography>
+                                                </Box>
+                                            </Stack>
+                                        </Box>
+                                    </Box>
+
+                                    {/* Medical Summary */}
+                                    <Box>
+                                        <Divider sx={{ my: 2 }} />
+                                        <Typography variant="h6" fontWeight="bold" mb={2} color="#20a09f">
+                                            Medical Summary
+                                        </Typography>
+                                        <Box sx={{
+                                            display: 'grid',
+                                            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+                                            gap: 3
+                                        }}>
+                                            <Card sx={{ p: 2, textAlign: 'center', bgcolor: 'rgba(32, 160, 159, 0.05)' }}>
+                                                <EventIcon sx={{ fontSize: 40, color: '#20a09f', mb: 1 }} />
+                                                <Typography variant="h4" fontWeight="bold" color="#20a09f">
+                                                    {selectedPatient.appointments_count}
                                                 </Typography>
-                                                <Typography variant="body1" fontWeight="500">
-                                                    {selectedPatient.email}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
-                                                    Phone
-                                                </Typography>
-                                                <Typography variant="body1" fontWeight="500">
-                                                    {selectedPatient.phone || 'Not provided'}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
-                                                    Gender
-                                                </Typography>
-                                                <Typography variant="body1" fontWeight="500">
-                                                    {selectedPatient.gender ? `${getGenderIcon(selectedPatient.gender)} ${selectedPatient.gender.charAt(0).toUpperCase() + selectedPatient.gender.slice(1)}` : 'Not specified'}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
-                                                    City
-                                                </Typography>
-                                                <Typography variant="body1" fontWeight="500">
-                                                    {selectedPatient.city || 'Not specified'}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
-                                                    Age
-                                                </Typography>
-                                                <Typography variant="body1" fontWeight="500">
-                                                    {selectedPatient.age !== null && selectedPatient.age !== undefined ? `${selectedPatient.age} years` : 'N/A'}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
-                                                    Date of Birth
-                                                </Typography>
-                                                <Typography variant="body1" fontWeight="500">
-                                                    {selectedPatient.date_of_birth ? dayjs(selectedPatient.date_of_birth).format('MMM D, YYYY') : 'Not provided'}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                <Typography variant="body2" color="text.secondary">
                                                     Total Appointments
                                                 </Typography>
-                                                <Typography variant="body1" fontWeight="500">
-                                                    {selectedPatient.appointments_count} visits
+                                            </Card>
+                                            <Card sx={{ p: 2, textAlign: 'center', bgcolor: 'rgba(76, 175, 80, 0.05)' }}>
+                                                <PersonAddIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
+                                                <Typography variant="h6" fontWeight="bold" color="success.main">
+                                                    {dayjs(selectedPatient.created_at).format('MMM YYYY')}
                                                 </Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
-                                                    Registration Date
+                                                <Typography variant="body2" color="text.secondary">
+                                                    Member Since
                                                 </Typography>
-                                                <Typography variant="body1" fontWeight="500">
-                                                    {dayjs(selectedPatient.created_at).format('MMM D, YYYY')} ({dayjs(selectedPatient.created_at).fromNow()})
+                                            </Card>
+                                            <Card sx={{ p: 2, textAlign: 'center', bgcolor: selectedPatient.appointments_count > 0 ? 'rgba(76, 175, 80, 0.05)' : 'rgba(158, 158, 158, 0.05)' }}>
+                                                <CheckCircleIcon sx={{ fontSize: 40, color: selectedPatient.appointments_count > 0 ? 'success.main' : 'text.secondary', mb: 1 }} />
+                                                <Typography variant="h6" fontWeight="bold" color={selectedPatient.appointments_count > 0 ? 'success.main' : 'text.secondary'}>
+                                                    {selectedPatient.appointments_count > 0 ? 'Active' : 'Idle'}
                                                 </Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </Stack>
-                                </Grid>
-                            </Grid>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    Patient Status
+                                                </Typography>
+                                            </Card>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
                         )}
                     </DialogContent>
                     <DialogActions sx={{ p: 3 }}>

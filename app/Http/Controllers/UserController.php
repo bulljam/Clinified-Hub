@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -139,7 +140,7 @@ class UserController extends Controller
         
         // Add age calculation to each patient
         $patients->each(function ($patient) {
-            $patient->age = $patient->date_of_birth ? $patient->date_of_birth->diffInYears(now()) : null;
+            $patient->age = $patient->date_of_birth ? (int) $patient->date_of_birth->diffInYears(now()) : null;
         });
         
         // Get unique cities for filter
@@ -157,5 +158,46 @@ class UserController extends Controller
             'cities' => $cities,
             'filters' => $request->only(['gender', 'city', 'min_age', 'max_age', 'min_appointments']),
         ]);
+    }
+
+    public function deletePatient(Request $request, User $patient)
+    {
+        if ($patient->role !== 'client') {
+            abort(404, 'Patient not found');
+        }
+
+        if (!in_array($request->user()->role, ['admin', 'super_admin'])) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'reason' => 'required|string|min:10|max:1000',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            DB::table('deleted_users')->insert([
+                'user_id' => $patient->id,
+                'name' => $patient->name,
+                'email' => $patient->email,
+                'role' => $patient->role,
+                'deletion_reason' => $request->reason,
+                'deleted_by' => $request->user()->id,
+                'user_data' => json_encode($patient->toArray()),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $patient->appointments()->delete();
+            $patient->delete();
+
+            DB::commit();
+
+            return redirect()->route('patients.index')->with('success', 'Patient deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Failed to delete patient. Please try again.']);
+        }
     }
 }

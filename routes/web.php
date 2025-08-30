@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::get('providers', [UserController::class, 'providers'])->name('providers.index');
     Route::get('patients', [UserController::class, 'patients'])->name('patients.index');
+    Route::delete('patients/{patient}', [UserController::class, 'deletePatient'])->name('patients.delete');
 
     Route::middleware(['can:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('doctor-applications', [DoctorApplicationController::class, 'index'])->name('doctor-applications.index');
