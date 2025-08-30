@@ -26,6 +26,12 @@ import {
     TextField,
     Typography,
     Stack,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    IconButton,
+    Divider,
 } from '@mui/material';
 import {
     People as PeopleIcon,
@@ -39,6 +45,11 @@ import {
     ExpandLess as ExpandLessIcon,
     Event as EventIcon,
     Cake as CakeIcon,
+    PersonAdd as PersonAddIcon,
+    CheckCircle as CheckCircleIcon,
+    Visibility as VisibilityIcon,
+    Delete as DeleteIcon,
+    Close as CloseIcon,
 } from '@mui/icons-material';
 import { useState } from 'react';
 import dayjs from 'dayjs';
@@ -70,7 +81,6 @@ interface PatientsProps {
         min_age?: number;
         max_age?: number;
         min_appointments?: number;
-        max_appointments?: number;
     };
 }
 
@@ -84,15 +94,24 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Patients({ patients, userRole, cities, filters }: PatientsProps) {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
-    const [showFilters, setShowFilters] = useState(false);
+    const [showFilters, setShowFilters] = useState(true);
     const [localFilters, setLocalFilters] = useState(filters);
-    const itemsPerPage = 10;
+    const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+    const [openViewModal, setOpenViewModal] = useState(false);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [deleteReason, setDeleteReason] = useState('');
+    const itemsPerPage = 3;
 
-    const filteredPatients = patients.filter(patient =>
-        patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (patient.city && patient.city.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    const filteredPatients = patients.filter(patient => {
+        if (searchQuery && !(
+            patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (patient.city && patient.city.toLowerCase().includes(searchQuery.toLowerCase()))
+        )) {
+            return false;
+        }
+        return true;
+    });
 
     const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -121,6 +140,29 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
     const clearFilters = () => {
         setLocalFilters({});
         router.get('/patients');
+    };
+
+    const handleViewPatient = (patient: Patient) => {
+        setSelectedPatient(patient);
+        setOpenViewModal(true);
+    };
+
+    const handleDeletePatient = (patient: Patient) => {
+        setSelectedPatient(patient);
+        setOpenDeleteDialog(true);
+    };
+
+    const confirmDeletePatient = () => {
+        if (selectedPatient && deleteReason.trim()) {
+            router.delete(`/patients/${selectedPatient.id}`, {
+                data: { reason: deleteReason },
+                onSuccess: () => {
+                    setOpenDeleteDialog(false);
+                    setDeleteReason('');
+                    setSelectedPatient(null);
+                },
+            });
+        }
     };
 
     const getPageDescription = () => {
@@ -216,7 +258,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                         },
                                     }}
                                 >
-                                    Advanced Filters
+                                    {showFilters ? 'Hide Filters' : 'Advanced Filters'}
                                 </Button>
                                 {Object.values(localFilters).some(v => v) && (
                                     <Button
@@ -235,27 +277,30 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                 <Box sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 3 }}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={12} sm={6} md={3}>
-                                            <FormControl fullWidth>
-                                                <InputLabel>Gender</InputLabel>
+                                            <FormControl fullWidth variant="outlined">
+                                                <InputLabel shrink>Gender</InputLabel>
                                                 <Select
                                                     value={localFilters.gender || ''}
                                                     label="Gender"
                                                     onChange={(e) => handleFilterChange('gender', e.target.value)}
+                                                    displayEmpty
+                                                    sx={{ minHeight: 56 }}
                                                 >
                                                     <MenuItem value="">All Genders</MenuItem>
                                                     <MenuItem value="male">👨 Male</MenuItem>
                                                     <MenuItem value="female">👩 Female</MenuItem>
-                                                    <MenuItem value="other">👤 Other</MenuItem>
                                                 </Select>
                                             </FormControl>
                                         </Grid>
                                         <Grid item xs={12} sm={6} md={3}>
-                                            <FormControl fullWidth>
-                                                <InputLabel>City</InputLabel>
+                                            <FormControl fullWidth variant="outlined">
+                                                <InputLabel shrink>City</InputLabel>
                                                 <Select
                                                     value={localFilters.city || ''}
                                                     label="City"
                                                     onChange={(e) => handleFilterChange('city', e.target.value)}
+                                                    displayEmpty
+                                                    sx={{ minHeight: 56 }}
                                                 >
                                                     <MenuItem value="">All Cities</MenuItem>
                                                     {cities.map((city) => (
@@ -274,6 +319,8 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                 value={localFilters.min_age || ''}
                                                 onChange={(e) => handleFilterChange('min_age', parseInt(e.target.value))}
                                                 InputProps={{ inputProps: { min: 0, max: 120 } }}
+                                                variant="outlined"
+                                                InputLabelProps={{ shrink: true }}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6} md={3}>
@@ -284,6 +331,8 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                 value={localFilters.max_age || ''}
                                                 onChange={(e) => handleFilterChange('max_age', parseInt(e.target.value))}
                                                 InputProps={{ inputProps: { min: 0, max: 120 } }}
+                                                variant="outlined"
+                                                InputLabelProps={{ shrink: true }}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6} md={3}>
@@ -294,16 +343,9 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                 value={localFilters.min_appointments || ''}
                                                 onChange={(e) => handleFilterChange('min_appointments', parseInt(e.target.value))}
                                                 InputProps={{ inputProps: { min: 0 } }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={6} md={3}>
-                                            <TextField
-                                                fullWidth
-                                                label="Max Appointments"
-                                                type="number"
-                                                value={localFilters.max_appointments || ''}
-                                                onChange={(e) => handleFilterChange('max_appointments', parseInt(e.target.value))}
-                                                InputProps={{ inputProps: { min: 0 } }}
+                                                variant="outlined"
+                                                InputLabelProps={{ shrink: true }}
+                                                helperText="Minimum number of appointments"
                                             />
                                         </Grid>
                                     </Grid>
@@ -336,7 +378,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                 {filteredPatients.length}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {searchQuery ? 'Matching Patients' : userRole === 'provider' ? 'My Patients' : 'Total Patients'}
+                                {searchQuery || Object.values(localFilters).some(v => v) ? 'Matching Patients' : userRole === 'provider' ? 'My Patients' : 'Total Patients'}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -344,10 +386,10 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="h3" fontWeight="bold" color="success.main" mb={1}>
-                                {patients.reduce((sum, patient) => sum + patient.appointments_count, 0)}
+                                {filteredPatients.reduce((sum, patient) => sum + patient.appointments_count, 0)}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Total Appointments
+                                {searchQuery || Object.values(localFilters).some(v => v) ? 'Filtered Appointments' : 'Total Appointments'}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -355,10 +397,10 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="h3" fontWeight="bold" color="info.main" mb={1}>
-                                {cities.length}
+                                {[...new Set(filteredPatients.map(patient => patient.city).filter(city => city))].length}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Cities
+                                {searchQuery || Object.values(localFilters).some(v => v) ? 'Filtered Cities' : 'Cities'}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -420,10 +462,19 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                 </Box>
                                             </TableCell>
                                             <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 140 }}>
-                                                Registration
+                                                <Box display="flex" alignItems="center" gap={1}>
+                                                    <PersonAddIcon fontSize="small" />
+                                                    Registration
+                                                </Box>
                                             </TableCell>
                                             <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 100 }}>
-                                                Status
+                                                <Box display="flex" alignItems="center" gap={1}>
+                                                    <CheckCircleIcon fontSize="small" />
+                                                    Status
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 120 }}>
+                                                Actions
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -554,6 +605,36 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                             }}
                                                         />
                                                     </TableCell>
+                                                    <TableCell sx={{ py: 3 }}>
+                                                        <Box display="flex" gap={1}>
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleViewPatient(patient)}
+                                                                sx={{
+                                                                    color: '#20a09f',
+                                                                    '&:hover': {
+                                                                        bgcolor: 'rgba(32, 160, 159, 0.1)',
+                                                                    },
+                                                                }}
+                                                            >
+                                                                <VisibilityIcon fontSize="small" />
+                                                            </IconButton>
+                                                            {(userRole === 'admin' || userRole === 'super_admin') && (
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={() => handleDeletePatient(patient)}
+                                                                    sx={{
+                                                                        color: 'error.main',
+                                                                        '&:hover': {
+                                                                            bgcolor: 'rgba(211, 47, 47, 0.1)',
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    <DeleteIcon fontSize="small" />
+                                                                </IconButton>
+                                                            )}
+                                                        </Box>
+                                                    </TableCell>
                                                 </TableRow>
                                             </Fade>
                                         ))}
@@ -635,6 +716,201 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                         </CardContent>
                     </Card>
                 )}
+
+                {/* Patient View Modal */}
+                <Dialog
+                    open={openViewModal}
+                    onClose={() => setOpenViewModal(false)}
+                    maxWidth="md"
+                    fullWidth
+                >
+                    <DialogTitle sx={{ bgcolor: '#20a09f', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box display="flex" alignItems="center" gap={2}>
+                            <PersonIcon />
+                            Patient Information
+                        </Box>
+                        <IconButton onClick={() => setOpenViewModal(false)} sx={{ color: 'white' }}>
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+                    <DialogContent sx={{ p: 4 }}>
+                        {selectedPatient && (
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} md={4} display="flex" flexDirection="column" alignItems="center" gap={2}>
+                                    {selectedPatient.photo ? (
+                                        <Avatar 
+                                            src={`/storage/${selectedPatient.photo}`}
+                                            sx={{ width: 120, height: 120, border: '3px solid #20a09f' }}
+                                        />
+                                    ) : (
+                                        <Avatar sx={{ 
+                                            bgcolor: '#4caf50', 
+                                            width: 120, 
+                                            height: 120,
+                                            fontSize: '2.5rem',
+                                            fontWeight: 'bold'
+                                        }}>
+                                            {selectedPatient.name.charAt(0)}
+                                        </Avatar>
+                                    )}
+                                    <Chip
+                                        label="Active Patient"
+                                        color="success"
+                                        sx={{ fontWeight: 600 }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={8}>
+                                    <Stack spacing={3}>
+                                        <Box>
+                                            <Typography variant="h5" fontWeight="bold" mb={1}>
+                                                {selectedPatient.name}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Patient ID: #{selectedPatient.id}
+                                            </Typography>
+                                        </Box>
+                                        
+                                        <Divider />
+                                        
+                                        <Grid container spacing={2}>
+                                            <Grid item xs={6}>
+                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                    Email
+                                                </Typography>
+                                                <Typography variant="body1" fontWeight="500">
+                                                    {selectedPatient.email}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                    Phone
+                                                </Typography>
+                                                <Typography variant="body1" fontWeight="500">
+                                                    {selectedPatient.phone || 'Not provided'}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                    Gender
+                                                </Typography>
+                                                <Typography variant="body1" fontWeight="500">
+                                                    {selectedPatient.gender ? `${getGenderIcon(selectedPatient.gender)} ${selectedPatient.gender.charAt(0).toUpperCase() + selectedPatient.gender.slice(1)}` : 'Not specified'}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                    City
+                                                </Typography>
+                                                <Typography variant="body1" fontWeight="500">
+                                                    {selectedPatient.city || 'Not specified'}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                    Age
+                                                </Typography>
+                                                <Typography variant="body1" fontWeight="500">
+                                                    {selectedPatient.age !== null && selectedPatient.age !== undefined ? `${selectedPatient.age} years` : 'N/A'}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                    Date of Birth
+                                                </Typography>
+                                                <Typography variant="body1" fontWeight="500">
+                                                    {selectedPatient.date_of_birth ? dayjs(selectedPatient.date_of_birth).format('MMM D, YYYY') : 'Not provided'}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                    Total Appointments
+                                                </Typography>
+                                                <Typography variant="body1" fontWeight="500">
+                                                    {selectedPatient.appointments_count} visits
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+                                                    Registration Date
+                                                </Typography>
+                                                <Typography variant="body1" fontWeight="500">
+                                                    {dayjs(selectedPatient.created_at).format('MMM D, YYYY')} ({dayjs(selectedPatient.created_at).fromNow()})
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </Stack>
+                                </Grid>
+                            </Grid>
+                        )}
+                    </DialogContent>
+                    <DialogActions sx={{ p: 3 }}>
+                        <Button
+                            onClick={() => setOpenViewModal(false)}
+                            variant="contained"
+                            sx={{
+                                bgcolor: '#20a09f',
+                                '&:hover': { bgcolor: '#178f8e' },
+                            }}
+                        >
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Delete Confirmation Dialog */}
+                <Dialog
+                    open={openDeleteDialog}
+                    onClose={() => setOpenDeleteDialog(false)}
+                    maxWidth="sm"
+                    fullWidth
+                >
+                    <DialogTitle sx={{ color: 'error.main', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <DeleteIcon />
+                        Delete Patient
+                    </DialogTitle>
+                    <DialogContent>
+                        {selectedPatient && (
+                            <Box>
+                                <Typography variant="body1" mb={3}>
+                                    Are you sure you want to delete <strong>{selectedPatient.name}</strong>? This action cannot be undone.
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    rows={4}
+                                    label="Reason for deletion (required)"
+                                    value={deleteReason}
+                                    onChange={(e) => setDeleteReason(e.target.value)}
+                                    placeholder="Please provide a reason for deleting this patient (e.g., duplicate record, patient request, data cleanup, etc.)"
+                                    required
+                                    sx={{ mb: 2 }}
+                                />
+                                <Typography variant="caption" color="text.secondary">
+                                    Note: This will permanently remove the patient and all associated appointment history from the system.
+                                </Typography>
+                            </Box>
+                        )}
+                    </DialogContent>
+                    <DialogActions sx={{ p: 3 }}>
+                        <Button
+                            onClick={() => {
+                                setOpenDeleteDialog(false);
+                                setDeleteReason('');
+                            }}
+                            variant="outlined"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={confirmDeletePatient}
+                            variant="contained"
+                            color="error"
+                            disabled={!deleteReason.trim()}
+                        >
+                            Delete Patient
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Box>
         </AppLayout>
     );

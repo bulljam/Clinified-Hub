@@ -135,10 +135,6 @@ class UserController extends Controller
             $query->has('appointments', '>=', $request->min_appointments);
         }
         
-        if ($request->filled('max_appointments')) {
-            $query->has('appointments', '<=', $request->max_appointments);
-        }
-        
         $patients = $query->orderBy('name')->get();
         
         // Add age calculation to each patient
@@ -159,7 +155,7 @@ class UserController extends Controller
             'patients' => $patients,
             'userRole' => $userRole,
             'cities' => $cities,
-            'filters' => $request->only(['gender', 'city', 'min_age', 'max_age', 'min_appointments', 'max_appointments']),
+            'filters' => $request->only(['gender', 'city', 'min_age', 'max_age', 'min_appointments']),
         ]);
     }
 }
