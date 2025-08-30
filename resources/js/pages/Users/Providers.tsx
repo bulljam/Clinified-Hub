@@ -218,15 +218,31 @@ export default function Providers({ providers, userRole, specialties, cities, fi
 
                             {/* Filters */}
                             <Collapse in={showFilters}>
-                                <Box sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 3 }}>
-                                    <Grid container spacing={3}>
-                                        <Grid item xs={12} sm={6} md={3}>
+                                <Box sx={{ 
+                                    border: '1px solid #e0e0e0', 
+                                    borderRadius: 2, 
+                                    p: 3, 
+                                    mt: 2,
+                                    bgcolor: 'rgba(32, 160, 159, 0.02)' 
+                                }}>
+                                    <Grid container spacing={3} alignItems="flex-end">
+                                        <Grid item xs={12} sm={6} md={2.4}>
                                             <FormControl fullWidth>
                                                 <InputLabel>Specialty</InputLabel>
                                                 <Select
                                                     value={localFilters.specialty || ''}
                                                     label="Specialty"
                                                     onChange={(e) => handleFilterChange('specialty', e.target.value)}
+                                                    sx={{
+                                                        '& .MuiOutlinedInput-root': {
+                                                            '&:hover fieldset': {
+                                                                borderColor: '#20a09f',
+                                                            },
+                                                            '&.Mui-focused fieldset': {
+                                                                borderColor: '#20a09f',
+                                                            },
+                                                        },
+                                                    }}
                                                 >
                                                     <MenuItem value="">All Specialties</MenuItem>
                                                     {specialties.map((specialty) => (
@@ -237,13 +253,23 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        <Grid item xs={12} sm={6} md={3}>
+                                        <Grid item xs={12} sm={6} md={2.4}>
                                             <FormControl fullWidth>
                                                 <InputLabel>City</InputLabel>
                                                 <Select
                                                     value={localFilters.city || ''}
                                                     label="City"
                                                     onChange={(e) => handleFilterChange('city', e.target.value)}
+                                                    sx={{
+                                                        '& .MuiOutlinedInput-root': {
+                                                            '&:hover fieldset': {
+                                                                borderColor: '#20a09f',
+                                                            },
+                                                            '&.Mui-focused fieldset': {
+                                                                borderColor: '#20a09f',
+                                                            },
+                                                        },
+                                                    }}
                                                 >
                                                     <MenuItem value="">All Cities</MenuItem>
                                                     {cities.map((city) => (
@@ -254,22 +280,31 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        <Grid item xs={12} sm={6} md={3}>
+                                        <Grid item xs={12} sm={6} md={2.4}>
                                             <FormControl fullWidth>
                                                 <InputLabel>Gender</InputLabel>
                                                 <Select
                                                     value={localFilters.gender || ''}
                                                     label="Gender"
                                                     onChange={(e) => handleFilterChange('gender', e.target.value)}
+                                                    sx={{
+                                                        '& .MuiOutlinedInput-root': {
+                                                            '&:hover fieldset': {
+                                                                borderColor: '#20a09f',
+                                                            },
+                                                            '&.Mui-focused fieldset': {
+                                                                borderColor: '#20a09f',
+                                                            },
+                                                        },
+                                                    }}
                                                 >
                                                     <MenuItem value="">All Genders</MenuItem>
                                                     <MenuItem value="male">👨 Male</MenuItem>
                                                     <MenuItem value="female">👩 Female</MenuItem>
-                                                    <MenuItem value="other">👤 Other</MenuItem>
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        <Grid item xs={12} sm={6} md={3}>
+                                        <Grid item xs={12} sm={6} md={2.4}>
                                             <TextField
                                                 fullWidth
                                                 label="Min Experience (Years)"
@@ -277,19 +312,76 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 value={localFilters.min_experience || ''}
                                                 onChange={(e) => handleFilterChange('min_experience', parseInt(e.target.value))}
                                                 InputProps={{ inputProps: { min: 0 } }}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '&:hover fieldset': {
+                                                            borderColor: '#20a09f',
+                                                        },
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: '#20a09f',
+                                                        },
+                                                    },
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6} md={2.4}>
+                                            <TextField
+                                                fullWidth
+                                                label="Max Experience (Years)"
+                                                type="number"
+                                                value={localFilters.max_experience || ''}
+                                                onChange={(e) => handleFilterChange('max_experience', parseInt(e.target.value))}
+                                                InputProps={{ inputProps: { min: 0 } }}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '&:hover fieldset': {
+                                                            borderColor: '#20a09f',
+                                                        },
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: '#20a09f',
+                                                        },
+                                                    },
+                                                }}
                                             />
                                         </Grid>
                                     </Grid>
-                                    <Box sx={{ mt: 2, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                                        <Button onClick={clearFilters} variant="outlined">
-                                            Clear
+                                    <Box sx={{ 
+                                        mt: 3, 
+                                        display: 'flex', 
+                                        gap: 2, 
+                                        justifyContent: 'flex-end',
+                                        flexWrap: 'wrap',
+                                        alignItems: 'center'
+                                    }}>
+                                        <Button 
+                                            onClick={clearFilters} 
+                                            variant="outlined"
+                                            sx={{
+                                                borderColor: '#e0e0e0',
+                                                color: 'text.secondary',
+                                                '&:hover': {
+                                                    borderColor: '#20a09f',
+                                                    bgcolor: 'rgba(32, 160, 159, 0.04)',
+                                                    color: '#20a09f',
+                                                },
+                                            }}
+                                        >
+                                            Clear Filters
                                         </Button>
                                         <Button
                                             onClick={applyFilters}
                                             variant="contained"
                                             sx={{
                                                 bgcolor: '#20a09f',
-                                                '&:hover': { bgcolor: '#178f8e' },
+                                                color: 'white',
+                                                px: 3,
+                                                py: 1,
+                                                fontWeight: 600,
+                                                '&:hover': { 
+                                                    bgcolor: '#178f8e',
+                                                    transform: 'translateY(-1px)',
+                                                    boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                                                },
                                             }}
                                         >
                                             Apply Filters
@@ -340,9 +432,9 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                 {/* Providers Grid */}
                 {filteredProviders.length > 0 ? (
                     <>
-                        <Grid container spacing={3} sx={{ mb: 4 }}>
+                        <Grid container spacing={3} sx={{ mb: 4 }} alignItems="stretch">
                             {paginatedProviders.map((provider, index) => (
-                                <Grid item xs={12} sm={6} md={4} lg={3} key={provider.id}>
+                                <Grid item xs={12} sm={6} md={4} lg={3} key={provider.id} sx={{ display: 'flex' }}>
                                     <Fade in={true} timeout={300 + index * 50}>
                                         <Card
                                             elevation={0}
@@ -356,9 +448,11 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                     borderColor: '#20a09f',
                                                 },
                                                 cursor: 'pointer',
+                                                width: '100%',
                                                 height: '100%',
                                                 display: 'flex',
                                                 flexDirection: 'column',
+                                                minHeight: '480px',
                                             }}
                                         >
                                             <CardContent sx={{ p: 3, flexGrow: 1 }}>
@@ -406,10 +500,10 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 </Box>
 
                                                 {/* Provider Details */}
-                                                <Stack spacing={1}>
+                                                <Stack spacing={1.5} sx={{ mb: 2 }}>
                                                     {provider.years_of_experience && (
                                                         <Box display="flex" alignItems="center" gap={1}>
-                                                            <WorkIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                                                            <WorkIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
                                                             <Typography variant="body2" color="text.secondary">
                                                                 {provider.years_of_experience} years experience
                                                             </Typography>
@@ -418,7 +512,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                     
                                                     {provider.city && (
                                                         <Box display="flex" alignItems="center" gap={1}>
-                                                            <LocationIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                                                            <LocationIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
                                                             <Typography variant="body2" color="text.secondary">
                                                                 {provider.city}
                                                             </Typography>
@@ -427,7 +521,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                     
                                                     {provider.gender && (
                                                         <Box display="flex" alignItems="center" gap={1}>
-                                                            <PersonIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                                                            <PersonIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
                                                             <Typography variant="body2" color="text.secondary">
                                                                 {getGenderIcon(provider.gender)} {provider.gender.charAt(0).toUpperCase() + provider.gender.slice(1)}
                                                             </Typography>
@@ -435,15 +529,24 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                     )}
 
                                                     <Box display="flex" alignItems="center" gap={1}>
-                                                        <EmailIcon fontSize="small" sx={{ color: '#20a09f' }} />
-                                                        <Typography variant="body2" color="text.secondary" noWrap>
+                                                        <EmailIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
+                                                        <Typography 
+                                                            variant="body2" 
+                                                            color="text.secondary" 
+                                                            sx={{
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                                whiteSpace: 'nowrap',
+                                                                maxWidth: '200px',
+                                                            }}
+                                                        >
                                                             {provider.email}
                                                         </Typography>
                                                     </Box>
 
                                                     {provider.phone && (
                                                         <Box display="flex" alignItems="center" gap={1}>
-                                                            <PhoneIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                                                            <PhoneIcon fontSize="small" sx={{ color: '#20a09f', minWidth: 20 }} />
                                                             <Typography variant="body2" color="text.secondary">
                                                                 {provider.phone}
                                                             </Typography>
