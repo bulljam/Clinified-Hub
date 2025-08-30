@@ -61,8 +61,7 @@ interface ProvidersProps {
         specialty?: string;
         city?: string;
         gender?: string;
-        min_experience?: number;
-        max_experience?: number;
+        experience?: string;
     };
     search?: string;
 }
@@ -76,8 +75,21 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Providers({ providers, userRole, specialties, cities, filters, search }: ProvidersProps) {
     const [searchQuery, setSearchQuery] = useState(search || '');
-    const [showFilters, setShowFilters] = useState(false);
+    const [showFilters, setShowFilters] = useState(true);
     const [localFilters, setLocalFilters] = useState(filters);
+
+    // Calculate filtered statistics based on current providers
+    const filteredSpecialties = Array.from(new Set(
+        providers.data
+            .map(provider => provider.specialty)
+            .filter(specialty => specialty) // Remove null/undefined
+    )).length;
+
+    const filteredCities = Array.from(new Set(
+        providers.data
+            .map(provider => provider.city)
+            .filter(city => city) // Remove null/undefined
+    )).length;
 
     const handlePageChange = (page: number) => {
         const params = new URLSearchParams();
@@ -111,10 +123,21 @@ export default function Providers({ providers, userRole, specialties, cities, fi
     };
 
     const handleFilterChange = (key: string, value: string | number) => {
-        setLocalFilters(prev => ({
-            ...prev,
+        const newFilters = {
+            ...localFilters,
             [key]: value || undefined
-        }));
+        };
+        setLocalFilters(newFilters);
+        
+        // Auto-apply filters when they change
+        const params = new URLSearchParams();
+        Object.entries(newFilters).forEach(([filterKey, filterValue]) => {
+            if (filterValue) params.append(filterKey, filterValue.toString());
+        });
+        
+        if (searchQuery) params.append('search', searchQuery);
+        
+        router.get(`/providers?${params.toString()}`);
     };
 
     const applyFilters = () => {
@@ -122,6 +145,9 @@ export default function Providers({ providers, userRole, specialties, cities, fi
         Object.entries(localFilters).forEach(([key, value]) => {
             if (value) params.append(key, value.toString());
         });
+        
+        if (searchQuery) params.append('search', searchQuery);
+        
         router.get(`/providers?${params.toString()}`);
     };
 
@@ -227,7 +253,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                         },
                                     }}
                                 >
-                                    Advanced Filters
+                                    {showFilters ? 'Hide Filters' : 'Show Filters'}
                                 </Button>
                                 {(Object.values(localFilters).some(v => v) || searchQuery) && (
                                     <Button
@@ -330,44 +356,32 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                             </FormControl>
                                         </Grid>
                                         <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                                            <TextField
-                                                fullWidth
-                                                label="Min Experience (Years)"
-                                                type="number"
-                                                value={localFilters.min_experience || ''}
-                                                onChange={(e) => handleFilterChange('min_experience', parseInt(e.target.value))}
-                                                InputProps={{ inputProps: { min: 0 } }}
-                                                sx={{
-                                                    '& .MuiOutlinedInput-root': {
-                                                        '&:hover fieldset': {
-                                                            borderColor: '#20a09f',
+                                            <FormControl fullWidth>
+                                                <InputLabel>Experience (Years)</InputLabel>
+                                                <Select
+                                                    value={localFilters.experience || ''}
+                                                    label="Experience (Years)"
+                                                    onChange={(e) => handleFilterChange('experience', e.target.value)}
+                                                    sx={{
+                                                        '& .MuiOutlinedInput-root': {
+                                                            '&:hover fieldset': {
+                                                                borderColor: '#20a09f',
+                                                            },
+                                                            '&.Mui-focused fieldset': {
+                                                                borderColor: '#20a09f',
+                                                            },
                                                         },
-                                                        '&.Mui-focused fieldset': {
-                                                            borderColor: '#20a09f',
-                                                        },
-                                                    },
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                                            <TextField
-                                                fullWidth
-                                                label="Max Experience (Years)"
-                                                type="number"
-                                                value={localFilters.max_experience || ''}
-                                                onChange={(e) => handleFilterChange('max_experience', parseInt(e.target.value))}
-                                                InputProps={{ inputProps: { min: 0 } }}
-                                                sx={{
-                                                    '& .MuiOutlinedInput-root': {
-                                                        '&:hover fieldset': {
-                                                            borderColor: '#20a09f',
-                                                        },
-                                                        '&.Mui-focused fieldset': {
-                                                            borderColor: '#20a09f',
-                                                        },
-                                                    },
-                                                }}
-                                            />
+                                                    }}
+                                                >
+                                                    <MenuItem value="">All Experience Levels</MenuItem>
+                                                    <MenuItem value="0-2">0-2 years</MenuItem>
+                                                    <MenuItem value="3-5">3-5 years</MenuItem>
+                                                    <MenuItem value="6-10">6-10 years</MenuItem>
+                                                    <MenuItem value="11-15">11-15 years</MenuItem>
+                                                    <MenuItem value="16-20">16-20 years</MenuItem>
+                                                    <MenuItem value="20+">20+ years</MenuItem>
+                                                </Select>
+                                            </FormControl>
                                         </Grid>
                                     </Grid>
                                     <Box sx={{ 
@@ -437,7 +451,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                             <CardContent sx={{ p: 3, textAlign: 'center' }}>
                                 <Typography variant="h3" fontWeight="bold" color="success.main" mb={1}>
-                                    {specialties.length}
+                                    {filteredSpecialties}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
                                     Specialties
@@ -450,7 +464,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                             <CardContent sx={{ p: 3, textAlign: 'center' }}>
                                 <Typography variant="h3" fontWeight="bold" color="info.main" mb={1}>
-                                    {cities.length}
+                                    {filteredCities}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
                                     Cities

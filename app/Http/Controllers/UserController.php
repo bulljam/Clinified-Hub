@@ -39,12 +39,28 @@ class UserController extends Controller
             $query->where('gender', $request->gender);
         }
         
-        if ($request->filled('min_experience')) {
-            $query->where('years_of_experience', '>=', $request->min_experience);
-        }
-        
-        if ($request->filled('max_experience')) {
-            $query->where('years_of_experience', '<=', $request->max_experience);
+        if ($request->filled('experience')) {
+            $experience = $request->experience;
+            switch ($experience) {
+                case '0-2':
+                    $query->whereBetween('years_of_experience', [0, 2]);
+                    break;
+                case '3-5':
+                    $query->whereBetween('years_of_experience', [3, 5]);
+                    break;
+                case '6-10':
+                    $query->whereBetween('years_of_experience', [6, 10]);
+                    break;
+                case '11-15':
+                    $query->whereBetween('years_of_experience', [11, 15]);
+                    break;
+                case '16-20':
+                    $query->whereBetween('years_of_experience', [16, 20]);
+                    break;
+                case '20+':
+                    $query->where('years_of_experience', '>=', 20);
+                    break;
+            }
         }
         
         $providers = $query->orderBy('name')->paginate(9);
@@ -71,7 +87,7 @@ class UserController extends Controller
             'userRole' => $userRole,
             'specialties' => $specialties,
             'cities' => $cities,
-            'filters' => $request->only(['specialty', 'city', 'gender', 'min_experience', 'max_experience']),
+            'filters' => $request->only(['specialty', 'city', 'gender', 'experience']),
             'search' => $request->search,
         ]);
     }

@@ -128,6 +128,7 @@ interface PatientAppointmentsProps {
 export default function PatientAppointments({ appointments, allAppointments, providers, currentUser }: PatientAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
+  const [viewingAppointment, setViewingAppointment] = useState<Appointment | null>(null);
   const [deletingAppointment, setDeletingAppointment] = useState<Appointment | null>(null);
   const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false);
   const [statusFilter, setStatusFilter] = useState('');
@@ -284,7 +285,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                 </Avatar>
               </Box>
               <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
-                <MedicalIcon sx={{ fontSize: 80 }} />
+                <StatsIcon sx={{ fontSize: 80 }} />
               </Box>
             </CardContent>
           </Card>
@@ -419,7 +420,13 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                     px: 4,
                     py: 1.5,
                     textTransform: 'none',
-                    fontWeight: 500
+                    fontWeight: 500,
+                    borderColor: '#20a09f',
+                    color: '#20a09f',
+                    '&:hover': {
+                      borderColor: '#178f8e',
+                      bgcolor: 'rgba(32, 160, 159, 0.08)'
+                    }
                   }}
                 >
                   Clear All
@@ -706,7 +713,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                               <Tooltip title="View Appointment Details" arrow>
                                 <IconButton
                                   size="medium"
-                                  onClick={() => setEditingAppointment(appointment)}
+                                  onClick={() => setViewingAppointment(appointment)}
                                   sx={{
                                     bgcolor: '#20a09f',
                                     color: 'white',
@@ -866,6 +873,99 @@ export default function PatientAppointments({ appointments, allAppointments, pro
           open={!!editingAppointment}
           onClose={() => setEditingAppointment(null)}
         />
+      )}
+
+      {viewingAppointment && (
+        <Dialog open={!!viewingAppointment} onClose={() => setViewingAppointment(null)} maxWidth="sm" fullWidth>
+          <DialogTitle sx={{ bgcolor: '#20a09f', color: 'white', display: 'flex', alignItems: 'center', gap: 2 }}>
+            <MedicalIcon />
+            Appointment Details
+          </DialogTitle>
+          <DialogContent sx={{ mt: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box>
+                <Typography variant="h6" color="primary" gutterBottom>
+                  Patient Information
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Name:</strong> {viewingAppointment.user?.name || 'N/A'}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Email:</strong> {viewingAppointment.user?.email || 'N/A'}
+                </Typography>
+              </Box>
+
+              <Divider />
+
+              <Box>
+                <Typography variant="h6" color="primary" gutterBottom>
+                  Provider Information
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Doctor:</strong> Dr. {viewingAppointment.provider?.name || 'N/A'}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Email:</strong> {viewingAppointment.provider?.email || 'N/A'}
+                </Typography>
+              </Box>
+
+              <Divider />
+
+              <Box>
+                <Typography variant="h6" color="primary" gutterBottom>
+                  Appointment Details
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Date:</strong> {dayjs(viewingAppointment.date).format('MMMM D, YYYY')}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Time:</strong> {viewingAppointment.time ? dayjs(`1970-01-01 ${viewingAppointment.time}`).format('h:mm A') : 'N/A'}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                  <strong>Status:</strong> 
+                  <Chip
+                    label={viewingAppointment.status.charAt(0).toUpperCase() + viewingAppointment.status.slice(1)}
+                    color={getStatusColor(viewingAppointment.status)}
+                    size="small"
+                  />
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <strong>Payment:</strong> 
+                  <Chip
+                    label={viewingAppointment.payment_status.charAt(0).toUpperCase() + viewingAppointment.payment_status.slice(1)}
+                    color={getPaymentStatusColor(viewingAppointment.payment_status)}
+                    size="small"
+                  />
+                </Typography>
+                {viewingAppointment.notes && (
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Notes:</strong> {viewingAppointment.notes}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          </DialogContent>
+          <DialogActions sx={{ p: 3, gap: 1 }}>
+            <Button
+              variant="outlined"
+              onClick={() => setViewingAppointment(null)}
+            >
+              Close
+            </Button>
+            {viewingAppointment.status === 'pending' && (
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setEditingAppointment(viewingAppointment);
+                  setViewingAppointment(null);
+                }}
+                sx={{ bgcolor: '#20a09f' }}
+              >
+                Edit Appointment
+              </Button>
+            )}
+          </DialogActions>
+        </Dialog>
       )}
 
       <Dialog 
