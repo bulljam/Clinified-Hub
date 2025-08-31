@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorApplicationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -14,9 +15,7 @@ Route::get('doctor-application', [DoctorApplicationController::class, 'create'])
 Route::post('doctor-application', [DoctorApplicationController::class, 'store'])->name('doctor-application.store');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('appointments', AppointmentController::class);
     Route::patch('appointments/{appointment}/patient', [AppointmentController::class, 'updatePatient'])->name('appointments.update-patient');

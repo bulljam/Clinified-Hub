@@ -16,7 +16,21 @@ interface StatCardProps {
     value: string;
     description: string;
     icon: React.ComponentType<any>;
-    trend?: string;
+    trend?: string | null;
+}
+
+interface AppointmentData {
+    time: string;
+    date?: string;
+    patient?: string;
+    provider?: string;
+    status: string;
+}
+
+interface DashboardProps {
+    stats: StatCardProps[];
+    upcomingAppointments: AppointmentData[];
+    userRole: 'admin' | 'provider' | 'client';
 }
 
 function StatCard({ title, value, description, icon: Icon, trend }: StatCardProps) {
@@ -42,30 +56,11 @@ function StatCard({ title, value, description, icon: Icon, trend }: StatCardProp
     );
 }
 
-export default function Dashboard() {
-    const stats = [
-        {
-            title: 'Appointments Today',
-            value: '12',
-            description: '3 pending, 9 confirmed',
-            icon: Calendar,
-            trend: '+2 from yesterday',
-        },
-        {
-            title: 'Pending Payments',
-            value: '$2,450',
-            description: '8 outstanding invoices',
-            icon: CreditCard,
-            trend: '-$350 from last week',
-        },
-        {
-            title: 'Total Patients',
-            value: '348',
-            description: '12 new this month',
-            icon: Users,
-            trend: '+5% this month',
-        },
-    ];
+export default function Dashboard({ stats, upcomingAppointments, userRole }: DashboardProps) {
+    const statsWithIcons = stats.map((stat, index) => ({
+        ...stat,
+        icon: [Calendar, CreditCard, Users][index] || Calendar,
+    }));
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -77,7 +72,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-3">
-                    {stats.map((stat, index) => (
+                    {statsWithIcons.map((stat, index) => (
                         <StatCard key={index} {...stat} />
                     ))}
                 </div>
@@ -87,30 +82,49 @@ export default function Dashboard() {
                         <h3 className="font-semibold">Upcoming Appointments</h3>
                     </div>
                     <div className="p-6">
-                        <div className="space-y-4">
-                            {[
-                                { time: '9:00 AM', patient: 'John Smith', status: 'confirmed' },
-                                { time: '10:30 AM', patient: 'Sarah Johnson', status: 'pending' },
-                                { time: '2:00 PM', patient: 'Michael Brown', status: 'confirmed' },
-                                { time: '3:30 PM', patient: 'Emily Davis', status: 'cancelled' },
-                            ].map((appointment, index) => (
-                                <div key={index} className="flex items-center justify-between p-3 border border-border rounded-lg">
-                                    <div className="flex items-center gap-3">
-                                        <div className="text-sm font-medium text-muted-foreground">{appointment.time}</div>
-                                        <div className="text-sm font-medium text-foreground">{appointment.patient}</div>
+                        {upcomingAppointments.length > 0 ? (
+                            <div className="space-y-4">
+                                {upcomingAppointments.map((appointment, index) => (
+                                    <div key={index} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                                        <div className="flex items-center gap-3">
+                                            <div className="text-sm font-medium text-muted-foreground">
+                                                {appointment.time}
+                                                {appointment.date && ` • ${appointment.date}`}
+                                            </div>
+                                            <div className="text-sm font-medium text-foreground">
+                                                {userRole === 'admin' 
+                                                    ? `${appointment.patient} with Dr. ${appointment.provider}`
+                                                    : userRole === 'provider'
+                                                    ? appointment.patient
+                                                    : `Dr. ${appointment.provider}`
+                                                }
+                                            </div>
+                                        </div>
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                            appointment.status === 'confirmed' 
+                                                ? 'bg-accent/10 text-accent' 
+                                                : appointment.status === 'pending'
+                                                ? 'bg-chart-3/10 text-chart-3'
+                                                : 'bg-destructive/10 text-destructive'
+                                        }`}>
+                                            {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                                        </span>
                                     </div>
-                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                        appointment.status === 'confirmed' 
-                                            ? 'bg-accent/10 text-accent' 
-                                            : appointment.status === 'pending'
-                                            ? 'bg-chart-3/10 text-chart-3'
-                                            : 'bg-destructive/10 text-destructive'
-                                    }`}>
-                                        {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8">
+                                <Calendar className="size-12 text-muted-foreground mx-auto mb-3" />
+                                <p className="text-muted-foreground">
+                                    {userRole === 'admin' 
+                                        ? 'No upcoming appointments in the system'
+                                        : userRole === 'provider'
+                                        ? 'No upcoming appointments with your patients'
+                                        : 'No upcoming appointments scheduled'
+                                    }
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,14 +18,12 @@ class SuperAdminSeeder extends Seeder
             [
                 'name' => 'Super Administrator',
                 'email' => 'super@clinify.com',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('123'),
                 'role' => 'super_admin',
                 'email_verified_at' => now(),
             ]
         );
 
         $this->command->info('Super admin created successfully!');
-        $this->command->info('Email: super@clinify.com');
-        $this->command->info('Password: password123');
     }
 }

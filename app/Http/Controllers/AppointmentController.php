@@ -22,7 +22,7 @@ class AppointmentController extends Controller
         $user = $request->user();
 
         $query = match ($user->role) {
-            'admin' => Appointment::with(['user', 'provider']),
+            'super_admin', 'admin' => Appointment::with(['user', 'provider']),
             'provider' => Appointment::with(['user', 'provider'])
                 ->where('provider_id', $user->id),
             'client' => Appointment::with(['user', 'provider'])
