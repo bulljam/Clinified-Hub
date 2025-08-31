@@ -19,6 +19,15 @@ import {
     Paper,
     Fade,
     Slide,
+    Drawer,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    IconButton,
+    useMediaQuery,
+    ToggleButton,
+    ToggleButtonGroup,
 } from '@mui/material';
 import {
     CalendarMonth,
@@ -36,6 +45,15 @@ import {
     MedicalServices,
     CheckCircle,
     People,
+    KeyboardArrowUp,
+    Menu as MenuIcon,
+    Close as CloseIcon,
+    ContactMail,
+    Home as HomeIcon,
+    Star,
+    Build,
+    Reviews,
+    Login as LoginIcon,
 } from '@mui/icons-material';
 import { useState, useEffect, useRef } from 'react';
 
@@ -142,17 +160,18 @@ const testimonials = [
 ];
 
 const navigationSections = [
-    { id: 'hero', label: 'Home' },
-    { id: 'features', label: 'Features' },
-    { id: 'how-it-works', label: 'How It Works' },
-    { id: 'testimonials', label: 'Reviews' },
-    { id: 'cta', label: 'Get Started' },
+    { id: 'hero', label: 'Home', icon: HomeIcon },
+    { id: 'features', label: 'Features', icon: Star },
+    { id: 'how-it-works', label: 'How It Works', icon: Build },
+    { id: 'testimonials', label: 'Testimonials', icon: Reviews },
+    { id: 'cta', label: 'Contact', icon: ContactMail },
 ];
 
 // Custom hook for scroll detection and progress
 const useScrollSpy = (sectionIds: string[], offset = 100) => {
     const [activeSection, setActiveSection] = useState('');
     const [scrollProgress, setScrollProgress] = useState(0);
+    const [showScrollToTop, setShowScrollToTop] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -160,6 +179,7 @@ const useScrollSpy = (sectionIds: string[], offset = 100) => {
             const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
             const progress = Math.min((window.scrollY / documentHeight) * 100, 100);
             setScrollProgress(progress);
+            setShowScrollToTop(window.scrollY > 300);
             
             for (let i = sectionIds.length - 1; i >= 0; i--) {
                 const section = document.getElementById(sectionIds[i]);
@@ -170,19 +190,19 @@ const useScrollSpy = (sectionIds: string[], offset = 100) => {
             }
         };
 
-        handleScroll(); // Set initial active section
+        handleScroll();
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, [sectionIds, offset]);
 
-    return { activeSection, scrollProgress };
+    return { activeSection, scrollProgress, showScrollToTop };
 };
 
 // Smooth scroll function
 const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
-        const offsetTop = section.offsetTop - 80; // Account for navbar height
+        const offsetTop = section.offsetTop - 80;
         window.scrollTo({
             top: offsetTop,
             behavior: 'smooth',
@@ -190,10 +210,21 @@ const scrollToSection = (sectionId: string) => {
     }
 };
 
+// Scroll to top function
+const scrollToTop = () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+};
+
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
     const theme = useTheme();
-    const { activeSection, scrollProgress } = useScrollSpy(navigationSections.map(s => s.id));
+    const { activeSection, scrollProgress, showScrollToTop } = useScrollSpy(navigationSections.map(s => s.id));
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [selectedRole, setSelectedRole] = useState<'patient' | 'doctor'>('patient');
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const turquoise = '#20a09f';
     const deepTeal = '#0f7673';
@@ -221,181 +252,331 @@ export default function Welcome() {
                     }}
                 />
 
-                {/* Sticky Navigation with Progress Indicator */}
-                <AppBar 
-                    position="sticky" 
-                    elevation={0} 
+                {/* Glassmorphic Navbar */}
+                <Box 
                     sx={{ 
-                        bgcolor: 'rgba(255, 255, 255, 0.95)', 
-                        backdropFilter: 'blur(20px)',
-                        borderBottom: 1, 
-                        borderColor: 'divider',
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                            boxShadow: theme.shadows[4],
-                        }
+                        position: 'sticky', 
+                        top: 20, 
+                        zIndex: 1000, 
+                        px: 2,
+                        animation: 'slideDown 0.8s ease-out',
                     }}
                 >
-                    <Container maxWidth="lg">
-                        <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
-                            <Typography 
-                                variant="h5" 
-                                component="div" 
-                                sx={{ 
-                                    fontWeight: 700, 
-                                    color: turquoise,
-                                    cursor: 'pointer',
-                                    transition: 'transform 0.2s ease',
-                                    '&:hover': {
-                                        transform: 'scale(1.05)',
-                                    }
-                                }}
-                                onClick={() => scrollToSection('hero')}
-                            >
-                                Clinify
-                            </Typography>
+                    <Container maxWidth="md">
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                background: `linear-gradient(135deg, ${alpha(turquoise, 0.1)}, ${alpha(turquoise, 0.05)})`,
+                                backdropFilter: 'blur(12px)',
+                                borderRadius: 8,
+                                border: `1px solid ${alpha(turquoise, 0.2)}`,
+                                boxShadow: `0 8px 32px ${alpha(turquoise, 0.15)}, 0 2px 8px rgba(0, 0, 0, 0.1)`,
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    boxShadow: `0 12px 40px ${alpha(turquoise, 0.2)}, 0 4px 12px rgba(0, 0, 0, 0.15)`,
+                                }
+                            }}
+                        >
+                            <Toolbar sx={{ 
+                                justifyContent: 'space-between', 
+                                py: 1.5,
+                                minHeight: { xs: 60, md: 70 }
+                            }}>
+                                {/* Logo */}
+                                <Typography 
+                                    variant="h5" 
+                                    component="div" 
+                                    sx={{ 
+                                        fontWeight: 700, 
+                                        color: turquoise,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        '&:hover': {
+                                            transform: 'scale(1.05)',
+                                            filter: 'drop-shadow(0 0 8px rgba(32, 160, 159, 0.5))',
+                                        }
+                                    }}
+                                    onClick={() => scrollToSection('hero')}
+                                >
+                                    Clinify
+                                </Typography>
 
-                            {/* Navigation Menu - Hidden on mobile, shown on desktop */}
-                            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
-                                {navigationSections.map((section) => (
-                                    <Box key={section.id} sx={{ position: 'relative' }}>
-                                        <Button
-                                            onClick={() => scrollToSection(section.id)}
-                                            sx={{
-                                                textTransform: 'none',
-                                                color: activeSection === section.id ? turquoise : 'text.secondary',
-                                                fontWeight: activeSection === section.id ? 600 : 400,
-                                                px: 2,
-                                                py: 1,
-                                                borderRadius: 2,
-                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                '&:hover': {
-                                                    color: turquoise,
-                                                    bgcolor: alpha(turquoise, 0.05),
-                                                }
-                                            }}
-                                        >
-                                            {section.label}
-                                        </Button>
-                                        {/* Glowing Progress Bar */}
-                                        <Box
-                                            sx={{
-                                                position: 'absolute',
-                                                bottom: -2,
-                                                left: '50%',
-                                                transform: 'translateX(-50%)',
-                                                width: activeSection === section.id ? '100%' : '0%',
-                                                height: 4,
-                                                bgcolor: turquoise,
-                                                borderRadius: 3,
-                                                transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                boxShadow: activeSection === section.id 
-                                                    ? `0 0 15px ${alpha(turquoise, 0.8)}, 0 0 30px ${alpha(turquoise, 0.4)}, 0 0 45px ${alpha(turquoise, 0.2)}` 
-                                                    : 'none',
-                                                background: activeSection === section.id 
-                                                    ? `linear-gradient(90deg, ${alpha(turquoise, 0.6)}, ${turquoise}, ${alpha(turquoise, 0.6)})`
-                                                    : turquoise,
-                                                '&::before': {
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    top: -2,
-                                                    left: -3,
-                                                    right: -3,
-                                                    bottom: -2,
-                                                    background: `linear-gradient(90deg, transparent, ${alpha(turquoise, 0.3)}, transparent)`,
+                                {/* Desktop Navigation */}
+                                <Box sx={{ 
+                                    display: { xs: 'none', md: 'flex' }, 
+                                    alignItems: 'center', 
+                                    gap: 1,
+                                    position: 'absolute',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                }}>
+                                    {navigationSections.map((section) => (
+                                        <Box key={section.id} sx={{ position: 'relative' }}>
+                                            <Button
+                                                onClick={() => scrollToSection(section.id)}
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: activeSection === section.id ? turquoise : 'text.primary',
+                                                    fontWeight: activeSection === section.id ? 600 : 500,
+                                                    px: 3,
+                                                    py: 1.5,
                                                     borderRadius: 6,
-                                                    opacity: activeSection === section.id ? 1 : 0,
-                                                    transition: 'opacity 0.5s ease',
-                                                    animation: activeSection === section.id ? 'glow 2s ease-in-out infinite alternate' : 'none',
-                                                }
-                                            }}
-                                        />
-                                    </Box>
-                                ))}
-                            </Box>
-
-                            <Stack direction="row" spacing={2}>
-                                {auth.user ? (
-                                    <Button
-                                        component={Link}
-                                        href={dashboard().url}
-                                        variant="contained"
-                                        sx={{ 
-                                            textTransform: 'none',
-                                            bgcolor: turquoise,
-                                            boxShadow: `0 4px 14px ${alpha(turquoise, 0.4)}`,
-                                            transition: 'all 0.3s ease',
-                                            '&:hover': {
-                                                bgcolor: deepTeal,
-                                                transform: 'translateY(-2px)',
-                                                boxShadow: `0 6px 20px ${alpha(turquoise, 0.4)}`,
-                                            }
-                                        }}
-                                    >
-                                        Dashboard
-                                    </Button>
-                                ) : (
-                                    <>
-                                        <Button
-                                            component={Link}
-                                            href={login().url}
-                                            variant="text"
-                                            sx={{ 
-                                                textTransform: 'none',
-                                                color: 'text.primary',
-                                                transition: 'color 0.3s ease',
-                                                display: { xs: 'none', sm: 'inline-flex' },
-                                                '&:hover': {
-                                                    color: turquoise,
-                                                }
-                                            }}
-                                        >
-                                            Log in
-                                        </Button>
-                                        <Button
-                                            component={Link}
-                                            href={register().url}
-                                            variant="outlined"
-                                            size="small"
-                                            sx={{ 
-                                                textTransform: 'none',
-                                                borderColor: turquoise,
-                                                color: turquoise,
-                                                transition: 'all 0.3s ease',
-                                                '&:hover': {
+                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    '&:hover': {
+                                                        color: turquoise,
+                                                        bgcolor: alpha(turquoise, 0.08),
+                                                        transform: 'translateY(-1px)',
+                                                        filter: 'drop-shadow(0 4px 8px rgba(32, 160, 159, 0.2))',
+                                                    }
+                                                }}
+                                            >
+                                                {section.label}
+                                            </Button>
+                                            {/* Glowing Underline */}
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    bottom: 4,
+                                                    left: '50%',
+                                                    transform: 'translateX(-50%)',
+                                                    width: activeSection === section.id ? '80%' : '0%',
+                                                    height: 3,
                                                     bgcolor: turquoise,
-                                                    color: 'white',
-                                                    transform: 'translateY(-2px)',
-                                                }
-                                            }}
-                                        >
-                                            Register
-                                        </Button>
+                                                    borderRadius: 2,
+                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    boxShadow: activeSection === section.id 
+                                                        ? `0 0 12px ${alpha(turquoise, 0.8)}` 
+                                                        : 'none',
+                                                }}
+                                            />
+                                        </Box>
+                                    ))}
+                                </Box>
+
+                                {/* Right Side */}
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    {/* Role Toggle */}
+                                    {!auth.user && !isMobile && (
+                                        <Box sx={{ mr: 2 }}>
+                                            <ToggleButtonGroup
+                                                value={selectedRole}
+                                                exclusive
+                                                onChange={(_, newRole) => newRole && setSelectedRole(newRole)}
+                                                size="small"
+                                                sx={{
+                                                    '& .MuiToggleButton-root': {
+                                                        textTransform: 'none',
+                                                        border: `1px solid ${alpha(turquoise, 0.3)}`,
+                                                        color: 'text.secondary',
+                                                        '&.Mui-selected': {
+                                                            bgcolor: turquoise,
+                                                            color: 'white',
+                                                            '&:hover': {
+                                                                bgcolor: deepTeal,
+                                                            }
+                                                        },
+                                                        '&:hover': {
+                                                            bgcolor: alpha(turquoise, 0.08),
+                                                        }
+                                                    }
+                                                }}
+                                            >
+                                                <ToggleButton value="patient" sx={{ px: 2, fontSize: '0.875rem' }}>
+                                                    Patient
+                                                </ToggleButton>
+                                                <ToggleButton value="doctor" sx={{ px: 2, fontSize: '0.875rem' }}>
+                                                    Doctor
+                                                </ToggleButton>
+                                            </ToggleButtonGroup>
+                                        </Box>
+                                    )}
+
+                                    {/* Auth Buttons */}
+                                    {auth.user ? (
                                         <Button
                                             component={Link}
-                                            href="/doctor-application"
+                                            href={dashboard().url}
                                             variant="contained"
-                                            size="small"
                                             sx={{ 
                                                 textTransform: 'none',
                                                 bgcolor: turquoise,
                                                 boxShadow: `0 4px 14px ${alpha(turquoise, 0.4)}`,
+                                                borderRadius: 6,
                                                 transition: 'all 0.3s ease',
                                                 '&:hover': {
                                                     bgcolor: deepTeal,
                                                     transform: 'translateY(-2px)',
-                                                    boxShadow: `0 6px 20px ${alpha(turquoise, 0.4)}`,
+                                                    boxShadow: `0 6px 20px ${alpha(turquoise, 0.5)}`,
                                                 }
                                             }}
                                         >
-                                            Join as Doctor
+                                            Dashboard
                                         </Button>
-                                    </>
-                                )}
-                            </Stack>
-                        </Toolbar>
+                                    ) : (
+                                        <>
+                                            {!isMobile && (
+                                                <Button
+                                                    component={Link}
+                                                    href={login().url}
+                                                    variant="text"
+                                                    sx={{ 
+                                                        textTransform: 'none',
+                                                        color: 'text.primary',
+                                                        borderRadius: 6,
+                                                        transition: 'all 0.3s ease',
+                                                        '&:hover': {
+                                                            color: turquoise,
+                                                            bgcolor: alpha(turquoise, 0.05),
+                                                        }
+                                                    }}
+                                                >
+                                                    Log in
+                                                </Button>
+                                            )}
+                                            <Button
+                                                component={Link}
+                                                href={register().url}
+                                                variant="contained"
+                                                size="small"
+                                                sx={{ 
+                                                    textTransform: 'none',
+                                                    bgcolor: turquoise,
+                                                    borderRadius: 6,
+                                                    boxShadow: `0 4px 14px ${alpha(turquoise, 0.4)}`,
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                        bgcolor: deepTeal,
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: `0 6px 20px ${alpha(turquoise, 0.5)}`,
+                                                    }
+                                                }}
+                                            >
+                                                {selectedRole === 'doctor' ? 'Join as Doctor' : 'Register'}
+                                            </Button>
+                                        </>
+                                    )}
+
+                                    {/* Mobile Menu Button */}
+                                    {isMobile && (
+                                        <IconButton
+                                            onClick={() => setMobileMenuOpen(true)}
+                                            sx={{ 
+                                                color: turquoise,
+                                                '&:hover': {
+                                                    bgcolor: alpha(turquoise, 0.08),
+                                                }
+                                            }}
+                                        >
+                                            <MenuIcon />
+                                        </IconButton>
+                                    )}
+                                </Stack>
+                            </Toolbar>
+                        </Paper>
                     </Container>
-                </AppBar>
+                </Box>
+
+                {/* Mobile Drawer */}
+                <Drawer
+                    anchor="right"
+                    open={mobileMenuOpen}
+                    onClose={() => setMobileMenuOpen(false)}
+                    sx={{
+                        '& .MuiDrawer-paper': {
+                            width: 280,
+                            background: `linear-gradient(135deg, ${alpha(turquoise, 0.1)}, ${alpha(turquoise, 0.05)})`,
+                            backdropFilter: 'blur(20px)',
+                            border: `1px solid ${alpha(turquoise, 0.2)}`,
+                        }
+                    }}
+                >
+                    <Box sx={{ p: 3 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                            <Typography variant="h6" sx={{ color: turquoise, fontWeight: 700 }}>
+                                Clinify
+                            </Typography>
+                            <IconButton onClick={() => setMobileMenuOpen(false)} sx={{ color: turquoise }}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
+
+                        <List>
+                            {navigationSections.map((section) => (
+                                <ListItem
+                                    key={section.id}
+                                    onClick={() => {
+                                        scrollToSection(section.id);
+                                        setMobileMenuOpen(false);
+                                    }}
+                                    sx={{
+                                        borderRadius: 2,
+                                        mb: 1,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        bgcolor: activeSection === section.id ? alpha(turquoise, 0.1) : 'transparent',
+                                        '&:hover': {
+                                            bgcolor: alpha(turquoise, 0.08),
+                                            transform: 'translateX(4px)',
+                                        }
+                                    }}
+                                >
+                                    <ListItemIcon sx={{ color: activeSection === section.id ? turquoise : 'text.secondary' }}>
+                                        <section.icon />
+                                    </ListItemIcon>
+                                    <ListItemText 
+                                        primary={section.label}
+                                        sx={{ 
+                                            '& .MuiListItemText-primary': {
+                                                color: activeSection === section.id ? turquoise : 'text.primary',
+                                                fontWeight: activeSection === section.id ? 600 : 500,
+                                            }
+                                        }}
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
+
+                        {!auth.user && (
+                            <Box sx={{ mt: 4, space: 2 }}>
+                                <Button
+                                    component={Link}
+                                    href={login().url}
+                                    variant="outlined"
+                                    fullWidth
+                                    sx={{ 
+                                        mb: 2,
+                                        textTransform: 'none',
+                                        borderColor: turquoise,
+                                        color: turquoise,
+                                        borderRadius: 6,
+                                        '&:hover': {
+                                            bgcolor: alpha(turquoise, 0.08),
+                                        }
+                                    }}
+                                >
+                                    Log in
+                                </Button>
+                                <Button
+                                    component={Link}
+                                    href={register().url}
+                                    variant="contained"
+                                    fullWidth
+                                    sx={{ 
+                                        textTransform: 'none',
+                                        bgcolor: turquoise,
+                                        borderRadius: 6,
+                                        boxShadow: `0 4px 14px ${alpha(turquoise, 0.4)}`,
+                                        '&:hover': {
+                                            bgcolor: deepTeal,
+                                        }
+                                    }}
+                                >
+                                    Register
+                                </Button>
+                            </Box>
+                        )}
+                    </Box>
+                </Drawer>
 
                 {/* Hero Section with Turquoise Gradient */}
                 <Box 
@@ -1218,6 +1399,70 @@ export default function Welcome() {
                         </Box>
                     </Container>
                 </Box>
+
+                {/* Scroll to Top Button */}
+                <Fade in={showScrollToTop} timeout={300}>
+                    <Box
+                        onClick={scrollToTop}
+                        sx={{
+                            position: 'fixed',
+                            bottom: 30,
+                            right: 30,
+                            width: 56,
+                            height: 56,
+                            borderRadius: '50%',
+                            bgcolor: turquoise,
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            zIndex: 1000,
+                            boxShadow: `0 4px 20px ${alpha(turquoise, 0.4)}`,
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            animation: 'subtlePulse 3s ease-in-out infinite',
+                            '&:hover': {
+                                transform: 'scale(1.1) translateY(-2px)',
+                                boxShadow: `0 8px 30px ${alpha(turquoise, 0.6)}, 0 0 0 8px ${alpha(turquoise, 0.1)}, 0 0 0 16px ${alpha(turquoise, 0.05)}`,
+                                bgcolor: deepTeal,
+                            },
+                            '&:active': {
+                                transform: 'scale(1.05) translateY(-1px)',
+                            }
+                        }}
+                    >
+                        {/* Progress Ring */}
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: -4,
+                                left: -4,
+                                right: -4,
+                                bottom: -4,
+                                borderRadius: '50%',
+                                background: `conic-gradient(${turquoise} ${scrollProgress * 3.6}deg, ${alpha(turquoise, 0.2)} 0deg)`,
+                                padding: '4px',
+                                '&::before': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    inset: 4,
+                                    borderRadius: '50%',
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+                                }
+                            }}
+                        />
+                        
+                        {/* Arrow Icon */}
+                        <KeyboardArrowUp 
+                            sx={{ 
+                                fontSize: 28,
+                                position: 'relative',
+                                zIndex: 1,
+                                transition: 'transform 0.2s ease',
+                            }} 
+                        />
+                    </Box>
+                </Fade>
             </Box>
 
             {/* Global Styles for Animations */}
@@ -1251,6 +1496,28 @@ export default function Welcome() {
                 @keyframes shimmer {
                     0% { transform: translateX(-100%); }
                     100% { transform: translateX(200%); }
+                }
+
+                @keyframes subtlePulse {
+                    0%, 100% { 
+                        transform: scale(1);
+                        box-shadow: 0 4px 20px ${alpha(turquoise, 0.4)};
+                    }
+                    50% { 
+                        transform: scale(1.02);
+                        box-shadow: 0 6px 25px ${alpha(turquoise, 0.5)};
+                    }
+                }
+
+                @keyframes slideDown {
+                    0% {
+                        opacity: 0;
+                        transform: translateY(-30px);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
                 }
 
                 .float {
