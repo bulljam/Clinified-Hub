@@ -932,6 +932,14 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                     onChange={(e) => setDeleteReason(e.target.value)}
                                     placeholder="Please provide a reason for deleting this patient (e.g., duplicate record, patient request, data cleanup, etc.)"
                                     required
+                                    error={deleteReason.length > 0 && deleteReason.trim().length < 10}
+                                    helperText={
+                                        deleteReason.length > 0 && deleteReason.trim().length < 10
+                                            ? `Minimum 10 characters required (${deleteReason.trim().length}/10)`
+                                            : deleteReason.trim().length >= 10
+                                            ? `✓ Valid reason (${deleteReason.trim().length}/1000)`
+                                            : 'Minimum 10 characters required'
+                                    }
                                     sx={{ mb: 2 }}
                                 />
                                 <Typography variant="caption" color="text.secondary">
@@ -954,7 +962,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                             onClick={confirmDeletePatient}
                             variant="contained"
                             color="error"
-                            disabled={!deleteReason.trim()}
+                            disabled={deleteReason.trim().length < 10}
                         >
                             Delete Patient
                         </Button>
