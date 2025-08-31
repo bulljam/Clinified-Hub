@@ -1,6 +1,7 @@
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import {
     Box,
     Container,
@@ -223,7 +224,6 @@ export default function Welcome() {
     const theme = useTheme();
     const { activeSection, scrollProgress, showScrollToTop } = useScrollSpy(navigationSections.map(s => s.id));
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [selectedRole, setSelectedRole] = useState<'patient' | 'doctor'>('patient');
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const turquoise = '#20a09f';
@@ -262,18 +262,18 @@ export default function Welcome() {
                         animation: 'slideDown 0.8s ease-out',
                     }}
                 >
-                    <Container maxWidth="md">
+                    <Container maxWidth="lg">
                         <Paper
                             elevation={0}
                             sx={{
-                                background: `linear-gradient(135deg, ${alpha(turquoise, 0.1)}, ${alpha(turquoise, 0.05)})`,
+                                background: `linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15))`,
                                 backdropFilter: 'blur(12px)',
                                 borderRadius: 8,
-                                border: `1px solid ${alpha(turquoise, 0.2)}`,
-                                boxShadow: `0 8px 32px ${alpha(turquoise, 0.15)}, 0 2px 8px rgba(0, 0, 0, 0.1)`,
+                                border: `1px solid rgba(255, 255, 255, 0.3)`,
+                                boxShadow: `0 8px 32px rgba(68, 175, 174, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)`,
                                 transition: 'all 0.3s ease',
                                 '&:hover': {
-                                    boxShadow: `0 12px 40px ${alpha(turquoise, 0.2)}, 0 4px 12px rgba(0, 0, 0, 0.15)`,
+                                    boxShadow: `0 12px 40px rgba(68, 175, 174, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15)`,
                                 }
                             }}
                         >
@@ -355,42 +355,6 @@ export default function Welcome() {
 
                                 {/* Right Side */}
                                 <Stack direction="row" spacing={1} alignItems="center">
-                                    {/* Role Toggle */}
-                                    {!auth.user && !isMobile && (
-                                        <Box sx={{ mr: 2 }}>
-                                            <ToggleButtonGroup
-                                                value={selectedRole}
-                                                exclusive
-                                                onChange={(_, newRole) => newRole && setSelectedRole(newRole)}
-                                                size="small"
-                                                sx={{
-                                                    '& .MuiToggleButton-root': {
-                                                        textTransform: 'none',
-                                                        border: `1px solid ${alpha(turquoise, 0.3)}`,
-                                                        color: 'text.secondary',
-                                                        '&.Mui-selected': {
-                                                            bgcolor: turquoise,
-                                                            color: 'white',
-                                                            '&:hover': {
-                                                                bgcolor: deepTeal,
-                                                            }
-                                                        },
-                                                        '&:hover': {
-                                                            bgcolor: alpha(turquoise, 0.08),
-                                                        }
-                                                    }
-                                                }}
-                                            >
-                                                <ToggleButton value="patient" sx={{ px: 2, fontSize: '0.875rem' }}>
-                                                    Patient
-                                                </ToggleButton>
-                                                <ToggleButton value="doctor" sx={{ px: 2, fontSize: '0.875rem' }}>
-                                                    Doctor
-                                                </ToggleButton>
-                                            </ToggleButtonGroup>
-                                        </Box>
-                                    )}
-
                                     {/* Auth Buttons */}
                                     {auth.user ? (
                                         <Button
@@ -419,6 +383,7 @@ export default function Welcome() {
                                                     component={Link}
                                                     href={login().url}
                                                     variant="text"
+                                                    startIcon={<LoginIcon />}
                                                     sx={{ 
                                                         textTransform: 'none',
                                                         color: 'text.primary',
@@ -437,6 +402,7 @@ export default function Welcome() {
                                                 component={Link}
                                                 href={register().url}
                                                 variant="contained"
+                                                startIcon={<PersonAdd />}
                                                 size="small"
                                                 sx={{ 
                                                     textTransform: 'none',
@@ -451,7 +417,7 @@ export default function Welcome() {
                                                     }
                                                 }}
                                             >
-                                                {selectedRole === 'doctor' ? 'Join as Doctor' : 'Register'}
+                                                Register
                                             </Button>
                                         </>
                                     )}
@@ -542,6 +508,7 @@ export default function Welcome() {
                                     component={Link}
                                     href={login().url}
                                     variant="outlined"
+                                    startIcon={<LoginIcon />}
                                     fullWidth
                                     sx={{ 
                                         mb: 2,
@@ -560,6 +527,7 @@ export default function Welcome() {
                                     component={Link}
                                     href={register().url}
                                     variant="contained"
+                                    startIcon={<PersonAdd />}
                                     fullWidth
                                     sx={{ 
                                         textTransform: 'none',
@@ -578,165 +546,138 @@ export default function Welcome() {
                     </Box>
                 </Drawer>
 
-                {/* Hero Section with Turquoise Gradient */}
+                {/* Hero Section with ECG Animation */}
                 <Box 
                     id="hero"
                     sx={{ 
+                        bgcolor: '#f3f7f9',
                         minHeight: '90vh',
-                        background: `linear-gradient(135deg, ${turquoise} 0%, ${alpha(turquoise, 0.8)} 50%, ${alpha(deepTeal, 0.9)} 100%)`,
-                        position: 'relative',
+                        mt: -12,
+                        pt: 12,
                         display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
                         alignItems: 'center',
+                        textAlign: 'center',
+                        position: 'relative',
                         overflow: 'hidden',
-                        '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="7" cy="7" r="1"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-                            animation: 'float 20s infinite linear',
-                        }
+                        px: 2,
                     }}
                 >
-                    <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
-                        <Fade in timeout={1000}>
-                            <Stack
-                                direction={{ xs: 'column', md: 'row' }}
-                                spacing={6}
-                                alignItems="center"
-                                sx={{ py: 8 }}
-                            >
-                                <Box sx={{ flex: 1, color: 'white' }}>
-                                    <Typography 
-                                        variant="h1" 
-                                        sx={{ 
-                                            fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' }, 
-                                            fontWeight: 800, 
-                                            lineHeight: 1.1, 
-                                            mb: 3,
-                                            textShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                            animation: 'fadeInUp 1s ease-out',
-                                        }}
-                                    >
-                                        Book Your Medical Appointments 
-                                        <Box component="span" sx={{ display: 'block', color: 'rgba(255,255,255,0.9)' }}>
-                                            in Minutes
-                                        </Box>
-                                    </Typography>
-                                    <Typography 
-                                        variant="h5" 
-                                        sx={{ 
-                                            mb: 5, 
-                                            color: 'rgba(255,255,255,0.9)', 
-                                            fontWeight: 400, 
-                                            lineHeight: 1.6,
-                                            animation: 'fadeInUp 1s ease-out 0.3s both',
-                                        }}
-                                    >
-                                        Find doctors near you and manage your appointments easily. 
-                                        Experience the future of healthcare scheduling.
-                                    </Typography>
-                                    <Stack 
-                                        direction={{ xs: 'column', sm: 'row' }} 
-                                        spacing={3}
-                                        sx={{ animation: 'fadeInUp 1s ease-out 0.6s both' }}
-                                    >
-                                        {!auth.user && (
-                                            <>
-                                                <Button
-                                                    component={Link}
-                                                    href={register().url}
-                                                    variant="contained"
-                                                    size="large"
-                                                    endIcon={<ArrowForward />}
-                                                    sx={{ 
-                                                        textTransform: 'none', 
-                                                        py: 2, 
-                                                        px: 4,
-                                                        fontSize: '1.1rem',
-                                                        bgcolor: 'white',
-                                                        color: turquoise,
-                                                        fontWeight: 600,
-                                                        boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                        '&:hover': {
-                                                            bgcolor: 'rgba(255,255,255,0.95)',
-                                                            transform: 'translateY(-3px) scale(1.02)',
-                                                            boxShadow: '0 12px 35px rgba(0,0,0,0.2)',
-                                                        }
-                                                    }}
-                                                >
-                                                    Book an Appointment
-                                                </Button>
-                                                <Button
-                                                    component={Link}
-                                                    href="/doctor-application"
-                                                    variant="outlined"
-                                                    size="large"
-                                                    sx={{ 
-                                                        textTransform: 'none', 
-                                                        py: 2, 
-                                                        px: 4,
-                                                        fontSize: '1.1rem',
-                                                        borderColor: 'white',
-                                                        color: 'white',
-                                                        fontWeight: 600,
-                                                        borderWidth: 2,
-                                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                        '&:hover': {
-                                                            borderColor: 'white',
-                                                            bgcolor: 'white',
-                                                            color: turquoise,
-                                                            transform: 'translateY(-3px) scale(1.02)',
-                                                        }
-                                                    }}
-                                                >
-                                                    Join as a Doctor
-                                                </Button>
-                                            </>
-                                        )}
-                                    </Stack>
-                                </Box>
-                                <Box 
-                                    sx={{ 
-                                        flex: 1, 
-                                        display: 'flex', 
-                                        justifyContent: 'center',
-                                        animation: 'float 6s ease-in-out infinite',
+                    {/* Headline */}
+                    <Typography
+                        variant="h2"
+                        fontWeight="bold"
+                        color="#1E2A2F"
+                        mb={2}
+                        sx={{ fontSize: { xs: "2rem", md: "3rem" }, lineHeight: 1.2 }}
+                    >
+                        Book Your Medical Appointments in Minutes
+                    </Typography>
+
+                    {/* Subtext */}
+                    <Typography
+                        variant="h6"
+                        color="text.secondary"
+                        mb={4}
+                        sx={{ maxWidth: "600px" }}
+                    >
+                        Find trusted doctors, manage your schedule, and take control of your
+                        health — all in one place.
+                    </Typography>
+
+                    {/* CTA Buttons */}
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" mb={6}>
+                        {!auth.user && (
+                            <>
+                                <Button
+                                    component={Link}
+                                    href={register().url}
+                                    variant="contained"
+                                    sx={{
+                                        bgcolor: "#44AFAE",
+                                        color: "white",
+                                        px: 4,
+                                        py: 1.5,
+                                        borderRadius: 3,
+                                        boxShadow: "0 4px 15px rgba(68,175,174,0.4)",
+                                        fontWeight: "bold",
+                                        textTransform: "none",
+                                        "&:hover": { bgcolor: "#369392" },
                                     }}
                                 >
-                                    <Box
-                                        sx={{
-                                            width: { xs: 300, md: 400 },
-                                            height: { xs: 300, md: 400 },
-                                            background: 'rgba(255,255,255,0.1)',
-                                            borderRadius: '50%',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            backdropFilter: 'blur(10px)',
-                                            border: '1px solid rgba(255,255,255,0.2)',
-                                            boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                                        }}
-                                    >
-                                        <MedicalServices sx={{ fontSize: { xs: 120, md: 160 }, color: 'white', opacity: 0.9 }} />
-                                    </Box>
-                                </Box>
-                            </Stack>
-                        </Fade>
-                    </Container>
+                                    Book Appointment
+                                </Button>
+                                <Button
+                                    component={Link}
+                                    href={register().url}
+                                    variant="outlined"
+                                    sx={{
+                                        color: "#44AFAE",
+                                        borderColor: "#44AFAE",
+                                        px: 4,
+                                        py: 1.5,
+                                        borderRadius: 3,
+                                        fontWeight: "bold",
+                                        textTransform: "none",
+                                        "&:hover": {
+                                            bgcolor: "rgba(68,175,174,0.1)",
+                                            borderColor: "#369392",
+                                        },
+                                    }}
+                                >
+                                    Join as Doctor
+                                </Button>
+                            </>
+                        )}
+                    </Stack>
 
-                    {/* Floating medical icons */}
-                    <Box sx={{ position: 'absolute', top: '20%', left: '10%', animation: 'float 8s ease-in-out infinite' }}>
-                        <CalendarMonth sx={{ fontSize: 30, color: 'rgba(255,255,255,0.3)' }} />
-                    </Box>
-                    <Box sx={{ position: 'absolute', top: '60%', right: '15%', animation: 'float 10s ease-in-out infinite 2s' }}>
-                        <Security sx={{ fontSize: 40, color: 'rgba(255,255,255,0.3)' }} />
-                    </Box>
-                    <Box sx={{ position: 'absolute', top: '30%', right: '5%', animation: 'float 12s ease-in-out infinite 4s' }}>
-                        <People sx={{ fontSize: 35, color: 'rgba(255,255,255,0.3)' }} />
+                    {/* ECG Animation */}
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            bottom: 60,
+                            left: 0,
+                            right: 0,
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            opacity: 0.8,
+                        }}
+                    >
+                        <motion.svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 500 100"
+                            width="80%"
+                            height="100"
+                            style={{
+                                stroke: "#44AFAE",
+                                fill: "none",
+                                strokeWidth: 2,
+                                filter: "drop-shadow(0px 0px 6px #44AFAE)",
+                            }}
+                            initial={{ strokeDasharray: 500, strokeDashoffset: 500 }}
+                            animate={{ strokeDashoffset: 0 }}
+                            transition={{
+                                repeat: Infinity,
+                                duration: 3,
+                                ease: "linear",
+                            }}
+                        >
+                            <motion.path
+                                d="M0 50 L50 50 L80 20 L100 80 L130 50 L200 50 L230 20 L250 80 L280 50 L350 50 L380 30 L400 70 L430 50 L500 50"
+                                animate={{
+                                    scale: [1, 1.05, 1],
+                                    strokeWidth: [2, 3, 2],
+                                    stroke: ["#44AFAE", "#5CD5D4", "#44AFAE"],
+                                }}
+                                transition={{
+                                    repeat: Infinity,
+                                    duration: 2,
+                                    ease: "easeInOut",
+                                }}
+                            />
+                        </motion.svg>
                     </Box>
                 </Box>
 
@@ -1234,59 +1175,31 @@ export default function Welcome() {
                                 for their appointment management needs.
                             </Typography>
                             {!auth.user && (
-                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
-                                    <Button
-                                        component={Link}
-                                        href={register().url}
-                                        variant="contained"
-                                        size="large"
-                                        sx={{ 
-                                            bgcolor: 'white', 
-                                            color: turquoise,
-                                            fontWeight: 600,
-                                            textTransform: 'none',
-                                            py: 2,
-                                            px: 5,
-                                            fontSize: '1.1rem',
-                                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                                            animation: 'pulse 2s infinite',
-                                            transition: 'all 0.3s ease',
-                                            '&:hover': { 
-                                                bgcolor: 'rgba(255,255,255,0.95)',
-                                                transform: 'translateY(-3px) scale(1.05)',
-                                                boxShadow: '0 12px 35px rgba(0,0,0,0.2)',
-                                            }
-                                        }}
-                                    >
-                                        Get Started
-                                    </Button>
-                                    <Button
-                                        component={Link}
-                                        href="/doctor-application"
-                                        variant="outlined"
-                                        size="large"
-                                        sx={{ 
-                                            borderColor: 'white',
-                                            color: 'white',
-                                            fontWeight: 600,
-                                            textTransform: 'none',
-                                            py: 2,
-                                            px: 5,
-                                            fontSize: '1.1rem',
-                                            borderWidth: 2,
-                                            animation: 'pulse 2s infinite 0.5s',
-                                            transition: 'all 0.3s ease',
-                                            '&:hover': { 
-                                                borderColor: 'white', 
-                                                bgcolor: 'white',
-                                                color: turquoise,
-                                                transform: 'translateY(-3px) scale(1.05)',
-                                            }
-                                        }}
-                                    >
-                                        Join as a Doctor
-                                    </Button>
-                                </Stack>
+                                <Button
+                                    component={Link}
+                                    href={register().url}
+                                    variant="contained"
+                                    size="large"
+                                    sx={{ 
+                                        bgcolor: 'white', 
+                                        color: turquoise,
+                                        fontWeight: 600,
+                                        textTransform: 'none',
+                                        py: 2,
+                                        px: 5,
+                                        fontSize: '1.1rem',
+                                        boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                                        animation: 'pulse 2s infinite',
+                                        transition: 'all 0.3s ease',
+                                        '&:hover': { 
+                                            bgcolor: 'rgba(255,255,255,0.95)',
+                                            transform: 'translateY(-3px) scale(1.05)',
+                                            boxShadow: '0 12px 35px rgba(0,0,0,0.2)',
+                                        }
+                                    }}
+                                >
+                                    Get Started
+                                </Button>
                             )}
                         </Box>
                     </Container>
@@ -1467,35 +1380,9 @@ export default function Welcome() {
 
             {/* Global Styles for Animations */}
             <style jsx global>{`
-                @keyframes fadeInUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(30px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-
-                @keyframes float {
-                    0%, 100% { transform: translateY(0px); }
-                    50% { transform: translateY(-20px); }
-                }
-
                 @keyframes pulse {
                     0%, 100% { transform: scale(1); }
                     50% { transform: scale(1.05); }
-                }
-
-                @keyframes glow {
-                    0% { opacity: 0.5; }
-                    100% { opacity: 1; }
-                }
-
-                @keyframes shimmer {
-                    0% { transform: translateX(-100%); }
-                    100% { transform: translateX(200%); }
                 }
 
                 @keyframes subtlePulse {
@@ -1518,10 +1405,6 @@ export default function Welcome() {
                         opacity: 1;
                         transform: translateY(0);
                     }
-                }
-
-                .float {
-                    animation: float 20s infinite linear;
                 }
 
                 /* Smooth scrolling for the entire page */
