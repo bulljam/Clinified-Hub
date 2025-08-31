@@ -57,9 +57,17 @@ function StatCard({ title, value, description, icon: Icon, trend }: StatCardProp
 }
 
 export default function Dashboard({ stats, upcomingAppointments, userRole }: DashboardProps) {
+    const getIconForStat = (title: string, index: number) => {
+        if (title.toLowerCase().includes('appointment')) return Calendar;
+        if (title.toLowerCase().includes('payment')) return CreditCard;
+        if (title.toLowerCase().includes('patient') || title.toLowerCase().includes('provider')) return Users;
+        if (title.toLowerCase().includes('revenue') || title.toLowerCase().includes('total')) return TrendingUp;
+        return [Calendar, Users, TrendingUp][index] || Calendar;
+    };
+
     const statsWithIcons = stats.map((stat, index) => ({
         ...stat,
-        icon: [Calendar, CreditCard, Users][index] || Calendar,
+        icon: getIconForStat(stat.title, index),
     }));
 
     return (

@@ -27,11 +27,16 @@ class DashboardController extends Controller
     {
         $today = Carbon::today();
         $thisMonth = Carbon::now()->startOfMonth();
+        $lastMonth = Carbon::now()->subMonth()->startOfMonth();
         
         $todayAppointments = Appointment::whereDate('date', $today)->get();
         $totalPatients = User::where('role', 'client')->count();
+        $totalProviders = User::where('role', 'provider')->count();
         $newPatientsThisMonth = User::where('role', 'client')
             ->where('created_at', '>=', $thisMonth)
+            ->count();
+        $newPatientsLastMonth = User::where('role', 'client')
+            ->whereBetween('created_at', [$lastMonth, $thisMonth])
             ->count();
         
         $upcomingAppointments = Appointment::with(['client', 'provider'])
@@ -46,6 +51,14 @@ class DashboardController extends Controller
             ->where('status', 'confirmed')
             ->count();
         
+        $totalRevenue = Appointment::where('payment_status', 'paid')
+            ->where('status', 'confirmed')
+            ->count() * 100;
+        
+        $patientsGrowth = $newPatientsLastMonth > 0 
+            ? round((($newPatientsThisMonth - $newPatientsLastMonth) / $newPatientsLastMonth) * 100, 1)
+            : ($newPatientsThisMonth > 0 ? 100 : 0);
+        
         return [
             'stats' => [
                 [
@@ -56,16 +69,16 @@ class DashboardController extends Controller
                     'trend' => null,
                 ],
                 [
-                    'title' => 'Pending Payments',
-                    'value' => (string) $pendingPayments,
-                    'description' => $pendingPayments . ' outstanding appointments',
-                    'trend' => null,
-                ],
-                [
                     'title' => 'Total Patients',
                     'value' => (string) $totalPatients,
                     'description' => $newPatientsThisMonth . ' new this month',
-                    'trend' => $newPatientsThisMonth > 0 ? '+' . $newPatientsThisMonth . ' this month' : null,
+                    'trend' => $patientsGrowth != 0 ? ($patientsGrowth > 0 ? '+' : '') . $patientsGrowth . '% from last month' : null,
+                ],
+                [
+                    'title' => 'Active Providers',
+                    'value' => (string) $totalProviders,
+                    'description' => 'Healthcare providers in system',
+                    'trend' => null,
                 ],
             ],
             'upcomingAppointments' => $upcomingAppointments->map(function ($appointment) {
@@ -85,6 +98,7 @@ class DashboardController extends Controller
     {
         $today = Carbon::today();
         $thisMonth = Carbon::now()->startOfMonth();
+        $lastMonth = Carbon::now()->subMonth()->startOfMonth();
         
         $todayAppointments = $provider->providedAppointments()
             ->whereDate('date', $today)
@@ -99,6 +113,14 @@ class DashboardController extends Controller
             ->distinct('user_id')
             ->count('user_id');
         
+        $thisMonthAppointments = $provider->providedAppointments()
+            ->where('created_at', '>=', $thisMonth)
+            ->count();
+        
+        $lastMonthAppointments = $provider->providedAppointments()
+            ->whereBetween('created_at', [$lastMonth, $thisMonth])
+            ->count();
+        
         $upcomingAppointments = $provider->providedAppointments()
             ->with('client')
             ->where('date', '>=', $today)
@@ -108,10 +130,14 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
         
-        $pendingPayments = $provider->providedAppointments()
-            ->where('payment_status', 'pending')
+        $completedAppointments = $provider->providedAppointments()
             ->where('status', 'confirmed')
+            ->where('date', '<', $today)
             ->count();
+        
+        $appointmentsGrowth = $lastMonthAppointments > 0 
+            ? round((($thisMonthAppointments - $lastMonthAppointments) / $lastMonthAppointments) * 100, 1)
+            : ($thisMonthAppointments > 0 ? 100 : 0);
         
         return [
             'stats' => [
@@ -123,16 +149,16 @@ class DashboardController extends Controller
                     'trend' => null,
                 ],
                 [
-                    'title' => 'Pending Payments',
-                    'value' => (string) $pendingPayments,
-                    'description' => $pendingPayments . ' outstanding appointments',
-                    'trend' => null,
-                ],
-                [
                     'title' => 'My Patients',
                     'value' => (string) $totalPatients,
                     'description' => $newPatientsThisMonth . ' new this month',
                     'trend' => $newPatientsThisMonth > 0 ? '+' . $newPatientsThisMonth . ' this month' : null,
+                ],
+                [
+                    'title' => 'Appointments This Month',
+                    'value' => (string) $thisMonthAppointments,
+                    'description' => $completedAppointments . ' completed overall',
+                    'trend' => $appointmentsGrowth != 0 ? ($appointmentsGrowth > 0 ? '+' : '') . $appointmentsGrowth . '% from last month' : null,
                 ],
             ],
             'upcomingAppointments' => $upcomingAppointments->map(function ($appointment) {
@@ -151,6 +177,7 @@ class DashboardController extends Controller
     {
         $today = Carbon::today();
         $thisMonth = Carbon::now()->startOfMonth();
+        $lastMonth = Carbon::now()->subMonth()->startOfMonth();
         
         $upcomingAppointments = $client->appointments()
             ->with('provider')
@@ -166,10 +193,23 @@ class DashboardController extends Controller
             ->where('created_at', '>=', $thisMonth)
             ->count();
         
+        $lastMonthAppointments = $client->appointments()
+            ->whereBetween('created_at', [$lastMonth, $thisMonth])
+            ->count();
+        
+        $completedAppointments = $client->appointments()
+            ->where('status', 'confirmed')
+            ->where('date', '<', $today)
+            ->count();
+        
         $pendingPayments = $client->appointments()
             ->where('payment_status', 'pending')
             ->where('status', 'confirmed')
             ->count();
+        
+        $appointmentsGrowth = $lastMonthAppointments > 0 
+            ? round((($thisMonthAppointments - $lastMonthAppointments) / $lastMonthAppointments) * 100, 1)
+            : ($thisMonthAppointments > 0 ? 100 : 0);
         
         return [
             'stats' => [
@@ -181,16 +221,16 @@ class DashboardController extends Controller
                     'trend' => null,
                 ],
                 [
+                    'title' => 'Total Appointments',
+                    'value' => (string) $totalAppointments,
+                    'description' => $completedAppointments . ' completed',
+                    'trend' => $thisMonthAppointments > 0 ? '+' . $thisMonthAppointments . ' this month' : null,
+                ],
+                [
                     'title' => 'Pending Payments',
                     'value' => (string) $pendingPayments,
                     'description' => $pendingPayments . ' outstanding payments',
                     'trend' => null,
-                ],
-                [
-                    'title' => 'Total Appointments',
-                    'value' => (string) $totalAppointments,
-                    'description' => $thisMonthAppointments . ' this month',
-                    'trend' => $thisMonthAppointments > 0 ? '+' . $thisMonthAppointments . ' this month' : null,
                 ],
             ],
             'upcomingAppointments' => $upcomingAppointments->map(function ($appointment) {
