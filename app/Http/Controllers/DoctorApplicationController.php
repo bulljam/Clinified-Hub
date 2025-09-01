@@ -64,7 +64,7 @@ class DoctorApplicationController extends Controller
             'photo' => $photoPath,
         ]);
 
-        return redirect('/')->with('success', 'Your doctor application has been submitted successfully! We will review your application and notify you via email.');
+        return back();
     }
 
     public function index()

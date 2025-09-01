@@ -11,8 +11,10 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::get('doctor-application', [DoctorApplicationController::class, 'create'])->name('doctor-application.create');
-Route::post('doctor-application', [DoctorApplicationController::class, 'store'])->name('doctor-application.store');
+Route::middleware('guest')->group(function () {
+    Route::get('doctor-application', [DoctorApplicationController::class, 'create'])->name('doctor-application.create');
+    Route::post('doctor-application', [DoctorApplicationController::class, 'store'])->name('doctor-application.store');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

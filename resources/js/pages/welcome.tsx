@@ -228,7 +228,7 @@ export default function Welcome() {
                                             Login
                                         </Button>
                                     </Link>
-                                    <Link href="/register">
+                                    <Link href="/doctor-application">
                                         <Button className="bg-primary hover:bg-primary/90">
                                             <PersonAdd className="h-4 w-4 mr-2" />
                                             Join as a Doctor

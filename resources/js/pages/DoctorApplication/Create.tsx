@@ -20,10 +20,6 @@ import {
     Button,
     Card,
     CardContent,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     FormControl,
     IconButton,
     InputLabel,
@@ -83,10 +79,8 @@ export default function DoctorApplicationCreate() {
         photo: null,
     });
 
-    const [success, setSuccess] = useState(false);
     const [fileInputKey, setFileInputKey] = useState(0);
-    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-    const [showSnackbar, setShowSnackbar] = useState(false);
+    const [showSuccessToast, setShowSuccessToast] = useState(false);
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(event.target.files || []);
@@ -120,113 +114,17 @@ export default function DoctorApplicationCreate() {
 
         post('/doctor-application', {
             onSuccess: () => {
-                setSuccess(true);
-                setShowConfirmDialog(true);
-                setShowSnackbar(true);
+                setShowSuccessToast(true);
                 reset();
+                setFileInputKey((prev) => prev + 1);
+                
+                setTimeout(() => {
+                    router.visit('/');
+                }, 3000);
             },
         });
     };
 
-    const handleConfirmRedirect = () => {
-        setShowConfirmDialog(false);
-        router.visit('/');
-    };
-
-    const handleStayOnPage = () => {
-        setShowConfirmDialog(false);
-        setSuccess(false);
-    };
-
-
-    if (success) {
-        return (
-            <Box
-                sx={{
-                    minHeight: '100vh',
-                    bgcolor: '#f8f9fa',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 3,
-                }}
-            >
-                <Card sx={{ 
-                    maxWidth: 600, 
-                    width: '100%', 
-                    textAlign: 'center',
-                    bgcolor: 'rgba(255,255,255,0.95)',
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: 3,
-                    border: '1px solid rgba(255,255,255,0.3)',
-                }}>
-                    <CardContent sx={{ p: 6 }}>
-                        <StethoscopeIcon sx={{ fontSize: 80, color: '#20a09f', mb: 3 }} />
-                        <Typography variant="h4" fontWeight="bold" color="#20a09f" mb={2}>
-                            Application Submitted Successfully!
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary" mb={4}>
-                            Thank you for applying to join our medical team. We will review your application and credentials, then contact you via
-                            email with our decision within 2-3 business days.
-                        </Typography>
-
-                        <Alert severity="success" sx={{ mb: 4, textAlign: 'left' }}>
-                            <Typography variant="body2" mb={1}>
-                                <strong>What happens next:</strong>
-                            </Typography>
-                            <Typography variant="body2" component="ul" sx={{ mb: 0, pl: 2 }}>
-                                <li>Our admin team will review your application</li>
-                                <li>We'll verify your credentials and documents</li>
-                                <li>You'll receive an email notification with our decision</li>
-                                <li>If approved, you'll get login credentials to access the platform</li>
-                            </Typography>
-                        </Alert>
-
-                        <Box mb={3}>
-                            <Typography variant="body2" color="text.secondary" mb={2}>
-                                You can now safely navigate away from this page.
-                            </Typography>
-                            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
-                                <Button
-                                    variant="contained"
-                                    onClick={() => router.visit('/')}
-                                    sx={{
-                                        bgcolor: '#20a09f',
-                                        '&:hover': { bgcolor: '#178f8e' },
-                                        px: 4,
-                                        py: 1.5,
-                                        textTransform: 'none',
-                                        fontWeight: 600,
-                                    }}
-                                >
-                                    Go to Home
-                                </Button>
-                                <Button
-                                    variant="outlined"
-                                    onClick={() => setSuccess(false)}
-                                    sx={{
-                                        borderColor: '#20a09f',
-                                        color: '#20a09f',
-                                        '&:hover': {
-                                            borderColor: '#178f8e',
-                                            color: '#178f8e',
-                                            bgcolor: 'rgba(32, 160, 159, 0.04)',
-                                        },
-                                        px: 4,
-                                        py: 1.5,
-                                        textTransform: 'none',
-                                        fontWeight: 600,
-                                    }}
-                                >
-                                    Submit Another Application
-                                </Button>
-                            </Stack>
-                        </Box>
-                    </CardContent>
-                </Card>
-            </Box>
-        );
-    }
 
     return (
         <Box 
@@ -676,91 +574,58 @@ export default function DoctorApplicationCreate() {
                 </form>
             </Box>
 
-            {/* Confirmation Dialog */}
-            <Dialog
-                open={showConfirmDialog}
-                onClose={() => setShowConfirmDialog(false)}
-                maxWidth="sm"
-                fullWidth
-                PaperProps={{
-                    sx: {
-                        borderRadius: 3,
-                        p: 2,
+            {/* Success Toast */}
+            <Snackbar
+                open={showSuccessToast}
+                autoHideDuration={3000}
+                onClose={() => setShowSuccessToast(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                sx={{ 
+                    '& .MuiSnackbarContent-root': {
+                        backgroundColor: 'transparent',
+                        boxShadow: 'none',
+                        padding: 0,
                     },
                 }}
             >
-                <DialogTitle sx={{ textAlign: 'center', pb: 2 }}>
-                    <StethoscopeIcon sx={{ fontSize: 60, color: '#20a09f', mb: 2 }} />
-                    <Typography variant="h5" fontWeight="bold" color="#20a09f">
-                        Application Submitted Successfully!
-                    </Typography>
-                </DialogTitle>
-                <DialogContent sx={{ textAlign: 'center', pb: 2 }}>
-                    <Typography variant="body1" color="text.secondary" mb={2}>
-                        Thank you for applying to join our medical team. We will review your application and notify you within 2-3 business days.
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        What would you like to do next?
-                    </Typography>
-                </DialogContent>
-                <DialogActions sx={{ justifyContent: 'center', gap: 2, pb: 2 }}>
-                    <Button
-                        onClick={handleStayOnPage}
-                        variant="outlined"
-                        sx={{
-                            borderColor: '#20a09f',
-                            color: '#20a09f',
-                            '&:hover': {
-                                borderColor: '#178f8e',
-                                bgcolor: 'rgba(32, 160, 159, 0.04)',
-                            },
-                            px: 3,
-                            py: 1,
-                            textTransform: 'none',
-                            fontWeight: 600,
-                        }}
-                    >
-                        Submit Another
-                    </Button>
-                    <Button
-                        onClick={handleConfirmRedirect}
-                        variant="contained"
-                        sx={{
-                            bgcolor: '#20a09f',
-                            '&:hover': { bgcolor: '#178f8e' },
-                            px: 3,
-                            py: 1,
-                            textTransform: 'none',
-                            fontWeight: 600,
-                        }}
-                    >
-                        Go to Home
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Success Snackbar */}
-            <Snackbar
-                open={showSnackbar}
-                autoHideDuration={6000}
-                onClose={() => setShowSnackbar(false)}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert 
-                    onClose={() => setShowSnackbar(false)} 
-                    severity="success" 
-                    sx={{ 
-                        width: '100%',
-                        borderRadius: 2,
+                <Alert
+                    onClose={() => setShowSuccessToast(false)}
+                    severity="success"
+                    variant="filled"
+                    sx={{
+                        minWidth: '400px',
+                        borderRadius: 3,
                         fontWeight: 600,
+                        fontSize: '1rem',
+                        bgcolor: '#2e7d32',
+                        color: 'white',
+                        boxShadow: '0 8px 32px rgba(46, 125, 50, 0.3)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        backdropFilter: 'blur(10px)',
                         '& .MuiAlert-icon': {
-                            fontSize: '1.5rem',
+                            fontSize: '1.8rem',
+                            color: 'white',
+                        },
+                        '& .MuiAlert-action .MuiIconButton-root': {
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            '&:hover': {
+                                color: 'white',
+                                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                            },
                         },
                     }}
                 >
-                    Doctor application submitted successfully! Check your email for updates.
+                    <Box>
+                        <Typography variant="body1" fontWeight="700" sx={{ mb: 0.5 }}>
+                            Application Submitted Successfully! 🎉
+                        </Typography>
+                        <Typography variant="body2" sx={{ opacity: 0.9, fontSize: '0.875rem' }}>
+                            Redirecting to home page...
+                        </Typography>
+                    </Box>
                 </Alert>
             </Snackbar>
+
         </Box>
     );
 }
