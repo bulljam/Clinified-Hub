@@ -9,7 +9,6 @@ import {
     Button,
     Card,
     CardContent,
-    AppBar,
     Toolbar,
     Stack,
     Avatar,
@@ -19,7 +18,6 @@ import {
     alpha,
     Paper,
     Fade,
-    Slide,
     Drawer,
     List,
     ListItem,
@@ -27,22 +25,15 @@ import {
     ListItemText,
     IconButton,
     useMediaQuery,
-    ToggleButton,
-    ToggleButtonGroup,
 } from '@mui/material';
 import {
     CalendarMonth,
     Schedule,
-    Security,
     PersonAdd,
-    Assessment,
-    Payment,
-    ArrowForward,
     Search,
     Notifications,
     Dashboard as DashboardIcon,
     History,
-    LocationOn,
     MedicalServices,
     CheckCircle,
     People,
@@ -56,7 +47,7 @@ import {
     Reviews,
     Login as LoginIcon,
 } from '@mui/icons-material';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 const patientFeatures = [
     {
@@ -163,7 +154,7 @@ const testimonials = [
 const navigationSections = [
     { id: 'hero', label: 'Home', icon: HomeIcon },
     { id: 'features', label: 'Features', icon: Star },
-    { id: 'how-it-works', label: 'How It Works', icon: Build },
+    { id: 'steps', label: 'Steps', icon: Build },
     { id: 'testimonials', label: 'Testimonials', icon: Reviews },
     { id: 'cta', label: 'Contact', icon: ContactMail },
 ];
@@ -546,139 +537,398 @@ export default function Welcome() {
                     </Box>
                 </Drawer>
 
-                {/* Hero Section with ECG Animation */}
+                {/* Hero Section with Gradient Background and Medical Illustration */}
                 <Box 
                     id="hero"
                     sx={{ 
-                        bgcolor: '#f3f7f9',
                         minHeight: '90vh',
                         mt: -12,
                         pt: 12,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        textAlign: 'center',
                         position: 'relative',
                         overflow: 'hidden',
                         px: 2,
+                        background: `
+                            radial-gradient(circle at 70% 30%, ${alpha(turquoise, 0.15)} 0%, transparent 50%),
+                            radial-gradient(circle at 30% 70%, ${alpha(deepTeal, 0.1)} 0%, transparent 50%),
+                            linear-gradient(135deg, #f8fdfd 0%, #e8f8f8 50%, #f0fafa 100%)
+                        `,
                     }}
                 >
-                    {/* Headline */}
-                    <Typography
-                        variant="h2"
-                        fontWeight="bold"
-                        color="#1E2A2F"
-                        mb={2}
-                        sx={{ fontSize: { xs: "2rem", md: "3rem" }, lineHeight: 1.2 }}
-                    >
-                        Book Your Medical Appointments in Minutes
-                    </Typography>
-
-                    {/* Subtext */}
-                    <Typography
-                        variant="h6"
-                        color="text.secondary"
-                        mb={4}
-                        sx={{ maxWidth: "600px" }}
-                    >
-                        Find trusted doctors, manage your schedule, and take control of your
-                        health — all in one place.
-                    </Typography>
-
-                    {/* CTA Buttons */}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" mb={6}>
-                        {!auth.user && (
-                            <>
-                                <Button
-                                    component={Link}
-                                    href={register().url}
-                                    variant="contained"
-                                    sx={{
-                                        bgcolor: "#44AFAE",
-                                        color: "white",
-                                        px: 4,
-                                        py: 1.5,
-                                        borderRadius: 3,
-                                        boxShadow: "0 4px 15px rgba(68,175,174,0.4)",
-                                        fontWeight: "bold",
-                                        textTransform: "none",
-                                        "&:hover": { bgcolor: "#369392" },
-                                    }}
-                                >
-                                    Book Appointment
-                                </Button>
-                                <Button
-                                    component={Link}
-                                    href={register().url}
-                                    variant="outlined"
-                                    sx={{
-                                        color: "#44AFAE",
-                                        borderColor: "#44AFAE",
-                                        px: 4,
-                                        py: 1.5,
-                                        borderRadius: 3,
-                                        fontWeight: "bold",
-                                        textTransform: "none",
-                                        "&:hover": {
-                                            bgcolor: "rgba(68,175,174,0.1)",
-                                            borderColor: "#369392",
-                                        },
-                                    }}
-                                >
-                                    Join as Doctor
-                                </Button>
-                            </>
-                        )}
-                    </Stack>
-
-                    {/* ECG Animation */}
+                    {/* Subtle Geometric Shapes */}
                     <Box
                         sx={{
-                            position: "absolute",
-                            bottom: 60,
+                            position: 'absolute',
+                            top: 0,
                             left: 0,
                             right: 0,
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            opacity: 0.8,
+                            bottom: 0,
+                            opacity: 0.03,
+                            background: `url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="${encodeURIComponent(turquoise)}"%3E%3Ccircle cx="7" cy="7" r="1"/%3E%3Ccircle cx="37" cy="37" r="1"/%3E%3Cpath d="M20 20h20v20H20z" fill="none" stroke="${encodeURIComponent(deepTeal)}" stroke-width="0.5"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
                         }}
-                    >
-                        <motion.svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 500 100"
-                            width="80%"
-                            height="100"
-                            style={{
-                                stroke: "#44AFAE",
-                                fill: "none",
-                                strokeWidth: 2,
-                                filter: "drop-shadow(0px 0px 6px #44AFAE)",
-                            }}
-                            initial={{ strokeDasharray: 500, strokeDashoffset: 500 }}
-                            animate={{ strokeDashoffset: 0 }}
-                            transition={{
-                                repeat: Infinity,
-                                duration: 3,
-                                ease: "linear",
-                            }}
+                    />
+
+                    <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
+                        <Stack 
+                            direction={{ xs: 'column', md: 'row' }}
+                            spacing={{ xs: 4, md: 8 }}
+                            alignItems="center"
+                            sx={{ minHeight: '80vh', py: { xs: 6, md: 10 } }}
                         >
-                            <motion.path
-                                d="M0 50 L50 50 L80 20 L100 80 L130 50 L200 50 L230 20 L250 80 L280 50 L350 50 L380 30 L400 70 L430 50 L500 50"
-                                animate={{
-                                    scale: [1, 1.05, 1],
-                                    strokeWidth: [2, 3, 2],
-                                    stroke: ["#44AFAE", "#5CD5D4", "#44AFAE"],
+                            {/* Left Column - Content */}
+                            <Box 
+                                sx={{ 
+                                    flex: { xs: '1', md: '1.2' },
+                                    textAlign: { xs: 'center', md: 'left' },
+                                    maxWidth: { xs: '100%', md: '600px' }
                                 }}
-                                transition={{
-                                    repeat: Infinity,
-                                    duration: 2,
-                                    ease: "easeInOut",
+                            >
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                >
+                                    <Typography
+                                        variant="h1"
+                                        sx={{ 
+                                            fontWeight: 800,
+                                            mb: 3,
+                                            fontSize: { xs: "2.5rem", md: "3.5rem", lg: "4rem" },
+                                            lineHeight: 1.1,
+                                            textAlign: { xs: 'center', md: 'left' },
+                                        }}
+                                    >
+                                        <Box
+                                            component="span"
+                                            sx={{
+                                                display: 'block',
+                                                color: deepTeal,
+                                                fontWeight: 700,
+                                            }}
+                                        >
+                                            Book Appointments
+                                        </Box>
+                                        <Box
+                                            component="span"
+                                            sx={{
+                                                display: 'block',
+                                                background: `linear-gradient(135deg, ${turquoise} 0%, ${deepTeal} 100%)`,
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                                fontWeight: 900,
+                                                fontSize: { xs: "2.8rem", md: "3.8rem", lg: "4.3rem" },
+                                                mt: { xs: 0.5, md: 1 },
+                                            }}
+                                        >
+                                            in Minutes
+                                        </Box>
+                                    </Typography>
+                                </motion.div>
+
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                                >
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            color: 'text.secondary',
+                                            mb: 5,
+                                            lineHeight: 1.5,
+                                            fontWeight: 400,
+                                            fontSize: { xs: "1.1rem", md: "1.3rem" }
+                                        }}
+                                    >
+                                        Trusted doctors, easy scheduling, secure platform.
+                                    </Typography>
+                                </motion.div>
+
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                                >
+                                    <Stack 
+                                        direction={{ xs: 'column', sm: 'row' }} 
+                                        spacing={3} 
+                                        sx={{ 
+                                            justifyContent: { xs: 'center', md: 'flex-start' },
+                                            mb: 6 
+                                        }}
+                                    >
+                                        {!auth.user && (
+                                            <>
+                                                <Button
+                                                    component={Link}
+                                                    href={register().url}
+                                                    variant="contained"
+                                                    size="large"
+                                                    sx={{
+                                                        bgcolor: turquoise,
+                                                        color: "white",
+                                                        px: 5,
+                                                        py: 2,
+                                                        borderRadius: 50,
+                                                        boxShadow: `0 8px 25px ${alpha(turquoise, 0.4)}`,
+                                                        fontWeight: 600,
+                                                        textTransform: "none",
+                                                        fontSize: "1.1rem",
+                                                        minWidth: 180,
+                                                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                                        "&:hover": { 
+                                                            bgcolor: deepTeal,
+                                                            transform: "translateY(-3px)",
+                                                            boxShadow: `0 12px 35px ${alpha(turquoise, 0.5)}`,
+                                                        },
+                                                    }}
+                                                >
+                                                    Book Now
+                                                </Button>
+                                                <Button
+                                                    component={Link}
+                                                    href={register().url}
+                                                    variant="outlined"
+                                                    size="large"
+                                                    sx={{
+                                                        color: turquoise,
+                                                        borderColor: turquoise,
+                                                        borderWidth: 2,
+                                                        px: 5,
+                                                        py: 2,
+                                                        borderRadius: 50,
+                                                        fontWeight: 600,
+                                                        textTransform: "none",
+                                                        fontSize: "1.1rem",
+                                                        minWidth: 180,
+                                                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                                        "&:hover": {
+                                                            bgcolor: alpha(turquoise, 0.08),
+                                                            borderColor: deepTeal,
+                                                            transform: "translateY(-2px)",
+                                                            boxShadow: `0 8px 20px ${alpha(turquoise, 0.2)}`,
+                                                        },
+                                                    }}
+                                                >
+                                                    Join as Doctor
+                                                </Button>
+                                            </>
+                                        )}
+                                    </Stack>
+                                </motion.div>
+
+                                {/* ECG Animation - Moved to left column */}
+                                <motion.div
+                                    initial={{ opacity: 0, scaleX: 0 }}
+                                    animate={{ opacity: 1, scaleX: 1 }}
+                                    transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: "100%",
+                                            maxWidth: 400,
+                                            mx: { xs: 'auto', md: 0 },
+                                            opacity: 0.7,
+                                        }}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 400 80"
+                                            width="100%"
+                                            height="80"
+                                            style={{
+                                                filter: `drop-shadow(0px 0px 8px ${alpha(turquoise, 0.6)})`,
+                                            }}
+                                        >
+                                            <motion.path
+                                                d="M0 40 L40 40 L60 15 L80 65 L100 40 L160 40 L180 15 L200 65 L220 40 L280 40 L300 20 L320 60 L340 40 L400 40"
+                                                stroke={turquoise}
+                                                strokeWidth={2.5}
+                                                fill="none"
+                                                strokeLinecap="round"
+                                                strokeDasharray="1000"
+                                                strokeDashoffset="1000"
+                                                animate={{
+                                                    strokeDashoffset: [1000, 0]
+                                                }}
+                                                transition={{
+                                                    duration: 2,
+                                                    ease: "easeInOut",
+                                                    repeat: Infinity,
+                                                    repeatType: "loop",
+                                                    repeatDelay: 1
+                                                }}
+                                            />
+                                        </svg>
+                                    </Box>
+                                </motion.div>
+                            </Box>
+
+                            {/* Right Column - Medical Illustration */}
+                            <Box 
+                                sx={{ 
+                                    flex: 1,
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    position: 'relative',
                                 }}
-                            />
-                        </motion.svg>
-                    </Box>
+                            >
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                                    style={{ position: 'relative' }}
+                                >
+                                    {/* Medical Illustration Container */}
+                                    <Box
+                                        sx={{
+                                            width: { xs: 280, md: 350, lg: 400 },
+                                            height: { xs: 280, md: 350, lg: 400 },
+                                            borderRadius: '50%',
+                                            background: `
+                                                radial-gradient(circle, ${alpha(turquoise, 0.1)} 0%, ${alpha(turquoise, 0.05)} 70%, transparent 100%)
+                                            `,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            position: 'relative',
+                                            '&::before': {
+                                                content: '""',
+                                                position: 'absolute',
+                                                top: -20,
+                                                left: -20,
+                                                right: -20,
+                                                bottom: -20,
+                                                borderRadius: '50%',
+                                                border: `2px solid ${alpha(turquoise, 0.1)}`,
+                                                animation: 'rotate 20s linear infinite',
+                                            },
+                                            '&::after': {
+                                                content: '""',
+                                                position: 'absolute',
+                                                top: -40,
+                                                left: -40,
+                                                right: -40,
+                                                bottom: -40,
+                                                borderRadius: '50%',
+                                                border: `1px solid ${alpha(turquoise, 0.05)}`,
+                                                animation: 'rotate 30s linear infinite reverse',
+                                            }
+                                        }}
+                                    >
+                                        {/* Doctor/Patient Illustration */}
+                                        <Box
+                                            sx={{
+                                                fontSize: { xs: 120, md: 150, lg: 180 },
+                                                color: turquoise,
+                                                opacity: 0.8,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                filter: `drop-shadow(0 10px 25px ${alpha(turquoise, 0.2)})`,
+                                            }}
+                                        >
+                                            <MedicalServices sx={{ fontSize: 'inherit' }} />
+                                        </Box>
+
+                                        {/* Floating Medical Icons */}
+                                        <motion.div
+                                            animate={{
+                                                y: [-10, 10, -10],
+                                                rotate: [0, 5, -5, 0]
+                                            }}
+                                            transition={{
+                                                duration: 4,
+                                                repeat: Infinity,
+                                                ease: "easeInOut"
+                                            }}
+                                            style={{
+                                                position: 'absolute',
+                                                top: '20%',
+                                                right: '15%',
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    p: 2,
+                                                    borderRadius: '50%',
+                                                    bgcolor: 'white',
+                                                    color: turquoise,
+                                                    boxShadow: `0 8px 25px ${alpha(turquoise, 0.2)}`,
+                                                    border: `2px solid ${alpha(turquoise, 0.1)}`,
+                                                }}
+                                            >
+                                                <CalendarMonth sx={{ fontSize: 32 }} />
+                                            </Box>
+                                        </motion.div>
+
+                                        <motion.div
+                                            animate={{
+                                                y: [10, -10, 10],
+                                                rotate: [0, -5, 5, 0]
+                                            }}
+                                            transition={{
+                                                duration: 3.5,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                                delay: 0.5
+                                            }}
+                                            style={{
+                                                position: 'absolute',
+                                                bottom: '25%',
+                                                left: '10%',
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    p: 2,
+                                                    borderRadius: '50%',
+                                                    bgcolor: 'white',
+                                                    color: deepTeal,
+                                                    boxShadow: `0 8px 25px ${alpha(deepTeal, 0.2)}`,
+                                                    border: `2px solid ${alpha(deepTeal, 0.1)}`,
+                                                }}
+                                            >
+                                                <People sx={{ fontSize: 32 }} />
+                                            </Box>
+                                        </motion.div>
+
+                                        <motion.div
+                                            animate={{
+                                                y: [-5, 15, -5],
+                                                rotate: [0, 3, -3, 0]
+                                            }}
+                                            transition={{
+                                                duration: 4.5,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                                delay: 1
+                                            }}
+                                            style={{
+                                                position: 'absolute',
+                                                top: '60%',
+                                                right: '5%',
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    p: 1.5,
+                                                    borderRadius: '50%',
+                                                    bgcolor: 'white',
+                                                    color: turquoise,
+                                                    boxShadow: `0 6px 20px ${alpha(turquoise, 0.2)}`,
+                                                    border: `2px solid ${alpha(turquoise, 0.1)}`,
+                                                }}
+                                            >
+                                                <Schedule sx={{ fontSize: 24 }} />
+                                            </Box>
+                                        </motion.div>
+                                    </Box>
+                                </motion.div>
+                            </Box>
+                        </Stack>
+                    </Container>
                 </Box>
 
                 {/* Split Features Section */}
@@ -834,7 +1084,7 @@ export default function Welcome() {
 
                 {/* How It Works Section */}
                 <Box 
-                    id="how-it-works"
+                    id="steps"
                     sx={{ 
                         py: 12, 
                         background: `linear-gradient(135deg, ${alpha(turquoise, 0.02)} 0%, white 50%, ${alpha(turquoise, 0.02)} 100%)`,
@@ -1379,7 +1629,8 @@ export default function Welcome() {
             </Box>
 
             {/* Global Styles for Animations */}
-            <style jsx global>{`
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 @keyframes pulse {
                     0%, 100% { transform: scale(1); }
                     50% { transform: scale(1.05); }
@@ -1407,12 +1658,19 @@ export default function Welcome() {
                     }
                 }
 
-                /* Smooth scrolling for the entire page */
+                @keyframes rotate {
+                    from {
+                        transform: rotate(0deg);
+                    }
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+
                 html {
                     scroll-behavior: smooth;
                 }
 
-                /* Custom scrollbar styling */
                 ::-webkit-scrollbar {
                     width: 8px;
                 }
@@ -1429,7 +1687,8 @@ export default function Welcome() {
                 ::-webkit-scrollbar-thumb:hover {
                     background: ${deepTeal};
                 }
-            `}</style>
+                `
+            }} />
         </>
     );
 }
