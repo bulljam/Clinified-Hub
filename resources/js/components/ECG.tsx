@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface ECGProps {
@@ -7,6 +7,7 @@ interface ECGProps {
   speed?: number;
   color?: string;
   className?: string;
+  bpm?: number;
 }
 
 const ECG: React.FC<ECGProps> = ({ 
@@ -14,23 +15,33 @@ const ECG: React.FC<ECGProps> = ({
   height = 200, 
   speed = 1, 
   color = '#00FF00',
-  className = ''
+  className = '',
+  bpm = 72
 }) => {
+  const [currentTime, setCurrentTime] = useState(0);
+
+  useEffect(() => {
+    const animationInterval = setInterval(() => {
+      setCurrentTime(prev => prev + 16);
+    }, 16);
+
+    return () => clearInterval(animationInterval);
+  }, []);
+
   // Generate realistic PQRST waveform pattern
-  const generateECGPath = (): string => {
+  const generateECGPath = (startX: number = 0): string => {
     const segments: string[] = [];
-    const baselineY = 100; // Center baseline at half height
-    let currentX = 0;
+    const baselineY = 100;
     
     // Generate multiple heartbeat cycles across the width
-    const cycleWidth = 200; // Width of one complete heartbeat cycle
-    const totalCycles = Math.ceil(800 / cycleWidth) + 2; // Extra cycles for seamless loop
+    const cycleWidth = 200;
+    const totalCycles = Math.ceil(1200 / cycleWidth);
     
     for (let cycle = 0; cycle < totalCycles; cycle++) {
-      const cycleStartX = cycle * cycleWidth;
+      const cycleStartX = startX + (cycle * cycleWidth);
       
-      // Add some randomness for realism (±2px amplitude variation)
-      const randomAmplitude = () => (Math.random() - 0.5) * 4;
+      // Add some randomness for realism
+      const randomAmplitude = () => (Math.random() - 0.5) * 2;
       
       // P-wave (atrial depolarization) - small upward curve
       const pWavePoints = [
@@ -102,11 +113,18 @@ const ECG: React.FC<ECGProps> = ({
     return segments.join(' ');
   };
   
-  // Generate the ECG path
-  const ecgPath = generateECGPath();
+  // Calculate scrolling position based on speed and time
+  const scrollSpeed = speed * 100; // pixels per second
+  const scrollPosition = (currentTime * scrollSpeed / 1000) % 200;
   
-  // Calculate path length for animation
-  const pathLength = 800 * Math.ceil(800 / 200) + 400;
+  // Generate multiple paths for seamless scrolling
+  const ecgPath1 = generateECGPath(-scrollPosition);
+  const ecgPath2 = generateECGPath(-scrollPosition + 200);
+  const ecgPath3 = generateECGPath(-scrollPosition + 400);
+  
+  // Calculate sweep line position (moves faster than the waveform)
+  const sweepSpeed = speed * 150;
+  const sweepPosition = (currentTime * sweepSpeed / 1000) % 800;
   
   return (
     <div 
@@ -167,57 +185,114 @@ const ECG: React.FC<ECGProps> = ({
         <defs>
           {/* Glow filter for neon effect */}
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
             <feMerge> 
               <feMergeNode in="coloredBlur"/>
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
+          
+          {/* Fade-out mask for the sweep effect */}
+          <linearGradient id="fadeOut" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="white" stopOpacity="0" />
+            <stop offset="20%" stopColor="white" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="white" stopOpacity="1" />
+          </linearGradient>
+          
+          <mask id="fadeMask">
+            <rect width="800" height="200" fill="url(#fadeOut)" />
+          </mask>
         </defs>
         
-        {/* Animated ECG Line */}
-        <motion.path
-          d={ecgPath}
-          fill="none"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          filter="url(#glow)"
-          initial={{ pathLength: 0, pathOffset: 0 }}
-          animate={{ 
-            pathOffset: [0, -400] // Move the pattern to create continuous scrolling
-          }}
-          transition={{
-            pathOffset: {
-              duration: 60 / speed, // 60 BPM base speed, adjustable
-              ease: "linear",
-              repeat: Infinity,
-            }
-          }}
-          style={{
-            strokeDasharray: pathLength,
-            strokeDashoffset: 0
-          }}
-        />
+        {/* Static ECG traces (faded) */}
+        <g mask="url(#fadeMask)">
+          <path
+            d={ecgPath1}
+            fill="none"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.3"
+          />
+          <path
+            d={ecgPath2}
+            fill="none"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.3"
+          />
+          <path
+            d={ecgPath3}
+            fill="none"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.3"
+          />
+        </g>
         
-        {/* Scanning line (optional - simulates real-time monitoring) */}
-        <motion.line
-          x1="400"
+        {/* Active sweep line with bright trace */}
+        <line
+          x1={sweepPosition}
           y1="0"
-          x2="400"
+          x2={sweepPosition}
           y2="200"
           stroke={color}
-          strokeWidth="1"
-          opacity="0.6"
-          initial={{ x1: 0, x2: 0 }}
-          animate={{ x1: [0, 800], x2: [0, 800] }}
-          transition={{
-            duration: 8 / speed,
-            ease: "linear",
-            repeat: Infinity,
-          }}
+          strokeWidth="2"
+          opacity="0.8"
+          filter="url(#glow)"
         />
+        
+        {/* Bright trace following the sweep */}
+        <g>
+          <defs>
+            <clipPath id={`sweepClip`}>
+              <rect 
+                x={sweepPosition - 50} 
+                y="0" 
+                width="50" 
+                height="200" 
+              />
+            </clipPath>
+          </defs>
+          
+          <g clipPath={`url(#sweepClip)`}>
+            <path
+              d={ecgPath1}
+              fill="none"
+              stroke={color}
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#glow)"
+              opacity="1"
+            />
+            <path
+              d={ecgPath2}
+              fill="none"
+              stroke={color}
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#glow)"
+              opacity="1"
+            />
+            <path
+              d={ecgPath3}
+              fill="none"
+              stroke={color}
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#glow)"
+              opacity="1"
+            />
+          </g>
+        </g>
       </svg>
       
       {/* Monitor-style overlay */}
@@ -242,8 +317,8 @@ const ECG: React.FC<ECGProps> = ({
       </div>
       
       {/* Optional: Heart rate indicator */}
-      <div className="absolute top-2 right-2 text-xs font-mono text-green-400 opacity-75">
-        {Math.round(60 * speed)} BPM
+      <div className="absolute top-2 right-2 text-xs font-mono text-green-400 opacity-75 transition-all duration-500">
+        {bpm} BPM
       </div>
       
       {/* Optional: Lead indicator */}

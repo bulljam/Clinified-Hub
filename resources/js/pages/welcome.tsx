@@ -73,21 +73,7 @@ const CountUpAnimation = ({ end, duration = 2000, suffix = '' }: { end: number; 
     );
 };
 
-const AnimatedHeartRate = () => {
-    const [bpm, setBpm] = useState(72);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setBpm(prev => {
-                const variation = Math.floor(Math.random() * 6) - 3;
-                const newBpm = prev + variation;
-                return Math.max(68, Math.min(78, newBpm));
-            });
-        }, 2000);
-
-        return () => clearInterval(interval);
-    }, []);
-
+const AnimatedHeartRate = ({ bpm }: { bpm: number }) => {
     return (
         <div className="text-lg font-semibold text-primary transition-all duration-500">
             {bpm} BPM
@@ -111,9 +97,22 @@ const FloatingCard = ({ children, delay = 0 }: { children: React.ReactNode; dela
 export default function Welcome() {
     const [isVisible, setIsVisible] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [bpm, setBpm] = useState(72);
 
     useEffect(() => {
         setIsVisible(true);
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setBpm(prev => {
+                const variation = Math.floor(Math.random() * 6) - 3;
+                const newBpm = prev + variation;
+                return Math.max(68, Math.min(78, newBpm));
+            });
+        }, 2000);
+
+        return () => clearInterval(interval);
     }, []);
 
     return (
@@ -267,12 +266,12 @@ export default function Welcome() {
                                     <Activity className="h-5 w-5 text-green-500" />
                                 </div>
                                 
-                                <ECG height={120} speed={1.2} className="rounded-md" />
+                                <ECG height={120} speed={1.2} bpm={bpm} className="rounded-md" />
                                 
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div>
                                         <span className="text-muted-foreground">Heart Rate</span>
-                                        <AnimatedHeartRate />
+                                        <AnimatedHeartRate bpm={bpm} />
                                     </div>
                                     <div>
                                         <span className="text-muted-foreground">Status</span>
