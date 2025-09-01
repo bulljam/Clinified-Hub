@@ -2,10 +2,17 @@ import { router, useForm } from '@inertiajs/react';
 import {
     Delete as DeleteIcon,
     UploadFile as FileIcon,
-    LocalHospital as MedicalIcon,
     Person as PersonIcon,
     CloudUpload as UploadIcon,
     Work as WorkIcon,
+    LocalHospital as StethoscopeIcon,
+    Email as EmailIcon,
+    Phone as PhoneIcon,
+    Badge as BadgeIcon,
+    School as SchoolIcon,
+    AccessTime as ExperienceIcon,
+    LocationOn as LocationIcon,
+    CameraAlt as PhotoIcon,
 } from '@mui/icons-material';
 import {
     Alert,
@@ -144,9 +151,17 @@ export default function DoctorApplicationCreate() {
                     p: 3,
                 }}
             >
-                <Card sx={{ maxWidth: 600, width: '100%', textAlign: 'center' }}>
+                <Card sx={{ 
+                    maxWidth: 600, 
+                    width: '100%', 
+                    textAlign: 'center',
+                    bgcolor: 'rgba(255,255,255,0.95)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: 3,
+                    border: '1px solid rgba(255,255,255,0.3)',
+                }}>
                     <CardContent sx={{ p: 6 }}>
-                        <MedicalIcon sx={{ fontSize: 80, color: '#20a09f', mb: 3 }} />
+                        <StethoscopeIcon sx={{ fontSize: 80, color: '#20a09f', mb: 3 }} />
                         <Typography variant="h4" fontWeight="bold" color="#20a09f" mb={2}>
                             Application Submitted Successfully!
                         </Typography>
@@ -214,27 +229,103 @@ export default function DoctorApplicationCreate() {
     }
 
     return (
-        <Box sx={{ minHeight: '100vh', bgcolor: '#f8f9fa' }}>
-            {/* Header */}
-            <Box sx={{ bgcolor: 'white', borderBottom: '1px solid #e0e0e0', py: 4 }}>
-                <Box sx={{ maxWidth: 900, mx: 'auto', px: 3, textAlign: 'center' }}>
-                    <MedicalIcon sx={{ fontSize: 60, color: '#20a09f', mb: 2 }} />
-                    <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f" mb={1}>
-                        Join Our Medical Team
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
-                        Apply to become a healthcare provider on our platform. We'll review your credentials and get back to you within 2-3 business
-                        days.
-                    </Typography>
-                </Box>
+        <Box 
+            sx={{ 
+                minHeight: '100vh', 
+                background: 'linear-gradient(135deg, #d9dcd7ff 0%, #b2dfdb 25%, #80cbc4 50%, #4db6ac 75%, #26a69a 100%)',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: '-20%',
+                    right: '-10%',
+                    width: '40%',
+                    height: '40%',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+                    animation: 'pulse 4s ease-in-out infinite',
+                },
+                '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: '-15%',
+                    left: '-5%',
+                    width: '30%',
+                    height: '30%',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)',
+                    animation: 'pulse 6s ease-in-out infinite reverse',
+                },
+                '@keyframes pulse': {
+                    '0%, 100%': {
+                        transform: 'scale(1)',
+                        opacity: 0.7,
+                    },
+                    '50%': {
+                        transform: 'scale(1.1)',
+                        opacity: 0.9,
+                    },
+                },
+            }}
+        >
+            {/* Animated Medical Shapes */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '10%',
+                    left: '5%',
+                    animation: 'float 3s ease-in-out infinite',
+                    '@keyframes float': {
+                        '0%, 100%': { transform: 'translateY(0px)' },
+                        '50%': { transform: 'translateY(-20px)' },
+                    },
+                }}
+            >
+                <StethoscopeIcon sx={{ fontSize: 60, color: 'rgba(255,255,255,0.3)', transform: 'rotate(15deg)' }} />
+            </Box>
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '20%',
+                    right: '15%',
+                    animation: 'float 4s ease-in-out infinite 1s',
+                }}
+            >
+                <PersonIcon sx={{ fontSize: 40, color: 'rgba(255,255,255,0.25)', transform: 'rotate(-10deg)' }} />
+            </Box>
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '25%',
+                    left: '10%',
+                    animation: 'float 3.5s ease-in-out infinite 2s',
+                }}
+            >
+                <BadgeIcon sx={{ fontSize: 50, color: 'rgba(255,255,255,0.2)', transform: 'rotate(20deg)' }} />
+            </Box>
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '15%',
+                    right: '8%',
+                    animation: 'float 4.5s ease-in-out infinite 0.5s',
+                }}
+            >
+                <SchoolIcon sx={{ fontSize: 45, color: 'rgba(255,255,255,0.15)', transform: 'rotate(-15deg)' }} />
             </Box>
 
             {/* Form Container */}
-            <Box sx={{ maxWidth: 900, mx: 'auto', p: 4 }}>
+            <Box sx={{ maxWidth: 900, mx: 'auto', p: 4, position: 'relative', zIndex: 1 }}>
                 <form onSubmit={handleSubmit}>
                     <Stack spacing={4}>
                         {/* Personal Information Section */}
-                        <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                        <Card elevation={0} sx={{ 
+                            border: '1px solid rgba(255,255,255,0.3)', 
+                            bgcolor: 'rgba(255,255,255,0.95)',
+                            backdropFilter: 'blur(10px)',
+                            borderRadius: 3,
+                        }}>
                             <CardContent sx={{ p: 4 }}>
                                 <Box display="flex" alignItems="center" gap={2} mb={3}>
                                     <PersonIcon sx={{ color: '#20a09f' }} />
@@ -253,6 +344,13 @@ export default function DoctorApplicationCreate() {
                                             required
                                             error={!!errors.full_name}
                                             helperText={errors.full_name}
+                                            slotProps={{
+                                                input: {
+                                                    startAdornment: (
+                                                        <PersonIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    ),
+                                                },
+                                            }}
                                         />
 
                                         <TextField
@@ -264,6 +362,13 @@ export default function DoctorApplicationCreate() {
                                             required
                                             error={!!errors.email}
                                             helperText={errors.email}
+                                            slotProps={{
+                                                input: {
+                                                    startAdornment: (
+                                                        <EmailIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    ),
+                                                },
+                                            }}
                                         />
                                     </Box>
 
@@ -276,13 +381,23 @@ export default function DoctorApplicationCreate() {
                                         error={!!errors.phone}
                                         helperText={errors.phone}
                                         sx={{ maxWidth: { sm: '50%' } }}
+                                        slotProps={{
+                                            input: {
+                                                startAdornment: (
+                                                    <PhoneIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                ),
+                                            },
+                                        }}
                                     />
 
                                     {/* Photo Upload Section */}
                                     <Box>
-                                        <Typography variant="subtitle1" fontWeight="600" mb={2}>
-                                            Profile Photo <span style={{ color: '#d32f2f' }}>*</span>
-                                        </Typography>
+                                        <Box display="flex" alignItems="center" gap={1} mb={2}>
+                                            <PhotoIcon sx={{ color: '#20a09f' }} />
+                                            <Typography variant="subtitle1" fontWeight="600">
+                                                Profile Photo <span style={{ color: '#d32f2f' }}>*</span>
+                                            </Typography>
+                                        </Box>
                                         <Typography variant="body2" color="text.secondary" mb={2}>
                                             Upload a professional headshot (JPG, PNG - Max 2MB)
                                         </Typography>
@@ -348,7 +463,12 @@ export default function DoctorApplicationCreate() {
                         </Card>
 
                         {/* Professional Information Section */}
-                        <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                        <Card elevation={0} sx={{ 
+                            border: '1px solid rgba(255,255,255,0.3)', 
+                            bgcolor: 'rgba(255,255,255,0.95)',
+                            backdropFilter: 'blur(10px)',
+                            borderRadius: 3,
+                        }}>
                             <CardContent sx={{ p: 4 }}>
                                 <Box display="flex" alignItems="center" gap={2} mb={3}>
                                     <WorkIcon sx={{ color: '#20a09f' }} />
@@ -365,6 +485,9 @@ export default function DoctorApplicationCreate() {
                                                 value={data.specialty}
                                                 label="Medical Specialty"
                                                 onChange={(e) => setData('specialty', e.target.value)}
+                                                startAdornment={
+                                                    <SchoolIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                }
                                             >
                                                 {specialties.map((specialty) => (
                                                     <MenuItem key={specialty} value={specialty}>
@@ -387,6 +510,13 @@ export default function DoctorApplicationCreate() {
                                             required
                                             error={!!errors.license_number}
                                             helperText={errors.license_number}
+                                            slotProps={{
+                                                input: {
+                                                    startAdornment: (
+                                                        <BadgeIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    ),
+                                                },
+                                            }}
                                         />
                                     </Box>
 
@@ -397,7 +527,14 @@ export default function DoctorApplicationCreate() {
                                         onChange={(e) => setData('years_of_experience', parseInt(e.target.value) || 0)}
                                         fullWidth
                                         required
-                                        slotProps={{ htmlInput: { min: 0, max: 50 } }}
+                                        slotProps={{ 
+                                            htmlInput: { min: 0, max: 50 },
+                                            input: {
+                                                startAdornment: (
+                                                    <ExperienceIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                ),
+                                            },
+                                        }}
                                         error={!!errors.years_of_experience}
                                         helperText={errors.years_of_experience}
                                         sx={{ maxWidth: { sm: '50%' } }}
@@ -413,13 +550,27 @@ export default function DoctorApplicationCreate() {
                                         rows={3}
                                         error={!!errors.office_address}
                                         helperText={errors.office_address}
+                                        slotProps={{
+                                            input: {
+                                                startAdornment: (
+                                                    <Box sx={{ alignSelf: 'flex-start', pt: 1 }}>
+                                                        <LocationIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    </Box>
+                                                ),
+                                            },
+                                        }}
                                     />
                                 </Stack>
                             </CardContent>
                         </Card>
 
                         {/* Documents & Credentials Section */}
-                        <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                        <Card elevation={0} sx={{ 
+                            border: '1px solid rgba(255,255,255,0.3)', 
+                            bgcolor: 'rgba(255,255,255,0.95)',
+                            backdropFilter: 'blur(10px)',
+                            borderRadius: 3,
+                        }}>
                             <CardContent sx={{ p: 4 }}>
                                 <Box display="flex" alignItems="center" gap={2} mb={3}>
                                     <FileIcon sx={{ color: '#20a09f' }} />
@@ -486,7 +637,12 @@ export default function DoctorApplicationCreate() {
                         </Card>
 
                         {/* Submit Section */}
-                        <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                        <Card elevation={0} sx={{ 
+                            border: '1px solid rgba(255,255,255,0.3)', 
+                            bgcolor: 'rgba(255,255,255,0.95)',
+                            backdropFilter: 'blur(10px)',
+                            borderRadius: 3,
+                        }}>
                             <CardContent sx={{ p: 4 }}>
                                 <Alert severity="info" sx={{ mb: 3 }}>
                                     <Typography variant="body2">
@@ -534,7 +690,7 @@ export default function DoctorApplicationCreate() {
                 }}
             >
                 <DialogTitle sx={{ textAlign: 'center', pb: 2 }}>
-                    <MedicalIcon sx={{ fontSize: 60, color: '#20a09f', mb: 2 }} />
+                    <StethoscopeIcon sx={{ fontSize: 60, color: '#20a09f', mb: 2 }} />
                     <Typography variant="h5" fontWeight="bold" color="#20a09f">
                         Application Submitted Successfully!
                     </Typography>
