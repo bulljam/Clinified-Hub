@@ -1,7 +1,7 @@
 import { Box, Card, CardContent, Typography, Container } from '@mui/material';
 import { Link } from '@inertiajs/react';
 import { home } from '@/routes';
-import { LocalHospital as MedicalIcon } from '@mui/icons-material';
+import { MedicalServices as StethoscopeIcon } from '@mui/icons-material';
 import { type PropsWithChildren } from 'react';
 
 interface AuthLayoutProps {
@@ -57,7 +57,7 @@ export default function AuthProfessionalLayout({ children, title, description }:
                                         boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
                                     }}
                                 >
-                                    <MedicalIcon sx={{ fontSize: 32 }} />
+                                    <StethoscopeIcon sx={{ fontSize: 32 }} />
                                 </Box>
                                 <Typography
                                     variant="h4"
@@ -67,7 +67,7 @@ export default function AuthProfessionalLayout({ children, title, description }:
                                         letterSpacing: '-0.5px',
                                     }}
                                 >
-                                    Clinify
+                                    Clinified Hub
                                 </Typography>
                             </Box>
                         </Link>
@@ -119,7 +119,7 @@ export default function AuthProfessionalLayout({ children, title, description }:
                                 fontSize: '0.75rem',
                             }}
                         >
-                            © 2024 Clinify. All rights reserved.
+                            © 2024 Clinified Hub. All rights reserved.
                         </Typography>
                     </Box>
                 </Box>

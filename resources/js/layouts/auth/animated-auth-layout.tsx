@@ -1,8 +1,6 @@
 import { Box, Card, CardContent, Typography, Container, useTheme, useMediaQuery } from '@mui/material';
-import { Link, router } from '@inertiajs/react';
-import { home } from '@/routes';
-import { LocalHospital as MedicalIcon } from '@mui/icons-material';
-import { type PropsWithChildren, useEffect, useState } from 'react';
+import { MedicalServices as StethoscopeIcon } from '@mui/icons-material';
+import { type PropsWithChildren, useEffect, useState, useRef } from 'react';
 
 interface AnimatedAuthLayoutProps {
     title?: string;
@@ -20,40 +18,29 @@ export default function AnimatedAuthLayout({
 }: PropsWithChildren<AnimatedAuthLayoutProps>) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
-    const [isTransitioning, setIsTransitioning] = useState(false);
     const [currentImagePosition, setCurrentImagePosition] = useState(imagePosition);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (currentImagePosition !== imagePosition) {
-            setIsTransitioning(true);
-            const timer = setTimeout(() => {
+            setTimeout(() => {
                 setCurrentImagePosition(imagePosition);
-                setIsTransitioning(false);
-            }, 200);
-            return () => clearTimeout(timer);
+            }, 400);
         }
     }, [imagePosition, currentImagePosition]);
 
-    const handleNavigation = (href: string) => {
-        setIsTransitioning(true);
-        setTimeout(() => {
-            router.visit(href);
-        }, 300);
-    };
 
     const medicalImage = (
         <Box
             sx={{
-                flex: 1,
+                width: '100%',
+                height: '100%',
                 position: 'relative',
                 background: 'linear-gradient(135deg, rgba(32, 160, 159, 0.1) 0%, rgba(20, 184, 166, 0.15) 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: currentImagePosition === 'left' ? '24px 0 0 24px' : '0 24px 24px 0',
-                transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                transform: isTransitioning ? 'scale(0.95)' : 'scale(1)',
-                opacity: isTransitioning ? 0.7 : 1,
                 overflow: 'hidden',
                 '&::before': {
                     content: '""',
@@ -76,8 +63,7 @@ export default function AnimatedAuthLayout({
                     zIndex: 2,
                     textAlign: 'center',
                     p: 6,
-                    transform: isTransitioning ? 'translateY(20px)' : 'translateY(0)',
-                    transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
             >
                 <Box
@@ -100,7 +86,7 @@ export default function AnimatedAuthLayout({
                         },
                     }}
                 >
-                    <MedicalIcon sx={{ fontSize: 60, color: '#20a09f' }} />
+                    <StethoscopeIcon sx={{ fontSize: 60, color: '#20a09f' }} />
                 </Box>
                 <Typography
                     variant="h4"
@@ -111,7 +97,7 @@ export default function AnimatedAuthLayout({
                         letterSpacing: '-0.5px',
                     }}
                 >
-                    {mode === 'login' ? 'Welcome Back!' : 'Join Clinify'}
+                    {mode === 'login' ? 'Welcome Back!' : 'Join Clinified Hub'}
                 </Typography>
                 <Typography
                     variant="body1"
@@ -184,52 +170,17 @@ export default function AnimatedAuthLayout({
     const formSection = (
         <Box
             sx={{
-                flex: 1,
+                width: '100%',
+                height: '100%',
                 p: 6,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                transform: isTransitioning ? 'translateX(20px)' : 'translateX(0)',
-                opacity: isTransitioning ? 0.7 : 1,
+                alignItems: 'center',
+                overflowY: 'auto',
+                position: 'relative',
             }}
         >
-            <Link href={home()} style={{ textDecoration: 'none', alignSelf: 'flex-start', marginBottom: '2rem' }}>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1.5,
-                        transition: 'transform 0.2s ease-in-out',
-                        '&:hover': {
-                            transform: 'scale(1.05)',
-                        },
-                    }}
-                >
-                    <Box
-                        sx={{
-                            p: 1,
-                            borderRadius: 1.5,
-                            bgcolor: '#20a09f',
-                            color: 'white',
-                            boxShadow: '0 2px 8px rgba(32, 160, 159, 0.3)',
-                        }}
-                    >
-                        <MedicalIcon sx={{ fontSize: 20 }} />
-                    </Box>
-                    <Typography
-                        variant="h6"
-                        sx={{
-                            fontWeight: 700,
-                            color: '#20a09f',
-                            letterSpacing: '-0.3px',
-                        }}
-                    >
-                        Clinify
-                    </Typography>
-                </Box>
-            </Link>
-
             <Box sx={{ maxWidth: 400, width: '100%' }}>
                 <Box sx={{ mb: 4 }}>
                     <Typography
@@ -303,7 +254,7 @@ export default function AnimatedAuthLayout({
                                     mb: 2,
                                 }}
                             >
-                                <MedicalIcon sx={{ fontSize: 40, color: '#20a09f' }} />
+                                <StethoscopeIcon sx={{ fontSize: 40, color: '#20a09f' }} />
                             </Box>
                             <Typography
                                 variant="h5"
@@ -313,7 +264,7 @@ export default function AnimatedAuthLayout({
                                     mb: 1,
                                 }}
                             >
-                                {mode === 'login' ? 'Welcome Back!' : 'Join Clinify'}
+                                {mode === 'login' ? 'Welcome Back!' : 'Join Clinified Hub'}
                             </Typography>
                         </Box>
                         <CardContent sx={{ p: 4 }}>
@@ -378,6 +329,7 @@ export default function AnimatedAuthLayout({
         >
             <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 2 }}>
                 <Card
+                    ref={containerRef}
                     elevation={0}
                     sx={{
                         borderRadius: 6,
@@ -388,27 +340,42 @@ export default function AnimatedAuthLayout({
                         overflow: 'hidden',
                         maxWidth: 1200,
                         mx: 'auto',
-                        transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                        transform: isTransitioning ? 'scale(0.98)' : 'scale(1)',
+                        transition: 'all 0.3s ease-in-out',
                     }}
                 >
                     <Box
                         sx={{
                             display: 'flex',
-                            minHeight: 600,
+                            minHeight: 800,
+                            position: 'relative',
                         }}
                     >
-                        {currentImagePosition === 'left' ? (
-                            <>
-                                {medicalImage}
-                                {formSection}
-                            </>
-                        ) : (
-                            <>
-                                {formSection}
-                                {medicalImage}
-                            </>
-                        )}
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '50%',
+                                height: '100%',
+                                transition: 'all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                                transform: currentImagePosition === 'left' ? 'translateX(0)' : 'translateX(100%)',
+                            }}
+                        >
+                            {medicalImage}
+                        </Box>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '50%',
+                                height: '100%',
+                                transition: 'all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                                transform: currentImagePosition === 'left' ? 'translateX(100%)' : 'translateX(0)',
+                            }}
+                        >
+                            {formSection}
+                        </Box>
                     </Box>
                 </Card>
             </Container>

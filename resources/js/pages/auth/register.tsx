@@ -1,5 +1,5 @@
 import RegisteredUserController from '@/actions/App/Http/Controllers/Auth/RegisteredUserController';
-import AuthProfessionalLayout from '@/layouts/auth/auth-professional-layout';
+import AnimatedAuthLayout from '@/layouts/auth/animated-auth-layout';
 import { login } from '@/routes';
 import { Form, Head, Link } from '@inertiajs/react';
 import {
@@ -26,7 +26,12 @@ export default function Register() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     return (
-        <AuthProfessionalLayout title="Create Account" description="Join Clinify to access our healthcare services">
+        <AnimatedAuthLayout 
+            title="Create Account" 
+            description="Join Clinified Hub to access our healthcare services"
+            mode="register"
+            imagePosition="left"
+        >
             <Head title="Register" />
             <Form
                 {...RegisteredUserController.store.form()}
@@ -271,6 +276,6 @@ export default function Register() {
                     </Box>
                 )}
             </Form>
-        </AuthProfessionalLayout>
+        </AnimatedAuthLayout>
     );
 }

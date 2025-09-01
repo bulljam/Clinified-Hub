@@ -33,7 +33,12 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <AuthProfessionalLayout title="Welcome Back" description="Please sign in to your account to continue">
+        <AnimatedAuthLayout 
+            title="Welcome Back" 
+            description="Please sign in to your account to continue"
+            mode="login"
+            imagePosition="right"
+        >
             <Head title="Log in" />
 
             {status && (
@@ -215,7 +220,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         {/* Divider */}
                         <Divider sx={{ my: 1 }}>
                             <Typography variant="body2" sx={{ color: 'text.secondary', px: 2 }}>
-                                New to Clinify?
+                                New to Clinified Hub?
                             </Typography>
                         </Divider>
 
@@ -241,6 +246,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </Box>
                 )}
             </Form>
-        </AuthProfessionalLayout>
+        </AnimatedAuthLayout>
     );
 }

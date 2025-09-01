@@ -2,7 +2,7 @@ import { Box, Card, CardContent, Typography, Container, Fade, Zoom } from '@mui/
 import { styled, keyframes } from '@mui/material/styles';
 import { Link } from '@inertiajs/react';
 import { home } from '@/routes';
-import { LocalHospital as MedicalIcon } from '@mui/icons-material';
+import { MedicalServices as StethoscopeIcon } from '@mui/icons-material';
 import { type PropsWithChildren } from 'react';
 
 interface AuthLayoutProps {
@@ -148,7 +148,7 @@ const LogoContainer = styled(Box)({
     animation: `${fadeInUp} 0.6s ease-out 0.2s both`,
 });
 
-const StyledMedicalIcon = styled(MedicalIcon)({
+const StyledStethoscopeIcon = styled(StethoscopeIcon)({
     fontSize: 48,
     color: '#20a09f',
     animation: `${pulse} 2s ease-in-out infinite`,
@@ -217,7 +217,7 @@ export default function AuthMaterialLayout({ children, title, description }: Pro
                                             boxShadow: '0 8px 32px rgba(32, 160, 159, 0.3)',
                                         }}
                                     >
-                                        <StyledMedicalIcon />
+                                        <StyledStethoscopeIcon />
                                     </Box>
                                     <Typography
                                         variant="h5"
@@ -228,7 +228,7 @@ export default function AuthMaterialLayout({ children, title, description }: Pro
                                             letterSpacing: 1,
                                         }}
                                     >
-                                        Clinify
+                                        Clinified Hub
                                     </Typography>
                                 </Box>
                             </Link>
