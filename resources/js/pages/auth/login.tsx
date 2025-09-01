@@ -1,5 +1,5 @@
 import AuthenticatedSessionController from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController';
-import AuthProfessionalLayout from '@/layouts/auth/auth-professional-layout';
+import AnimatedAuthLayout from '@/layouts/auth/animated-auth-layout';
 import { register } from '@/routes';
 import { request } from '@/routes/password';
 import { Form, Head, Link } from '@inertiajs/react';

@@ -23,7 +23,8 @@ import {
     Baby,
     Bone,
     Pill,
-    Zap
+    Zap,
+    ChevronUp
 } from 'lucide-react';
 import { Login, PersonAdd } from '@mui/icons-material';
 import { useState, useEffect, useRef } from 'react';
@@ -105,9 +106,48 @@ export default function Welcome() {
     const [isVisible, setIsVisible] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [bpm, setBpm] = useState(72);
+    const [showBackToTop, setShowBackToTop] = useState(false);
 
     useEffect(() => {
         setIsVisible(true);
+    }, []);
+
+    // Back to top functionality
+    useEffect(() => {
+        const handleScroll = () => {
+            setShowBackToTop(window.scrollY > 300);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    // Scroll animations
+    useEffect(() => {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        const animateElements = document.querySelectorAll('.animate-on-scroll');
+        animateElements.forEach((el) => observer.observe(el));
+
+        return () => observer.disconnect();
     }, []);
 
     useEffect(() => {
@@ -196,9 +236,33 @@ export default function Welcome() {
                     0% { opacity: 0; transform: translateY(20px); }
                     100% { opacity: 1; transform: translateY(0); }
                 }
+                @keyframes fadeInUp {
+                    0% { opacity: 0; transform: translateY(30px); }
+                    100% { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes fadeInLeft {
+                    0% { opacity: 0; transform: translateX(-30px); }
+                    100% { opacity: 1; transform: translateX(0); }
+                }
+                @keyframes fadeInRight {
+                    0% { opacity: 0; transform: translateX(30px); }
+                    100% { opacity: 1; transform: translateX(0); }
+                }
+                @keyframes scaleIn {
+                    0% { opacity: 0; transform: scale(0.8); }
+                    100% { opacity: 1; transform: scale(1); }
+                }
                 @keyframes pulse-glow {
-                    0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-                    50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+                    0%, 100% { box-shadow: 0 0 20px rgba(20, 184, 166, 0.3); }
+                    50% { box-shadow: 0 0 40px rgba(20, 184, 166, 0.6); }
+                }
+                @keyframes bounce-gentle {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-5px); }
+                }
+                @keyframes back-to-top-bounce {
+                    0%, 100% { transform: translateY(0px) scale(1); }
+                    50% { transform: translateY(-3px) scale(1.05); }
                 }
                 @keyframes float-cloud-1 {
                     0%, 100% { transform: translateX(0px) translateY(0px) scale(1); }
@@ -268,6 +332,32 @@ export default function Welcome() {
                 }
                 .pulse-glow {
                     animation: pulse-glow 2s ease-in-out infinite;
+                }
+                .animate-on-scroll {
+                    opacity: 0;
+                    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                }
+                .animate-on-scroll.animate-fade-in-up {
+                    animation: fadeInUp 0.8s ease-out forwards;
+                }
+                .animate-on-scroll.animate-fade-in-left {
+                    animation: fadeInLeft 0.8s ease-out forwards;
+                }
+                .animate-on-scroll.animate-fade-in-right {
+                    animation: fadeInRight 0.8s ease-out forwards;
+                }
+                .animate-on-scroll.animate-scale-in {
+                    animation: scaleIn 0.8s ease-out forwards;
+                }
+                .hover-lift {
+                    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                }
+                .hover-lift:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                }
+                .back-to-top-btn {
+                    animation: back-to-top-bounce 2s ease-in-out infinite;
                 }
             `}</style>
 
@@ -398,20 +488,27 @@ export default function Welcome() {
                         <div className="space-y-4">
                             <h2 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
                                 Healthcare 
-                                <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent"> Simplified</span>
+                                <span className="bg-gradient-to-r from-primary to-teal-600 bg-clip-text text-transparent"> Simplified</span>
                             </h2>
                             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
                                 Streamline your medical practice with our comprehensive appointment scheduling system. Connect patients with healthcare providers seamlessly.
                             </p>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex justify-center">
                             <Link href="/register">
-                                <Button size="lg" className="group relative overflow-hidden">
+                                <Button 
+                                    size="lg" 
+                                    className="group relative overflow-hidden bg-gradient-to-r from-primary via-teal-600 to-cyan-600 hover:from-primary/90 hover:via-teal-600/90 hover:to-cyan-600/90 text-white font-bold px-12 py-6 text-xl rounded-full shadow-2xl hover:shadow-cyan-500/25 transition-all duration-500 transform hover:scale-105 border-0"
+                                >
                                     <span className="relative z-10 flex items-center">
-                                        Get Started
-                                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4">
+                                            <Stethoscope className="h-4 w-4 text-white" />
+                                        </div>
+                                        Get Started Today
+                                        <ArrowRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform duration-300" />
                                     </span>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                                 </Button>
                             </Link>
                         </div>
@@ -419,8 +516,8 @@ export default function Welcome() {
                         {/* App Benefits */}
                         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-8">
                             <div className="flex items-center space-x-3 bg-card/50 rounded-lg p-4 backdrop-blur-sm border border-primary/10">
-                                <div className="flex items-center justify-center w-10 h-10 bg-blue-500/10 rounded-lg">
-                                    <Calendar className="h-5 w-5 text-blue-500" />
+                                <div className="flex items-center justify-center w-10 h-10 bg-teal-500/10 rounded-lg">
+                                    <Calendar className="h-5 w-5 text-teal-500" />
                                 </div>
                                 <div>
                                     <div className="font-semibold text-sm">Smart Scheduling</div>
@@ -514,7 +611,7 @@ export default function Welcome() {
             {/* Medical Specialties Section */}
             <section className="py-20 px-4 bg-white dark:bg-gray-950">
                 <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-16 animate-on-scroll">
                         <h3 className="text-4xl font-bold mb-4">Medical Specialties</h3>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                             Connect with healthcare professionals across all major medical specialties through our comprehensive platform.
@@ -523,12 +620,12 @@ export default function Welcome() {
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <FloatingCard delay={0.1}>
-                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/50 dark:to-red-900/50 group cursor-pointer">
+                            <Card className="h-full hover:shadow-xl hover-lift transition-all duration-500 border-0 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/50 dark:to-red-900/50 group cursor-pointer animate-on-scroll">
                                 <CardHeader className="text-center">
-                                    <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
-                                        <Heart className="h-8 w-8 text-white" />
+                                    <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-125 group-hover:rotate-12 transition-all duration-500">
+                                        <Heart className="h-8 w-8 text-white group-hover:animate-pulse" />
                                     </div>
-                                    <CardTitle className="text-xl">Cardiology</CardTitle>
+                                    <CardTitle className="text-xl group-hover:text-red-600 transition-colors duration-300">Cardiology</CardTitle>
                                     <CardDescription>
                                         Heart and cardiovascular system specialists for comprehensive cardiac care.
                                     </CardDescription>
@@ -537,12 +634,12 @@ export default function Welcome() {
                         </FloatingCard>
 
                         <FloatingCard delay={0.2}>
-                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 group cursor-pointer">
+                            <Card className="h-full hover:shadow-xl hover-lift transition-all duration-500 border-0 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 group cursor-pointer animate-on-scroll">
                                 <CardHeader className="text-center">
-                                    <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
-                                        <Brain className="h-8 w-8 text-white" />
+                                    <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500">
+                                        <Brain className="h-8 w-8 text-white group-hover:animate-bounce" />
                                     </div>
-                                    <CardTitle className="text-xl">Neurology</CardTitle>
+                                    <CardTitle className="text-xl group-hover:text-purple-600 transition-colors duration-300">Neurology</CardTitle>
                                     <CardDescription>
                                         Brain and nervous system experts for neurological conditions and disorders.
                                     </CardDescription>
@@ -551,9 +648,9 @@ export default function Welcome() {
                         </FloatingCard>
 
                         <FloatingCard delay={0.3}>
-                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50 group cursor-pointer">
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950/50 dark:to-cyan-900/50 group cursor-pointer">
                                 <CardHeader className="text-center">
-                                    <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
+                                    <div className="w-16 h-16 bg-cyan-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
                                         <Eye className="h-8 w-8 text-white" />
                                     </div>
                                     <CardTitle className="text-xl">Ophthalmology</CardTitle>
@@ -612,7 +709,7 @@ export default function Welcome() {
             {/* Testimonials Section */}
             <section className="py-20 px-4 bg-muted/30">
                 <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-16 animate-on-scroll">
                         <h3 className="text-4xl font-bold mb-4">What Our Users Say</h3>
                         <p className="text-xl text-muted-foreground">
                             Trusted by healthcare professionals and patients worldwide
@@ -621,11 +718,11 @@ export default function Welcome() {
 
                     <div className="grid md:grid-cols-3 gap-8">
                         <FloatingCard delay={0.1}>
-                            <Card className="h-full">
+                            <Card className="h-full hover-lift animate-on-scroll group">
                                 <CardContent className="pt-6">
                                     <div className="flex items-center mb-4">
                                         {[...Array(5)].map((_, i) => (
-                                            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400 group-hover:animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
                                         ))}
                                     </div>
                                     <p className="text-muted-foreground mb-6 italic">
@@ -635,7 +732,7 @@ export default function Welcome() {
                                         <img 
                                             src="/images/Doctor.jpg" 
                                             alt="Dr. Michael Rodriguez"
-                                            className="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
+                                            className="w-12 h-12 rounded-full object-cover border-2 border-teal-200"
                                         />
                                         <div className="ml-3">
                                             <div className="font-semibold">Dr. Michael Rodriguez</div>
@@ -702,9 +799,9 @@ export default function Welcome() {
             </section>
 
             {/* CTA Section */}
-            <section className="py-20 px-4 bg-gradient-to-br from-teal-500 via-cyan-500 to-blue-500">
+            <section className="py-20 px-4 bg-gradient-to-br from-teal-500 via-cyan-500 to-turquoise-500">
                 <div className="max-w-4xl mx-auto text-center">
-                    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 text-white shadow-2xl">
+                    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 text-white shadow-2xl animate-on-scroll">
                         <h3 className="text-4xl font-bold mb-4">Ready to Transform Your Healthcare Practice?</h3>
                         <p className="text-xl opacity-90 mb-8">
                             Join thousands of healthcare providers who trust Clinified Hub for their appointment management needs.
@@ -786,6 +883,17 @@ export default function Welcome() {
                     </div>
                 </div>
             </footer>
+
+            {/* Back to Top Button */}
+            {showBackToTop && (
+                <button
+                    onClick={scrollToTop}
+                    className={`fixed bottom-8 right-8 z-50 bg-gradient-to-r from-primary to-teal-600 text-white p-4 rounded-full shadow-2xl hover:shadow-teal-500/25 transition-all duration-300 hover:scale-110 back-to-top-btn group`}
+                    aria-label="Back to top"
+                >
+                    <ChevronUp className="h-6 w-6 group-hover:-translate-y-1 transition-transform duration-300" />
+                </button>
+            )}
         </div>
     );
 }
