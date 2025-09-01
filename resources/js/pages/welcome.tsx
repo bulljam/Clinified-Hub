@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import ECG from '@/components/ECG';
 import { 
     Calendar, 
@@ -24,10 +24,20 @@ import {
     Bone,
     Pill,
     Zap,
-    ChevronUp
+    ChevronUp,
+    LogOut
 } from 'lucide-react';
 import { Login, PersonAdd } from '@mui/icons-material';
 import { useState, useEffect, useRef } from 'react';
+import { SharedData } from '@/types';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { 
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 
 const CountUpAnimation = ({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) => {
@@ -103,6 +113,7 @@ const FloatingCard = ({ children, delay = 0 }: { children: React.ReactNode; dela
 };
 
 export default function Welcome() {
+    const { auth } = usePage<SharedData>().props;
     const [isVisible, setIsVisible] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [bpm, setBpm] = useState(72);
@@ -180,18 +191,51 @@ export default function Welcome() {
 
                         {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center space-x-4">
-                            <Link href="/login">
-                                <Button variant="ghost" className="text-foreground hover:text-primary">
-                                    <Login className="h-4 w-4 mr-2" />
-                                    Login
-                                </Button>
-                            </Link>
-                            <Link href="/register">
-                                <Button className="bg-primary hover:bg-primary/90">
-                                    <PersonAdd className="h-4 w-4 mr-2" />
-                                    Join as a Doctor
-                                </Button>
-                            </Link>
+                            {auth?.user ? (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" className="flex items-center space-x-2 hover:bg-teal-500/10 hover:text-teal-600">
+                                            <Avatar className="h-8 w-8">
+                                                <AvatarImage src={auth.user.avatar || auth.user.photo} alt={auth.user.name} />
+                                                <AvatarFallback>
+                                                    {auth.user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <span className="font-medium">{auth.user.name}</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-48">
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/dashboard" className="flex items-center hover:bg-teal-500/10 hover:text-teal-600 focus:bg-teal-500/10 focus:text-teal-600">
+                                                <Activity className="h-4 w-4 mr-2" />
+                                                Dashboard
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/logout" method="post" className="flex items-center text-red-600 hover:bg-teal-500/10 hover:text-red-700 focus:bg-teal-500/10 focus:text-red-700">
+                                                <LogOut className="h-4 w-4 mr-2" />
+                                                Log Out
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            ) : (
+                                <>
+                                    <Link href="/login">
+                                        <Button variant="ghost" className="text-foreground hover:text-primary">
+                                            <Login className="h-4 w-4 mr-2" />
+                                            Login
+                                        </Button>
+                                    </Link>
+                                    <Link href="/register">
+                                        <Button className="bg-primary hover:bg-primary/90">
+                                            <PersonAdd className="h-4 w-4 mr-2" />
+                                            Join as a Doctor
+                                        </Button>
+                                    </Link>
+                                </>
+                            )}
                         </div>
 
                         {/* Mobile menu button */}
@@ -210,18 +254,49 @@ export default function Welcome() {
                     {mobileMenuOpen && (
                         <div className="md:hidden bg-background">
                             <div className="px-2 pt-2 pb-3 space-y-1">
-                                <Link href="/login" className="block">
-                                    <Button variant="ghost" className="w-full justify-start">
-                                        <Login className="h-4 w-4 mr-2" />
-                                        Login
-                                    </Button>
-                                </Link>
-                                <Link href="/register" className="block">
-                                    <Button className="w-full bg-primary hover:bg-primary/90">
-                                        <PersonAdd className="h-4 w-4 mr-2" />
-                                        Join as a Doctor
-                                    </Button>
-                                </Link>
+                                {auth?.user ? (
+                                    <>
+                                        <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg mb-2">
+                                            <Avatar className="h-10 w-10">
+                                                <AvatarImage src={auth.user.avatar || auth.user.photo} alt={auth.user.name} />
+                                                <AvatarFallback>
+                                                    {auth.user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <div className="font-semibold">{auth.user.name}</div>
+                                                <div className="text-sm text-muted-foreground">{auth.user.email}</div>
+                                            </div>
+                                        </div>
+                                        <Link href="/dashboard" className="block">
+                                            <Button variant="ghost" className="w-full justify-start hover:bg-teal-500/10 hover:text-teal-600">
+                                                <Activity className="h-4 w-4 mr-2" />
+                                                Dashboard
+                                            </Button>
+                                        </Link>
+                                        <Link href="/logout" method="post" className="block">
+                                            <Button variant="ghost" className="w-full justify-start text-red-600 hover:bg-teal-500/10 hover:text-red-700">
+                                                <LogOut className="h-4 w-4 mr-2" />
+                                                Log Out
+                                            </Button>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link href="/login" className="block">
+                                            <Button variant="ghost" className="w-full justify-start">
+                                                <Login className="h-4 w-4 mr-2" />
+                                                Login
+                                            </Button>
+                                        </Link>
+                                        <Link href="/register" className="block">
+                                            <Button className="w-full bg-primary hover:bg-primary/90">
+                                                <PersonAdd className="h-4 w-4 mr-2" />
+                                                Join as a Doctor
+                                            </Button>
+                                        </Link>
+                                    </>
+                                )}
                             </div>
                         </div>
                     )}
@@ -365,6 +440,53 @@ export default function Welcome() {
 <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-24">
                 {/* Animated Background Shapes */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {/* Floating Medical Icons */}
+                    <div className="absolute top-20 left-10 text-teal-200/20 animate-bounce" style={{ animationDelay: '0s', animationDuration: '4s' }}>
+                        <Stethoscope className="w-12 h-12" />
+                    </div>
+                    <div className="absolute top-40 right-20 text-cyan-200/20 animate-bounce" style={{ animationDelay: '1s', animationDuration: '5s' }}>
+                        <Heart className="w-10 h-10" />
+                    </div>
+                    <div className="absolute bottom-40 left-20 text-teal-300/20 animate-bounce" style={{ animationDelay: '2s', animationDuration: '6s' }}>
+                        <Activity className="w-14 h-14" />
+                    </div>
+                    <div className="absolute top-1/3 left-1/4 text-cyan-300/15 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '4.5s' }}>
+                        <Shield className="w-8 h-8" />
+                    </div>
+                    <div className="absolute bottom-20 right-1/4 text-teal-200/25 animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '5.5s' }}>
+                        <Calendar className="w-11 h-11" />
+                    </div>
+                    <div className="absolute top-1/2 right-10 text-cyan-200/20 animate-bounce" style={{ animationDelay: '3s', animationDuration: '4.2s' }}>
+                        <CheckCircle className="w-9 h-9" />
+                    </div>
+                    
+                    {/* Medical Cross Pattern */}
+                    <div className="absolute top-32 right-1/3 w-16 h-16 opacity-5">
+                        <div className="absolute top-1/2 left-0 w-full h-2 bg-teal-400 transform -translate-y-1/2"></div>
+                        <div className="absolute left-1/2 top-0 w-2 h-full bg-teal-400 transform -translate-x-1/2"></div>
+                    </div>
+                    <div className="absolute bottom-1/3 left-1/3 w-12 h-12 opacity-5">
+                        <div className="absolute top-1/2 left-0 w-full h-1.5 bg-cyan-400 transform -translate-y-1/2"></div>
+                        <div className="absolute left-1/2 top-0 w-1.5 h-full bg-cyan-400 transform -translate-x-1/2"></div>
+                    </div>
+                    
+                    {/* DNA Helix Pattern */}
+                    <div className="absolute top-16 left-1/2 w-1 h-40 opacity-10">
+                        <div className="w-full h-full bg-gradient-to-b from-teal-400 via-cyan-400 to-teal-400 transform rotate-12 animate-pulse"></div>
+                        <div className="absolute top-0 left-2 w-4 h-4 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '0s' }}></div>
+                        <div className="absolute top-8 -left-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                        <div className="absolute top-16 left-2 w-4 h-4 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                        <div className="absolute top-24 -left-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+                        <div className="absolute top-32 left-2 w-4 h-4 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+                    </div>
+                    
+                    {/* Pill Capsules */}
+                    <div className="absolute bottom-32 right-16 transform rotate-45">
+                        <div className="w-16 h-8 bg-gradient-to-r from-teal-300/20 to-cyan-300/20 rounded-full animate-pulse"></div>
+                    </div>
+                    <div className="absolute top-2/3 left-16 transform -rotate-12">
+                        <div className="w-12 h-6 bg-gradient-to-r from-cyan-300/15 to-teal-300/15 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    </div>
                     {/* Large turquoise floating circles with blur */}
                     <div 
                         className="absolute top-48 left-16 w-32 h-32 bg-teal-400/4 rounded-full"
@@ -609,8 +731,56 @@ export default function Welcome() {
             </section>
 
             {/* Medical Specialties Section */}
-            <section className="py-20 px-4 bg-white dark:bg-gray-950">
-                <div className="max-w-7xl mx-auto">
+            <section className="py-20 px-4 bg-white dark:bg-gray-950 relative overflow-hidden">
+                {/* Medical Background Elements */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {/* Floating Medical Symbols */}
+                    <div className="absolute top-10 left-1/4 text-teal-100/30 dark:text-teal-900/30 animate-spin" style={{ animationDuration: '20s' }}>
+                        <div className="w-20 h-20 relative">
+                            <div className="absolute top-1/2 left-0 w-full h-1 bg-current transform -translate-y-1/2"></div>
+                            <div className="absolute left-1/2 top-0 w-1 h-full bg-current transform -translate-x-1/2"></div>
+                            <div className="absolute top-1/2 left-1/2 w-8 h-8 border-2 border-current rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+                        </div>
+                    </div>
+                    
+                    {/* EKG/ECG Line Pattern */}
+                    <div className="absolute top-1/3 right-10 w-40 h-2 opacity-10">
+                        <svg className="w-full h-full" viewBox="0 0 160 8">
+                            <path 
+                                d="M0,4 L20,4 L25,1 L30,7 L35,4 L55,4 L60,1 L65,7 L70,4 L90,4 L95,1 L100,7 L105,4 L125,4 L130,1 L135,7 L140,4 L160,4" 
+                                stroke="currentColor" 
+                                strokeWidth="1" 
+                                fill="none"
+                                className="text-teal-300/20 dark:text-teal-700/20"
+                            />
+                        </svg>
+                    </div>
+                    
+                    {/* Molecular Structure */}
+                    <div className="absolute bottom-20 left-10 opacity-10">
+                        <div className="relative w-24 h-24">
+                            <div className="absolute top-0 left-1/2 w-3 h-3 bg-teal-400 rounded-full transform -translate-x-1/2"></div>
+                            <div className="absolute bottom-0 left-1/2 w-3 h-3 bg-cyan-400 rounded-full transform -translate-x-1/2"></div>
+                            <div className="absolute top-1/2 left-0 w-3 h-3 bg-teal-400 rounded-full transform -translate-y-1/2"></div>
+                            <div className="absolute top-1/2 right-0 w-3 h-3 bg-cyan-400 rounded-full transform -translate-y-1/2"></div>
+                            <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-teal-500 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+                            <div className="absolute top-1/4 left-1/4 w-0.5 h-6 bg-teal-400 transform rotate-45"></div>
+                            <div className="absolute top-1/4 right-1/4 w-0.5 h-6 bg-teal-400 transform -rotate-45"></div>
+                            <div className="absolute bottom-1/4 left-1/4 w-0.5 h-6 bg-teal-400 transform -rotate-45"></div>
+                            <div className="absolute bottom-1/4 right-1/4 w-0.5 h-6 bg-teal-400 transform rotate-45"></div>
+                        </div>
+                    </div>
+                    
+                    {/* Medical Capsules Floating */}
+                    <div className="absolute top-1/2 right-1/4 transform rotate-12 animate-pulse">
+                        <div className="w-8 h-16 bg-gradient-to-b from-teal-200/20 to-cyan-200/20 rounded-full"></div>
+                    </div>
+                    <div className="absolute bottom-1/3 right-1/3 transform -rotate-45 animate-pulse" style={{ animationDelay: '1s' }}>
+                        <div className="w-6 h-12 bg-gradient-to-b from-cyan-200/15 to-teal-200/15 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div className="max-w-7xl mx-auto relative z-10">
                     <div className="text-center mb-16 animate-on-scroll">
                         <h3 className="text-4xl font-bold mb-4">Medical Specialties</h3>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -799,16 +969,56 @@ export default function Welcome() {
             </section>
 
             {/* CTA Section */}
-            <section className="py-20 px-4 bg-gradient-to-br from-teal-500 via-cyan-500 to-turquoise-500">
-                <div className="max-w-4xl mx-auto text-center">
-                    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 text-white shadow-2xl animate-on-scroll">
-                        <h3 className="text-4xl font-bold mb-4">Ready to Transform Your Healthcare Practice?</h3>
-                        <p className="text-xl opacity-90 mb-8">
+            <section className="py-20 px-4 bg-gradient-to-br from-teal-400 via-teal-500 to-teal-600 relative overflow-hidden">
+                {/* Medical Background Elements for CTA */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {/* Floating Medical Icons */}
+                    <div className="absolute top-10 left-10 text-white/10 animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}>
+                        <Stethoscope className="w-16 h-16" />
+                    </div>
+                    <div className="absolute bottom-10 right-10 text-white/10 animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}>
+                        <UserCheck className="w-14 h-14" />
+                    </div>
+                    <div className="absolute top-1/3 right-20 text-white/8 animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}>
+                        <Activity className="w-12 h-12" />
+                    </div>
+                    <div className="absolute bottom-1/3 left-20 text-white/8 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}>
+                        <Shield className="w-10 h-10" />
+                    </div>
+                    
+                    {/* Medical Cross Patterns */}
+                    <div className="absolute top-20 right-1/4 w-12 h-12 opacity-10">
+                        <div className="absolute top-1/2 left-0 w-full h-1.5 bg-white transform -translate-y-1/2"></div>
+                        <div className="absolute left-1/2 top-0 w-1.5 h-full bg-white transform -translate-x-1/2"></div>
+                    </div>
+                    <div className="absolute bottom-20 left-1/4 w-8 h-8 opacity-10">
+                        <div className="absolute top-1/2 left-0 w-full h-1 bg-white transform -translate-y-1/2"></div>
+                        <div className="absolute left-1/2 top-0 w-1 h-full bg-white transform -translate-x-1/2"></div>
+                    </div>
+                    
+                    {/* Heartbeat Line */}
+                    <div className="absolute top-1/2 left-0 w-full h-0.5 opacity-10 transform -translate-y-1/2">
+                        <svg className="w-full h-full" viewBox="0 0 400 2">
+                            <path 
+                                d="M0,1 L50,1 L60,0 L70,2 L80,1 L120,1 L130,0 L140,2 L150,1 L200,1 L210,0 L220,2 L230,1 L280,1 L290,0 L300,2 L310,1 L400,1" 
+                                stroke="white" 
+                                strokeWidth="0.5" 
+                                fill="none"
+                                className="animate-pulse"
+                            />
+                        </svg>
+                    </div>
+                </div>
+                
+                <div className="max-w-4xl mx-auto text-center relative z-10">
+                    <div className="bg-white/95 backdrop-blur-md border border-white/30 rounded-3xl p-12 text-gray-800 shadow-2xl animate-on-scroll">
+                        <h3 className="text-4xl font-bold mb-4 text-teal-700">Ready to Transform Your Healthcare Practice?</h3>
+                        <p className="text-xl text-gray-600 mb-8">
                             Join thousands of healthcare providers who trust Clinified Hub for their appointment management needs.
                         </p>
                         <div className="flex justify-center">
                             <Link href="/register">
-                                <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-bold px-8 py-4 text-lg group shadow-xl hover:shadow-2xl transition-all duration-300">
+                                <Button size="lg" className="bg-teal-600 text-white hover:bg-teal-700 font-bold px-8 py-4 text-lg group shadow-xl hover:shadow-2xl transition-all duration-300">
                                     Discover Now
                                     <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
                                 </Button>

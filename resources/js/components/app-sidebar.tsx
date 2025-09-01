@@ -108,7 +108,7 @@ export function AppSidebar() {
                             asChild
                             className="hover:bg-transparent group relative overflow-hidden"
                         >
-                            <Link href={dashboard()} prefetch className="relative">
+                            <Link href="/" prefetch className="relative">
                                 <AppLogo />
                                 <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out origin-left"></span>
                             </Link>
