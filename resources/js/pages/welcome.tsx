@@ -1,1694 +1,563 @@
-import { dashboard, login, register } from '@/routes';
-import { type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { motion } from 'framer-motion';
-import {
-    Box,
-    Container,
-    Typography,
-    Button,
-    Card,
-    CardContent,
-    Toolbar,
-    Stack,
-    Avatar,
-    Rating,
-    Chip,
-    useTheme,
-    alpha,
-    Paper,
-    Fade,
-    Drawer,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    IconButton,
-    useMediaQuery,
-} from '@mui/material';
-import {
-    CalendarMonth,
-    Schedule,
-    PersonAdd,
-    Search,
-    Notifications,
-    Dashboard as DashboardIcon,
-    History,
-    MedicalServices,
-    CheckCircle,
-    People,
-    KeyboardArrowUp,
-    Menu as MenuIcon,
-    Close as CloseIcon,
-    ContactMail,
-    Home as HomeIcon,
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from '@inertiajs/react';
+import ECG from '@/components/ECG';
+import { 
+    Calendar, 
+    Stethoscope, 
+    Shield, 
+    Clock, 
+    Users, 
+    Heart, 
+    CheckCircle, 
     Star,
-    Build,
-    Reviews,
-    Login as LoginIcon,
-} from '@mui/icons-material';
-import { useState, useEffect } from 'react';
+    ArrowRight,
+    Activity,
+    UserCheck,
+    CalendarCheck,
+    Phone,
+    Menu,
+    X
+} from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 
-const patientFeatures = [
-    {
-        icon: Search,
-        title: 'Search Doctors',
-        description: 'Find doctors by specialty, location, or availability near you.',
-    },
-    {
-        icon: CalendarMonth,
-        title: 'Easy Booking',
-        description: 'Book, reschedule, or cancel appointments with just a few clicks.',
-    },
-    {
-        icon: Notifications,
-        title: 'Smart Reminders',
-        description: 'Get automated reminders via email and SMS for upcoming appointments.',
-    },
-];
 
-const doctorFeatures = [
-    {
-        icon: DashboardIcon,
-        title: 'Personal Dashboard',
-        description: 'Manage all your appointments from a comprehensive dashboard.',
-    },
-    {
-        icon: History,
-        title: 'Patient History',
-        description: 'Access complete patient history and medical records securely.',
-    },
-    {
-        icon: Schedule,
-        title: 'Smart Scheduling',
-        description: 'Set availability and receive automated appointment notifications.',
-    },
-];
-
-const patientSteps = [
-    {
-        number: '01',
-        title: 'Search',
-        description: 'Find doctors by specialty or location',
-        icon: Search,
-    },
-    {
-        number: '02',
-        title: 'Book',
-        description: 'Select time slot and confirm appointment',
-        icon: CalendarMonth,
-    },
-    {
-        number: '03',
-        title: 'Confirm',
-        description: 'Receive confirmation and reminders',
-        icon: CheckCircle,
-    },
-];
-
-const doctorSteps = [
-    {
-        number: '01',
-        title: 'Register',
-        description: 'Create your professional profile',
-        icon: PersonAdd,
-    },
-    {
-        number: '02',
-        title: 'Set Availability',
-        description: 'Configure your schedule and preferences',
-        icon: Schedule,
-    },
-    {
-        number: '03',
-        title: 'Manage',
-        description: 'Handle appointments from your dashboard',
-        icon: DashboardIcon,
-    },
-];
-
-const testimonials = [
-    {
-        name: 'Sarah Johnson',
-        role: 'Patient',
-        avatar: '/api/placeholder/60/60',
-        rating: 5,
-        text: 'Clinify has revolutionized how I book appointments. The interface is intuitive and I never miss appointments thanks to the smart reminders.',
-    },
-    {
-        name: 'Dr. Michael Chen',
-        role: 'Cardiologist',
-        avatar: '/api/placeholder/60/60',
-        rating: 5,
-        text: 'As a busy physician, this platform streamlines my practice. The dashboard helps me manage everything efficiently while focusing on patient care.',
-    },
-    {
-        name: 'Lisa Rodriguez',
-        role: 'Practice Manager',
-        avatar: '/api/placeholder/60/60',
-        rating: 5,
-        text: 'The admin features are outstanding. We can track appointments, payments, and analytics all in one comprehensive platform.',
-    },
-];
-
-const navigationSections = [
-    { id: 'hero', label: 'Home', icon: HomeIcon },
-    { id: 'features', label: 'Features', icon: Star },
-    { id: 'steps', label: 'Steps', icon: Build },
-    { id: 'testimonials', label: 'Testimonials', icon: Reviews },
-    { id: 'cta', label: 'Contact', icon: ContactMail },
-];
-
-// Custom hook for scroll detection and progress
-const useScrollSpy = (sectionIds: string[], offset = 100) => {
-    const [activeSection, setActiveSection] = useState('');
-    const [scrollProgress, setScrollProgress] = useState(0);
-    const [showScrollToTop, setShowScrollToTop] = useState(false);
+const CountUpAnimation = ({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) => {
+    const [count, setCount] = useState(0);
+    const countRef = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => {
-            const scrollPosition = window.scrollY + offset;
-            const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const progress = Math.min((window.scrollY / documentHeight) * 100, 100);
-            setScrollProgress(progress);
-            setShowScrollToTop(window.scrollY > 300);
-            
-            for (let i = sectionIds.length - 1; i >= 0; i--) {
-                const section = document.getElementById(sectionIds[i]);
-                if (section && section.offsetTop <= scrollPosition) {
-                    setActiveSection(sectionIds[i]);
-                    break;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && !isVisible) {
+                    setIsVisible(true);
                 }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (countRef.current) {
+            observer.observe(countRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, [isVisible]);
+
+    useEffect(() => {
+        if (!isVisible) return;
+
+        let startTime: number;
+        const animate = (currentTime: number) => {
+            if (startTime === undefined) startTime = currentTime;
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const currentCount = Math.floor(easeOutQuart * end);
+            
+            setCount(currentCount);
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
             }
         };
+        
+        requestAnimationFrame(animate);
+    }, [isVisible, end, duration]);
 
-        handleScroll();
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [sectionIds, offset]);
-
-    return { activeSection, scrollProgress, showScrollToTop };
+    return (
+        <div ref={countRef} className="text-2xl font-bold text-primary">
+            {count}{suffix}
+        </div>
+    );
 };
 
-// Smooth scroll function
-const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-        const offsetTop = section.offsetTop - 80;
-        window.scrollTo({
-            top: offsetTop,
-            behavior: 'smooth',
-        });
-    }
+const AnimatedHeartRate = () => {
+    const [bpm, setBpm] = useState(72);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setBpm(prev => {
+                const variation = Math.floor(Math.random() * 6) - 3;
+                const newBpm = prev + variation;
+                return Math.max(68, Math.min(78, newBpm));
+            });
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="text-lg font-semibold text-primary transition-all duration-500">
+            {bpm} BPM
+        </div>
+    );
 };
 
-// Scroll to top function
-const scrollToTop = () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
+const FloatingCard = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => {
+    return (
+        <div 
+            className="transform transition-all duration-1000 hover:scale-105"
+            style={{
+                animation: `float 6s ease-in-out infinite ${delay}s, fadeIn 1s ease-out ${delay}s both`
+            }}
+        >
+            {children}
+        </div>
+    );
 };
 
 export default function Welcome() {
-    const { auth } = usePage<SharedData>().props;
-    const theme = useTheme();
-    const { activeSection, scrollProgress, showScrollToTop } = useScrollSpy(navigationSections.map(s => s.id));
+    const [isVisible, setIsVisible] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const turquoise = '#20a09f';
-    const deepTeal = '#0f7673';
+    useEffect(() => {
+        setIsVisible(true);
+    }, []);
 
     return (
-        <>
-            <Head title="Clinify - Book Your Medical Appointments in Minutes">
-                <meta name="description" content="Find doctors near you and manage your appointments easily. Modern healthcare scheduling platform for patients and providers." />
-            </Head>
+        <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-muted/20">
+            {/* Top Navigation */}
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center h-16">
+                        {/* Logo */}
+                        <Link href="/" className="flex items-center space-x-3">
+                            <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                                <Stethoscope className="size-5 text-white" />
+                            </div>
+                            <div>
+                                <span className="text-lg font-bold text-foreground">Clinify</span>
+                            </div>
+                        </Link>
 
-            <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-                {/* Top Scroll Progress Bar */}
-                <Box
-                    sx={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: `${scrollProgress}%`,
-                        height: 4,
-                        bgcolor: turquoise,
-                        zIndex: 9999,
-                        background: `linear-gradient(90deg, ${turquoise}, ${deepTeal})`,
-                        boxShadow: `0 0 20px ${alpha(turquoise, 0.5)}`,
-                        transition: 'width 0.3s ease-out',
-                    }}
-                />
-
-                {/* Glassmorphic Navbar */}
-                <Box 
-                    sx={{ 
-                        position: 'sticky', 
-                        top: 20, 
-                        zIndex: 1000, 
-                        px: 2,
-                        animation: 'slideDown 0.8s ease-out',
-                    }}
-                >
-                    <Container maxWidth="lg">
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                background: `linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15))`,
-                                backdropFilter: 'blur(12px)',
-                                borderRadius: 8,
-                                border: `1px solid rgba(255, 255, 255, 0.3)`,
-                                boxShadow: `0 8px 32px rgba(68, 175, 174, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)`,
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    boxShadow: `0 12px 40px rgba(68, 175, 174, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15)`,
-                                }
-                            }}
-                        >
-                            <Toolbar sx={{ 
-                                justifyContent: 'space-between', 
-                                py: 1.5,
-                                minHeight: { xs: 60, md: 70 }
-                            }}>
-                                {/* Logo */}
-                                <Typography 
-                                    variant="h5" 
-                                    component="div" 
-                                    sx={{ 
-                                        fontWeight: 700, 
-                                        color: turquoise,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.3s ease',
-                                        '&:hover': {
-                                            transform: 'scale(1.05)',
-                                            filter: 'drop-shadow(0 0 8px rgba(32, 160, 159, 0.5))',
-                                        }
-                                    }}
-                                    onClick={() => scrollToSection('hero')}
-                                >
-                                    Clinify
-                                </Typography>
-
-                                {/* Desktop Navigation */}
-                                <Box sx={{ 
-                                    display: { xs: 'none', md: 'flex' }, 
-                                    alignItems: 'center', 
-                                    gap: 1,
-                                    position: 'absolute',
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                }}>
-                                    {navigationSections.map((section) => (
-                                        <Box key={section.id} sx={{ position: 'relative' }}>
-                                            <Button
-                                                onClick={() => scrollToSection(section.id)}
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    color: activeSection === section.id ? turquoise : 'text.primary',
-                                                    fontWeight: activeSection === section.id ? 600 : 500,
-                                                    px: 3,
-                                                    py: 1.5,
-                                                    borderRadius: 6,
-                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    '&:hover': {
-                                                        color: turquoise,
-                                                        bgcolor: alpha(turquoise, 0.08),
-                                                        transform: 'translateY(-1px)',
-                                                        filter: 'drop-shadow(0 4px 8px rgba(32, 160, 159, 0.2))',
-                                                    }
-                                                }}
-                                            >
-                                                {section.label}
-                                            </Button>
-                                            {/* Glowing Underline */}
-                                            <Box
-                                                sx={{
-                                                    position: 'absolute',
-                                                    bottom: 4,
-                                                    left: '50%',
-                                                    transform: 'translateX(-50%)',
-                                                    width: activeSection === section.id ? '80%' : '0%',
-                                                    height: 3,
-                                                    bgcolor: turquoise,
-                                                    borderRadius: 2,
-                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    boxShadow: activeSection === section.id 
-                                                        ? `0 0 12px ${alpha(turquoise, 0.8)}` 
-                                                        : 'none',
-                                                }}
-                                            />
-                                        </Box>
-                                    ))}
-                                </Box>
-
-                                {/* Right Side */}
-                                <Stack direction="row" spacing={1} alignItems="center">
-                                    {/* Auth Buttons */}
-                                    {auth.user ? (
-                                        <Button
-                                            component={Link}
-                                            href={dashboard().url}
-                                            variant="contained"
-                                            sx={{ 
-                                                textTransform: 'none',
-                                                bgcolor: turquoise,
-                                                boxShadow: `0 4px 14px ${alpha(turquoise, 0.4)}`,
-                                                borderRadius: 6,
-                                                transition: 'all 0.3s ease',
-                                                '&:hover': {
-                                                    bgcolor: deepTeal,
-                                                    transform: 'translateY(-2px)',
-                                                    boxShadow: `0 6px 20px ${alpha(turquoise, 0.5)}`,
-                                                }
-                                            }}
-                                        >
-                                            Dashboard
-                                        </Button>
-                                    ) : (
-                                        <>
-                                            {!isMobile && (
-                                                <Button
-                                                    component={Link}
-                                                    href={login().url}
-                                                    variant="text"
-                                                    startIcon={<LoginIcon />}
-                                                    sx={{ 
-                                                        textTransform: 'none',
-                                                        color: 'text.primary',
-                                                        borderRadius: 6,
-                                                        transition: 'all 0.3s ease',
-                                                        '&:hover': {
-                                                            color: turquoise,
-                                                            bgcolor: alpha(turquoise, 0.05),
-                                                        }
-                                                    }}
-                                                >
-                                                    Log in
-                                                </Button>
-                                            )}
-                                            <Button
-                                                component={Link}
-                                                href={register().url}
-                                                variant="contained"
-                                                startIcon={<PersonAdd />}
-                                                size="small"
-                                                sx={{ 
-                                                    textTransform: 'none',
-                                                    bgcolor: turquoise,
-                                                    borderRadius: 6,
-                                                    boxShadow: `0 4px 14px ${alpha(turquoise, 0.4)}`,
-                                                    transition: 'all 0.3s ease',
-                                                    '&:hover': {
-                                                        bgcolor: deepTeal,
-                                                        transform: 'translateY(-2px)',
-                                                        boxShadow: `0 6px 20px ${alpha(turquoise, 0.5)}`,
-                                                    }
-                                                }}
-                                            >
-                                                Register
-                                            </Button>
-                                        </>
-                                    )}
-
-                                    {/* Mobile Menu Button */}
-                                    {isMobile && (
-                                        <IconButton
-                                            onClick={() => setMobileMenuOpen(true)}
-                                            sx={{ 
-                                                color: turquoise,
-                                                '&:hover': {
-                                                    bgcolor: alpha(turquoise, 0.08),
-                                                }
-                                            }}
-                                        >
-                                            <MenuIcon />
-                                        </IconButton>
-                                    )}
-                                </Stack>
-                            </Toolbar>
-                        </Paper>
-                    </Container>
-                </Box>
-
-                {/* Mobile Drawer */}
-                <Drawer
-                    anchor="right"
-                    open={mobileMenuOpen}
-                    onClose={() => setMobileMenuOpen(false)}
-                    sx={{
-                        '& .MuiDrawer-paper': {
-                            width: 280,
-                            background: `linear-gradient(135deg, ${alpha(turquoise, 0.1)}, ${alpha(turquoise, 0.05)})`,
-                            backdropFilter: 'blur(20px)',
-                            border: `1px solid ${alpha(turquoise, 0.2)}`,
-                        }
-                    }}
-                >
-                    <Box sx={{ p: 3 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                            <Typography variant="h6" sx={{ color: turquoise, fontWeight: 700 }}>
-                                Clinify
-                            </Typography>
-                            <IconButton onClick={() => setMobileMenuOpen(false)} sx={{ color: turquoise }}>
-                                <CloseIcon />
-                            </IconButton>
-                        </Box>
-
-                        <List>
-                            {navigationSections.map((section) => (
-                                <ListItem
-                                    key={section.id}
-                                    onClick={() => {
-                                        scrollToSection(section.id);
-                                        setMobileMenuOpen(false);
-                                    }}
-                                    sx={{
-                                        borderRadius: 2,
-                                        mb: 1,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.3s ease',
-                                        bgcolor: activeSection === section.id ? alpha(turquoise, 0.1) : 'transparent',
-                                        '&:hover': {
-                                            bgcolor: alpha(turquoise, 0.08),
-                                            transform: 'translateX(4px)',
-                                        }
-                                    }}
-                                >
-                                    <ListItemIcon sx={{ color: activeSection === section.id ? turquoise : 'text.secondary' }}>
-                                        <section.icon />
-                                    </ListItemIcon>
-                                    <ListItemText 
-                                        primary={section.label}
-                                        sx={{ 
-                                            '& .MuiListItemText-primary': {
-                                                color: activeSection === section.id ? turquoise : 'text.primary',
-                                                fontWeight: activeSection === section.id ? 600 : 500,
-                                            }
-                                        }}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-
-                        {!auth.user && (
-                            <Box sx={{ mt: 4, space: 2 }}>
-                                <Button
-                                    component={Link}
-                                    href={login().url}
-                                    variant="outlined"
-                                    startIcon={<LoginIcon />}
-                                    fullWidth
-                                    sx={{ 
-                                        mb: 2,
-                                        textTransform: 'none',
-                                        borderColor: turquoise,
-                                        color: turquoise,
-                                        borderRadius: 6,
-                                        '&:hover': {
-                                            bgcolor: alpha(turquoise, 0.08),
-                                        }
-                                    }}
-                                >
-                                    Log in
+                        {/* Desktop Navigation */}
+                        <div className="hidden md:flex items-center space-x-4">
+                            <Link href="/login">
+                                <Button variant="ghost" className="text-foreground hover:text-primary">
+                                    Login
                                 </Button>
-                                <Button
-                                    component={Link}
-                                    href={register().url}
-                                    variant="contained"
-                                    startIcon={<PersonAdd />}
-                                    fullWidth
-                                    sx={{ 
-                                        textTransform: 'none',
-                                        bgcolor: turquoise,
-                                        borderRadius: 6,
-                                        boxShadow: `0 4px 14px ${alpha(turquoise, 0.4)}`,
-                                        '&:hover': {
-                                            bgcolor: deepTeal,
-                                        }
-                                    }}
-                                >
-                                    Register
+                            </Link>
+                            <Link href="/register">
+                                <Button className="bg-primary hover:bg-primary/90">
+                                    Join as a Doctor
                                 </Button>
-                            </Box>
-                        )}
-                    </Box>
-                </Drawer>
+                            </Link>
+                        </div>
 
-                {/* Hero Section with Gradient Background and Medical Illustration */}
-                <Box 
-                    id="hero"
-                    sx={{ 
-                        minHeight: '90vh',
-                        mt: -12,
-                        pt: 12,
-                        position: 'relative',
-                        overflow: 'hidden',
-                        px: 2,
-                        background: `
-                            radial-gradient(circle at 70% 30%, ${alpha(turquoise, 0.15)} 0%, transparent 50%),
-                            radial-gradient(circle at 30% 70%, ${alpha(deepTeal, 0.1)} 0%, transparent 50%),
-                            linear-gradient(135deg, #f8fdfd 0%, #e8f8f8 50%, #f0fafa 100%)
-                        `,
-                    }}
-                >
-                    {/* Subtle Geometric Shapes */}
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            opacity: 0.03,
-                            background: `url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="${encodeURIComponent(turquoise)}"%3E%3Ccircle cx="7" cy="7" r="1"/%3E%3Ccircle cx="37" cy="37" r="1"/%3E%3Cpath d="M20 20h20v20H20z" fill="none" stroke="${encodeURIComponent(deepTeal)}" stroke-width="0.5"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                        }}
-                    />
-
-                    <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
-                        <Stack 
-                            direction={{ xs: 'column', md: 'row' }}
-                            spacing={{ xs: 4, md: 8 }}
-                            alignItems="center"
-                            sx={{ minHeight: '80vh', py: { xs: 6, md: 10 } }}
-                        >
-                            {/* Left Column - Content */}
-                            <Box 
-                                sx={{ 
-                                    flex: { xs: '1', md: '1.2' },
-                                    textAlign: { xs: 'center', md: 'left' },
-                                    maxWidth: { xs: '100%', md: '600px' }
-                                }}
+                        {/* Mobile menu button */}
+                        <div className="md:hidden">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             >
-                                <motion.div
-                                    initial={{ opacity: 0, y: 30 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.8, ease: "easeOut" }}
-                                >
-                                    <Typography
-                                        variant="h1"
-                                        sx={{ 
-                                            fontWeight: 800,
-                                            mb: 3,
-                                            fontSize: { xs: "2.5rem", md: "3.5rem", lg: "4rem" },
-                                            lineHeight: 1.1,
-                                            textAlign: { xs: 'center', md: 'left' },
-                                        }}
-                                    >
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                display: 'block',
-                                                color: deepTeal,
-                                                fontWeight: 700,
-                                            }}
-                                        >
-                                            Book Appointments
-                                        </Box>
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                display: 'block',
-                                                background: `linear-gradient(135deg, ${turquoise} 0%, ${deepTeal} 100%)`,
-                                                WebkitBackgroundClip: 'text',
-                                                WebkitTextFillColor: 'transparent',
-                                                backgroundClip: 'text',
-                                                fontWeight: 900,
-                                                fontSize: { xs: "2.8rem", md: "3.8rem", lg: "4.3rem" },
-                                                mt: { xs: 0.5, md: 1 },
-                                            }}
-                                        >
-                                            in Minutes
-                                        </Box>
-                                    </Typography>
-                                </motion.div>
+                                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                            </Button>
+                        </div>
+                    </div>
 
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                                >
-                                    <Typography
-                                        variant="h5"
-                                        sx={{
-                                            color: 'text.secondary',
-                                            mb: 5,
-                                            lineHeight: 1.5,
-                                            fontWeight: 400,
-                                            fontSize: { xs: "1.1rem", md: "1.3rem" }
-                                        }}
-                                    >
-                                        Trusted doctors, easy scheduling, secure platform.
-                                    </Typography>
-                                </motion.div>
+                    {/* Mobile Navigation */}
+                    {mobileMenuOpen && (
+                        <div className="md:hidden border-t bg-background">
+                            <div className="px-2 pt-2 pb-3 space-y-1">
+                                <Link href="/login" className="block">
+                                    <Button variant="ghost" className="w-full justify-start">
+                                        Login
+                                    </Button>
+                                </Link>
+                                <Link href="/register" className="block">
+                                    <Button className="w-full bg-primary hover:bg-primary/90">
+                                        Join as a Doctor
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </nav>
+            <style>{`
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-10px); }
+                }
+                @keyframes fadeIn {
+                    0% { opacity: 0; transform: translateY(20px); }
+                    100% { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes pulse-glow {
+                    0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+                    50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+                }
+                .pulse-glow {
+                    animation: pulse-glow 2s ease-in-out infinite;
+                }
+            `}</style>
 
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-                                >
-                                    <Stack 
-                                        direction={{ xs: 'column', sm: 'row' }} 
-                                        spacing={3} 
-                                        sx={{ 
-                                            justifyContent: { xs: 'center', md: 'flex-start' },
-                                            mb: 6 
-                                        }}
-                                    >
-                                        {!auth.user && (
-                                            <>
-                                                <Button
-                                                    component={Link}
-                                                    href={register().url}
-                                                    variant="contained"
-                                                    size="large"
-                                                    sx={{
-                                                        bgcolor: turquoise,
-                                                        color: "white",
-                                                        px: 5,
-                                                        py: 2,
-                                                        borderRadius: 50,
-                                                        boxShadow: `0 8px 25px ${alpha(turquoise, 0.4)}`,
-                                                        fontWeight: 600,
-                                                        textTransform: "none",
-                                                        fontSize: "1.1rem",
-                                                        minWidth: 180,
-                                                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                                                        "&:hover": { 
-                                                            bgcolor: deepTeal,
-                                                            transform: "translateY(-3px)",
-                                                            boxShadow: `0 12px 35px ${alpha(turquoise, 0.5)}`,
-                                                        },
-                                                    }}
-                                                >
-                                                    Book Now
-                                                </Button>
-                                                <Button
-                                                    component={Link}
-                                                    href={register().url}
-                                                    variant="outlined"
-                                                    size="large"
-                                                    sx={{
-                                                        color: turquoise,
-                                                        borderColor: turquoise,
-                                                        borderWidth: 2,
-                                                        px: 5,
-                                                        py: 2,
-                                                        borderRadius: 50,
-                                                        fontWeight: 600,
-                                                        textTransform: "none",
-                                                        fontSize: "1.1rem",
-                                                        minWidth: 180,
-                                                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                                                        "&:hover": {
-                                                            bgcolor: alpha(turquoise, 0.08),
-                                                            borderColor: deepTeal,
-                                                            transform: "translateY(-2px)",
-                                                            boxShadow: `0 8px 20px ${alpha(turquoise, 0.2)}`,
-                                                        },
-                                                    }}
-                                                >
-                                                    Join as Doctor
-                                                </Button>
-                                            </>
-                                        )}
-                                    </Stack>
-                                </motion.div>
+            {/* Hero Section */}
+            <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-16">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-5">
+                    <div className="absolute top-20 left-20 w-32 h-32 border border-primary/20 rounded-full"></div>
+                    <div className="absolute top-40 right-20 w-24 h-24 border border-primary/20 rounded-full"></div>
+                    <div className="absolute bottom-40 left-40 w-20 h-20 border border-primary/20 rounded-full"></div>
+                    <div className="absolute bottom-20 right-40 w-28 h-28 border border-primary/20 rounded-full"></div>
+                </div>
 
-                                {/* ECG Animation - Moved to left column */}
-                                <motion.div
-                                    initial={{ opacity: 0, scaleX: 0 }}
-                                    animate={{ opacity: 1, scaleX: 1 }}
-                                    transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: "100%",
-                                            maxWidth: 400,
-                                            mx: { xs: 'auto', md: 0 },
-                                            opacity: 0.7,
-                                        }}
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 400 80"
-                                            width="100%"
-                                            height="80"
-                                            style={{
-                                                filter: `drop-shadow(0px 0px 8px ${alpha(turquoise, 0.6)})`,
-                                            }}
-                                        >
-                                            <motion.path
-                                                d="M0 40 L40 40 L60 15 L80 65 L100 40 L160 40 L180 15 L200 65 L220 40 L280 40 L300 20 L320 60 L340 40 L400 40"
-                                                stroke={turquoise}
-                                                strokeWidth={2.5}
-                                                fill="none"
-                                                strokeLinecap="round"
-                                                strokeDasharray="1000"
-                                                strokeDashoffset="1000"
-                                                animate={{
-                                                    strokeDashoffset: [1000, 0]
-                                                }}
-                                                transition={{
-                                                    duration: 2,
-                                                    ease: "easeInOut",
-                                                    repeat: Infinity,
-                                                    repeatType: "loop",
-                                                    repeatDelay: 1
-                                                }}
-                                            />
-                                        </svg>
-                                    </Box>
-                                </motion.div>
-                            </Box>
+                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+                    {/* Left Content */}
+                    <div className={`space-y-8 transform transition-all duration-1000 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'}`}>
 
-                            {/* Right Column - Medical Illustration */}
-                            <Box 
-                                sx={{ 
-                                    flex: 1,
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    position: 'relative',
-                                }}
-                            >
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                                    style={{ position: 'relative' }}
-                                >
-                                    {/* Medical Illustration Container */}
-                                    <Box
-                                        sx={{
-                                            width: { xs: 280, md: 350, lg: 400 },
-                                            height: { xs: 280, md: 350, lg: 400 },
-                                            borderRadius: '50%',
-                                            background: `
-                                                radial-gradient(circle, ${alpha(turquoise, 0.1)} 0%, ${alpha(turquoise, 0.05)} 70%, transparent 100%)
-                                            `,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            position: 'relative',
-                                            '&::before': {
-                                                content: '""',
-                                                position: 'absolute',
-                                                top: -20,
-                                                left: -20,
-                                                right: -20,
-                                                bottom: -20,
-                                                borderRadius: '50%',
-                                                border: `2px solid ${alpha(turquoise, 0.1)}`,
-                                                animation: 'rotate 20s linear infinite',
-                                            },
-                                            '&::after': {
-                                                content: '""',
-                                                position: 'absolute',
-                                                top: -40,
-                                                left: -40,
-                                                right: -40,
-                                                bottom: -40,
-                                                borderRadius: '50%',
-                                                border: `1px solid ${alpha(turquoise, 0.05)}`,
-                                                animation: 'rotate 30s linear infinite reverse',
-                                            }
-                                        }}
-                                    >
-                                        {/* Doctor/Patient Illustration */}
-                                        <Box
-                                            sx={{
-                                                fontSize: { xs: 120, md: 150, lg: 180 },
-                                                color: turquoise,
-                                                opacity: 0.8,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                filter: `drop-shadow(0 10px 25px ${alpha(turquoise, 0.2)})`,
-                                            }}
-                                        >
-                                            <MedicalServices sx={{ fontSize: 'inherit' }} />
-                                        </Box>
+                        <div className="space-y-4">
+                            <h2 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+                                Healthcare 
+                                <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent"> Simplified</span>
+                            </h2>
+                            <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
+                                Streamline your medical practice with our comprehensive appointment scheduling system. Connect patients with healthcare providers seamlessly.
+                            </p>
+                        </div>
 
-                                        {/* Floating Medical Icons */}
-                                        <motion.div
-                                            animate={{
-                                                y: [-10, 10, -10],
-                                                rotate: [0, 5, -5, 0]
-                                            }}
-                                            transition={{
-                                                duration: 4,
-                                                repeat: Infinity,
-                                                ease: "easeInOut"
-                                            }}
-                                            style={{
-                                                position: 'absolute',
-                                                top: '20%',
-                                                right: '15%',
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    p: 2,
-                                                    borderRadius: '50%',
-                                                    bgcolor: 'white',
-                                                    color: turquoise,
-                                                    boxShadow: `0 8px 25px ${alpha(turquoise, 0.2)}`,
-                                                    border: `2px solid ${alpha(turquoise, 0.1)}`,
-                                                }}
-                                            >
-                                                <CalendarMonth sx={{ fontSize: 32 }} />
-                                            </Box>
-                                        </motion.div>
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <Link href="/register">
+                                <Button size="lg" className="group relative overflow-hidden">
+                                    <span className="relative z-10 flex items-center">
+                                        Get Started
+                                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                    </span>
+                                </Button>
+                            </Link>
+                            <Link href="/login">
+                                <Button variant="outline" size="lg" className="group">
+                                    Sign In
+                                    <UserCheck className="ml-2 h-4 w-4" />
+                                </Button>
+                            </Link>
+                        </div>
 
-                                        <motion.div
-                                            animate={{
-                                                y: [10, -10, 10],
-                                                rotate: [0, -5, 5, 0]
-                                            }}
-                                            transition={{
-                                                duration: 3.5,
-                                                repeat: Infinity,
-                                                ease: "easeInOut",
-                                                delay: 0.5
-                                            }}
-                                            style={{
-                                                position: 'absolute',
-                                                bottom: '25%',
-                                                left: '10%',
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    p: 2,
-                                                    borderRadius: '50%',
-                                                    bgcolor: 'white',
-                                                    color: deepTeal,
-                                                    boxShadow: `0 8px 25px ${alpha(deepTeal, 0.2)}`,
-                                                    border: `2px solid ${alpha(deepTeal, 0.1)}`,
-                                                }}
-                                            >
-                                                <People sx={{ fontSize: 32 }} />
-                                            </Box>
-                                        </motion.div>
+                        <div className="flex items-center space-x-8 pt-4">
+                            <div className="text-center">
+                                <CountUpAnimation end={30} suffix="+" />
+                                <div className="text-sm text-muted-foreground">Healthcare Providers</div>
+                            </div>
+                            <div className="text-center">
+                                <CountUpAnimation end={1000} suffix="+" duration={2500} />
+                                <div className="text-sm text-muted-foreground">Appointments Scheduled</div>
+                            </div>
+                            <div className="text-center">
+                                <CountUpAnimation end={99.9} suffix="%" duration={3000} />
+                                <div className="text-sm text-muted-foreground">Uptime</div>
+                            </div>
+                        </div>
+                    </div>
 
-                                        <motion.div
-                                            animate={{
-                                                y: [-5, 15, -5],
-                                                rotate: [0, 3, -3, 0]
-                                            }}
-                                            transition={{
-                                                duration: 4.5,
-                                                repeat: Infinity,
-                                                ease: "easeInOut",
-                                                delay: 1
-                                            }}
-                                            style={{
-                                                position: 'absolute',
-                                                top: '60%',
-                                                right: '5%',
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    p: 1.5,
-                                                    borderRadius: '50%',
-                                                    bgcolor: 'white',
-                                                    color: turquoise,
-                                                    boxShadow: `0 6px 20px ${alpha(turquoise, 0.2)}`,
-                                                    border: `2px solid ${alpha(turquoise, 0.1)}`,
-                                                }}
-                                            >
-                                                <Schedule sx={{ fontSize: 24 }} />
-                                            </Box>
-                                        </motion.div>
-                                    </Box>
-                                </motion.div>
-                            </Box>
-                        </Stack>
-                    </Container>
-                </Box>
+                    {/* Right Content - ECG Animation */}
+                    <div className={`relative transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}`}>
+                        <div className="relative bg-card rounded-2xl border p-8 shadow-2xl">
+                            <div className="absolute top-4 left-4 flex space-x-2">
+                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                            </div>
+                            
+                            <div className="mt-8 space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-lg font-semibold">Patient Monitoring</h3>
+                                    <Activity className="h-5 w-5 text-green-500" />
+                                </div>
+                                
+                                <ECG height={120} speed={1.2} className="rounded-md" />
+                                
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span className="text-muted-foreground">Heart Rate</span>
+                                        <AnimatedHeartRate />
+                                    </div>
+                                    <div>
+                                        <span className="text-muted-foreground">Status</span>
+                                        <div className="text-lg font-semibold text-green-600">Normal</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Floating elements */}
+                        <FloatingCard delay={0.2}>
+                            <div className="absolute -top-4 -right-4 bg-primary text-primary-foreground p-3 rounded-full shadow-lg">
+                                <Heart className="h-6 w-6" />
+                            </div>
+                        </FloatingCard>
+                        
+                        <FloatingCard delay={0.5}>
+                            <div className="absolute -bottom-4 -left-4 bg-green-500 text-white p-3 rounded-full shadow-lg">
+                                <CheckCircle className="h-6 w-6" />
+                            </div>
+                        </FloatingCard>
+                    </div>
+                </div>
+            </section>
 
-                {/* Split Features Section */}
-                <Container id="features" maxWidth="lg" sx={{ py: 12 }}>
-                    <Box textAlign="center" sx={{ mb: 8 }}>
-                        <Typography variant="h2" sx={{ fontWeight: 700, mb: 2, color: deepTeal }}>
-                            Built for Everyone
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: 'text.secondary', maxWidth: 600, mx: 'auto' }}>
-                            Whether you're a patient seeking care or a doctor managing your practice, 
-                            we've got the perfect tools for you.
-                        </Typography>
-                    </Box>
+            {/* Features Section */}
+            <section className="py-20 px-4">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h3 className="text-4xl font-bold mb-4">Why Choose Clinify?</h3>
+                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                            Experience the future of healthcare management with our comprehensive platform designed for modern medical practices.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <FloatingCard delay={0.1}>
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50">
+                                <CardHeader>
+                                    <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
+                                        <Calendar className="h-6 w-6 text-white" />
+                                    </div>
+                                    <CardTitle>Smart Scheduling</CardTitle>
+                                    <CardDescription>
+                                        AI-powered appointment scheduling that reduces conflicts and maximizes efficiency.
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </FloatingCard>
+
+                        <FloatingCard delay={0.2}>
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/50 dark:to-green-900/50">
+                                <CardHeader>
+                                    <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
+                                        <Shield className="h-6 w-6 text-white" />
+                                    </div>
+                                    <CardTitle>Secure & Compliant</CardTitle>
+                                    <CardDescription>
+                                        HIPAA-compliant platform ensuring your patients' data remains private and secure.
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </FloatingCard>
+
+                        <FloatingCard delay={0.3}>
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50">
+                                <CardHeader>
+                                    <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
+                                        <Clock className="h-6 w-6 text-white" />
+                                    </div>
+                                    <CardTitle>Real-time Updates</CardTitle>
+                                    <CardDescription>
+                                        Instant notifications and updates keep everyone informed about appointment changes.
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </FloatingCard>
+
+                        <FloatingCard delay={0.4}>
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/50">
+                                <CardHeader>
+                                    <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-4">
+                                        <Users className="h-6 w-6 text-white" />
+                                    </div>
+                                    <CardTitle>Multi-User Support</CardTitle>
+                                    <CardDescription>
+                                        Designed for patients, healthcare providers, and administrative staff.
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </FloatingCard>
+
+                        <FloatingCard delay={0.5}>
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950/50 dark:to-teal-900/50">
+                                <CardHeader>
+                                    <div className="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mb-4">
+                                        <CalendarCheck className="h-6 w-6 text-white" />
+                                    </div>
+                                    <CardTitle>Easy Integration</CardTitle>
+                                    <CardDescription>
+                                        Seamlessly integrates with existing healthcare systems and workflows.
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </FloatingCard>
+
+                        <FloatingCard delay={0.6}>
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950/50 dark:to-pink-900/50">
+                                <CardHeader>
+                                    <div className="w-12 h-12 bg-pink-500 rounded-lg flex items-center justify-center mb-4">
+                                        <Phone className="h-6 w-6 text-white" />
+                                    </div>
+                                    <CardTitle>24/7 Support</CardTitle>
+                                    <CardDescription>
+                                        Round-the-clock customer support to ensure your practice runs smoothly.
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </FloatingCard>
+                    </div>
+                </div>
+            </section>
+
+            {/* Testimonials Section */}
+            <section className="py-20 px-4 bg-muted/30">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h3 className="text-4xl font-bold mb-4">What Our Users Say</h3>
+                        <p className="text-xl text-muted-foreground">
+                            Trusted by healthcare professionals and patients worldwide
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        <FloatingCard delay={0.1}>
+                            <Card className="h-full">
+                                <CardContent className="pt-6">
+                                    <div className="flex items-center mb-4">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                        ))}
+                                    </div>
+                                    <p className="text-muted-foreground mb-6 italic">
+                                        "Clinify has revolutionized our practice. The scheduling system is intuitive and our patients love the convenience."
+                                    </p>
+                                    <div className="flex items-center">
+                                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                            DS
+                                        </div>
+                                        <div className="ml-3">
+                                            <div className="font-semibold">Dr. Sarah Mitchell</div>
+                                            <div className="text-sm text-muted-foreground">Cardiologist</div>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </FloatingCard>
+
+                        <FloatingCard delay={0.2}>
+                            <Card className="h-full">
+                                <CardContent className="pt-6">
+                                    <div className="flex items-center mb-4">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                        ))}
+                                    </div>
+                                    <p className="text-muted-foreground mb-6 italic">
+                                        "As a patient, I love being able to book appointments online and receive timely reminders. It's so convenient!"
+                                    </p>
+                                    <div className="flex items-center">
+                                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                            MJ
+                                        </div>
+                                        <div className="ml-3">
+                                            <div className="font-semibold">Maria Johnson</div>
+                                            <div className="text-sm text-muted-foreground">Patient</div>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </FloatingCard>
+
+                        <FloatingCard delay={0.3}>
+                            <Card className="h-full">
+                                <CardContent className="pt-6">
+                                    <div className="flex items-center mb-4">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                        ))}
+                                    </div>
+                                    <p className="text-muted-foreground mb-6 italic">
+                                        "The admin dashboard gives us complete visibility into our operations. It's made managing our clinic so much easier."
+                                    </p>
+                                    <div className="flex items-center">
+                                        <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                            RT
+                                        </div>
+                                        <div className="ml-3">
+                                            <div className="font-semibold">Robert Chen</div>
+                                            <div className="text-sm text-muted-foreground">Clinic Administrator</div>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </FloatingCard>
+                    </div>
+                </div>
+            </section>
+
+            {/* CTA Section */}
+            <section className="py-20 px-4">
+                <div className="max-w-4xl mx-auto text-center">
+                    <div className="bg-gradient-to-r from-primary to-blue-600 rounded-3xl p-12 text-white">
+                        <h3 className="text-4xl font-bold mb-4">Ready to Transform Your Healthcare Practice?</h3>
+                        <p className="text-xl opacity-90 mb-8">
+                            Join thousands of healthcare providers who trust Clinify for their appointment management needs.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <Link href="/register">
+                                <Button size="lg" variant="secondary" className="text-primary font-semibold group">
+                                    Start Free Trial
+                                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                            </Link>
+                            <Link href="/login">
+                                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
+                                    Sign In
+                                </Button>
+                            </Link>
+                        </div>
+                        <p className="text-sm opacity-75 mt-4">No credit card required " Free 30-day trial</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="border-t py-12 px-4">
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid md:grid-cols-4 gap-8">
+                        <div>
+                            <div className="flex items-center space-x-2 mb-4">
+                                <Stethoscope className="h-8 w-8 text-primary" />
+                                <span className="text-xl font-bold">Clinify</span>
+                            </div>
+                            <p className="text-muted-foreground text-sm">
+                                Modern healthcare management for the digital age.
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h4 className="font-semibold mb-4">Product</h4>
+                            <ul className="space-y-2 text-sm text-muted-foreground">
+                                <li>Features</li>
+                                <li>Pricing</li>
+                                <li>Security</li>
+                                <li>Updates</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 className="font-semibold mb-4">Support</h4>
+                            <ul className="space-y-2 text-sm text-muted-foreground">
+                                <li>Documentation</li>
+                                <li>Help Center</li>
+                                <li>Contact Us</li>
+                                <li>Status</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 className="font-semibold mb-4">Company</h4>
+                            <ul className="space-y-2 text-sm text-muted-foreground">
+                                <li>About</li>
+                                <li>Privacy</li>
+                                <li>Terms</li>
+                                <li>Blog</li>
+                            </ul>
+                        </div>
+                    </div>
                     
-                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>
-                        {/* Patient Features */}
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                flex: 1,
-                                p: 6,
-                                borderRadius: 4,
-                                background: `linear-gradient(135deg, ${alpha(turquoise, 0.05)} 0%, ${alpha(turquoise, 0.1)} 100%)`,
-                                border: `1px solid ${alpha(turquoise, 0.1)}`,
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    transform: 'translateY(-8px)',
-                                    boxShadow: `0 20px 40px ${alpha(turquoise, 0.15)}`,
-                                }
-                            }}
-                        >
-                            <Box textAlign="center" sx={{ mb: 4 }}>
-                                <Box
-                                    sx={{
-                                        width: 80,
-                                        height: 80,
-                                        borderRadius: '50%',
-                                        bgcolor: turquoise,
-                                        color: 'white',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        mx: 'auto',
-                                        mb: 3,
-                                        boxShadow: `0 8px 25px ${alpha(turquoise, 0.3)}`,
-                                    }}
-                                >
-                                    <People sx={{ fontSize: 40 }} />
-                                </Box>
-                                <Typography variant="h4" sx={{ fontWeight: 700, color: deepTeal, mb: 2 }}>
-                                    For Patients
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                                    Find and book appointments with qualified healthcare providers
-                                </Typography>
-                            </Box>
-                            <Stack spacing={3}>
-                                {patientFeatures.map((feature, index) => (
-                                    <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
-                                        <Box
-                                            sx={{
-                                                p: 1.5,
-                                                borderRadius: 2,
-                                                bgcolor: alpha(turquoise, 0.1),
-                                                color: turquoise,
-                                                flexShrink: 0,
-                                            }}
-                                        >
-                                            <feature.icon sx={{ fontSize: 24 }} />
-                                        </Box>
-                                        <Box>
-                                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                                                {feature.title}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
-                                                {feature.description}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                ))}
-                            </Stack>
-                        </Paper>
-
-                        {/* Doctor Features */}
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                flex: 1,
-                                p: 6,
-                                borderRadius: 4,
-                                background: `linear-gradient(135deg, ${alpha(deepTeal, 0.05)} 0%, ${alpha(deepTeal, 0.1)} 100%)`,
-                                border: `1px solid ${alpha(deepTeal, 0.1)}`,
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    transform: 'translateY(-8px)',
-                                    boxShadow: `0 20px 40px ${alpha(deepTeal, 0.15)}`,
-                                }
-                            }}
-                        >
-                            <Box textAlign="center" sx={{ mb: 4 }}>
-                                <Box
-                                    sx={{
-                                        width: 80,
-                                        height: 80,
-                                        borderRadius: '50%',
-                                        bgcolor: deepTeal,
-                                        color: 'white',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        mx: 'auto',
-                                        mb: 3,
-                                        boxShadow: `0 8px 25px ${alpha(deepTeal, 0.3)}`,
-                                    }}
-                                >
-                                    <MedicalServices sx={{ fontSize: 40 }} />
-                                </Box>
-                                <Typography variant="h4" sx={{ fontWeight: 700, color: deepTeal, mb: 2 }}>
-                                    For Doctors
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                                    Manage your practice and connect with patients efficiently
-                                </Typography>
-                            </Box>
-                            <Stack spacing={3}>
-                                {doctorFeatures.map((feature, index) => (
-                                    <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
-                                        <Box
-                                            sx={{
-                                                p: 1.5,
-                                                borderRadius: 2,
-                                                bgcolor: alpha(deepTeal, 0.1),
-                                                color: deepTeal,
-                                                flexShrink: 0,
-                                            }}
-                                        >
-                                            <feature.icon sx={{ fontSize: 24 }} />
-                                        </Box>
-                                        <Box>
-                                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                                                {feature.title}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
-                                                {feature.description}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                ))}
-                            </Stack>
-                        </Paper>
-                    </Stack>
-                </Container>
-
-                {/* How It Works Section */}
-                <Box 
-                    id="steps"
-                    sx={{ 
-                        py: 12, 
-                        background: `linear-gradient(135deg, ${alpha(turquoise, 0.02)} 0%, white 50%, ${alpha(turquoise, 0.02)} 100%)`,
-                        position: 'relative',
-                        overflow: 'hidden',
-                    }}
-                >
-                    <Container maxWidth="lg">
-                        <Box textAlign="center" sx={{ mb: 10 }}>
-                            <Typography variant="h2" sx={{ fontWeight: 700, mb: 2, color: deepTeal }}>
-                                How It Works
-                            </Typography>
-                            <Typography variant="h6" sx={{ color: 'text.secondary', maxWidth: 600, mx: 'auto' }}>
-                                Get started in just three simple steps
-                            </Typography>
-                        </Box>
-
-                        {/* Patient Process */}
-                        <Box sx={{ mb: 10 }}>
-                            <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 600, mb: 6, color: turquoise }}>
-                                For Patients
-                            </Typography>
-                            <Box
-                                sx={{
-                                    display: 'grid',
-                                    gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-                                    gap: 6,
-                                }}
-                            >
-                                {patientSteps.map((step, index) => (
-                                    <Box 
-                                        key={index} 
-                                        textAlign="center"
-                                        sx={{
-                                            position: 'relative',
-                                            transition: 'transform 0.3s ease',
-                                            '&:hover': {
-                                                transform: 'translateY(-10px)',
-                                                '& .step-circle': {
-                                                    bgcolor: deepTeal,
-                                                    transform: 'scale(1.1)',
-                                                },
-                                                '& .step-icon': {
-                                                    color: turquoise,
-                                                }
-                                            }
-                                        }}
-                                    >
-                                        <Box
-                                            className="step-circle"
-                                            sx={{
-                                                width: 100,
-                                                height: 100,
-                                                borderRadius: '50%',
-                                                bgcolor: turquoise,
-                                                color: 'white',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                mx: 'auto',
-                                                mb: 3,
-                                                fontSize: '2rem',
-                                                fontWeight: 700,
-                                                boxShadow: `0 8px 25px ${alpha(turquoise, 0.3)}`,
-                                                transition: 'all 0.3s ease',
-                                            }}
-                                        >
-                                            {step.number}
-                                        </Box>
-                                        <step.icon 
-                                            className="step-icon"
-                                            sx={{ 
-                                                fontSize: 40, 
-                                                color: 'text.secondary', 
-                                                mb: 2,
-                                                transition: 'color 0.3s ease',
-                                            }} 
-                                        />
-                                        <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, color: deepTeal }}>
-                                            {step.title}
-                                        </Typography>
-                                        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                                            {step.description}
-                                        </Typography>
-                                        {index < patientSteps.length - 1 && (
-                                            <Box
-                                                sx={{
-                                                    position: 'absolute',
-                                                    top: 50,
-                                                    right: { xs: '50%', md: -40 },
-                                                    transform: { xs: 'translateX(50%) rotate(90deg)', md: 'none' },
-                                                    width: 80,
-                                                    height: 2,
-                                                    bgcolor: alpha(turquoise, 0.3),
-                                                    display: { xs: 'none', md: 'block' },
-                                                    '&::after': {
-                                                        content: '""',
-                                                        position: 'absolute',
-                                                        right: -5,
-                                                        top: -3,
-                                                        width: 0,
-                                                        height: 0,
-                                                        borderLeft: `8px solid ${alpha(turquoise, 0.3)}`,
-                                                        borderTop: '4px solid transparent',
-                                                        borderBottom: '4px solid transparent',
-                                                    }
-                                                }}
-                                            />
-                                        )}
-                                    </Box>
-                                ))}
-                            </Box>
-                        </Box>
-
-                        {/* Doctor Process */}
-                        <Box>
-                            <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 600, mb: 6, color: deepTeal }}>
-                                For Doctors
-                            </Typography>
-                            <Box
-                                sx={{
-                                    display: 'grid',
-                                    gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-                                    gap: 6,
-                                }}
-                            >
-                                {doctorSteps.map((step, index) => (
-                                    <Box 
-                                        key={index} 
-                                        textAlign="center"
-                                        sx={{
-                                            position: 'relative',
-                                            transition: 'transform 0.3s ease',
-                                            '&:hover': {
-                                                transform: 'translateY(-10px)',
-                                                '& .step-circle': {
-                                                    bgcolor: turquoise,
-                                                    transform: 'scale(1.1)',
-                                                },
-                                                '& .step-icon': {
-                                                    color: deepTeal,
-                                                }
-                                            }
-                                        }}
-                                    >
-                                        <Box
-                                            className="step-circle"
-                                            sx={{
-                                                width: 100,
-                                                height: 100,
-                                                borderRadius: '50%',
-                                                bgcolor: deepTeal,
-                                                color: 'white',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                mx: 'auto',
-                                                mb: 3,
-                                                fontSize: '2rem',
-                                                fontWeight: 700,
-                                                boxShadow: `0 8px 25px ${alpha(deepTeal, 0.3)}`,
-                                                transition: 'all 0.3s ease',
-                                            }}
-                                        >
-                                            {step.number}
-                                        </Box>
-                                        <step.icon 
-                                            className="step-icon"
-                                            sx={{ 
-                                                fontSize: 40, 
-                                                color: 'text.secondary', 
-                                                mb: 2,
-                                                transition: 'color 0.3s ease',
-                                            }} 
-                                        />
-                                        <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, color: deepTeal }}>
-                                            {step.title}
-                                        </Typography>
-                                        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                                            {step.description}
-                                        </Typography>
-                                        {index < doctorSteps.length - 1 && (
-                                            <Box
-                                                sx={{
-                                                    position: 'absolute',
-                                                    top: 50,
-                                                    right: { xs: '50%', md: -40 },
-                                                    transform: { xs: 'translateX(50%) rotate(90deg)', md: 'none' },
-                                                    width: 80,
-                                                    height: 2,
-                                                    bgcolor: alpha(deepTeal, 0.3),
-                                                    display: { xs: 'none', md: 'block' },
-                                                    '&::after': {
-                                                        content: '""',
-                                                        position: 'absolute',
-                                                        right: -5,
-                                                        top: -3,
-                                                        width: 0,
-                                                        height: 0,
-                                                        borderLeft: `8px solid ${alpha(deepTeal, 0.3)}`,
-                                                        borderTop: '4px solid transparent',
-                                                        borderBottom: '4px solid transparent',
-                                                    }
-                                                }}
-                                            />
-                                        )}
-                                    </Box>
-                                ))}
-                            </Box>
-                        </Box>
-                    </Container>
-                </Box>
-
-                {/* Testimonials Section */}
-                <Box id="testimonials" sx={{ py: 12, bgcolor: '#F5F5F5' }}>
-                    <Container maxWidth="lg">
-                        <Box textAlign="center" sx={{ mb: 8 }}>
-                            <Typography variant="h2" sx={{ fontWeight: 700, mb: 2, color: deepTeal }}>
-                                Trusted by Thousands
-                            </Typography>
-                            <Typography variant="h6" sx={{ color: 'text.secondary', maxWidth: 600, mx: 'auto' }}>
-                                See what healthcare providers and patients are saying about Clinify
-                            </Typography>
-                        </Box>
-                        
-                        <Box
-                            sx={{
-                                display: 'grid',
-                                gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-                                gap: 4,
-                            }}
-                        >
-                            {testimonials.map((testimonial, index) => (
-                                <Card 
-                                    key={index} 
-                                    sx={{ 
-                                        height: '100%', 
-                                        p: 4,
-                                        borderRadius: 4,
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                                        transition: 'all 0.3s ease',
-                                        '&:hover': {
-                                            transform: 'translateY(-8px)',
-                                            boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
-                                        }
-                                    }}
-                                >
-                                    <CardContent>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-                                            <Avatar 
-                                                sx={{ 
-                                                    width: 64, 
-                                                    height: 64, 
-                                                    mr: 3, 
-                                                    bgcolor: turquoise,
-                                                    boxShadow: `0 4px 15px ${alpha(turquoise, 0.3)}`,
-                                                }}
-                                            >
-                                                {testimonial.name.split(' ').map(n => n[0]).join('')}
-                                            </Avatar>
-                                            <Box>
-                                                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                                                    {testimonial.name}
-                                                </Typography>
-                                                <Chip 
-                                                    label={testimonial.role} 
-                                                    size="small" 
-                                                    sx={{ 
-                                                        bgcolor: alpha(turquoise, 0.1),
-                                                        color: turquoise,
-                                                        fontWeight: 500,
-                                                    }}
-                                                />
-                                            </Box>
-                                        </Box>
-                                        <Rating 
-                                            value={testimonial.rating} 
-                                            readOnly 
-                                            sx={{ 
-                                                mb: 3,
-                                                '& .MuiRating-iconFilled': {
-                                                    color: '#FFD700',
-                                                }
-                                            }} 
-                                        />
-                                        <Typography 
-                                            variant="body1" 
-                                            sx={{ 
-                                                color: 'text.secondary', 
-                                                fontStyle: 'italic', 
-                                                lineHeight: 1.7,
-                                                fontSize: '1rem',
-                                            }}
-                                        >
-                                            "{testimonial.text}"
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </Box>
-                    </Container>
-                </Box>
-
-                {/* CTA Banner */}
-                <Box 
-                    id="cta"
-                    sx={{ 
-                        py: 10, 
-                        background: `linear-gradient(135deg, ${turquoise} 0%, ${deepTeal} 100%)`,
-                        color: 'white',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="7" cy="7" r="1"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-                        }
-                    }}
-                >
-                    <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
-                        <Box textAlign="center">
-                            <Typography 
-                                variant="h3" 
-                                sx={{ 
-                                    fontWeight: 700, 
-                                    mb: 3,
-                                    textShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                }}
-                            >
-                                Ready to simplify your medical appointments?
-                            </Typography>
-                            <Typography variant="h6" sx={{ mb: 6, opacity: 0.95, maxWidth: 600, mx: 'auto' }}>
-                                Join thousands of healthcare providers and patients who trust Clinify 
-                                for their appointment management needs.
-                            </Typography>
-                            {!auth.user && (
-                                <Button
-                                    component={Link}
-                                    href={register().url}
-                                    variant="contained"
-                                    size="large"
-                                    sx={{ 
-                                        bgcolor: 'white', 
-                                        color: turquoise,
-                                        fontWeight: 600,
-                                        textTransform: 'none',
-                                        py: 2,
-                                        px: 5,
-                                        fontSize: '1.1rem',
-                                        boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                                        animation: 'pulse 2s infinite',
-                                        transition: 'all 0.3s ease',
-                                        '&:hover': { 
-                                            bgcolor: 'rgba(255,255,255,0.95)',
-                                            transform: 'translateY(-3px) scale(1.05)',
-                                            boxShadow: '0 12px 35px rgba(0,0,0,0.2)',
-                                        }
-                                    }}
-                                >
-                                    Get Started
-                                </Button>
-                            )}
-                        </Box>
-                    </Container>
-                </Box>
-
-                {/* Footer */}
-                <Box sx={{ py: 8, bgcolor: deepTeal, color: 'white' }}>
-                    <Container maxWidth="lg">
-                        <Box
-                            sx={{
-                                display: 'grid',
-                                gridTemplateColumns: { xs: '1fr', md: '2fr 1fr 1fr 1fr' },
-                                gap: 6,
-                                mb: 6,
-                            }}
-                        >
-                            <Box>
-                                <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: turquoise }}>
-                                    Clinify
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.8)', maxWidth: 350, lineHeight: 1.6 }}>
-                                    Modern healthcare appointment management platform designed for efficiency, 
-                                    security, and exceptional user experience.
-                                </Typography>
-                            </Box>
-                            <Box>
-                                <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
-                                    Quick Links
-                                </Typography>
-                                <Stack spacing={2}>
-                                    {!auth.user && (
-                                        <>
-                                            <Link href={login().url}>
-                                                <Typography 
-                                                    variant="body2" 
-                                                    sx={{ 
-                                                        color: 'rgba(255,255,255,0.7)', 
-                                                        transition: 'color 0.3s ease',
-                                                        '&:hover': { color: turquoise }
-                                                    }}
-                                                >
-                                                    Log in
-                                                </Typography>
-                                            </Link>
-                                            <Link href={register().url}>
-                                                <Typography 
-                                                    variant="body2" 
-                                                    sx={{ 
-                                                        color: 'rgba(255,255,255,0.7)', 
-                                                        transition: 'color 0.3s ease',
-                                                        '&:hover': { color: turquoise }
-                                                    }}
-                                                >
-                                                    Register
-                                                </Typography>
-                                            </Link>
-                                            <Link href="/doctor-application">
-                                                <Typography 
-                                                    variant="body2" 
-                                                    sx={{ 
-                                                        color: 'rgba(255,255,255,0.7)', 
-                                                        transition: 'color 0.3s ease',
-                                                        '&:hover': { color: turquoise }
-                                                    }}
-                                                >
-                                                    Join as Doctor
-                                                </Typography>
-                                            </Link>
-                                        </>
-                                    )}
-                                </Stack>
-                            </Box>
-                            <Box>
-                                <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
-                                    About Us
-                                </Typography>
-                                <Stack spacing={2}>
-                                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                                        Contact
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                                        FAQ
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                                        Support
-                                    </Typography>
-                                </Stack>
-                            </Box>
-                            <Box>
-                                <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
-                                    Legal
-                                </Typography>
-                                <Stack spacing={2}>
-                                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                                        Terms & Conditions
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                                        Privacy Policy
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                                        HIPAA Compliance
-                                    </Typography>
-                                </Stack>
-                            </Box>
-                        </Box>
-                        <Box sx={{ pt: 4, borderTop: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
-                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
-                                © {new Date().getFullYear()} Clinify – Made with care for better healthcare
-                            </Typography>
-                        </Box>
-                    </Container>
-                </Box>
-
-                {/* Scroll to Top Button */}
-                <Fade in={showScrollToTop} timeout={300}>
-                    <Box
-                        onClick={scrollToTop}
-                        sx={{
-                            position: 'fixed',
-                            bottom: 30,
-                            right: 30,
-                            width: 56,
-                            height: 56,
-                            borderRadius: '50%',
-                            bgcolor: turquoise,
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            zIndex: 1000,
-                            boxShadow: `0 4px 20px ${alpha(turquoise, 0.4)}`,
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            animation: 'subtlePulse 3s ease-in-out infinite',
-                            '&:hover': {
-                                transform: 'scale(1.1) translateY(-2px)',
-                                boxShadow: `0 8px 30px ${alpha(turquoise, 0.6)}, 0 0 0 8px ${alpha(turquoise, 0.1)}, 0 0 0 16px ${alpha(turquoise, 0.05)}`,
-                                bgcolor: deepTeal,
-                            },
-                            '&:active': {
-                                transform: 'scale(1.05) translateY(-1px)',
-                            }
-                        }}
-                    >
-                        {/* Progress Ring */}
-                        <Box
-                            sx={{
-                                position: 'absolute',
-                                top: -4,
-                                left: -4,
-                                right: -4,
-                                bottom: -4,
-                                borderRadius: '50%',
-                                background: `conic-gradient(${turquoise} ${scrollProgress * 3.6}deg, ${alpha(turquoise, 0.2)} 0deg)`,
-                                padding: '4px',
-                                '&::before': {
-                                    content: '""',
-                                    position: 'absolute',
-                                    inset: 4,
-                                    borderRadius: '50%',
-                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
-                                }
-                            }}
-                        />
-                        
-                        {/* Arrow Icon */}
-                        <KeyboardArrowUp 
-                            sx={{ 
-                                fontSize: 28,
-                                position: 'relative',
-                                zIndex: 1,
-                                transition: 'transform 0.2s ease',
-                            }} 
-                        />
-                    </Box>
-                </Fade>
-            </Box>
-
-            {/* Global Styles for Animations */}
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                @keyframes pulse {
-                    0%, 100% { transform: scale(1); }
-                    50% { transform: scale(1.05); }
-                }
-
-                @keyframes subtlePulse {
-                    0%, 100% { 
-                        transform: scale(1);
-                        box-shadow: 0 4px 20px ${alpha(turquoise, 0.4)};
-                    }
-                    50% { 
-                        transform: scale(1.02);
-                        box-shadow: 0 6px 25px ${alpha(turquoise, 0.5)};
-                    }
-                }
-
-                @keyframes slideDown {
-                    0% {
-                        opacity: 0;
-                        transform: translateY(-30px);
-                    }
-                    100% {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-
-                @keyframes rotate {
-                    from {
-                        transform: rotate(0deg);
-                    }
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-
-                html {
-                    scroll-behavior: smooth;
-                }
-
-                ::-webkit-scrollbar {
-                    width: 8px;
-                }
-
-                ::-webkit-scrollbar-track {
-                    background: #f1f1f1;
-                }
-
-                ::-webkit-scrollbar-thumb {
-                    background: ${turquoise};
-                    border-radius: 4px;
-                }
-
-                ::-webkit-scrollbar-thumb:hover {
-                    background: ${deepTeal};
-                }
-                `
-            }} />
-        </>
+                    <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+                        <p>&copy; 2024 Clinify. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
     );
 }
