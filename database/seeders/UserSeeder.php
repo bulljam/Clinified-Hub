@@ -69,6 +69,7 @@ class UserSeeder extends Seeder
             'phone' => '+1 (555) 100-0001',
             'bio' => 'Experienced cardiologist specializing in interventional cardiology and heart disease prevention.',
             'date_of_birth' => '1979-04-15',
+            'image' => '/images/doctors/Cardiology.jpg',
         ]);
 
         User::create([
@@ -83,6 +84,7 @@ class UserSeeder extends Seeder
             'phone' => '+1 (555) 100-0002',
             'bio' => 'Board-certified dermatologist with expertise in skin cancer treatment and cosmetic procedures.',
             'date_of_birth' => '1983-09-22',
+            'image' => '/images/doctors/Dermatology.jpg',
         ]);
 
         User::create([
@@ -97,6 +99,7 @@ class UserSeeder extends Seeder
             'phone' => '+1 (555) 100-0003',
             'bio' => 'Pediatrician dedicated to providing comprehensive healthcare for children from infancy through adolescence.',
             'date_of_birth' => '1976-12-08',
+            'image' => '/images/doctors/Pediatrics.jpg',
         ]);
 
         User::create([
@@ -111,6 +114,7 @@ class UserSeeder extends Seeder
             'phone' => '+1 (555) 100-0004',
             'bio' => 'Orthopedic surgeon specializing in sports medicine and joint replacement procedures.',
             'date_of_birth' => '1971-06-30',
+            'image' => '/images/doctors/Orthopedics.jpg',
         ]);
 
         User::create([

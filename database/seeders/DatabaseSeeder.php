@@ -23,18 +23,6 @@ class DatabaseSeeder extends Seeder
     private function seedUsers(): void
     {
         User::create([
-            'name' => 'Super Administrator',
-            'email' => 'super@clinify.com',
-            'password' => Hash::make('password123'),
-            'role' => 'super_admin',
-            'email_verified_at' => now(),
-            'gender' => 'male',
-            'date_of_birth' => '1975-01-15',
-            'city' => 'New York',
-            'phone' => '+1 (555) 000-0000',
-        ]);
-
-        User::create([
             'name' => 'Super Admin',
             'email' => 'superadmin@example.com',
             'password' => Hash::make('123'),
@@ -91,7 +79,7 @@ class DatabaseSeeder extends Seeder
             'bio' => 'Experienced cardiologist specializing in interventional cardiology and heart disease prevention.',
             'date_of_birth' => '1979-04-15',
             'email_verified_at' => now(),
-            'photo' => 'doctors/sarah-johnson.jpg',
+            'photo' => '/images/doctors/Cardiology.jpg',
         ]);
 
         User::create([
@@ -107,7 +95,7 @@ class DatabaseSeeder extends Seeder
             'bio' => 'Board-certified dermatologist with expertise in skin cancer treatment and cosmetic procedures.',
             'date_of_birth' => '1983-09-22',
             'email_verified_at' => now(),
-            'photo' => 'doctors/michael-chen.jpg',
+            'photo' => '/images/doctors/Dermatology.jpg',
         ]);
 
         User::create([
@@ -123,7 +111,7 @@ class DatabaseSeeder extends Seeder
             'bio' => 'Pediatrician dedicated to providing comprehensive healthcare for children from infancy through adolescence.',
             'date_of_birth' => '1976-12-08',
             'email_verified_at' => now(),
-            'photo' => 'doctors/emily-rodriguez.jpg',
+            'photo' => '/images/doctors/Pediatrics.jpg',
         ]);
 
         User::create([
@@ -139,7 +127,7 @@ class DatabaseSeeder extends Seeder
             'bio' => 'Orthopedic surgeon specializing in sports medicine and joint replacement procedures.',
             'date_of_birth' => '1971-06-30',
             'email_verified_at' => now(),
-            'photo' => 'doctors/david-thompson.jpg',
+            'photo' => '/images/doctors/Orthopedics.jpg',
         ]);
 
         User::create([
@@ -155,7 +143,7 @@ class DatabaseSeeder extends Seeder
             'bio' => 'Neurologist specializing in epilepsy, stroke treatment, and neurodegenerative diseases.',
             'date_of_birth' => '1981-03-14',
             'email_verified_at' => now(),
-            'photo' => 'doctors/maria-garcia.jpg',
+            'photo' => '/images/doctors/Neurology.jpg',
         ]);
 
         User::create([
@@ -171,7 +159,7 @@ class DatabaseSeeder extends Seeder
             'bio' => 'Psychiatrist with expertise in anxiety disorders, depression, and cognitive behavioral therapy.',
             'date_of_birth' => '1973-11-22',
             'email_verified_at' => now(),
-            'photo' => 'doctors/james-wilson.jpg',
+            'photo' => '/images/doctors/Psychiatry.jpg',
         ]);
 
         User::create([

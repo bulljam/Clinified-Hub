@@ -66,7 +66,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
             <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
                     <Avatar
-                        src={provider.photo ? `/storage/${provider.photo}` : undefined}
+                        src={provider.photo || undefined}
                         sx={{ 
                             width: 64,
                             height: 64,
@@ -74,6 +74,11 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                             fontSize: '1.5rem',
                             fontWeight: 'bold',
                             mb: 1,
+                            '& img': {
+                                objectPosition: 'top center',
+                                transform: 'translateY(8px) scale(1.3)',
+                                objectFit: 'cover',
+                            },
                         }}
                     >
                         {!provider.photo && provider.name.charAt(0)}
