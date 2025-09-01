@@ -264,7 +264,7 @@ export default function DoctorApplications({ applications }: Props) {
                       <Box display="flex" alignItems="center" gap={2}>
                         {application.photo ? (
                           <Avatar 
-                            src={`/storage/${application.photo}`}
+                            src={`${window.location.origin}/storage/${application.photo}`}
                             sx={{ 
                               width: 40, 
                               height: 40,
@@ -466,7 +466,7 @@ export default function DoctorApplications({ applications }: Props) {
                   <Box display="flex" alignItems="center" gap={3} mb={2}>
                     {viewingApplication.photo ? (
                       <Avatar 
-                        src={`/storage/${viewingApplication.photo}`}
+                        src={`${window.location.origin}/storage/${viewingApplication.photo}`}
                         sx={{ 
                           width: 64, 
                           height: 64,
