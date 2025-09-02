@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\DoctorApplicationApproved;
+use App\Mail\DoctorApplicationRejected;
 use App\Models\DoctorApplication;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -84,16 +88,17 @@ class DoctorApplicationController extends Controller
             return redirect()->back()->withErrors(['error' => 'This application has already been reviewed.']);
         }
 
+        $temporaryPassword = $this->generateTemporaryPassword();
+
         $application->update([
             'status' => 'approved',
             'reviewed_at' => now(),
             'reviewed_by' => auth()->id(),
         ]);
 
-        // Update user role and copy photo to profile
         $updateData = [
             'role' => 'provider',
-            'password' => Hash::make('temporary-password-' . uniqid()),
+            'password' => Hash::make($temporaryPassword),
         ];
 
         if ($application->photo) {
@@ -102,7 +107,11 @@ class DoctorApplicationController extends Controller
 
         $application->user->update($updateData);
 
-        return redirect()->back()->with('success', 'Doctor application approved successfully!');
+        Mail::to($application->email)->send(
+            new DoctorApplicationApproved($application, $temporaryPassword)
+        );
+
+        return redirect()->back()->with('success', 'Doctor application approved successfully! Approval email sent.');
     }
 
     public function reject(Request $request, DoctorApplication $application)
@@ -122,7 +131,11 @@ class DoctorApplicationController extends Controller
             'reviewed_by' => auth()->id(),
         ]);
 
-        return redirect()->back()->with('success', 'Doctor application rejected successfully!');
+        Mail::to($application->email)->send(
+            new DoctorApplicationRejected($application)
+        );
+
+        return redirect()->back()->with('success', 'Doctor application rejected successfully! Rejection email sent.');
     }
 
     public function viewCredential(DoctorApplication $application, $filename)
@@ -152,5 +165,10 @@ class DoctorApplicationController extends Controller
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="' . $filename . '"',
         ]);
+    }
+
+    private function generateTemporaryPassword(): string
+    {
+        return 'Clinify-' . Str::random(8) . '-' . now()->format('md');
     }
 }
