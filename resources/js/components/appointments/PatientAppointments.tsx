@@ -54,6 +54,7 @@ import { useState, useEffect } from 'react';
 import AppointmentCalendar from '../calendar/AppointmentCalendar';
 import PatientAppointmentForm from './PatientAppointmentForm';
 import NewAppointmentModal from './NewAppointmentModal';
+import CreatePayment from '../../Pages/Payments/Create';
 import '../calendar/calendar.css';
 
 const getStatusColor = (status: string) => {
@@ -131,6 +132,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
   const [viewingAppointment, setViewingAppointment] = useState<Appointment | null>(null);
   const [deletingAppointment, setDeletingAppointment] = useState<Appointment | null>(null);
   const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false);
+  const [payingAppointment, setPayingAppointment] = useState<Appointment | null>(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [paymentFilter, setPaymentFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
@@ -165,6 +167,10 @@ export default function PatientAppointments({ appointments, allAppointments, pro
     router.patch(`/appointments/${appointmentId}`, {
       payment_status: paymentStatus,
     });
+  };
+
+  const handlePaymentSuccess = () => {
+    setPayingAppointment(null);
   };
 
   // Filter appointments based on current filter values
@@ -672,28 +678,16 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                             />
                           </TableCell>
                           <TableCell sx={{ py: 3, minWidth: 120 }}>
-                            <Tooltip title="Click to mark as paid" arrow>
+                            <Box display="flex" alignItems="center" gap={1}>
                               <Chip
-                                icon={<PaymentIcon fontSize="small" />}
-                                label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
+                                label={`${appointment.payment_status === 'paid' ? '🟢' : '🟡'} ${appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}`}
                                 color={getPaymentStatusColor(appointment.payment_status)}
                                 size="medium"
-                                onClick={() => {
-                                  if (appointment.payment_status === 'pending') {
-                                    handlePaymentStatusUpdate(appointment.id, 'paid');
-                                  }
-                                }}
                                 sx={{ 
-                                  cursor: appointment.payment_status === 'pending' ? 'pointer' : 'default',
                                   fontWeight: 600,
-                                  minWidth: 100,
+                                  minWidth: 80,
                                   height: 32,
                                   borderRadius: 2,
-                                  '&:hover': appointment.payment_status === 'pending' ? {
-                                    transform: 'scale(1.05)',
-                                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-                                  } : {},
-                                  transition: 'all 0.2s ease',
                                   '&.MuiChip-colorWarning': {
                                     bgcolor: '#fff3cd',
                                     color: '#856404',
@@ -706,7 +700,28 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                                   }
                                 }}
                               />
-                            </Tooltip>
+                              {appointment.payment_status === 'pending' && (
+                                <Tooltip title="Pay with Credit Card" arrow>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => setPayingAppointment(appointment)}
+                                    sx={{
+                                      bgcolor: '#4caf50',
+                                      color: 'white',
+                                      width: 32,
+                                      height: 32,
+                                      '&:hover': {
+                                        bgcolor: '#45a049',
+                                        transform: 'scale(1.1)',
+                                      },
+                                      transition: 'all 0.2s ease'
+                                    }}
+                                  >
+                                    <PaymentIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
+                            </Box>
                           </TableCell>
                           <TableCell align="right" sx={{ py: 3, minWidth: 180 }}>
                             <Stack direction="row" spacing={1} justifyContent="flex-end">
@@ -1006,6 +1021,18 @@ export default function PatientAppointments({ appointments, allAppointments, pro
         allAppointments={allAppointments || []}
         currentUser={currentUser || (appointments.data.length > 0 ? appointments.data[0].user : { id: 0, name: '', email: '', role: 'client' })}
       />
+
+      {payingAppointment && (
+        <CreatePayment
+          open={!!payingAppointment}
+          onClose={() => setPayingAppointment(null)}
+          amount={30}
+          doctorId={payingAppointment.provider_id}
+          userId={payingAppointment.user.id}
+          appointmentId={payingAppointment.id}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
     </Box>
   );
 }
