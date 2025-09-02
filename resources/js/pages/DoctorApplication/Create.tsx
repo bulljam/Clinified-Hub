@@ -1,4 +1,4 @@
-import { router, useForm } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import {
     Delete as DeleteIcon,
     UploadFile as FileIcon,
@@ -13,6 +13,7 @@ import {
     AccessTime as ExperienceIcon,
     LocationOn as LocationIcon,
     CameraAlt as PhotoIcon,
+    Home as HomeIcon,
 } from '@mui/icons-material';
 import {
     Alert,
@@ -211,6 +212,25 @@ export default function DoctorApplicationCreate() {
                 }}
             >
                 <SchoolIcon sx={{ fontSize: 45, color: 'rgba(255,255,255,0.15)', transform: 'rotate(-15deg)' }} />
+            </Box>
+
+            {/* Home Icon Link */}
+            <Box sx={{ position: 'absolute', top: 24, right: 24, zIndex: 10 }}>
+                <IconButton
+                    component={Link}
+                    href="/"
+                    sx={{
+                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                        color: '#20a09f',
+                        '&:hover': {
+                            bgcolor: 'rgba(255, 255, 255, 1)',
+                            color: '#178f8e',
+                        },
+                    }}
+                    title="Go to Home"
+                >
+                    <HomeIcon />
+                </IconButton>
             </Box>
 
             {/* Form Container */}

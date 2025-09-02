@@ -6,16 +6,24 @@ import {
     Box,
     Button,
     CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider,
+    IconButton,
     InputAdornment,
     TextField,
     Typography,
 } from '@mui/material';
 import {
     Email as EmailIcon,
+    Home as HomeIcon,
     Lock as LockIcon,
+    MonitorHeart as DoctorIcon,
     Person as PersonIcon,
     PersonAdd as RegisterIcon,
+    MedicalServices,
     Visibility,
     VisibilityOff,
 } from '@mui/icons-material';
@@ -24,6 +32,7 @@ import { useState } from 'react';
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isDoctorDialogOpen, setIsDoctorDialogOpen] = useState(true);
 
     return (
         <AnimatedAuthLayout 
@@ -33,6 +42,25 @@ export default function Register() {
             imagePosition="left"
         >
             <Head title="Register" />
+            
+            <Box sx={{ position: 'absolute', top: 24, right: 24 }}>
+                <IconButton
+                    component={Link}
+                    href="/"
+                    sx={{
+                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                        color: '#20a09f',
+                        '&:hover': {
+                            bgcolor: 'rgba(255, 255, 255, 1)',
+                            color: '#178f8e',
+                        },
+                    }}
+                    title="Go to Home"
+                >
+                    <HomeIcon />
+                </IconButton>
+            </Box>
+
             <Form
                 {...RegisteredUserController.store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
@@ -276,6 +304,70 @@ export default function Register() {
                     </Box>
                 )}
             </Form>
+
+            <Dialog
+                open={isDoctorDialogOpen}
+                onClose={() => setIsDoctorDialogOpen(false)}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
+                    <DoctorIcon sx={{ fontSize: 48, color: '#20a09f', mb: 2 }} />
+                    <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
+                        Are you a healthcare provider?
+                    </Typography>
+                </DialogTitle>
+                
+                <DialogContent sx={{ textAlign: 'center', pb: 2 }}>
+                    <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
+                        If you're a doctor or healthcare provider, you'll need to complete a separate application process to join our platform.
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        Patient registration is available directly on this page.
+                    </Typography>
+                </DialogContent>
+
+                <DialogActions sx={{ justifyContent: 'center', pb: 3, px: 3, gap: 2 }}>
+                    <Button
+                        variant="outlined"
+                        onClick={() => setIsDoctorDialogOpen(false)}
+                        sx={{
+                            color: 'text.secondary',
+                            borderColor: 'divider',
+                            px: 3,
+                            py: 1,
+                            textTransform: 'none',
+                            fontWeight: 500,
+                            '&:hover': {
+                                borderColor: '#20a09f',
+                                color: '#20a09f',
+                            },
+                        }}
+                    >
+                        No, I'm a patient
+                    </Button>
+                    
+                    <Button
+                        variant="contained"
+                        onClick={() => window.location.href = 'http://localhost:8000/doctor-application'}
+                        startIcon={<MedicalServices />}
+                        sx={{
+                            bgcolor: '#20a09f',
+                            px: 3,
+                            py: 1,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                            '&:hover': {
+                                bgcolor: '#178f8e',
+                                boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+                            },
+                        }}
+                    >
+                        Yes, I'm a doctor
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </AnimatedAuthLayout>
     );
 }

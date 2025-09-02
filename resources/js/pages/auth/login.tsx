@@ -11,12 +11,14 @@ import {
     CircularProgress,
     Divider,
     FormControlLabel,
+    IconButton,
     InputAdornment,
     TextField,
     Typography,
 } from '@mui/material';
 import {
     Email as EmailIcon,
+    Home as HomeIcon,
     Lock as LockIcon,
     Login as LoginIcon,
     Visibility,
@@ -40,6 +42,24 @@ export default function Login({ status, canResetPassword }: LoginProps) {
             imagePosition="right"
         >
             <Head title="Log in" />
+            
+            <Box sx={{ position: 'absolute', top: 24, right: 24 }}>
+                <IconButton
+                    component={Link}
+                    href="/"
+                    sx={{
+                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                        color: '#20a09f',
+                        '&:hover': {
+                            bgcolor: 'rgba(255, 255, 255, 1)',
+                            color: '#178f8e',
+                        },
+                    }}
+                    title="Go to Home"
+                >
+                    <HomeIcon />
+                </IconButton>
+            </Box>
 
             {status && (
                 <Alert 
