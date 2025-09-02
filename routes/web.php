@@ -30,6 +30,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::post('payments/{transaction}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
+    Route::post('payments/{transaction}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
+    Route::post('appointments/{appointment}/approve-payment', [PaymentController::class, 'approveByAppointment'])->name('appointments.approve-payment');
+    Route::post('appointments/{appointment}/reject-payment', [PaymentController::class, 'rejectByAppointment'])->name('appointments.reject-payment');
 
     Route::middleware(['can:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('doctor-applications', [DoctorApplicationController::class, 'index'])->name('doctor-applications.index');

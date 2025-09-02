@@ -36,9 +36,9 @@ class PaymentController extends Controller
         $cardLast4 = substr($request->card_number, -4);
         
         $status = match ($request->card_number) {
-            '4242424242424242' => 'paid',
+            '4242424242424242' => 'on_hold',
             '4000000000000002' => 'failed',
-            default => 'pending'
+            default => 'on_hold'
         };
 
         $transaction = Transaction::create([
@@ -49,15 +49,15 @@ class PaymentController extends Controller
             'status' => $status,
         ]);
 
-        if ($request->appointment_id && $status === 'paid') {
+        if ($request->appointment_id && $status === 'on_hold') {
             $appointment = Appointment::find($request->appointment_id);
             if ($appointment) {
-                $appointment->update(['payment_status' => 'paid']);
+                $appointment->update(['payment_status' => 'on_hold']);
             }
         }
 
         $message = match ($status) {
-            'paid' => 'Payment successful!',
+            'on_hold' => 'Payment submitted successfully! Awaiting doctor approval.',
             'failed' => 'Payment failed. Please try a different card.',
             default => 'Payment is being processed.'
         };
@@ -66,6 +66,123 @@ class PaymentController extends Controller
             'success' => $status !== 'failed',
             'message' => $message,
             'transaction' => $transaction,
+        ]);
+    }
+
+    public function approve(Request $request, Transaction $transaction)
+    {
+        $request->validate([
+            'appointment_id' => 'required|exists:appointments,id',
+        ]);
+
+        if ($transaction->status !== 'on_hold') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction cannot be approved.',
+            ], 400);
+        }
+
+        $transaction->update(['status' => 'paid']);
+
+        $appointment = Appointment::find($request->appointment_id);
+        if ($appointment) {
+            $appointment->update([
+                'payment_status' => 'paid',
+                'status' => 'confirmed'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment approved and appointment confirmed!',
+            'transaction' => $transaction->fresh(),
+        ]);
+    }
+
+    public function reject(Request $request, Transaction $transaction)
+    {
+        $request->validate([
+            'appointment_id' => 'required|exists:appointments,id',
+            'reason' => 'sometimes|string|max:255',
+        ]);
+
+        if ($transaction->status !== 'on_hold') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction cannot be rejected.',
+            ], 400);
+        }
+
+        $transaction->update(['status' => 'cancelled']);
+
+        $appointment = Appointment::find($request->appointment_id);
+        if ($appointment) {
+            $appointment->update(['payment_status' => 'pending']);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment rejected.',
+            'transaction' => $transaction->fresh(),
+        ]);
+    }
+
+    public function approveByAppointment(Request $request, $appointmentId)
+    {
+        $appointment = Appointment::findOrFail($appointmentId);
+        
+        $transaction = Transaction::where('user_id', $appointment->user_id)
+            ->where('doctor_id', $appointment->provider_id)
+            ->where('status', 'on_hold')
+            ->latest()
+            ->first();
+
+        if (!$transaction) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No pending payment found for this appointment.',
+            ], 404);
+        }
+
+        $transaction->update(['status' => 'paid']);
+
+        $appointment->update([
+            'payment_status' => 'paid',
+            'status' => 'confirmed'
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment approved and appointment confirmed!',
+            'transaction' => $transaction->fresh(),
+        ]);
+    }
+
+    public function rejectByAppointment(Request $request, $appointmentId)
+    {
+        $appointment = Appointment::findOrFail($appointmentId);
+        
+        $transaction = Transaction::where('user_id', $appointment->user_id)
+            ->where('doctor_id', $appointment->provider_id)
+            ->where('status', 'on_hold')
+            ->latest()
+            ->first();
+
+        if (!$transaction) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No pending payment found for this appointment.',
+            ], 404);
+        }
+
+        $transaction->update(['status' => 'cancelled']);
+
+        $appointment->update(['payment_status' => 'pending']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment rejected.',
+            'transaction' => $transaction->fresh(),
         ]);
     }
 }

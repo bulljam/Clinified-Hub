@@ -177,8 +177,49 @@ class AppointmentController extends Controller
 
         $validated = $request->validate([
             'status' => 'required|in:pending,confirmed,cancelled',
-            'payment_status' => 'sometimes|in:pending,paid',
+            'payment_status' => 'sometimes|in:pending,on_hold,paid',
         ]);
+
+        // Handle combined appointment and payment status logic
+        if (isset($validated['status'])) {
+            switch ($validated['status']) {
+                case 'confirmed':
+                    // When confirming appointment, also approve any on_hold payments
+                    if ($appointment->payment_status === 'on_hold') {
+                        // Find and approve the on_hold transaction
+                        $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
+                            ->where('doctor_id', $appointment->provider_id)
+                            ->where('status', 'on_hold')
+                            ->latest()
+                            ->first();
+                        
+                        if ($transaction) {
+                            $transaction->update(['status' => 'paid']);
+                        }
+                        
+                        $validated['payment_status'] = 'paid';
+                    }
+                    break;
+                    
+                case 'cancelled':
+                    // When cancelling appointment, also reject any on_hold payments
+                    if ($appointment->payment_status === 'on_hold') {
+                        // Find and reject the on_hold transaction
+                        $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
+                            ->where('doctor_id', $appointment->provider_id)
+                            ->where('status', 'on_hold')
+                            ->latest()
+                            ->first();
+                        
+                        if ($transaction) {
+                            $transaction->update(['status' => 'cancelled']);
+                        }
+                        
+                        $validated['payment_status'] = 'pending';
+                    }
+                    break;
+            }
+        }
 
         $appointment->update($validated);
 

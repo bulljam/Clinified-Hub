@@ -74,6 +74,8 @@ const getPaymentStatusColor = (paymentStatus: string) => {
       return 'warning';
     case 'paid':
       return 'success';
+    case 'on_hold':
+      return 'info';
     default:
       return 'default';
   }
@@ -84,7 +86,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'paid';
+  payment_status: 'pending' | 'paid' | 'on_hold';
   user: {
     id: number;
     name: string;
@@ -134,6 +136,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     confirmed: appointments.data.filter(a => a.status === 'confirmed').length,
     pending: appointments.data.filter(a => a.status === 'pending').length,
     paid: appointments.data.filter(a => a.payment_status === 'paid').length,
+    onHold: appointments.data.filter(a => a.payment_status === 'on_hold').length,
   };
 
   // Filter appointments based on current filter values
@@ -165,6 +168,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     confirmed: filteredAppointments.filter(a => a.status === 'confirmed').length,
     pending: filteredAppointments.filter(a => a.status === 'pending').length,
     paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
+    onHold: filteredAppointments.filter(a => a.payment_status === 'on_hold').length,
   };
 
   // Pagination logic
@@ -261,11 +265,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     router.patch(`/appointments/${appointmentId}`, { status });
   };
 
-  const handleMarkAsPaid = (appointmentId: number) => {
-    router.patch(`/appointments/${appointmentId}`, {
-      payment_status: 'paid',
-    });
-  };
+
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, minHeight: '100vh', bgcolor: '#fafafa' }}>
@@ -417,6 +417,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                 >
                   <MenuItem value="">All Payments</MenuItem>
                   <MenuItem value="pending">🟡 Pending</MenuItem>
+                  <MenuItem value="on_hold">🔵 On Hold</MenuItem>
                   <MenuItem value="paid">🟢 Paid</MenuItem>
                 </Select>
               </FormControl>
@@ -665,69 +666,50 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                             </Box>
                           </TableCell>
                           <TableCell sx={{ py: 3, minWidth: 120 }}>
-                            <Tooltip title="Click to cycle status" arrow>
-                              <Chip
-                                label={`${appointment.status === 'confirmed' ? '🟢' : appointment.status === 'pending' ? '🟡' : '🔴'} ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}`}
-                                color={getStatusColor(appointment.status)}
-                                size="medium"
-                                onClick={() => {
-                                  const newStatus = appointment.status === 'pending' ? 'confirmed' : 
-                                                  appointment.status === 'confirmed' ? 'cancelled' : 'pending';
-                                  handleQuickAction(appointment.id, newStatus);
-                                }}
-                                sx={{ 
-                                  cursor: 'pointer',
-                                  fontWeight: 600,
-                                  minWidth: 100,
-                                  height: 32,
-                                  borderRadius: 2,
-                                  '&:hover': {
-                                    transform: 'scale(1.05)',
-                                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-                                  },
-                                  transition: 'all 0.2s ease',
-                                  '&.MuiChip-colorWarning': {
-                                    bgcolor: '#fff3cd',
-                                    color: '#856404',
-                                    borderColor: '#ffeaa7',
-                                  },
-                                  '&.MuiChip-colorSuccess': {
-                                    bgcolor: '#d4edda',
-                                    color: '#155724',
-                                    borderColor: '#a7d8a7',
-                                  },
-                                  '&.MuiChip-colorError': {
-                                    bgcolor: '#f8d7da',
-                                    color: '#721c24',
-                                    borderColor: '#f1aeb5',
-                                  }
-                                }}
-                              />
-                            </Tooltip>
+                            <Chip
+                              label={`${appointment.status === 'confirmed' ? '🟢' : appointment.status === 'pending' ? '🟡' : '🔴'} ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}`}
+                              color={getStatusColor(appointment.status)}
+                              size="medium"
+                              sx={{ 
+                                fontWeight: 600,
+                                minWidth: 100,
+                                height: 32,
+                                borderRadius: 2,
+                                '&.MuiChip-colorWarning': {
+                                  bgcolor: '#fff3cd',
+                                  color: '#856404',
+                                  borderColor: '#ffeaa7',
+                                },
+                                '&.MuiChip-colorSuccess': {
+                                  bgcolor: '#d4edda',
+                                  color: '#155724',
+                                  borderColor: '#a7d8a7',
+                                },
+                                '&.MuiChip-colorError': {
+                                  bgcolor: '#f8d7da',
+                                  color: '#721c24',
+                                  borderColor: '#f1aeb5',
+                                }
+                              }}
+                            />
                           </TableCell>
-                          <TableCell sx={{ py: 3, minWidth: 120 }}>
-                            <Tooltip title="Click to mark as paid" arrow>
+                          <TableCell sx={{ py: 3, minWidth: 180 }}>
+                            <Box display="flex" flexDirection="column" gap={1}>
                               <Chip
-                                icon={<PaymentIcon fontSize="small" />}
-                                label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
+                                label={`${
+                                  appointment.payment_status === 'paid' 
+                                    ? '🟢 Paid' 
+                                    : appointment.payment_status === 'on_hold' 
+                                    ? '🔵 On Hold' 
+                                    : '🟡 Pending'
+                                }`}
                                 color={getPaymentStatusColor(appointment.payment_status)}
                                 size="medium"
-                                onClick={() => {
-                                  if (appointment.payment_status === 'pending') {
-                                    handleMarkAsPaid(appointment.id);
-                                  }
-                                }}
                                 sx={{ 
-                                  cursor: appointment.payment_status === 'pending' ? 'pointer' : 'default',
                                   fontWeight: 600,
                                   minWidth: 100,
                                   height: 32,
                                   borderRadius: 2,
-                                  '&:hover': appointment.payment_status === 'pending' ? {
-                                    transform: 'scale(1.05)',
-                                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-                                  } : {},
-                                  transition: 'all 0.2s ease',
                                   '&.MuiChip-colorWarning': {
                                     bgcolor: '#fff3cd',
                                     color: '#856404',
@@ -737,10 +719,22 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                                     bgcolor: '#d4edda',
                                     color: '#155724',
                                     borderColor: '#a7d8a7',
+                                  },
+                                  '&.MuiChip-colorInfo': {
+                                    bgcolor: '#d1ecf1',
+                                    color: '#0c5460',
+                                    borderColor: '#bee5eb',
                                   }
                                 }}
                               />
-                            </Tooltip>
+                              
+                              
+                              {appointment.payment_status === 'on_hold' && (
+                                <Typography variant="caption" color="text.secondary">
+                                  Click confirm to approve
+                                </Typography>
+                              )}
+                            </Box>
                           </TableCell>
                           <TableCell sx={{ py: 3, minWidth: 160, overflow: 'visible', position: 'relative' }}>
                             <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ overflow: 'visible' }}>
@@ -969,6 +963,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                 onChange={(e) => setNewPaymentStatus(e.target.value)}
               >
                 <MenuItem value="pending">Pending</MenuItem>
+                <MenuItem value="on_hold">On Hold</MenuItem>
                 <MenuItem value="paid">Paid</MenuItem>
               </Select>
             </FormControl>

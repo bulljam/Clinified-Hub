@@ -76,6 +76,8 @@ const getPaymentStatusColor = (paymentStatus: string) => {
       return 'warning';
     case 'paid':
       return 'success';
+    case 'on_hold':
+      return 'info';
     default:
       return 'default';
   }
@@ -93,7 +95,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'paid';
+  payment_status: 'pending' | 'paid' | 'on_hold';
   notes?: string;
   user: {
     id: number;
@@ -161,6 +163,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
     confirmed: appointments.data.filter(a => a.status === 'confirmed').length,
     pending: appointments.data.filter(a => a.status === 'pending').length,
     paid: appointments.data.filter(a => a.payment_status === 'paid').length,
+    onHold: appointments.data.filter(a => a.payment_status === 'on_hold').length,
   };
 
   const handlePaymentStatusUpdate = (appointmentId: number, paymentStatus: string) => {
@@ -202,6 +205,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
     confirmed: filteredAppointments.filter(a => a.status === 'confirmed').length,
     pending: filteredAppointments.filter(a => a.status === 'pending').length,
     paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
+    onHold: filteredAppointments.filter(a => a.payment_status === 'on_hold').length,
   };
 
   // Pagination logic
@@ -397,6 +401,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                 >
                   <MenuItem value="">All Payments</MenuItem>
                   <MenuItem value="pending">🟡 Pending</MenuItem>
+                  <MenuItem value="on_hold">🔵 On Hold</MenuItem>
                   <MenuItem value="paid">🟢 Paid</MenuItem>
                 </Select>
               </FormControl>
@@ -680,12 +685,18 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                           <TableCell sx={{ py: 3, minWidth: 120 }}>
                             <Box display="flex" alignItems="center" gap={1}>
                               <Chip
-                                label={`${appointment.payment_status === 'paid' ? '🟢' : '🟡'} ${appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}`}
+                                label={`${
+                                  appointment.payment_status === 'paid' 
+                                    ? '🟢 Paid' 
+                                    : appointment.payment_status === 'on_hold' 
+                                    ? '🔵 On Hold' 
+                                    : '🟡 Pending'
+                                }`}
                                 color={getPaymentStatusColor(appointment.payment_status)}
                                 size="medium"
                                 sx={{ 
                                   fontWeight: 600,
-                                  minWidth: 80,
+                                  minWidth: 100,
                                   height: 32,
                                   borderRadius: 2,
                                   '&.MuiChip-colorWarning': {
@@ -697,6 +708,11 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                                     bgcolor: '#d4edda',
                                     color: '#155724',
                                     borderColor: '#a7d8a7',
+                                  },
+                                  '&.MuiChip-colorInfo': {
+                                    bgcolor: '#d1ecf1',
+                                    color: '#0c5460',
+                                    borderColor: '#bee5eb',
                                   }
                                 }}
                               />
