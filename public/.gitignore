@@ -1,0 +1,25 @@
+# -----------------------------
+# Keep directories but ignore files inside
+# -----------------------------
+
+/storage/applications/*
+!/storage/applications/.gitkeep
+
+/storage/doctor-credentials/*
+!/storage/doctor-credentials/.gitkeep
+
+/storage/doctor-photos/*
+!/storage/doctor-photos/.gitkeep
+
+# -----------------------------
+# Ignore everything inside build folder
+# -----------------------------
+
+/build/
+
+# -----------------------------
+# Ignore everything inside images folder but keep the folder
+# -----------------------------
+
+/images/*
+!/images/.gitkeep
