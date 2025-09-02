@@ -1,25 +1,9 @@
-# -----------------------------
-# Keep directories but ignore files inside
-# -----------------------------
+# Ignore everything inside storage folders (symlink targets)
+/storage/*
 
-/storage/applications/*
-!/storage/applications/.gitkeep
-
-/storage/doctor-credentials/*
-!/storage/doctor-credentials/.gitkeep
-
-/storage/doctor-photos/*
-!/storage/doctor-photos/.gitkeep
-
-# -----------------------------
-# Ignore everything inside build folder
-# -----------------------------
-
+# Ignore build folder entirely
 /build/
 
-# -----------------------------
-# Ignore everything inside images folder but keep the folder
-# -----------------------------
-
+# Ignore everything inside images but keep folder
 /images/*
 !/images/.gitkeep

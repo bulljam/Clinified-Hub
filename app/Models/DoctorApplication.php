@@ -15,6 +15,8 @@ class DoctorApplication extends Model
         'full_name',
         'email',
         'phone',
+        'gender',
+        'bio',
         'specialty',
         'license_number',
         'years_of_experience',

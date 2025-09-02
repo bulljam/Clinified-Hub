@@ -26,6 +26,8 @@ class DoctorApplicationController extends Controller
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|unique:doctor_applications,email',
             'phone' => 'required|string|max:20',
+            'gender' => 'required|in:male,female',
+            'bio' => 'nullable|string|max:1000',
             'specialty' => 'required|string|max:255',
             'license_number' => 'required|string|max:50|unique:doctor_applications,license_number',
             'years_of_experience' => 'required|integer|min:0|max:50',
@@ -60,6 +62,8 @@ class DoctorApplicationController extends Controller
             'full_name' => $validated['full_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
+            'gender' => $validated['gender'],
+            'bio' => $validated['bio'],
             'specialty' => $validated['specialty'],
             'license_number' => $validated['license_number'],
             'years_of_experience' => $validated['years_of_experience'],
@@ -99,10 +103,19 @@ class DoctorApplicationController extends Controller
         $updateData = [
             'role' => 'provider',
             'password' => Hash::make($temporaryPassword),
+            'specialty' => $application->specialty,
+            'years_of_experience' => $application->years_of_experience,
+            'phone' => $application->phone,
+            'gender' => $application->gender,
+            'bio' => $application->bio,
         ];
 
         if ($application->photo) {
             $updateData['photo'] = $application->photo;
+        }
+
+        if ($application->office_address) {
+            $updateData['city'] = $application->office_address;
         }
 
         $application->user->update($updateData);

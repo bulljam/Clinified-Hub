@@ -16,6 +16,7 @@ import {
     Star as StarIcon,
 } from '@mui/icons-material';
 import dayjs from 'dayjs';
+import { getImageUrl } from '@/utils/imageHelpers';
 
 interface Provider {
     id: number;
@@ -45,6 +46,7 @@ const getGenderIcon = (gender?: string) => {
     }
 };
 
+
 export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
     return (
         <Card
@@ -66,7 +68,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
             <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
                     <Avatar
-                        src={provider.photo || undefined}
+                        src={getImageUrl(provider.photo)}
                         sx={{ 
                             width: 64,
                             height: 64,

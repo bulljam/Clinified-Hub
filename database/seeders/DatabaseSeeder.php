@@ -332,7 +332,7 @@ class DatabaseSeeder extends Seeder
 
         DoctorApplication::create([
             'user_id' => $providers->where('email', 'doctor1@example.com')->first()->id,
-            'full_name' => 'Sarah Johnson',
+            'full_name' => 'Sam Johnson',
             'email' => 'doctor1@example.com',
             'phone' => '+1 (555) 100-0001',
             'specialty' => 'Cardiology',
@@ -345,7 +345,7 @@ class DatabaseSeeder extends Seeder
                 'board_certification' => 'American Board of Internal Medicine',
                 'fellowships' => ['Interventional Cardiology Fellowship at Mayo Clinic']
             ]),
-            'photo' => 'applications/sarah-johnson-photo.jpg',
+            'photo' => 'applications/sam-johnson-photo.jpg',
             'status' => 'approved',
             'reviewed_at' => now()->subDays(30),
             'reviewed_by' => $admin->id,

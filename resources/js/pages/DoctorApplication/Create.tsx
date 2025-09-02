@@ -40,6 +40,8 @@ interface FormData {
     full_name: string;
     email: string;
     phone: string;
+    gender: string;
+    bio: string;
     specialty: string;
     license_number: string;
     years_of_experience: number;
@@ -72,6 +74,8 @@ export default function DoctorApplicationCreate() {
         full_name: '',
         email: '',
         phone: '',
+        gender: '',
+        bio: '',
         specialty: '',
         license_number: '',
         years_of_experience: 0,
@@ -290,19 +294,61 @@ export default function DoctorApplicationCreate() {
                                         />
                                     </Box>
 
+                                    <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={3}>
+                                        <TextField
+                                            label="Phone Number"
+                                            value={data.phone}
+                                            onChange={(e) => setData('phone', e.target.value)}
+                                            fullWidth
+                                            required
+                                            error={!!errors.phone}
+                                            helperText={errors.phone}
+                                            slotProps={{
+                                                input: {
+                                                    startAdornment: (
+                                                        <PhoneIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    ),
+                                                },
+                                            }}
+                                        />
+
+                                        <FormControl fullWidth required error={!!errors.gender}>
+                                            <InputLabel>Gender</InputLabel>
+                                            <Select
+                                                value={data.gender}
+                                                label="Gender"
+                                                onChange={(e) => setData('gender', e.target.value)}
+                                                startAdornment={
+                                                    <PersonIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                }
+                                            >
+                                                <MenuItem value="male">👨 Male</MenuItem>
+                                                <MenuItem value="female">👩 Female</MenuItem>
+                                            </Select>
+                                            {errors.gender && (
+                                                <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 2 }}>
+                                                    {errors.gender}
+                                                </Typography>
+                                            )}
+                                        </FormControl>
+                                    </Box>
+
                                     <TextField
-                                        label="Phone Number"
-                                        value={data.phone}
-                                        onChange={(e) => setData('phone', e.target.value)}
+                                        label="Professional Bio"
+                                        value={data.bio}
+                                        onChange={(e) => setData('bio', e.target.value)}
                                         fullWidth
-                                        required
-                                        error={!!errors.phone}
-                                        helperText={errors.phone}
-                                        sx={{ maxWidth: { sm: '50%' } }}
+                                        multiline
+                                        rows={4}
+                                        error={!!errors.bio}
+                                        helperText={errors.bio || "Brief description of your medical background and expertise"}
+                                        placeholder="Describe your medical background, areas of expertise, and approach to patient care..."
                                         slotProps={{
                                             input: {
                                                 startAdornment: (
-                                                    <PhoneIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    <Box sx={{ alignSelf: 'flex-start', pt: 1 }}>
+                                                        <PersonIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    </Box>
                                                 ),
                                             },
                                         }}

@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   Chip,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -46,6 +47,8 @@ interface DoctorApplication {
   full_name: string;
   email: string;
   phone: string;
+  gender: string | null;
+  bio: string | null;
   specialty: string;
   license_number: string;
   years_of_experience: number;
@@ -99,6 +102,8 @@ const getStatusColor = (status: string) => {
 export default function DoctorApplications({ applications }: Props) {
   const [viewingApplication, setViewingApplication] = useState<DoctorApplication | null>(null);
   const [rejectingApplication, setRejectingApplication] = useState<DoctorApplication | null>(null);
+  const [approvingApplication, setApprovingApplication] = useState<DoctorApplication | null>(null);
+  const [isApproving, setIsApproving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
   
@@ -107,7 +112,23 @@ export default function DoctorApplications({ applications }: Props) {
   });
 
   const handleApprove = (application: DoctorApplication) => {
-    router.post(`/admin/doctor-applications/${application.id}/approve`);
+    setApprovingApplication(application);
+    setIsApproving(false); // Reset loading state when opening dialog
+  };
+
+  const confirmApproval = () => {
+    if (approvingApplication && !isApproving) {
+      setIsApproving(true);
+      router.post(`/admin/doctor-applications/${approvingApplication.id}/approve`, {}, {
+        onSuccess: () => {
+          setIsApproving(false);
+          setApprovingApplication(null);
+        },
+        onError: () => {
+          setIsApproving(false);
+        },
+      });
+    }
   };
 
   const handleReject = () => {
@@ -547,7 +568,7 @@ export default function DoctorApplications({ applications }: Props) {
                   <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
                     Contact Information
                   </Typography>
-                  <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+                  <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr 1fr' }} gap={3}>
                     <Box>
                       <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
                         Email Address
@@ -564,6 +585,16 @@ export default function DoctorApplications({ applications }: Props) {
                         {viewingApplication.phone}
                       </Typography>
                     </Box>
+                    {viewingApplication.gender && (
+                      <Box>
+                        <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                          Gender
+                        </Typography>
+                        <Typography variant="body1" fontWeight="500">
+                          {viewingApplication.gender === 'male' ? '👨 Male' : '👩 Female'}
+                        </Typography>
+                      </Box>
+                    )}
                   </Box>
                 </CardContent>
               </Card>
@@ -600,6 +631,17 @@ export default function DoctorApplications({ applications }: Props) {
                       </Typography>
                       <Typography variant="body1" fontWeight="500">
                         {viewingApplication.office_address}
+                      </Typography>
+                    </Box>
+                  )}
+                  
+                  {viewingApplication.bio && (
+                    <Box mt={3}>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Professional Bio
+                      </Typography>
+                      <Typography variant="body1" fontWeight="500" sx={{ mt: 1, lineHeight: 1.7 }}>
+                        {viewingApplication.bio}
                       </Typography>
                     </Box>
                   )}
@@ -661,6 +703,68 @@ export default function DoctorApplications({ applications }: Props) {
             sx={{ px: 4 }}
           >
             Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Approve Application Dialog */}
+      <Dialog 
+        open={!!approvingApplication} 
+        onClose={isApproving ? undefined : () => setApprovingApplication(null)} 
+        maxWidth="sm" 
+        fullWidth
+      >
+        <DialogTitle>Approve Doctor Application</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" gutterBottom>
+            Are you sure you want to approve this doctor application?
+          </Typography>
+          {approvingApplication && (
+            <Box sx={{ mt: 2, p: 2, bgcolor: '#f8f9fa', borderRadius: 2, border: '1px solid #e0e0e0' }}>
+              <Typography variant="subtitle2" fontWeight="600" color="#20a09f">
+                Dr. {approvingApplication.full_name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {approvingApplication.specialty} • {approvingApplication.years_of_experience} years experience
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                License: {approvingApplication.license_number}
+              </Typography>
+            </Box>
+          )}
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+            This will:
+          </Typography>
+          <Box component="ul" sx={{ mt: 1, pl: 2 }}>
+            <Typography component="li" variant="body2" color="text.secondary">
+              Grant the doctor access to the system as a healthcare provider
+            </Typography>
+            <Typography component="li" variant="body2" color="text.secondary">
+              Send them a temporary password via email
+            </Typography>
+            <Typography component="li" variant="body2" color="text.secondary">
+              Allow them to start managing appointments
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button 
+            onClick={() => setApprovingApplication(null)}
+            variant="outlined"
+            disabled={isApproving}
+            sx={{ px: 3 }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            variant="contained" 
+            color="success"
+            onClick={confirmApproval}
+            disabled={isApproving}
+            startIcon={isApproving ? <CircularProgress size={16} color="inherit" /> : null}
+            sx={{ px: 3, fontWeight: 600 }}
+          >
+            {isApproving ? 'Approving...' : 'Approve Application'}
           </Button>
         </DialogActions>
       </Dialog>

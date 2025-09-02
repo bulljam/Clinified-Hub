@@ -14,7 +14,6 @@ class UserController extends Controller
         $userRole = $request->user()->role;
         
         $query = User::where('role', 'provider')
-            ->select('id', 'name', 'email', 'photo', 'gender', 'city', 'specialty', 'years_of_experience', 'bio', 'phone', 'created_at')
             ->withCount(['providedAppointments as appointments_count']);
             
         // Apply search
@@ -64,7 +63,7 @@ class UserController extends Controller
             }
         }
         
-        $providers = $query->orderBy('name')->paginate(9);
+        $providers = $query->orderBy('name')->paginate(6);
         
         // Get unique values for filters
         $specialties = User::where('role', 'provider')
