@@ -165,21 +165,10 @@ export default function AdminsIndex({ admins, filters, flash }: Props) {
   const handleDeleteConfirm = async () => {
     if (!adminToDelete) return;
 
-    try {
-      await router.delete(superAdmin.admins.destroy(adminToDelete.id).url, {
-        onSuccess: () => {
-          setSnackbar({ open: true, message: 'Admin deleted successfully!', severity: 'success' });
-        },
-        onError: () => {
-          setSnackbar({ open: true, message: 'Failed to delete admin', severity: 'error' });
-        },
-      });
-    } catch (error) {
-      setSnackbar({ open: true, message: 'An error occurred', severity: 'error' });
-    } finally {
-      setDeleteDialogOpen(false);
-      setAdminToDelete(null);
-    }
+    setDeleteDialogOpen(false);
+    setAdminToDelete(null);
+    
+    router.delete(superAdmin.admins.destroy(adminToDelete.id).url);
   };
 
   const getRoleIcon = (role: string) => {

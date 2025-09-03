@@ -57,6 +57,10 @@ class AdminController extends Controller
                 'role' => $role,
                 'per_page' => $perPage,
             ],
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
         ]);
     }
 
@@ -145,17 +149,15 @@ class AdminController extends Controller
 
         // Prevent self-deletion
         if ($admin->id === auth()->id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You cannot delete your own account.',
-            ], 400);
+            return redirect()
+                ->back()
+                ->with('error', 'You cannot delete your own account.');
         }
 
         $admin->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Admin deleted successfully!',
-        ]);
+        return redirect()
+            ->route('super-admin.admins.index')
+            ->with('success', 'Admin deleted successfully!');
     }
 }
