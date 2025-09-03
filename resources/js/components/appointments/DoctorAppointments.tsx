@@ -477,7 +477,6 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                 fontSize: '1rem',
                 py: 2,
                 '&.Mui-selected': {
-                  color: '#20a09f',
                   bgcolor: '#20a09f',
                   color: 'white',
                   borderRadius: '8px 8px 0 0',
@@ -813,12 +812,12 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                     count={totalPages}
                     page={currentPage}
                     onChange={(_event, page) => handlePageChange(page)}
-                    sx={{ color: '#20a09f' }}
                     size="large"
                     shape="rounded"
                     showFirstButton
                     showLastButton
                     sx={{
+                      color: '#20a09f',
                       '& .MuiPaginationItem-root': {
                         borderRadius: 2,
                         fontWeight: 600,

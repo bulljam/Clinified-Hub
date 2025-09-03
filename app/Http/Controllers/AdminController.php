@@ -1,0 +1,161 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class AdminController extends Controller
+{
+    public function __construct()
+    {
+        //
+    }
+
+    private function checkSuperAdminAccess(): void
+    {
+        if (!auth()->check()) {
+            abort(401, 'Authentication required');
+        }
+        
+        if (auth()->user()?->role !== 'super_admin') {
+            abort(403, 'Super Admin access required');
+        }
+    }
+
+    public function index(Request $request): Response
+    {
+        $this->checkSuperAdminAccess();
+        $search = $request->get('search', '');
+        $role = $request->get('role', '');
+        $perPage = $request->get('per_page', 10);
+        $page = $request->get('page', 1);
+
+        $query = User::whereIn('role', ['admin', 'super_admin'])
+            ->where('id', '!=', auth()->id())
+            ->when($search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->when($role, function ($query, $role) {
+                return $query->where('role', $role);
+            });
+
+        $admins = $query->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return Inertia::render('SuperAdmin/Admins/Index', [
+            'admins' => $admins,
+            'filters' => [
+                'search' => $search,
+                'role' => $role,
+                'per_page' => $perPage,
+            ],
+        ]);
+    }
+
+    public function create(): Response
+    {
+        $this->checkSuperAdminAccess();
+        return Inertia::render('SuperAdmin/Admins/Create');
+    }
+
+    public function store(Request $request)
+    {
+        $this->checkSuperAdminAccess();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => ['required', Rule::in(['admin', 'super_admin'])],
+        ]);
+
+        $validated['password'] = Hash::make($validated['password']);
+
+        $admin = User::create($validated);
+
+        return redirect()
+            ->route('super-admin.admins.index')
+            ->with('success', 'Admin created successfully!');
+    }
+
+    public function show(User $admin): Response
+    {
+        $this->checkSuperAdminAccess();
+        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+            abort(404);
+        }
+
+        return Inertia::render('SuperAdmin/Admins/Show', [
+            'admin' => $admin->load(['appointments', 'providedAppointments']),
+        ]);
+    }
+
+    public function edit(User $admin): Response
+    {
+        $this->checkSuperAdminAccess();
+        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+            abort(404);
+        }
+
+        return Inertia::render('SuperAdmin/Admins/Edit', [
+            'admin' => $admin,
+        ]);
+    }
+
+    public function update(Request $request, User $admin)
+    {
+        $this->checkSuperAdminAccess();
+        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($admin->id)],
+            'password' => 'nullable|string|min:8|confirmed',
+            'role' => ['required', Rule::in(['admin', 'super_admin'])],
+        ]);
+
+        if (empty($validated['password'])) {
+            unset($validated['password']);
+        } else {
+            $validated['password'] = Hash::make($validated['password']);
+        }
+
+        $admin->update($validated);
+
+        return redirect()
+            ->route('super-admin.admins.index')
+            ->with('success', 'Admin updated successfully!');
+    }
+
+    public function destroy(User $admin)
+    {
+        $this->checkSuperAdminAccess();
+        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+            abort(404);
+        }
+
+        // Prevent self-deletion
+        if ($admin->id === auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot delete your own account.',
+            ], 400);
+        }
+
+        $admin->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Admin deleted successfully!',
+        ]);
+    }
+}

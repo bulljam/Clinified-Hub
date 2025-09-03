@@ -3,9 +3,10 @@ import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import superAdmin from '@/routes/super-admin';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Calendar, CreditCard, Home, Settings, Stethoscope, Users, UserCheck } from 'lucide-react';
+import { Calendar, CreditCard, Home, Settings, Stethoscope, Users, UserCheck, Shield } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const baseNavItems: NavItem[] = [
@@ -75,6 +76,14 @@ const patientNavItems: NavItem[] = [
     },
 ];
 
+const superAdminNavItems: NavItem[] = [
+    {
+        title: 'Admin Management',
+        href: superAdmin.admins.index().url,
+        icon: Shield,
+    },
+];
+
 const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
@@ -85,6 +94,7 @@ export function AppSidebar() {
         
         switch (auth.user.role) {
             case 'super_admin':
+                return [...baseNavItems, ...adminNavItems, ...superAdminNavItems];
             case 'admin':
                 return [...baseNavItems, ...adminNavItems];
             case 'provider':

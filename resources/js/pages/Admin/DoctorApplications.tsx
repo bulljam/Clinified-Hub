@@ -425,12 +425,12 @@ export default function DoctorApplications({ applications }: Props) {
               count={totalPages}
               page={currentPage}
               onChange={(_event, page) => handlePageChange(page)}
-              sx={{ color: '#20a09f' }}
               size="large"
               shape="rounded"
               showFirstButton
               showLastButton
               sx={{
+                color: '#20a09f',
                 '& .MuiPaginationItem-root': {
                   borderRadius: 2,
                   fontWeight: 600,

@@ -41,6 +41,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('doctor-applications/{application}/reject', [DoctorApplicationController::class, 'reject'])->name('doctor-applications.reject');
         Route::get('doctor-applications/{application}/credential/{filename}', [DoctorApplicationController::class, 'viewCredential'])->name('doctor-applications.view-credential');
     });
+
+    // Super Admin only routes
+    Route::prefix('super-admin')->name('super-admin.')->middleware('auth')->group(function () {
+        Route::resource('admins', App\Http\Controllers\AdminController::class);
+    });
 });
 
 require __DIR__.'/settings.php';
