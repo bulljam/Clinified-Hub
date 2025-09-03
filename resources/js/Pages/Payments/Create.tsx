@@ -186,46 +186,57 @@ export default function CreatePayment({
         try {
             await new Promise(resolve => setTimeout(resolve, 2500));
 
-            const response = await fetch('/payments', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            const data = await response.json();
-
-            setSnackbar({
-                open: true,
-                message: data.message,
-                severity: data.success ? 'success' : 'error',
-            });
-
-            if (data.success) {
-                onSuccess?.();
-                setTimeout(() => {
-                    onClose();
-                    setFormData({
-                        card_number: '',
-                        expiration: '',
-                        cvv: '',
-                        amount: amount,
-                        doctor_id: doctorId,
-                        user_id: userId,
-                        appointment_id: appointmentId,
+            router.post('/payments', {
+                card_number: formData.card_number,
+                expiration: formData.expiration,
+                cvv: formData.cvv,
+                amount: formData.amount,
+                doctor_id: formData.doctor_id,
+                user_id: formData.user_id,
+                appointment_id: formData.appointment_id,
+            }, {
+                onSuccess: () => {
+                    setSnackbar({
+                        open: true,
+                        message: 'Payment submitted successfully! Awaiting doctor approval.',
+                        severity: 'success',
                     });
-                }, 1500);
-            }
+                    
+                    onSuccess?.();
+                    setTimeout(() => {
+                        onClose();
+                        setFormData({
+                            card_number: '',
+                            expiration: '',
+                            cvv: '',
+                            amount: amount,
+                            doctor_id: doctorId,
+                            user_id: userId,
+                            appointment_id: appointmentId,
+                        });
+                    }, 1500);
+                },
+                onError: (errors) => {
+                    const errorMessage = typeof errors === 'object' && errors 
+                        ? Object.values(errors)[0] as string
+                        : 'An error occurred while processing payment';
+                    
+                    setSnackbar({
+                        open: true,
+                        message: errorMessage,
+                        severity: 'error',
+                    });
+                },
+                onFinish: () => {
+                    setLoading(false);
+                },
+            });
         } catch (error) {
             setSnackbar({
                 open: true,
                 message: 'An error occurred while processing payment',
                 severity: 'error',
             });
-        } finally {
             setLoading(false);
         }
     };

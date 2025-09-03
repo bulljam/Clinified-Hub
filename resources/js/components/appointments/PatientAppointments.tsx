@@ -36,6 +36,7 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   Visibility as ViewIcon,
+  CreditCard as CreditCardIcon,
   CalendarMonth as CalendarIcon,
   List as ListIcon,
   LocalHospital as MedicalIcon,
@@ -412,8 +413,8 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                slotProps={{
-                  inputLabel: { shrink: true }
+                InputLabelProps={{
+                  shrink: true
                 }}
                 sx={{ 
                   minWidth: 170,
@@ -462,7 +463,6 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                 fontSize: '1rem',
                 py: 2,
                 '&.Mui-selected': {
-                  color: '#20a09f',
                   bgcolor: '#20a09f',
                   color: 'white',
                   borderRadius: '8px 8px 0 0',
@@ -579,10 +579,12 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                       <Fade in={true} timeout={300 + index * 100} key={appointment.id}>
                         <TableRow 
                           hover
+                          onClick={() => setViewingAppointment(appointment)}
                           sx={{
                             '&:hover': {
                               bgcolor: 'rgba(32, 160, 159, 0.08)',
                               transition: 'background-color 0.2s ease',
+                              transform: 'scale(1.002)',
                             },
                             '&:nth-of-type(even)': {
                               bgcolor: '#fafafa',
@@ -683,90 +685,75 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                             />
                           </TableCell>
                           <TableCell sx={{ py: 3, minWidth: 120 }}>
-                            <Box display="flex" alignItems="center" gap={1}>
-                              <Chip
-                                label={`${
-                                  appointment.payment_status === 'paid' 
-                                    ? '🟢 Paid' 
-                                    : appointment.payment_status === 'on_hold' 
-                                    ? '🔵 On Hold' 
-                                    : '🟡 Pending'
-                                }`}
-                                color={getPaymentStatusColor(appointment.payment_status)}
-                                size="medium"
-                                sx={{ 
-                                  fontWeight: 600,
-                                  minWidth: 100,
-                                  height: 32,
-                                  borderRadius: 2,
-                                  '&.MuiChip-colorWarning': {
-                                    bgcolor: '#fff3cd',
-                                    color: '#856404',
-                                    borderColor: '#ffeaa7',
-                                  },
-                                  '&.MuiChip-colorSuccess': {
-                                    bgcolor: '#d4edda',
-                                    color: '#155724',
-                                    borderColor: '#a7d8a7',
-                                  },
-                                  '&.MuiChip-colorInfo': {
-                                    bgcolor: '#d1ecf1',
-                                    color: '#0c5460',
-                                    borderColor: '#bee5eb',
-                                  }
-                                }}
-                              />
-                              {appointment.payment_status === 'pending' && (
-                                <Tooltip title="Pay with Credit Card" arrow>
-                                  <IconButton
-                                    size="small"
-                                    onClick={() => setPayingAppointment(appointment)}
-                                    sx={{
-                                      bgcolor: '#4caf50',
-                                      color: 'white',
-                                      width: 32,
-                                      height: 32,
-                                      '&:hover': {
-                                        bgcolor: '#45a049',
-                                        transform: 'scale(1.1)',
-                                      },
-                                      transition: 'all 0.2s ease'
-                                    }}
-                                  >
-                                    <PaymentIcon fontSize="small" />
-                                  </IconButton>
-                                </Tooltip>
-                              )}
-                            </Box>
+                            <Chip
+                              label={`${
+                                appointment.payment_status === 'paid' 
+                                  ? '🟢 Paid' 
+                                  : appointment.payment_status === 'on_hold' 
+                                  ? '🔵 On Hold' 
+                                  : '🟡 Pending'
+                              }`}
+                              color={getPaymentStatusColor(appointment.payment_status)}
+                              size="medium"
+                              sx={{ 
+                                fontWeight: 600,
+                                minWidth: 100,
+                                height: 32,
+                                borderRadius: 2,
+                                '&.MuiChip-colorWarning': {
+                                  bgcolor: '#fff3cd',
+                                  color: '#856404',
+                                  borderColor: '#ffeaa7',
+                                },
+                                '&.MuiChip-colorSuccess': {
+                                  bgcolor: '#d4edda',
+                                  color: '#155724',
+                                  borderColor: '#a7d8a7',
+                                },
+                                '&.MuiChip-colorInfo': {
+                                  bgcolor: '#d1ecf1',
+                                  color: '#0c5460',
+                                  borderColor: '#bee5eb',
+                                }
+                              }}
+                            />
                           </TableCell>
                           <TableCell align="right" sx={{ py: 3, minWidth: 180 }}>
                             <Stack direction="row" spacing={1} justifyContent="flex-end">
-                              <Tooltip title="View Appointment Details" arrow>
-                                <IconButton
-                                  size="medium"
-                                  onClick={() => setViewingAppointment(appointment)}
-                                  sx={{
-                                    bgcolor: '#20a09f',
-                                    color: 'white',
-                                    width: 36,
-                                    height: 36,
-                                    borderRadius: 2,
-                                    boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
-                                    '&:hover': {
-                                      bgcolor: '#178f8e',
-                                      transform: 'scale(1.1) rotate(5deg)',
-                                      boxShadow: '0 4px 8px rgba(32, 160, 159, 0.4)',
-                                    },
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                                  }}
-                                >
-                                  <ViewIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
+                              {appointment.payment_status === 'pending' && (
+                                <Tooltip title="Pay with Credit Card" arrow>
+                                  <IconButton
+                                    size="medium"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setPayingAppointment(appointment);
+                                    }}
+                                    sx={{
+                                      bgcolor: '#4caf50',
+                                      color: 'white',
+                                      width: 36,
+                                      height: 36,
+                                      borderRadius: 2,
+                                      boxShadow: '0 2px 4px rgba(76, 175, 80, 0.3)',
+                                      '&:hover': {
+                                        bgcolor: '#45a049',
+                                        transform: 'scale(1.1) rotate(5deg)',
+                                        boxShadow: '0 4px 8px rgba(76, 175, 80, 0.4)',
+                                      },
+                                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                    }}
+                                  >
+                                    <CreditCardIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
                               <Tooltip title="Edit Appointment" arrow>
                                 <IconButton
                                   size="medium"
-                                  onClick={() => setEditingAppointment(appointment)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingAppointment(appointment);
+                                  }}
                                   sx={{
                                     bgcolor: '#ff9800',
                                     color: 'white',
@@ -789,7 +776,10 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                                 <Tooltip title="Cancel Appointment" arrow>
                                   <IconButton
                                     size="medium"
-                                    onClick={() => setDeletingAppointment(appointment)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setDeletingAppointment(appointment);
+                                    }}
                                     sx={{
                                       bgcolor: 'error.main',
                                       color: 'white',
@@ -835,12 +825,12 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                     count={totalPages}
                     page={currentPage}
                     onChange={(_event, page) => handlePageChange(page)}
-                    sx={{ color: '#20a09f' }}
                     size="large"
                     shape="rounded"
                     showFirstButton
                     showLastButton
                     sx={{
+                      color: '#20a09f',
                       '& .MuiPaginationItem-root': {
                         borderRadius: 2,
                         fontWeight: 600,
@@ -1035,7 +1025,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
         onClose={() => setShowNewAppointmentModal(false)}
         providers={providers}
         allAppointments={allAppointments || []}
-        currentUser={currentUser || (appointments.data.length > 0 ? appointments.data[0].user : { id: 0, name: '', email: '', role: 'client' })}
+        currentUser={currentUser || { id: 0, name: '', email: '', role: 'client' }}
       />
 
       {payingAppointment && (

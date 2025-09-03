@@ -386,8 +386,8 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                slotProps={{
-                  inputLabel: { shrink: true }
+                InputLabelProps={{
+                  shrink: true
                 }}
                 sx={{ 
                   minWidth: 170,

@@ -34,7 +34,6 @@ import {
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-import CreditScoreIcon from '@mui/icons-material/CreditScore';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
 import {
@@ -428,8 +427,8 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                slotProps={{
-                  inputLabel: { shrink: true }
+                InputLabelProps={{
+                  shrink: true
                 }}
                 sx={{ 
                   minWidth: 170,
@@ -763,30 +762,6 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                                 </Tooltip>
                               )}
                               
-                              {appointment.payment_status === 'pending' && (
-                                <Tooltip title="Mark as Paid" arrow>
-                                  <IconButton
-                                    size="medium"
-                                    onClick={() => handleConfirmAction(appointment, 'payment')}
-                                    sx={{
-                                      bgcolor: '#ff9800',
-                                      color: 'white',
-                                      width: 36,
-                                      height: 36,
-                                      borderRadius: 2,
-                                      boxShadow: '0 2px 4px rgba(255, 152, 0, 0.3)',
-                                      '&:hover': {
-                                        bgcolor: '#f57c00',
-                                        transform: 'scale(1.1) rotate(-5deg)',
-                                        boxShadow: '0 4px 8px rgba(255, 152, 0, 0.4)',
-                                      },
-                                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                                    }}
-                                  >
-                                    <CreditScoreIcon fontSize="small" />
-                                  </IconButton>
-                                </Tooltip>
-                              )}
                               
                               {appointment.status === 'pending' && (
                                 <Tooltip title="Cancel Appointment" arrow>

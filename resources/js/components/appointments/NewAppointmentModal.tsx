@@ -11,7 +11,20 @@ import {
   Select,
   TextField,
   Alert,
+  Typography,
+  Avatar,
+  Divider,
+  Paper,
+  InputAdornment,
 } from '@mui/material';
+import {
+  LocalHospital as MedicalIcon,
+  Person as PersonIcon,
+  CalendarMonth as CalendarIcon,
+  AccessTime as TimeIcon,
+  Notes as NotesIcon,
+  BookOnline as BookIcon,
+} from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -36,7 +49,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'paid';
+  payment_status: 'pending' | 'paid' | 'on_hold';
 }
 
 interface User {
@@ -171,60 +184,153 @@ export default function NewAppointmentModal({
 
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Book New Appointment</DialogTitle>
-      <DialogContent>
+    <Dialog 
+      open={open} 
+      onClose={handleClose} 
+      maxWidth="md" 
+      fullWidth
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 3,
+            overflow: 'hidden',
+          }
+        }
+      }}
+    >
+      <DialogTitle 
+        sx={{ 
+          bgcolor: '#20a09f',
+          color: 'white',
+          p: 3,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2
+        }}
+      >
+        <Avatar sx={{ bgcolor: 'rgba(255, 255, 255, 0.2)', width: 40, height: 40 }}>
+          <BookIcon />
+        </Avatar>
+        <Box>
+          <Typography variant="h5" component="h2" fontWeight="bold">
+            Book New Appointment
+          </Typography>
+          <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>
+            Schedule your healthcare appointment with ease
+          </Typography>
+        </Box>
+      </DialogTitle>
+      <DialogContent sx={{ p: 0 }}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box component="form" onSubmit={handleSubmit} sx={{ pt: 1 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <FormControl fullWidth error={!!errors.provider_id}>
-                <InputLabel>Select Provider</InputLabel>
-                <Select
-                  value={data.provider_id}
-                  label="Select Provider"
-                  onChange={(e) => {
-                    setData('provider_id', e.target.value);
-                    // Clear time selection when provider changes
-                    if (data.time) {
-                      setData('time', '');
-                    }
-                  }}
-                >
-                  <MenuItem value="">
-                    <em>Choose a provider...</em>
-                  </MenuItem>
-                  {providers && providers.length > 0 && providers.map((provider) => (
-                    <MenuItem key={provider.id} value={provider.id}>
-                      {provider.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {errors.provider_id && (
-                  <Alert severity="error" sx={{ mt: 1 }}>
-                    {errors.provider_id}
-                  </Alert>
-                )}
-              </FormControl>
+          <Paper elevation={0} sx={{ p: 4, m: 0 }}>
+            <Box component="form" onSubmit={handleSubmit}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 
-              <DatePicker
-                label="Appointment Date"
-                value={data.date ? dayjs(data.date) : null}
-                onChange={(newValue) => {
-                  setData('date', newValue ? newValue.format('YYYY-MM-DD') : '');
-                  // Clear time selection when date changes
-                  if (data.time) {
-                    setData('time', '');
-                  }
-                }}
-                minDate={minDate}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    error: !!errors.date,
-                    helperText: errors.date,
-                  },
-                }}
-              />
+                <Box>
+                  <Typography variant="h6" color="#20a09f" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <MedicalIcon fontSize="small" />
+                    Healthcare Provider
+                  </Typography>
+                  <FormControl fullWidth error={!!errors.provider_id}>
+                    <InputLabel shrink>Select Provider</InputLabel>
+                    <Select
+                      value={data.provider_id}
+                      label="Select Provider"
+                      onChange={(e) => {
+                        setData('provider_id', e.target.value);
+                        if (data.time) {
+                          setData('time', '');
+                        }
+                      }}
+                      sx={{ 
+                        borderRadius: 2,
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: '#e0e0e0',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: '#20a09f',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#20a09f',
+                          },
+                        },
+                      }}
+                      startAdornment={
+                        <InputAdornment position="start">
+                          <PersonIcon sx={{ color: '#20a09f' }} />
+                        </InputAdornment>
+                      }
+                    >
+                      <MenuItem value="">
+                        <em>Choose a healthcare provider...</em>
+                      </MenuItem>
+                      {providers && providers.length > 0 && providers.map((provider) => (
+                        <MenuItem key={provider.id} value={provider.id}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Avatar sx={{ bgcolor: '#20a09f', width: 32, height: 32 }}>
+                              <MedicalIcon fontSize="small" />
+                            </Avatar>
+                            Dr. {provider.name}
+                          </Box>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.provider_id && (
+                      <Alert severity="error" sx={{ mt: 1 }}>
+                        {errors.provider_id}
+                      </Alert>
+                    )}
+                  </FormControl>
+                </Box>
+
+                <Box>
+                  <Typography variant="h6" color="#20a09f" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <CalendarIcon fontSize="small" />
+                    Appointment Date
+                  </Typography>
+                  <DatePicker
+                    label="Appointment Date"
+                    value={data.date ? dayjs(data.date) : null}
+                    onChange={(newValue) => {
+                      setData('date', newValue ? newValue.format('YYYY-MM-DD') : '');
+                      if (data.time) {
+                        setData('time', '');
+                      }
+                    }}
+                    minDate={minDate}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!errors.date,
+                        helperText: errors.date,
+                        sx: {
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                            '& fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#20a09f',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#20a09f',
+                            },
+                          },
+                        },
+                        slotProps: {
+                          input: {
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <CalendarIcon sx={{ color: '#20a09f' }} />
+                              </InputAdornment>
+                            ),
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </Box>
 
               {data.provider_id && data.date && hasAppointmentWithProvider(data.provider_id, data.date) && (
                 <Alert severity="warning" sx={{ mb: 2 }}>
@@ -232,21 +338,45 @@ export default function NewAppointmentModal({
                 </Alert>
               )}
 
-              <FormControl fullWidth error={!!errors.time}>
-                <InputLabel>Appointment Time</InputLabel>
-                <Select
-                  value={data.time}
-                  label="Appointment Time"
-                  onChange={(e) => setData('time', e.target.value)}
-                  disabled={!data.provider_id || !data.date || hasAppointmentWithProvider(data.provider_id, data.date)}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 300,
-                      },
-                    },
-                  }}
-                >
+                <Box>
+                  <Typography variant="h6" color="#20a09f" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <TimeIcon fontSize="small" />
+                    Appointment Time
+                  </Typography>
+                  <FormControl fullWidth error={!!errors.time}>
+                    <InputLabel shrink>Appointment Time</InputLabel>
+                    <Select
+                      value={data.time}
+                      label="Appointment Time"
+                      onChange={(e) => setData('time', e.target.value)}
+                      disabled={!data.provider_id || !data.date || hasAppointmentWithProvider(data.provider_id, data.date)}
+                      sx={{ 
+                        borderRadius: 2,
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: '#e0e0e0',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: '#20a09f',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#20a09f',
+                          },
+                        },
+                      }}
+                      startAdornment={
+                        <InputAdornment position="start">
+                          <TimeIcon sx={{ color: '#20a09f' }} />
+                        </InputAdornment>
+                      }
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                          },
+                        },
+                      }}
+                    >
                   {!data.provider_id || !data.date ? (
                     <MenuItem disabled value="">
                       Select provider and date first
@@ -287,28 +417,75 @@ export default function NewAppointmentModal({
                       `${getAvailableTimeSlots().length} slot${getAvailableTimeSlots().length !== 1 ? 's' : ''} available`)}
                   </Box>
                 )}
-              </FormControl>
+                  </FormControl>
+                </Box>
 
-              <TextField
-                label="Notes / Symptoms"
-                multiline
-                rows={4}
-                fullWidth
-                value={data.notes}
-                onChange={(e) => setData('notes', e.target.value)}
-                placeholder="Describe your symptoms or what you'd like to discuss during your appointment..."
-                error={!!errors.notes}
-                helperText={errors.notes}
-              />
+                <Box>
+                  <Typography variant="h6" color="#20a09f" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <NotesIcon fontSize="small" />
+                    Notes & Symptoms
+                  </Typography>
+                  <TextField
+                    label="Notes / Symptoms"
+                    multiline
+                    rows={4}
+                    fullWidth
+                    value={data.notes}
+                    onChange={(e) => setData('notes', e.target.value)}
+                    placeholder="Describe your symptoms or what you'd like to discuss during your appointment..."
+                    error={!!errors.notes}
+                    helperText={errors.notes}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '& fieldset': {
+                          borderColor: '#e0e0e0',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#20a09f',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#20a09f',
+                        },
+                      },
+                    }}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 2 }}>
+                            <NotesIcon sx={{ color: '#20a09f' }} />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                </Box>
+
+              </Box>
             </Box>
-          </Box>
+          </Paper>
         </LocalizationProvider>
       </DialogContent>
-      <DialogActions sx={{ p: 3, gap: 1 }}>
+      <Divider />
+      <DialogActions sx={{ p: 4, gap: 2, bgcolor: '#fafafa' }}>
         <Button
           variant="outlined"
           onClick={handleClose}
           disabled={processing}
+          size="large"
+          sx={{ 
+            borderRadius: 2,
+            px: 4,
+            py: 1.5,
+            textTransform: 'none',
+            fontWeight: 600,
+            borderColor: '#20a09f',
+            color: '#20a09f',
+            '&:hover': {
+              borderColor: '#178f8e',
+              bgcolor: 'rgba(32, 160, 159, 0.08)'
+            }
+          }}
         >
           Cancel
         </Button>
@@ -317,6 +494,26 @@ export default function NewAppointmentModal({
           variant="contained"
           disabled={processing || !data.provider_id || !data.date || !data.time || hasAppointmentWithProvider(data.provider_id, data.date)}
           onClick={handleSubmit}
+          size="large"
+          sx={{ 
+            bgcolor: '#20a09f',
+            borderRadius: 2,
+            px: 4,
+            py: 1.5,
+            textTransform: 'none',
+            fontWeight: 600,
+            boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+            '&:hover': {
+              bgcolor: '#178f8e',
+              boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+              transform: 'translateY(-1px)',
+            },
+            '&:disabled': {
+              bgcolor: '#e0e0e0',
+              color: '#9e9e9e',
+            },
+            transition: 'all 0.3s ease'
+          }}
         >
           {processing ? 'Booking...' : 'Book Appointment'}
         </Button>

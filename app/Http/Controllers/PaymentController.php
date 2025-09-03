@@ -62,11 +62,10 @@ class PaymentController extends Controller
             default => 'Payment is being processed.'
         };
 
-        return response()->json([
-            'success' => $status !== 'failed',
-            'message' => $message,
-            'transaction' => $transaction,
-        ]);
+        session()->flash('message', $message);
+        session()->flash('success', $status !== 'failed');
+        
+        return back();
     }
 
     public function approve(Request $request, Transaction $transaction)

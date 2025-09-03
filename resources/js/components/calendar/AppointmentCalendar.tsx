@@ -30,7 +30,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'paid';
+  payment_status: 'pending' | 'paid' | 'on_hold';
   user: {
     id: number;
     name: string;
@@ -232,6 +232,7 @@ export default function AppointmentCalendar({
   userRole = 'admin',
 }: AppointmentCalendarProps) {
   const [currentView, setCurrentView] = useState<CalendarView>(initialView);
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
 
   const events: CalendarEvent[] = appointments.map(appointment => {
@@ -257,6 +258,7 @@ export default function AppointmentCalendar({
   // Create sets of appointment days and exact time slots for efficient lookup
   const appointmentDays = new Set();
   const appointmentSlots = new Set();
+  const appointmentCounts = new Map<string, number>();
   
   appointments.forEach(appointment => {
     // Extract date and parse appointment datetime
@@ -264,6 +266,9 @@ export default function AppointmentCalendar({
     
     // For day-level highlighting (month view): store just the date string
     appointmentDays.add(dateOnly); // e.g., "2025-08-31"
+    
+    // Count appointments per day for provider view
+    appointmentCounts.set(dateOnly, (appointmentCounts.get(dateOnly) || 0) + 1);
     
     // For slot-level highlighting (week/day views): store full datetime string
     const slotKey = `${dateOnly}T${appointment.time.substring(0, 5)}`; // e.g., "2025-08-31T09:30"
@@ -282,13 +287,19 @@ export default function AppointmentCalendar({
     const day = String(date.getDate()).padStart(2, '0');
     const dateString = `${year}-${month}-${day}`;
     
-    if (appointmentDays.has(dateString)) {
+    const count = appointmentCounts.get(dateString) || 0;
+    
+    if (count > 0) {
       return {
         style: {
           backgroundColor: '#fff3e0',
           border: '2px solid #ff9800',
           borderRadius: '4px',
-        }
+          position: 'relative',
+          cursor: 'pointer',
+          '--appointment-count': `"${count}"`,
+        } as React.CSSProperties & { '--appointment-count': string },
+        className: userRole === 'provider' ? 'day-with-appointments' : '',
       };
     }
     return {};
@@ -396,6 +407,13 @@ export default function AppointmentCalendar({
     };
   };
 
+  const handleSelectSlot = ({ start }: { start: Date }) => {
+    if (currentView === 'month') {
+      setCurrentDate(start);
+      setCurrentView('day');
+    }
+  };
+
   return (
     <Box sx={{ p: 2 }}>
       <style>{`
@@ -492,6 +510,36 @@ export default function AppointmentCalendar({
         .rbc-event-content {
           font-weight: 600 !important;
         }
+        
+        /* Provider appointment count display in month view */
+        .day-with-appointments::after {
+          content: var(--appointment-count);
+          position: absolute;
+          bottom: 2px;
+          right: 2px;
+          background: #ff9800;
+          color: white;
+          font-weight: bold;
+          font-size: 10px;
+          border-radius: 50%;
+          width: 16px;
+          height: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+          z-index: 10;
+        }
+        
+        .day-with-appointments {
+          transition: all 0.2s ease !important;
+        }
+        
+        .day-with-appointments:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+        }
       `}</style>
       
       
@@ -519,12 +567,16 @@ export default function AppointmentCalendar({
               endAccessor="end"
               style={{ height: 650, fontFamily: 'Roboto' }}
               view={currentView}
+              date={currentDate}
+              onNavigate={(date) => setCurrentDate(date)}
               onView={(newView) => setCurrentView(newView)}
               views={[Views.MONTH, Views.WEEK, Views.DAY]}
               dayPropGetter={dayPropGetter}
               slotPropGetter={slotPropGetter}
               eventPropGetter={eventStyleGetter}
               onSelectEvent={onSelectEvent}
+              onSelectSlot={handleSelectSlot}
+              selectable={currentView === 'month'}
               components={{
                 toolbar: CustomToolbar,
                 event: EventComponent,
