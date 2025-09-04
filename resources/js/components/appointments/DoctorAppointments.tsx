@@ -76,10 +76,14 @@ const getPaymentStatusColor = (paymentStatus: string) => {
   switch (paymentStatus) {
     case 'pending':
       return 'warning';
+    case 'approved':
     case 'paid':
       return 'success';
     case 'on_hold':
       return 'info';
+    case 'cancelled':
+    case 'refunded':
+      return 'error';
     default:
       return 'default';
   }
@@ -90,7 +94,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'paid' | 'on_hold';
+  payment_status: 'pending' | 'approved' | 'paid' | 'on_hold' | 'cancelled' | 'refunded';
   user: {
     id: number;
     name: string;
@@ -126,7 +130,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
   const [pendingAction, setPendingAction] = useState<{
-    type: 'confirm' | 'cancel' | 'payment' | 'update';
+    type: 'approve_payment' | 'cancel' | 'payment' | 'update';
     title: string;
     message: string;
   } | null>(null);
@@ -141,7 +145,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     total: appointments.data.length,
     confirmed: appointments.data.filter(a => a.status === 'confirmed').length,
     pending: appointments.data.filter(a => a.status === 'pending').length,
-    paid: appointments.data.filter(a => a.payment_status === 'paid').length,
+    paid: appointments.data.filter(a => a.payment_status === 'approved' || a.payment_status === 'paid').length,
     onHold: appointments.data.filter(a => a.payment_status === 'on_hold').length,
   };
 
@@ -173,7 +177,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     total: filteredAppointments.length,
     confirmed: filteredAppointments.filter(a => a.status === 'confirmed').length,
     pending: filteredAppointments.filter(a => a.status === 'pending').length,
-    paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
+    paid: filteredAppointments.filter(a => a.payment_status === 'approved' || a.payment_status === 'paid').length,
     onHold: filteredAppointments.filter(a => a.payment_status === 'on_hold').length,
   };
 
@@ -216,16 +220,16 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     }
   };
 
-  const handleConfirmAction = (appointment: Appointment, type: 'confirm' | 'cancel' | 'payment' | 'update') => {
+  const handleConfirmAction = (appointment: Appointment, type: 'approve_payment' | 'cancel' | 'payment' | 'update') => {
     setSelectedAppointment(appointment);
     
     let title = '';
     let message = '';
     
     switch (type) {
-      case 'confirm':
-        title = 'Confirm Appointment';
-        message = `Are you sure you want to confirm the appointment with ${appointment.user.name}?`;
+      case 'approve_payment':
+        title = 'Approve Payment';
+        message = `Approve payment and automatically confirm the appointment with ${appointment.user.name}?`;
         break;
       case 'cancel':
         title = 'Cancel Appointment';
@@ -249,14 +253,14 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     if (!selectedAppointment || !pendingAction) return;
     
     switch (pendingAction.type) {
-      case 'confirm':
-        router.patch(`/appointments/${selectedAppointment.id}`, { status: 'confirmed' });
+      case 'approve_payment':
+        router.post(`/appointments/${selectedAppointment.id}/approve-payment`);
         break;
       case 'cancel':
         router.patch(`/appointments/${selectedAppointment.id}`, { status: 'cancelled' });
         break;
       case 'payment':
-        router.patch(`/appointments/${selectedAppointment.id}`, { payment_status: 'paid' });
+        router.patch(`/appointments/${selectedAppointment.id}`, { payment_status: 'approved' });
         break;
       case 'update':
         setUpdateDialogOpen(true);
@@ -377,7 +381,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                     {filteredStats.paid}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Paid
+                    Approved
                   </Typography>
                 </Box>
                 <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
@@ -429,7 +433,10 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                   <MenuItem value="">All Payments</MenuItem>
                   <MenuItem value="pending">🟡 Pending</MenuItem>
                   <MenuItem value="on_hold">🔵 On Hold</MenuItem>
+                  <MenuItem value="approved">🟢 Approved</MenuItem>
                   <MenuItem value="paid">🟢 Paid</MenuItem>
+                  <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
+                  <MenuItem value="refunded">🔴 Refunded</MenuItem>
                 </Select>
               </FormControl>
 
@@ -708,10 +715,14 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                             <Box display="flex" flexDirection="column" gap={1}>
                               <Chip
                                 label={`${
-                                  appointment.payment_status === 'paid' 
-                                    ? '🟢 Paid' 
+                                  appointment.payment_status === 'approved' || appointment.payment_status === 'paid'
+                                    ? '🟢 Approved' 
                                     : appointment.payment_status === 'on_hold' 
-                                    ? '🔵 On Hold' 
+                                    ? '🔵 On Hold'
+                                    : appointment.payment_status === 'cancelled'
+                                    ? '🔴 Cancelled'
+                                    : appointment.payment_status === 'refunded'
+                                    ? '🔴 Refunded'
                                     : '🟡 Pending'
                                 }`}
                                 color={getPaymentStatusColor(appointment.payment_status)}
@@ -735,6 +746,11 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                                     bgcolor: '#d1ecf1',
                                     color: '#0c5460',
                                     borderColor: '#bee5eb',
+                                  },
+                                  '&.MuiChip-colorError': {
+                                    bgcolor: '#f8d7da',
+                                    color: '#721c24',
+                                    borderColor: '#f1aeb5',
                                   }
                                 }}
                               />
@@ -749,13 +765,13 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                           </TableCell>
                           <TableCell sx={{ py: 3, minWidth: 160, overflow: 'visible', position: 'relative' }}>
                             <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ overflow: 'visible' }}>
-                              {appointment.status === 'pending' && (
-                                <Tooltip title="Confirm Appointment" arrow>
+                              {appointment.status === 'pending' && appointment.payment_status === 'on_hold' && (
+                                <Tooltip title="Approve Payment & Confirm Appointment" arrow>
                                   <IconButton
                                     size="medium"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleConfirmAction(appointment, 'confirm');
+                                      handleConfirmAction(appointment, 'approve_payment');
                                     }}
                                     sx={{
                                       bgcolor: 'success.main',
@@ -774,6 +790,30 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                                   >
                                     <CheckCircleIcon fontSize="small" />
                                   </IconButton>
+                                </Tooltip>
+                              )}
+                              
+                              {appointment.status === 'pending' && appointment.payment_status !== 'on_hold' && (
+                                <Tooltip title="Payment must be submitted before approval" arrow>
+                                  <Box sx={{ position: 'relative' }}>
+                                    <IconButton
+                                      size="medium"
+                                      disabled
+                                      sx={{
+                                        bgcolor: 'grey.300',
+                                        color: 'grey.600',
+                                        width: 36,
+                                        height: 36,
+                                        borderRadius: 2,
+                                        '&.Mui-disabled': {
+                                          bgcolor: 'grey.200',
+                                          color: 'grey.400',
+                                        }
+                                      }}
+                                    >
+                                      <CheckCircleIcon fontSize="small" />
+                                    </IconButton>
+                                  </Box>
                                 </Tooltip>
                               )}
                               
@@ -1093,10 +1133,14 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                       <Box mt={0.5}>
                         <Chip
                           label={`${
-                            viewingAppointment.payment_status === 'paid' 
-                              ? '🟢 Paid' 
+                            viewingAppointment.payment_status === 'approved' || viewingAppointment.payment_status === 'paid'
+                              ? '🟢 Approved' 
                               : viewingAppointment.payment_status === 'on_hold' 
-                              ? '🔵 On Hold' 
+                              ? '🔵 On Hold'
+                              : viewingAppointment.payment_status === 'cancelled'
+                              ? '🔴 Cancelled'
+                              : viewingAppointment.payment_status === 'refunded'
+                              ? '🔴 Refunded'
                               : '🟡 Pending'
                           }`}
                           color={getPaymentStatusColor(viewingAppointment.payment_status)}
@@ -1115,43 +1159,102 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                     <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
                       Quick Actions
                     </Typography>
-                    <Stack direction="row" spacing={2}>
-                      <Button
-                        variant="contained"
-                        startIcon={<CheckCircleIcon />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setAppointmentDetailsOpen(false);
-                          handleConfirmAction(viewingAppointment, 'confirm');
-                        }}
-                        sx={{ 
-                          bgcolor: 'success.main',
-                          '&:hover': { bgcolor: 'success.dark' }
-                        }}
-                      >
-                        Confirm Appointment
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<CancelIcon />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setAppointmentDetailsOpen(false);
-                          handleConfirmAction(viewingAppointment, 'cancel');
-                        }}
-                        sx={{ 
-                          borderColor: 'error.main',
-                          color: 'error.main',
-                          '&:hover': { 
-                            borderColor: 'error.dark',
-                            bgcolor: 'error.light',
-                            color: 'error.dark'
-                          }
-                        }}
-                      >
-                        Cancel Appointment
-                      </Button>
-                    </Stack>
+                    
+                    {viewingAppointment.payment_status === 'on_hold' ? (
+                      <Stack direction="row" spacing={2}>
+                        <Button
+                          variant="contained"
+                          startIcon={<CheckCircleIcon />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAppointmentDetailsOpen(false);
+                            handleConfirmAction(viewingAppointment, 'approve_payment');
+                          }}
+                          sx={{ 
+                            bgcolor: 'success.main',
+                            '&:hover': { bgcolor: 'success.dark' }
+                          }}
+                        >
+                          Approve Payment & Confirm
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<CancelIcon />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAppointmentDetailsOpen(false);
+                            handleConfirmAction(viewingAppointment, 'cancel');
+                          }}
+                          sx={{ 
+                            borderColor: 'error.main',
+                            color: 'error.main',
+                            '&:hover': { 
+                              borderColor: 'error.dark',
+                              bgcolor: 'error.light',
+                              color: 'error.dark'
+                            }
+                          }}
+                        >
+                          Cancel Appointment
+                        </Button>
+                      </Stack>
+                    ) : (
+                      <Box>
+                        <Stack direction="row" spacing={2} mb={2}>
+                          <Button
+                            variant="contained"
+                            startIcon={<CheckCircleIcon />}
+                            disabled
+                            sx={{ 
+                              bgcolor: 'grey.300',
+                              color: 'grey.600',
+                              '&.Mui-disabled': {
+                                bgcolor: 'grey.200',
+                                color: 'grey.400',
+                              }
+                            }}
+                          >
+                            Approve Payment & Confirm
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            startIcon={<CancelIcon />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAppointmentDetailsOpen(false);
+                              handleConfirmAction(viewingAppointment, 'cancel');
+                            }}
+                            sx={{ 
+                              borderColor: 'error.main',
+                              color: 'error.main',
+                              '&:hover': { 
+                                borderColor: 'error.dark',
+                                bgcolor: 'error.light',
+                                color: 'error.dark'
+                              }
+                            }}
+                          >
+                            Cancel Appointment
+                          </Button>
+                        </Stack>
+                        <Box 
+                          sx={{ 
+                            bgcolor: '#fff3cd', 
+                            border: '1px solid #ffeaa7',
+                            borderRadius: 1,
+                            p: 2,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
+                          }}
+                        >
+                          <PaymentIcon sx={{ color: '#856404', fontSize: 20 }} />
+                          <Typography variant="body2" color="#856404" fontWeight="500">
+                            Patient must submit payment before you can approve and confirm this appointment
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )}
                   </CardContent>
                 </Card>
               )}

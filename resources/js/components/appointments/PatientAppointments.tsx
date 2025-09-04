@@ -76,9 +76,13 @@ const getPaymentStatusColor = (paymentStatus: string) => {
     case 'pending':
       return 'warning';
     case 'paid':
+    case 'approved':
       return 'success';
     case 'on_hold':
       return 'info';
+    case 'cancelled':
+    case 'refunded':
+      return 'error';
     default:
       return 'default';
   }
@@ -96,7 +100,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'paid' | 'on_hold';
+  payment_status: 'pending' | 'paid' | 'approved' | 'on_hold' | 'cancelled' | 'refunded';
   notes?: string;
   user: {
     id: number;
@@ -163,7 +167,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
     total: appointments.data.length,
     confirmed: appointments.data.filter(a => a.status === 'confirmed').length,
     pending: appointments.data.filter(a => a.status === 'pending').length,
-    paid: appointments.data.filter(a => a.payment_status === 'paid').length,
+    paid: appointments.data.filter(a => a.payment_status === 'paid' || a.payment_status === 'approved').length,
     onHold: appointments.data.filter(a => a.payment_status === 'on_hold').length,
   };
 
@@ -205,7 +209,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
     total: filteredAppointments.length,
     confirmed: filteredAppointments.filter(a => a.status === 'confirmed').length,
     pending: filteredAppointments.filter(a => a.status === 'pending').length,
-    paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
+    paid: filteredAppointments.filter(a => a.payment_status === 'paid' || a.payment_status === 'approved').length,
     onHold: filteredAppointments.filter(a => a.payment_status === 'on_hold').length,
   };
 
@@ -404,6 +408,9 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   <MenuItem value="pending">🟡 Pending</MenuItem>
                   <MenuItem value="on_hold">🔵 On Hold</MenuItem>
                   <MenuItem value="paid">🟢 Paid</MenuItem>
+                  <MenuItem value="approved">🟢 Approved</MenuItem>
+                  <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
+                  <MenuItem value="refunded">🔴 Refunded</MenuItem>
                 </Select>
               </FormControl>
 
@@ -685,42 +692,58 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                             />
                           </TableCell>
                           <TableCell sx={{ py: 3, minWidth: 120 }}>
-                            <Chip
-                              label={`${
-                                appointment.payment_status === 'paid' 
-                                  ? '🟢 Paid' 
-                                  : appointment.payment_status === 'on_hold' 
-                                  ? '🔵 On Hold' 
-                                  : '🟡 Pending'
-                              }`}
-                              color={getPaymentStatusColor(appointment.payment_status)}
-                              size="medium"
-                              sx={{ 
-                                fontWeight: 600,
-                                minWidth: 100,
-                                height: 32,
-                                borderRadius: 2,
-                                '&.MuiChip-colorWarning': {
-                                  bgcolor: '#fff3cd',
-                                  color: '#856404',
-                                  borderColor: '#ffeaa7',
-                                },
-                                '&.MuiChip-colorSuccess': {
-                                  bgcolor: '#d4edda',
-                                  color: '#155724',
-                                  borderColor: '#a7d8a7',
-                                },
-                                '&.MuiChip-colorInfo': {
-                                  bgcolor: '#d1ecf1',
-                                  color: '#0c5460',
-                                  borderColor: '#bee5eb',
-                                }
-                              }}
-                            />
+                            <Box display="flex" flexDirection="column" alignItems="flex-start" gap={0.5}>
+                              <Chip
+                                label={`${
+                                  appointment.status === 'cancelled' 
+                                    ? appointment.payment_status === 'refunded'
+                                      ? '🔴 Refunded'
+                                      : '🔴 Cancelled'
+                                    : appointment.payment_status === 'paid' || appointment.payment_status === 'approved'
+                                    ? '🟢 Paid' 
+                                    : appointment.payment_status === 'on_hold' 
+                                    ? '🔵 On Hold' 
+                                    : '🟡 Pending'
+                                }`}
+                                color={appointment.status === 'cancelled' ? 'error' : getPaymentStatusColor(appointment.payment_status)}
+                                size="medium"
+                                sx={{ 
+                                  fontWeight: 600,
+                                  minWidth: 100,
+                                  height: 32,
+                                  borderRadius: 2,
+                                  '&.MuiChip-colorWarning': {
+                                    bgcolor: '#fff3cd',
+                                    color: '#856404',
+                                    borderColor: '#ffeaa7',
+                                  },
+                                  '&.MuiChip-colorSuccess': {
+                                    bgcolor: '#d4edda',
+                                    color: '#155724',
+                                    borderColor: '#a7d8a7',
+                                  },
+                                  '&.MuiChip-colorInfo': {
+                                    bgcolor: '#d1ecf1',
+                                    color: '#0c5460',
+                                    borderColor: '#bee5eb',
+                                  },
+                                  '&.MuiChip-colorError': {
+                                    bgcolor: '#f8d7da',
+                                    color: '#721c24',
+                                    borderColor: '#f1aeb5',
+                                  }
+                                }}
+                              />
+                              {appointment.status === 'cancelled' && (appointment.payment_status === 'refunded' || appointment.payment_status === 'cancelled') && appointment.payment_status !== 'pending' && (
+                                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', lineHeight: 1.2 }}>
+                                  {appointment.payment_status === 'refunded' ? 'Refund processed' : 'Refund will be processed'}
+                                </Typography>
+                              )}
+                            </Box>
                           </TableCell>
                           <TableCell align="right" sx={{ py: 3, minWidth: 180 }}>
                             <Stack direction="row" spacing={1} justifyContent="flex-end">
-                              {appointment.payment_status === 'pending' && (
+                              {appointment.payment_status === 'pending' && appointment.status !== 'cancelled' && (
                                 <Tooltip title="Pay with Credit Card" arrow>
                                   <IconButton
                                     size="medium"
@@ -747,31 +770,33 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                                   </IconButton>
                                 </Tooltip>
                               )}
-                              <Tooltip title="Edit Appointment" arrow>
-                                <IconButton
-                                  size="medium"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditingAppointment(appointment);
-                                  }}
-                                  sx={{
-                                    bgcolor: '#ff9800',
-                                    color: 'white',
-                                    width: 36,
-                                    height: 36,
-                                    borderRadius: 2,
-                                    boxShadow: '0 2px 4px rgba(255, 152, 0, 0.3)',
-                                    '&:hover': {
-                                      bgcolor: '#f57c00',
-                                      transform: 'scale(1.1) rotate(-5deg)',
-                                      boxShadow: '0 4px 8px rgba(255, 152, 0, 0.4)',
-                                    },
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                                  }}
-                                >
-                                  <EditIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
+                              {appointment.status !== 'cancelled' && (
+                                <Tooltip title="Edit Appointment" arrow>
+                                  <IconButton
+                                    size="medium"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setEditingAppointment(appointment);
+                                    }}
+                                    sx={{
+                                      bgcolor: '#ff9800',
+                                      color: 'white',
+                                      width: 36,
+                                      height: 36,
+                                      borderRadius: 2,
+                                      boxShadow: '0 2px 4px rgba(255, 152, 0, 0.3)',
+                                      '&:hover': {
+                                        bgcolor: '#f57c00',
+                                        transform: 'scale(1.1) rotate(-5deg)',
+                                        boxShadow: '0 4px 8px rgba(255, 152, 0, 0.4)',
+                                      },
+                                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                    }}
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
                               {appointment.status === 'pending' && (
                                 <Tooltip title="Cancel Appointment" arrow>
                                   <IconButton
@@ -950,14 +975,29 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                     size="small"
                   />
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <strong>Payment:</strong> 
-                  <Chip
-                    label={viewingAppointment.payment_status.charAt(0).toUpperCase() + viewingAppointment.payment_status.slice(1)}
-                    color={getPaymentStatusColor(viewingAppointment.payment_status)}
-                    size="small"
-                  />
-                </Typography>
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <strong>Payment:</strong> 
+                    <Chip
+                      label={viewingAppointment.status === 'cancelled' 
+                        ? viewingAppointment.payment_status === 'refunded'
+                          ? 'Refunded'
+                          : 'Cancelled'
+                        : viewingAppointment.payment_status.charAt(0).toUpperCase() + viewingAppointment.payment_status.slice(1)
+                      }
+                      color={viewingAppointment.status === 'cancelled' ? 'error' : getPaymentStatusColor(viewingAppointment.payment_status)}
+                      size="small"
+                    />
+                  </Typography>
+                  {viewingAppointment.status === 'cancelled' && (viewingAppointment.payment_status === 'refunded' || viewingAppointment.payment_status === 'cancelled') && viewingAppointment.payment_status !== 'pending' && (
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', fontStyle: 'italic', ml: 9 }}>
+                      {viewingAppointment.payment_status === 'refunded' 
+                        ? 'Refund has been processed to your original payment method'
+                        : 'Refund will be processed within 3-5 business days'
+                      }
+                    </Typography>
+                  )}
+                </Box>
                 {viewingAppointment.notes && (
                   <Typography variant="body2" color="text.secondary">
                     <strong>Notes:</strong> {viewingAppointment.notes}
@@ -973,7 +1013,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             >
               Close
             </Button>
-            {viewingAppointment.status === 'pending' && (
+            {viewingAppointment.status !== 'cancelled' && (
               <Button
                 variant="contained"
                 onClick={() => {

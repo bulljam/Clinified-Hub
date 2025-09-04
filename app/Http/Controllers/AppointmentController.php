@@ -177,7 +177,7 @@ class AppointmentController extends Controller
 
         $validated = $request->validate([
             'status' => 'required|in:pending,confirmed,cancelled',
-            'payment_status' => 'sometimes|in:pending,on_hold,paid',
+            'payment_status' => 'sometimes|in:pending,on_hold,paid,approved,cancelled,refunded',
         ]);
 
         // Handle combined appointment and payment status logic
@@ -202,7 +202,7 @@ class AppointmentController extends Controller
                     break;
                     
                 case 'cancelled':
-                    // When cancelling appointment, also reject any on_hold payments
+                    // When cancelling appointment, handle payments based on current status
                     if ($appointment->payment_status === 'on_hold') {
                         // Find and reject the on_hold transaction
                         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
@@ -215,7 +215,23 @@ class AppointmentController extends Controller
                             $transaction->update(['status' => 'cancelled']);
                         }
                         
-                        $validated['payment_status'] = 'pending';
+                        $validated['payment_status'] = 'cancelled';
+                    } elseif ($appointment->payment_status === 'paid' || $appointment->payment_status === 'approved') {
+                        // Find and refund the paid transaction
+                        $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
+                            ->where('doctor_id', $appointment->provider_id)
+                            ->whereIn('status', ['paid', 'approved'])
+                            ->latest()
+                            ->first();
+                        
+                        if ($transaction) {
+                            $transaction->update(['status' => 'refunded']);
+                        }
+                        
+                        $validated['payment_status'] = 'refunded';
+                    } else {
+                        // For pending payments, just cancel the payment status
+                        $validated['payment_status'] = 'cancelled';
                     }
                     break;
             }
@@ -310,5 +326,88 @@ class AppointmentController extends Controller
 
         return redirect()->route('appointments.index')
             ->with('success', 'Appointment cancelled successfully.');
+    }
+
+    /**
+     * Approve payment for an appointment and automatically confirm the appointment.
+     */
+    public function approvePayment(Request $request, Appointment $appointment)
+    {
+        $this->authorize('update', $appointment);
+
+        // Find the transaction for this appointment
+        $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
+            ->where('doctor_id', $appointment->provider_id)
+            ->where('status', 'on_hold')
+            ->latest()
+            ->first();
+
+        if (!$transaction) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No pending payment found for this appointment.',
+            ], 404);
+        }
+
+        // Approve the payment
+        $transaction->update(['status' => 'approved']);
+
+        // Automatically confirm the appointment
+        $appointment->update([
+            'payment_status' => 'approved',
+            'status' => 'confirmed'
+        ]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment approved and appointment confirmed successfully!',
+                'appointment' => $appointment->fresh(),
+                'transaction' => $transaction->fresh(),
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Payment approved and appointment confirmed successfully!');
+    }
+
+    /**
+     * Reject payment for an appointment.
+     */
+    public function rejectPayment(Request $request, Appointment $appointment)
+    {
+        $this->authorize('update', $appointment);
+
+        // Find the transaction for this appointment
+        $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
+            ->where('doctor_id', $appointment->provider_id)
+            ->where('status', 'on_hold')
+            ->latest()
+            ->first();
+
+        if (!$transaction) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No pending payment found for this appointment.',
+            ], 404);
+        }
+
+        // Reject the payment
+        $transaction->update(['status' => 'cancelled']);
+
+        // Reset appointment payment status
+        $appointment->update(['payment_status' => 'pending']);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment rejected successfully.',
+                'appointment' => $appointment->fresh(),
+                'transaction' => $transaction->fresh(),
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Payment rejected successfully.');
     }
 }
