@@ -47,6 +47,11 @@ import {
   TrendingUp as StatsIcon,
   Search as SearchIcon,
   FilterAlt as FilterIcon,
+  Visibility as ViewIcon,
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  Event as EventIcon,
+  Notes as NotesIcon,
 } from '@mui/icons-material';
 import { router } from '@inertiajs/react';
 import dayjs from 'dayjs';
@@ -125,6 +130,8 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     title: string;
     message: string;
   } | null>(null);
+  const [appointmentDetailsOpen, setAppointmentDetailsOpen] = useState(false);
+  const [viewingAppointment, setViewingAppointment] = useState<Appointment | null>(null);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -262,6 +269,11 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
 
   const handleQuickAction = (appointmentId: number, status: string) => {
     router.patch(`/appointments/${appointmentId}`, { status });
+  };
+
+  const handleAppointmentRowClick = (appointment: Appointment) => {
+    setViewingAppointment(appointment);
+    setAppointmentDetailsOpen(true);
   };
 
 
@@ -586,6 +598,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                       <Fade in={true} timeout={300 + index * 100} key={appointment.id}>
                         <TableRow 
                           hover
+                          onClick={() => handleAppointmentRowClick(appointment)}
                           sx={{
                             '&:hover': {
                               bgcolor: 'rgba(32, 160, 159, 0.08)',
@@ -740,7 +753,10 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                                 <Tooltip title="Confirm Appointment" arrow>
                                   <IconButton
                                     size="medium"
-                                    onClick={() => handleConfirmAction(appointment, 'confirm')}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleConfirmAction(appointment, 'confirm');
+                                    }}
                                     sx={{
                                       bgcolor: 'success.main',
                                       color: 'white',
@@ -766,7 +782,10 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                                 <Tooltip title="Cancel Appointment" arrow>
                                   <IconButton
                                     size="medium"
-                                    onClick={() => handleConfirmAction(appointment, 'cancel')}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleConfirmAction(appointment, 'cancel');
+                                    }}
                                     sx={{
                                       bgcolor: 'error.main',
                                       color: 'white',
@@ -947,6 +966,205 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
           <Button onClick={() => setUpdateDialogOpen(false)}>Cancel</Button>
           <Button onClick={handleUpdateSubmit} variant="contained">
             Update
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Appointment Details Modal */}
+      <Dialog
+        open={appointmentDetailsOpen}
+        onClose={() => setAppointmentDetailsOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Typography variant="h5" fontWeight="bold" color="#20a09f">
+              Appointment Details
+            </Typography>
+            {viewingAppointment && (
+              <Chip
+                label={`${viewingAppointment.status === 'confirmed' ? '🟢' : viewingAppointment.status === 'pending' ? '🟡' : '🔴'} ${viewingAppointment.status.charAt(0).toUpperCase() + viewingAppointment.status.slice(1)}`}
+                color={getStatusColor(viewingAppointment.status)}
+                sx={{ fontWeight: 600, fontSize: '0.875rem' }}
+              />
+            )}
+          </Box>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 2 }}>
+          {viewingAppointment && (
+            <Stack spacing={4}>
+              {/* Header with appointment info */}
+              <Card elevation={0} sx={{ bgcolor: '#f8f9fa', border: '1px solid #e0e0e0' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box display="flex" alignItems="center" gap={3} mb={2}>
+                    <Avatar sx={{ 
+                      bgcolor: '#20a09f', 
+                      width: 56, 
+                      height: 56,
+                      boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)'
+                    }}>
+                      <EventIcon fontSize="large" />
+                    </Avatar>
+                    <Box>
+                      <Typography variant="h6" fontWeight="bold" gutterBottom>
+                        APT-{viewingAppointment.id}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Appointment ID: #{viewingAppointment.id}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Patient Information */}
+              <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+                    Patient Information
+                  </Typography>
+                  <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+                    <Box display="flex" alignItems="center" gap={2}>
+                      <Avatar sx={{ 
+                        bgcolor: '#4caf50', 
+                        width: 48, 
+                        height: 48,
+                        fontSize: '1.2rem',
+                        fontWeight: 'bold'
+                      }}>
+                        {viewingAppointment.user.name.charAt(0)}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="body1" fontWeight="600">
+                          {viewingAppointment.user.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" display="flex" alignItems="center" gap={1}>
+                          <EmailIcon fontSize="small" />
+                          {viewingAppointment.user.email}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Appointment Details */}
+              <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+                    Appointment Information
+                  </Typography>
+                  <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Date
+                      </Typography>
+                      <Typography variant="body1" fontWeight="500" display="flex" alignItems="center" gap={1}>
+                        <EventIcon fontSize="small" />
+                        {dayjs(viewingAppointment.date).format('MMMM D, YYYY')}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Time
+                      </Typography>
+                      <Typography variant="body1" fontWeight="500" display="flex" alignItems="center" gap={1}>
+                        <TimeIcon fontSize="small" />
+                        {viewingAppointment.time ? dayjs(`1970-01-01 ${viewingAppointment.time}`).format('h:mm A') : 'N/A'}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Status
+                      </Typography>
+                      <Box mt={0.5}>
+                        <Chip
+                          label={`${viewingAppointment.status === 'confirmed' ? '🟢' : viewingAppointment.status === 'pending' ? '🟡' : '🔴'} ${viewingAppointment.status.charAt(0).toUpperCase() + viewingAppointment.status.slice(1)}`}
+                          color={getStatusColor(viewingAppointment.status)}
+                          sx={{ fontWeight: 600 }}
+                        />
+                      </Box>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" fontWeight="600" textTransform="uppercase">
+                        Payment Status
+                      </Typography>
+                      <Box mt={0.5}>
+                        <Chip
+                          label={`${
+                            viewingAppointment.payment_status === 'paid' 
+                              ? '🟢 Paid' 
+                              : viewingAppointment.payment_status === 'on_hold' 
+                              ? '🔵 On Hold' 
+                              : '🟡 Pending'
+                          }`}
+                          color={getPaymentStatusColor(viewingAppointment.payment_status)}
+                          sx={{ fontWeight: 600 }}
+                        />
+                      </Box>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              {viewingAppointment.status === 'pending' && (
+                <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                  <CardContent sx={{ p: 3 }}>
+                    <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+                      Quick Actions
+                    </Typography>
+                    <Stack direction="row" spacing={2}>
+                      <Button
+                        variant="contained"
+                        startIcon={<CheckCircleIcon />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAppointmentDetailsOpen(false);
+                          handleConfirmAction(viewingAppointment, 'confirm');
+                        }}
+                        sx={{ 
+                          bgcolor: 'success.main',
+                          '&:hover': { bgcolor: 'success.dark' }
+                        }}
+                      >
+                        Confirm Appointment
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<CancelIcon />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAppointmentDetailsOpen(false);
+                          handleConfirmAction(viewingAppointment, 'cancel');
+                        }}
+                        sx={{ 
+                          borderColor: 'error.main',
+                          color: 'error.main',
+                          '&:hover': { 
+                            borderColor: 'error.dark',
+                            bgcolor: 'error.light',
+                            color: 'error.dark'
+                          }
+                        }}
+                      >
+                        Cancel Appointment
+                      </Button>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              )}
+            </Stack>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3, borderTop: '1px solid #e0e0e0' }}>
+          <Button 
+            onClick={() => setAppointmentDetailsOpen(false)}
+            variant="outlined"
+            sx={{ px: 4 }}
+          >
+            Close
           </Button>
         </DialogActions>
       </Dialog>

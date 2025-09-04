@@ -53,7 +53,7 @@ interface DoctorApplication {
   license_number: string;
   years_of_experience: number;
   office_address: string | null;
-  credentials: string[] | null;
+  credentials: string | string[] | null;
   photo: string | null;
   status: 'pending' | 'approved' | 'rejected';
   rejection_reason: string | null;
@@ -97,6 +97,58 @@ const getStatusColor = (status: string) => {
     default:
       return 'default';
   }
+};
+
+const parseCredentials = (credentials: string | string[] | null): string[] => {
+  if (!credentials) return [];
+  if (Array.isArray(credentials)) return credentials;
+  
+  try {
+    const parsed = JSON.parse(credentials);
+    if (typeof parsed === 'object' && parsed !== null) {
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+      return Object.entries(parsed).map(([key, value]) => `${key}: ${value}`);
+    }
+    return [];
+  } catch {
+    return [credentials];
+  }
+};
+
+const isFilePath = (str: string): boolean => {
+  return str.includes('/') && (
+    str.endsWith('.pdf') || 
+    str.endsWith('.jpg') || 
+    str.endsWith('.jpeg') || 
+    str.endsWith('.png') || 
+    str.endsWith('.doc') || 
+    str.endsWith('.docx')
+  );
+};
+
+const getFileName = (filePath: string, index: number): string => {
+  const extension = filePath.split('.').pop()?.toLowerCase();
+  
+  switch (extension) {
+    case 'pdf':
+      return `Medical Certificate ${index + 1}`;
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+      return `Medical License Image ${index + 1}`;
+    case 'doc':
+    case 'docx':
+      return `Medical Document ${index + 1}`;
+    default:
+      return `Credential Document ${index + 1}`;
+  }
+};
+
+const previewFile = (filePath: string): void => {
+  const fullPath = `http://localhost:8000/storage/${filePath}`;
+  window.open(fullPath, '_blank');
 };
 
 export default function DoctorApplications({ applications }: Props) {
@@ -146,10 +198,6 @@ export default function DoctorApplications({ applications }: Props) {
     window.open(`/storage/${photoPath}`, '_blank');
   };
 
-  const previewCredential = (applicationId: number, path: string) => {
-    const filename = path.split('/').pop() || 'document';
-    window.open(`/admin/doctor-applications/${applicationId}/credential/${filename}`, '_blank');
-  };
 
   const totalPages = Math.ceil(applications.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -479,7 +527,9 @@ export default function DoctorApplications({ applications }: Props) {
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
-          {viewingApplication && (
+          {viewingApplication && (() => {
+            const parsedCredentials = parseCredentials(viewingApplication.credentials);
+            return (
             <Stack spacing={4}>
               {/* Header with doctor info */}
               <Card elevation={0} sx={{ bgcolor: '#f8f9fa', border: '1px solid #e0e0e0' }}>
@@ -649,33 +699,50 @@ export default function DoctorApplications({ applications }: Props) {
               </Card>
 
               {/* Credentials Section */}
-              {viewingApplication.credentials && viewingApplication.credentials.length > 0 && (
+              {parsedCredentials.length > 0 && (
                 <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
                   <CardContent sx={{ p: 3 }}>
                     <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
-                      Uploaded Documents ({viewingApplication.credentials.length})
+                      Professional Credentials ({parsedCredentials.length})
                     </Typography>
-                    <Stack direction="row" spacing={2} flexWrap="wrap" gap={2}>
-                      {viewingApplication.credentials.map((credential, index) => (
-                        <Button
-                          key={index}
-                          variant="outlined"
-                          startIcon={<PreviewIcon />}
-                          onClick={() => previewCredential(viewingApplication.id, credential)}
-                          sx={{ 
-                            borderColor: '#20a09f',
-                            color: '#20a09f',
-                            fontWeight: 500,
-                            px: 3,
-                            py: 1.5,
-                            '&:hover': {
-                              borderColor: '#178f8e',
-                              bgcolor: 'rgba(32, 160, 159, 0.04)',
-                            }
-                          }}
-                        >
-                          Document {index + 1}
-                        </Button>
+                    <Stack spacing={2}>
+                      {parsedCredentials.map((credential, index) => (
+                        isFilePath(credential) ? (
+                          <Button
+                            key={index}
+                            variant="outlined"
+                            startIcon={<PreviewIcon />}
+                            onClick={() => previewFile(credential)}
+                            sx={{ 
+                              borderColor: '#20a09f',
+                              color: '#20a09f',
+                              fontWeight: 500,
+                              justifyContent: 'flex-start',
+                              px: 3,
+                              py: 2,
+                              textTransform: 'none',
+                              '&:hover': {
+                                borderColor: '#178f8e',
+                                bgcolor: 'rgba(32, 160, 159, 0.04)',
+                              }
+                            }}
+                          >
+                            {getFileName(credential, index)}
+                          </Button>
+                        ) : (
+                          <Typography
+                            key={index}
+                            variant="body2"
+                            sx={{
+                              p: 2,
+                              border: '1px solid #e0e0e0',
+                              borderRadius: 1,
+                              bgcolor: '#f5f5f5'
+                            }}
+                          >
+                            {credential}
+                          </Typography>
+                        )
                       ))}
                     </Stack>
                   </CardContent>
@@ -694,7 +761,8 @@ export default function DoctorApplications({ applications }: Props) {
                 </Alert>
               )}
             </Stack>
-          )}
+            );
+          })()}
         </DialogContent>
         <DialogActions sx={{ p: 3, borderTop: '1px solid #e0e0e0' }}>
           <Button 

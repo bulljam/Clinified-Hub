@@ -12,12 +12,38 @@ class PaymentController extends Controller
 {
     public function index(): Response
     {
-        $transactions = Transaction::with(['user', 'doctor'])
-            ->latest()
-            ->get();
+        $user = auth()->user();
+        
+        // Base query with relationships
+        $transactionsQuery = Transaction::with(['user', 'doctor']);
+        
+        // Filter based on user role
+        if ($user->role === 'provider') {
+            $transactionsQuery->where('doctor_id', $user->id);
+        } elseif ($user->role === 'client') {
+            $transactionsQuery->where('user_id', $user->id);
+        }
+        
+        $transactions = $transactionsQuery->latest()->paginate(10);
+        
+        // Get additional data for admin filters
+        $users = [];
+        $providers = [];
+        
+        if (in_array($user->role, ['admin', 'super_admin'])) {
+            $users = \App\Models\User::select('id', 'name', 'email', 'role')
+                ->where('role', 'client')
+                ->get();
+                
+            $providers = \App\Models\User::select('id', 'name', 'email', 'specialty')
+                ->where('role', 'provider')
+                ->get();
+        }
 
-        return Inertia::render('Payments/Index', [
+        return Inertia::render('Payments', [
             'transactions' => $transactions,
+            'users' => $users,
+            'providers' => $providers,
         ]);
     }
 
@@ -81,12 +107,12 @@ class PaymentController extends Controller
             ], 400);
         }
 
-        $transaction->update(['status' => 'paid']);
+        $transaction->update(['status' => 'approved']);
 
         $appointment = Appointment::find($request->appointment_id);
         if ($appointment) {
             $appointment->update([
-                'payment_status' => 'paid',
+                'payment_status' => 'approved',
                 'status' => 'confirmed'
             ]);
         }
@@ -143,10 +169,10 @@ class PaymentController extends Controller
             ], 404);
         }
 
-        $transaction->update(['status' => 'paid']);
+        $transaction->update(['status' => 'approved']);
 
         $appointment->update([
-            'payment_status' => 'paid',
+            'payment_status' => 'approved',
             'status' => 'confirmed'
         ]);
 
