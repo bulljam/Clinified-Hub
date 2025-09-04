@@ -16,7 +16,6 @@ class AdminController extends Controller
 {
     public function __construct()
     {
-        //
     }
 
     private function checkSuperAdminAccess(): void

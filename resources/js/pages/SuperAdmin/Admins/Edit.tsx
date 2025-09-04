@@ -14,6 +14,12 @@ import {
   Alert,
   InputAdornment,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Snackbar,
 } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -24,6 +30,7 @@ import {
   VpnKey as ResetIcon,
   MailOutline as MailIcon,
 } from '@mui/icons-material';
+import { CircularProgress } from '@mui/material';
 import { Crown as CrownIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -52,6 +59,10 @@ interface Props {
 
 export default function EditAdmin({ admin }: Props) {
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
+  const [showErrorSnackbar, setShowErrorSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const { data, setData, put, processing, errors } = useForm<FormData>({
     name: admin.name,
@@ -64,10 +75,13 @@ export default function EditAdmin({ admin }: Props) {
     put(superAdmin.admins.update(admin.id).url);
   };
 
-  const handlePasswordReset = () => {
+  const handlePasswordResetClick = () => {
+    setShowConfirmDialog(true);
+  };
+
+  const handlePasswordResetConfirm = () => {
     setIsResettingPassword(true);
     
-    // Build the reset password URL manually since it's not in generated routes yet
     const resetPasswordUrl = `/super-admin/admins/${admin.id}/reset-password`;
     
     fetch(resetPasswordUrl, {
@@ -81,16 +95,22 @@ export default function EditAdmin({ admin }: Props) {
     .then(response => response.json())
     .then((data) => {
       setIsResettingPassword(false);
+      setShowConfirmDialog(false);
       if (data.message) {
-        // Show success notification (you could add a toast/snackbar here)
-        alert(data.message);
+        setShowSuccessSnackbar(true);
       }
     })
     .catch((error) => {
       setIsResettingPassword(false);
+      setShowConfirmDialog(false);
       console.error('Password reset error:', error);
-      alert('Failed to reset password. Please try again.');
+      setErrorMessage('Failed to reset password. Please try again.');
+      setShowErrorSnackbar(true);
     });
+  };
+
+  const handlePasswordResetCancel = () => {
+    setShowConfirmDialog(false);
   };
 
   const breadcrumbs = [
@@ -219,7 +239,7 @@ export default function EditAdmin({ admin }: Props) {
                       </MenuItem>
                       <MenuItem value="super_admin">
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                          <CrownIcon sx={{ color: '#dc2626' }} />
+                          <CrownIcon style={{ color: '#dc2626', width: 20, height: 20 }} />
                           <Box>
                             <Typography fontWeight={600}>Super Admin</Typography>
                             <Typography variant="caption" color="text.secondary">
@@ -258,7 +278,7 @@ export default function EditAdmin({ admin }: Props) {
                   </Alert>
                   
                   <Button
-                    onClick={handlePasswordReset}
+                    onClick={handlePasswordResetClick}
                     disabled={isResettingPassword}
                     startIcon={<MailIcon />}
                     variant="outlined"
@@ -355,6 +375,116 @@ export default function EditAdmin({ admin }: Props) {
             </form>
           </CardContent>
         </Paper>
+
+        {/* Confirmation Dialog */}
+        <Dialog
+          open={showConfirmDialog}
+          onClose={handlePasswordResetCancel}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: { borderRadius: 3 }
+          }}
+        >
+          <DialogTitle sx={{ pb: 1, fontWeight: 600 }}>
+            Confirm Password Reset
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText sx={{ color: '#374151', fontSize: '1rem' }}>
+              Are you sure you want to reset <strong>{admin.name}'s</strong> password? 
+              A new temporary password will be generated and sent to their email address ({admin.email}).
+            </DialogContentText>
+            <Alert severity="warning" sx={{ mt: 2, borderRadius: 2 }}>
+              <Typography variant="body2">
+                This action will immediately invalidate their current password. 
+                They will need to use the new temporary password to log in.
+              </Typography>
+            </Alert>
+          </DialogContent>
+          <DialogActions sx={{ p: 3, gap: 1 }}>
+            <Button
+              onClick={handlePasswordResetCancel}
+              variant="outlined"
+              sx={{ 
+                textTransform: 'none',
+                borderRadius: 2,
+                px: 3
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handlePasswordResetConfirm}
+              variant="contained"
+              color="warning"
+              disabled={isResettingPassword}
+              startIcon={isResettingPassword ? (
+                <CircularProgress 
+                  size={16} 
+                  sx={{ color: 'white' }}
+                />
+              ) : undefined}
+              sx={{
+                textTransform: 'none',
+                borderRadius: 2,
+                px: 3,
+                bgcolor: '#f59e0b',
+                '&:hover': { bgcolor: '#d97706' },
+                '&:disabled': { 
+                  bgcolor: '#fbbf24',
+                  color: 'white',
+                  opacity: 0.8
+                }
+              }}
+            >
+              {isResettingPassword ? 'Resetting Password...' : 'Reset Password'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Success Snackbar */}
+        <Snackbar
+          open={showSuccessSnackbar}
+          autoHideDuration={6000}
+          onClose={() => setShowSuccessSnackbar(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert
+            onClose={() => setShowSuccessSnackbar(false)}
+            severity="success"
+            variant="filled"
+            sx={{ borderRadius: 2 }}
+          >
+            <Typography variant="body2" fontWeight={600}>
+              Password Reset Successful!
+            </Typography>
+            <Typography variant="body2">
+              New temporary credentials have been sent to {admin.email}
+            </Typography>
+          </Alert>
+        </Snackbar>
+
+        {/* Error Snackbar */}
+        <Snackbar
+          open={showErrorSnackbar}
+          autoHideDuration={6000}
+          onClose={() => setShowErrorSnackbar(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert
+            onClose={() => setShowErrorSnackbar(false)}
+            severity="error"
+            variant="filled"
+            sx={{ borderRadius: 2 }}
+          >
+            <Typography variant="body2" fontWeight={600}>
+              Password Reset Failed
+            </Typography>
+            <Typography variant="body2">
+              {errorMessage}
+            </Typography>
+          </Alert>
+        </Snackbar>
       </Box>
     </AppLayout>
   );
