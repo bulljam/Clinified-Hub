@@ -13,17 +13,16 @@ import {
   Paper,
   Alert,
   InputAdornment,
-  IconButton,
+  Divider,
 } from '@mui/material';
 import {
   Save as SaveIcon,
   ArrowBack as BackIcon,
   Person as PersonIcon,
   Email as EmailIcon,
-  Lock as LockIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
   Shield as ShieldIcon,
+  VpnKey as ResetIcon,
+  MailOutline as MailIcon,
 } from '@mui/icons-material';
 import { Crown as CrownIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -44,8 +43,6 @@ interface Admin {
 interface FormData {
   name: string;
   email: string;
-  password: string;
-  password_confirmation: string;
   role: 'admin' | 'super_admin';
 }
 
@@ -54,20 +51,46 @@ interface Props {
 }
 
 export default function EditAdmin({ admin }: Props) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
 
   const { data, setData, put, processing, errors } = useForm<FormData>({
     name: admin.name,
     email: admin.email,
-    password: '',
-    password_confirmation: '',
     role: admin.role,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     put(superAdmin.admins.update(admin.id).url);
+  };
+
+  const handlePasswordReset = () => {
+    setIsResettingPassword(true);
+    
+    // Build the reset password URL manually since it's not in generated routes yet
+    const resetPasswordUrl = `/super-admin/admins/${admin.id}/reset-password`;
+    
+    fetch(resetPasswordUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+      },
+    })
+    .then(response => response.json())
+    .then((data) => {
+      setIsResettingPassword(false);
+      if (data.message) {
+        // Show success notification (you could add a toast/snackbar here)
+        alert(data.message);
+      }
+    })
+    .catch((error) => {
+      setIsResettingPassword(false);
+      console.error('Password reset error:', error);
+      alert('Failed to reset password. Please try again.');
+    });
   };
 
   const breadcrumbs = [
@@ -214,73 +237,47 @@ export default function EditAdmin({ admin }: Props) {
                   </FormControl>
                 </Box>
 
-                {/* Password Section */}
+                {/* Password Reset Section */}
                 <Box>
                   <Typography variant="h6" fontWeight={600} sx={{ mb: 2, color: '#374151' }}>
-                    Change Password (Optional)
+                    Password Management
                   </Typography>
                   
-                  <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }}>
-                    Leave password fields empty to keep the current password unchanged.
+                  <Alert 
+                    severity="warning" 
+                    icon={<ResetIcon />}
+                    sx={{ mb: 3, borderRadius: 2 }}
+                  >
+                    <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>
+                      Password Reset Available
+                    </Typography>
+                    <Typography variant="body2">
+                      You can reset this admin's password to a new temporary password. 
+                      They will receive the new credentials via email and can change it immediately.
+                    </Typography>
                   </Alert>
                   
-                  <Stack spacing={3}>
-                    <TextField
-                      label="New Password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={data.password}
-                      onChange={(e) => setData('password', e.target.value)}
-                      error={!!errors.password}
-                      helperText={errors.password || 'Leave empty to keep current password'}
-                      fullWidth
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockIcon color="action" />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowPassword(!showPassword)}
-                              edge="end"
-                            >
-                              {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-                    />
-
-                    <TextField
-                      label="Confirm New Password"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      value={data.password_confirmation}
-                      onChange={(e) => setData('password_confirmation', e.target.value)}
-                      error={!!errors.password_confirmation}
-                      helperText={errors.password_confirmation}
-                      fullWidth
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockIcon color="action" />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                              edge="end"
-                            >
-                              {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-                    />
-                  </Stack>
+                  <Button
+                    onClick={handlePasswordReset}
+                    disabled={isResettingPassword}
+                    startIcon={<MailIcon />}
+                    variant="outlined"
+                    color="warning"
+                    sx={{
+                      textTransform: 'none',
+                      px: 3,
+                      py: 1.5,
+                      borderRadius: 2,
+                      borderColor: '#f59e0b',
+                      color: '#f59e0b',
+                      '&:hover': {
+                        borderColor: '#d97706',
+                        bgcolor: '#fef3c7',
+                      },
+                    }}
+                  >
+                    {isResettingPassword ? 'Resetting Password...' : 'Reset Password & Send Email'}
+                  </Button>
                 </Box>
 
                 {/* Account Information */}
@@ -319,6 +316,8 @@ export default function EditAdmin({ admin }: Props) {
                     </Box>
                   </Box>
                 </Box>
+
+                <Divider sx={{ my: 2 }} />
 
                 {/* Action Buttons */}
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', pt: 2 }}>

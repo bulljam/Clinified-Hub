@@ -13,17 +13,14 @@ import {
   Paper,
   Alert,
   InputAdornment,
-  IconButton,
 } from '@mui/material';
 import {
   Save as SaveIcon,
   ArrowBack as BackIcon,
   Person as PersonIcon,
   Email as EmailIcon,
-  Lock as LockIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
   Shield as ShieldIcon,
+  MailOutline as MailIcon,
 } from '@mui/icons-material';
 import { Crown as CrownIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -35,20 +32,13 @@ import AppLayout from '@/layouts/app-layout';
 interface FormData {
   name: string;
   email: string;
-  password: string;
-  password_confirmation: string;
   role: 'admin' | 'super_admin' | '';
 }
 
 export default function CreateAdmin() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const { data, setData, post, processing, errors, reset } = useForm<FormData>({
     name: '',
     email: '',
-    password: '',
-    password_confirmation: '',
     role: '',
   });
 
@@ -205,83 +195,23 @@ export default function CreateAdmin() {
                   </FormControl>
                 </Box>
 
-                {/* Password Section */}
-                <Box>
-                  <Typography variant="h6" fontWeight={600} sx={{ mb: 2, color: '#374151' }}>
-                    Security
-                  </Typography>
-                  
-                  <Stack spacing={3}>
-                    <TextField
-                      label="Password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={data.password}
-                      onChange={(e) => setData('password', e.target.value)}
-                      error={!!errors.password}
-                      helperText={errors.password || 'Minimum 8 characters required'}
-                      fullWidth
-                      required
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockIcon color="action" />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowPassword(!showPassword)}
-                              edge="end"
-                            >
-                              {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-                    />
 
-                    <TextField
-                      label="Confirm Password"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      value={data.password_confirmation}
-                      onChange={(e) => setData('password_confirmation', e.target.value)}
-                      error={!!errors.password_confirmation}
-                      helperText={errors.password_confirmation}
-                      fullWidth
-                      required
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockIcon color="action" />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                              edge="end"
-                            >
-                              {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-                    />
-                  </Stack>
-                </Box>
-
-                {/* Security Notice */}
+                {/* Email Notice */}
                 <Alert 
                   severity="info" 
+                  icon={<MailIcon />}
                   sx={{ 
                     borderRadius: 2,
                     '& .MuiAlert-message': { fontWeight: 500 }
                   }}
                 >
-                  The new admin will receive login credentials and can change their password after first login.
-                  Super Admins have full system access including the ability to manage other administrators.
+                  <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>
+                    Automatic Email Notification
+                  </Typography>
+                  <Typography variant="body2">
+                    The new admin will receive a welcome email with temporary login credentials. 
+                    They can login immediately and change their password for security.
+                  </Typography>
                 </Alert>
 
                 {/* Action Buttons */}

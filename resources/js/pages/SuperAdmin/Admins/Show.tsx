@@ -52,7 +52,7 @@ export default function ShowAdmin({ admin }: Props) {
     return role === 'super_admin' ? (
       <CrownIcon sx={{ fontSize: 24, color: '#dc2626' }} />
     ) : (
-      <ShieldIcon sx={{ fontSize: 24, color: '#7c3aed' }} />
+      <ShieldIcon sx={{ fontSize: 24, color: '#14b8a6' }} />
     );
   };
 
@@ -74,9 +74,9 @@ export default function ShowAdmin({ admin }: Props) {
         icon={<ShieldIcon />}
         label="Admin" 
         sx={{ 
-          backgroundColor: '#f3e8ff', 
-          color: '#7c3aed',
-          border: '1px solid #e9d5ff',
+          backgroundColor: '#f0fdfa', 
+          color: '#14b8a6',
+          border: '1px solid #ccfbf1',
           fontWeight: 600,
           fontSize: '0.875rem'
         }} 
@@ -144,11 +144,13 @@ export default function ShowAdmin({ admin }: Props) {
                     sx={{ 
                       width: 80, 
                       height: 80, 
-                      bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#7c3aed',
+                      bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#14b8a6',
+                      color: 'white', 
+                      fontWeight: 600,
                       fontSize: '2rem'
                     }}
                   >
-                    {getRoleIcon(admin.role)}
+                    {admin.name.charAt(0).toUpperCase()}
                   </Avatar>
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="h4" fontWeight="bold" sx={{ mb: 1 }}>
@@ -166,9 +168,12 @@ export default function ShowAdmin({ admin }: Props) {
                   position: 'absolute', 
                   top: 16, 
                   right: 16, 
-                  opacity: 0.1 
+                  opacity: 0.1,
+                  fontSize: '3rem',
+                  fontWeight: 600,
+                  color: 'white'
                 }}>
-                  {getRoleIcon(admin.role)}
+                  {admin.name.charAt(0).toUpperCase()}
                 </Box>
               </Box>
 
@@ -210,7 +215,7 @@ export default function ShowAdmin({ admin }: Props) {
                     <ListItemIcon>
                       {admin.role === 'super_admin' ? 
                         <CrownIcon sx={{ color: '#dc2626' }} /> : 
-                        <ShieldIcon sx={{ color: '#7c3aed' }} />
+                        <ShieldIcon sx={{ color: '#14b8a6' }} />
                       }
                     </ListItemIcon>
                     <ListItemText 
@@ -365,10 +370,13 @@ export default function ShowAdmin({ admin }: Props) {
                       height: 60, 
                       mx: 'auto', 
                       mb: 2,
-                      bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#7c3aed'
+                      bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#14b8a6',
+                      color: 'white',
+                      fontWeight: 600,
+                      fontSize: '1.5rem'
                     }}
                   >
-                    {getRoleIcon(admin.role)}
+                    {admin.name.charAt(0).toUpperCase()}
                   </Avatar>
                   {getRoleChip(admin.role)}
                 </Box>

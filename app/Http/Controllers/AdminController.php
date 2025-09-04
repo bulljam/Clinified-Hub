@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AdminWelcome;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -76,17 +79,22 @@ class AdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
             'role' => ['required', Rule::in(['admin', 'super_admin'])],
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+        $temporaryPassword = $this->generateTemporaryPassword();
+        
+        $validated['password'] = Hash::make($temporaryPassword);
 
         $admin = User::create($validated);
 
+        Mail::to($admin->email)->send(
+            new AdminWelcome($admin, $temporaryPassword)
+        );
+
         return redirect()
             ->route('super-admin.admins.index')
-            ->with('success', 'Admin created successfully!');
+            ->with('success', 'Admin created successfully! Welcome email sent with temporary credentials.');
     }
 
     public function show(User $admin): Response
@@ -123,15 +131,8 @@ class AdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($admin->id)],
-            'password' => 'nullable|string|min:8|confirmed',
             'role' => ['required', Rule::in(['admin', 'super_admin'])],
         ]);
-
-        if (empty($validated['password'])) {
-            unset($validated['password']);
-        } else {
-            $validated['password'] = Hash::make($validated['password']);
-        }
 
         $admin->update($validated);
 
@@ -159,5 +160,32 @@ class AdminController extends Controller
         return redirect()
             ->route('super-admin.admins.index')
             ->with('success', 'Admin deleted successfully!');
+    }
+
+    public function resetPassword(User $admin)
+    {
+        $this->checkSuperAdminAccess();
+        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+            abort(404);
+        }
+
+        $temporaryPassword = $this->generateTemporaryPassword();
+        
+        $admin->update([
+            'password' => Hash::make($temporaryPassword),
+        ]);
+
+        Mail::to($admin->email)->send(
+            new AdminWelcome($admin, $temporaryPassword)
+        );
+
+        return response()->json([
+            'message' => 'Password reset successfully! New temporary credentials sent via email.',
+        ]);
+    }
+
+    private function generateTemporaryPassword(): string
+    {
+        return 'Clinify-' . Str::random(8) . '-' . now()->format('md');
     }
 }

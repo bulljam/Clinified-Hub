@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Super Admin only routes
     Route::prefix('super-admin')->name('super-admin.')->middleware('auth')->group(function () {
         Route::resource('admins', App\Http\Controllers\AdminController::class);
+        Route::post('admins/{admin}/reset-password', [App\Http\Controllers\AdminController::class, 'resetPassword'])->name('admins.reset-password');
     });
 });
 
