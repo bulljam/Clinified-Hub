@@ -805,7 +805,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
                               
                               {appointment.payment_status === 'cancelled' && (
                                 <Typography variant="caption" color="warning.main" fontWeight="500" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap' }}>
-                                  Refund will be processed
+                                  Payment has been cancelled
                                 </Typography>
                               )}
                             </Box>

@@ -372,7 +372,7 @@ export default function DoctorAppointments({ appointments, filters = {} }: Docto
                     {appointmentStats.paid}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Approved
+                    Paid
                   </Typography>
                 </Box>
                 <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
@@ -426,7 +426,6 @@ export default function DoctorAppointments({ appointments, filters = {} }: Docto
                   <MenuItem value="on_hold">🔵 On Hold</MenuItem>
                   <MenuItem value="paid">🟢 Paid</MenuItem>
                   <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
-                  <MenuItem value="refunded">🔴 Refunded</MenuItem>
                 </Select>
               </FormControl>
 
@@ -525,7 +524,7 @@ export default function DoctorAppointments({ appointments, filters = {} }: Docto
         </Box>
       </Card>
 
-      {filteredAppointments.length === 0 ? (
+      {appointments.data.length === 0 ? (
         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ textAlign: 'center', py: 8 }}>
             <Avatar sx={{ bgcolor: 'grey.100', width: 80, height: 80, mx: 'auto', mb: 3 }}>
@@ -766,7 +765,7 @@ export default function DoctorAppointments({ appointments, filters = {} }: Docto
                               
                               {appointment.payment_status === 'cancelled' && (
                                 <Typography variant="caption" color="warning.main" fontWeight="600">
-                                  Refund will be processed for patient
+                                  Payment has been cancelled
                                 </Typography>
                               )}
                             </Box>
@@ -861,59 +860,6 @@ export default function DoctorAppointments({ appointments, filters = {} }: Docto
                   </TableBody>
                 </Table>
               </TableContainer>
-              
-              {/* Beautiful Pagination */}
-              {totalPages > 1 && (
-                <Box sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
-                  alignItems: 'center', 
-                  mt: 4, 
-                  mb: 2,
-                  gap: 2
-                }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Showing {startIndex + 1}-{Math.min(endIndex, filteredAppointments.length)} of {filteredAppointments.length} appointments
-                  </Typography>
-                  <Pagination
-                    count={totalPages}
-                    page={currentPage}
-                    onChange={(_event, page) => handlePageChange(page)}
-                    size="large"
-                    shape="rounded"
-                    showFirstButton
-                    showLastButton
-                    sx={{
-                      color: '#20a09f',
-                      '& .MuiPaginationItem-root': {
-                        borderRadius: 2,
-                        fontWeight: 600,
-                        minWidth: 40,
-                        height: 40,
-                        border: '1px solid #e0e0e0',
-                        '&:hover': {
-                          bgcolor: '#20a09f',
-                          color: 'white',
-                          transform: 'scale(1.05)',
-                          boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
-                        },
-                        '&.Mui-selected': {
-                          bgcolor: '#20a09f',
-                          color: 'white',
-                          boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
-                          '&:hover': {
-                            bgcolor: '#178f8e',
-                          },
-                        },
-                        transition: 'all 0.2s ease',
-                      },
-                      '& .MuiPaginationItem-ellipsis': {
-                        color: 'text.secondary',
-                      },
-                    }}
-                  />
-                </Box>
-              )}
             </Card>
           )}
 
@@ -1174,8 +1120,6 @@ export default function DoctorAppointments({ appointments, filters = {} }: Docto
                               ? '🔵 On Hold'
                               : viewingAppointment.payment_status === 'cancelled'
                               ? '🔴 Cancelled'
-                              : viewingAppointment.payment_status === 'refunded'
-                              ? '🔴 Refunded'
                               : '🟡 Pending'
                           }`}
                           color={getPaymentStatusColor(viewingAppointment.payment_status)}

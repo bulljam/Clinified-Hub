@@ -400,7 +400,6 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   <MenuItem value="on_hold">🔵 On Hold</MenuItem>
                   <MenuItem value="paid">🟢 Paid</MenuItem>
                   <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
-                  <MenuItem value="refunded">🔴 Refunded</MenuItem>
                 </Select>
               </FormControl>
 
@@ -701,9 +700,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                               <Chip
                                 label={`${
                                   appointment.status === 'cancelled' 
-                                    ? appointment.payment_status === 'refunded'
-                                      ? '🔴 Refunded'
-                                      : '🔴 Cancelled'
+                                    ? '🔴 Cancelled'
                                     : appointment.payment_status === 'paid'
                                     ? '🟢 Paid' 
                                     : appointment.payment_status === 'on_hold' 
@@ -739,9 +736,9 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                                   }
                                 }}
                               />
-                              {appointment.status === 'cancelled' && (appointment.payment_status === 'refunded' || appointment.payment_status === 'cancelled') && appointment.payment_status !== 'pending' && (
+                              {appointment.status === 'cancelled' && appointment.payment_status === 'cancelled' && (
                                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', lineHeight: 1.2 }}>
-                                  {appointment.payment_status === 'refunded' ? 'Refund processed' : 'Refund will be processed'}
+                                  Refund will be processed
                                 </Typography>
                               )}
                             </Box>
