@@ -27,6 +27,9 @@ import {
   Divider,
   LinearProgress,
   Dialog,
+  Collapse,
+  Grid,
+  InputAdornment,
   DialogActions,
   DialogContent,
   DialogTitle,
@@ -46,6 +49,8 @@ import {
   TrendingUp as StatsIcon,
   Search as SearchIcon,
   FilterAlt as FilterIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
 } from '@mui/icons-material';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
@@ -155,6 +160,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
   const [paymentFilter, setPaymentFilter] = useState(filters.payment_status || '');
   const [dateFilter, setDateFilter] = useState(filters.date || '');
   const [isLoading, setIsLoading] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
 
 
   const handleDelete = () => {
@@ -364,97 +370,166 @@ export default function PatientAppointments({ appointments, allAppointments, pro
       {/* Advanced Filters Section - Only show in list view */}
       {activeTab === 0 && (
         <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-          <CardContent sx={{ p: 4 }}>
-            <Box display="flex" alignItems="center" gap={2} mb={3}>
-              <FilterIcon sx={{ color: '#20a09f' }} />
-              <Typography variant="h6" fontWeight="600" color="#20a09f">
-                Filter My Appointments
-              </Typography>
-            </Box>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="stretch" justifyContent="flex-start" flexWrap="wrap">
-              <FormControl size="medium" sx={{ minWidth: 180, flex: { xs: '1 1 100%', sm: '1 1 auto' } }}>
-                <InputLabel>Appointment Status</InputLabel>
-                <Select
-                  value={statusFilter}
-                  label="Appointment Status"
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  sx={{ borderRadius: 2 }}
-                >
-                  <MenuItem value="">All Status</MenuItem>
-                  <MenuItem value="pending">🟡 Pending</MenuItem>
-                  <MenuItem value="confirmed">🟢 Confirmed</MenuItem>
-                  <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl size="medium" sx={{ minWidth: 160, flex: { xs: '1 1 100%', sm: '1 1 auto' } }}>
-                <InputLabel>Payment Status</InputLabel>
-                <Select
-                  value={paymentFilter}
-                  label="Payment Status"
-                  onChange={(e) => setPaymentFilter(e.target.value)}
-                  sx={{ borderRadius: 2 }}
-                >
-                  <MenuItem value="">All Payments</MenuItem>
-                  <MenuItem value="pending">🟡 Pending</MenuItem>
-                  <MenuItem value="on_hold">🔵 On Hold</MenuItem>
-                  <MenuItem value="paid">🟢 Paid</MenuItem>
-                  <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
-                </Select>
-              </FormControl>
-
-              <TextField
-                size="medium"
-                label="Filter by Date"
-                type="date"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                InputLabelProps={{
-                  shrink: true
-                }}
-                sx={{ 
-                  minWidth: 160,
-                  flex: { xs: '1 1 100%', sm: '1 1 auto' },
-                  '& .MuiOutlinedInput-root': { borderRadius: 2 }
-                }}
-              />
-
-              <Box display="flex" gap={2} sx={{ flex: { xs: '1 1 100%', sm: 'none' }, justifyContent: { xs: 'stretch', sm: 'flex-start' } }}>
-                <Button 
-                  variant="contained" 
-                  onClick={() => applyFilters()}
-                  size="large"
-                  sx={{ 
-                    bgcolor: '#20a09f',
-                    borderRadius: 2,
-                    px: 3,
-                    py: 1.5,
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    flex: { xs: 1, sm: 'none' },
+          <CardContent sx={{ p: 3 }}>
+            <Stack spacing={3}>
+              {/* Filter Toggle */}
+              <Box display="flex" alignItems="center" gap={2}>
+                <Button
+                  startIcon={<FilterIcon />}
+                  endIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                  onClick={() => setShowFilters(!showFilters)}
+                  variant="outlined"
+                  sx={{
+                    borderColor: '#20a09f',
+                    color: '#20a09f',
                     '&:hover': {
-                      bgcolor: '#178f8e',
-                    }
+                      borderColor: '#178f8e',
+                      bgcolor: 'rgba(32, 160, 159, 0.04)',
+                    },
                   }}
                 >
-                  Apply Filters
+                  {showFilters ? 'Hide Filters' : 'Show Filters'}
                 </Button>
-                <Button 
-                  variant="outlined" 
-                  onClick={clearFilters}
-                  size="large"
-                  sx={{ 
-                    borderRadius: 2,
-                    px: 3,
-                    py: 1.5,
-                    textTransform: 'none',
-                    fontWeight: 500,
-                    flex: { xs: 1, sm: 'none' }
-                  }}
-                >
-                  Clear All
-                </Button>
+                {(statusFilter || paymentFilter || dateFilter) && (
+                  <Button
+                    variant="text"
+                    color="error"
+                    onClick={clearFilters}
+                    size="small"
+                  >
+                    Clear All
+                  </Button>
+                )}
               </Box>
+
+              {/* Filters */}
+              <Collapse in={showFilters}>
+                <Box sx={{ 
+                  border: '1px solid #e0e0e0', 
+                  borderRadius: 2, 
+                  p: 3, 
+                  mt: 2,
+                  bgcolor: 'rgba(32, 160, 159, 0.02)' 
+                }}>
+                  <Grid container spacing={3} alignItems="flex-end">
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                      <FormControl fullWidth>
+                        <InputLabel>Appointment Status</InputLabel>
+                        <Select
+                          value={statusFilter}
+                          label="Appointment Status"
+                          onChange={(e) => setStatusFilter(e.target.value)}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              '&:hover fieldset': {
+                                borderColor: '#20a09f',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: '#20a09f',
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">All Status</MenuItem>
+                          <MenuItem value="pending">🟡 Pending</MenuItem>
+                          <MenuItem value="confirmed">🟢 Confirmed</MenuItem>
+                          <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                      <FormControl fullWidth>
+                        <InputLabel>Payment Status</InputLabel>
+                        <Select
+                          value={paymentFilter}
+                          label="Payment Status"
+                          onChange={(e) => setPaymentFilter(e.target.value)}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              '&:hover fieldset': {
+                                borderColor: '#20a09f',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: '#20a09f',
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">All Payments</MenuItem>
+                          <MenuItem value="pending">🟡 Pending</MenuItem>
+                          <MenuItem value="on_hold">🔵 On Hold</MenuItem>
+                          <MenuItem value="paid">🟢 Paid</MenuItem>
+                          <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                      <TextField
+                        fullWidth
+                        label="Filter by Date"
+                        type="date"
+                        value={dateFilter}
+                        onChange={(e) => setDateFilter(e.target.value)}
+                        slotProps={{
+                          inputLabel: { shrink: true }
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            '&:hover fieldset': {
+                              borderColor: '#20a09f',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#20a09f',
+                            },
+                          },
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                  <Box sx={{ 
+                    mt: 3, 
+                    display: 'flex', 
+                    gap: 2, 
+                    justifyContent: 'flex-end',
+                    flexWrap: 'wrap',
+                    alignItems: 'center'
+                  }}>
+                    <Button 
+                      onClick={clearFilters} 
+                      variant="outlined"
+                      sx={{
+                        borderColor: '#e0e0e0',
+                        color: 'text.secondary',
+                        '&:hover': {
+                          borderColor: '#20a09f',
+                          bgcolor: 'rgba(32, 160, 159, 0.04)',
+                          color: '#20a09f',
+                        },
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                    <Button
+                      onClick={() => applyFilters()}
+                      variant="contained"
+                      sx={{
+                        bgcolor: '#20a09f',
+                        color: 'white',
+                        px: 3,
+                        py: 1,
+                        fontWeight: 600,
+                        '&:hover': { 
+                          bgcolor: '#178f8e',
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                        },
+                      }}
+                    >
+                      Apply Filters
+                    </Button>
+                  </Box>
+                </Box>
+              </Collapse>
             </Stack>
           </CardContent>
         </Card>
