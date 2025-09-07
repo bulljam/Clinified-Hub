@@ -34,7 +34,7 @@ interface Transaction {
   doctor_id: number;
   amount: string;
   card_last4: string | null;
-  status: 'pending' | 'approved' | 'on_hold' | 'cancelled';
+  status: 'pending' | 'paid' | 'on_hold' | 'cancelled';
   created_at: string;
   updated_at: string;
   user: {
@@ -89,7 +89,7 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
       return 'warning';
-    case 'approved':
+    case 'paid':
       return 'success';
     case 'on_hold':
       return 'info';
@@ -104,7 +104,7 @@ const getStatusLabel = (status: string) => {
   switch (status) {
     case 'pending':
       return 'Pending';
-    case 'approved':
+    case 'paid':
       return 'Approved';
     case 'on_hold':
       return 'On Hold';
@@ -141,7 +141,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
 
   const totalAmount = filteredTransactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
   const approvedAmount = filteredTransactions
-    .filter(t => t.status === 'approved')
+    .filter(t => t.status === 'paid')
     .reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
   const getRoleTitle = () => {
@@ -269,7 +269,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                 >
                   <MenuItem value="">All Status</MenuItem>
                   <MenuItem value="pending">Pending</MenuItem>
-                  <MenuItem value="approved">Approved</MenuItem>
+                  <MenuItem value="paid">Paid</MenuItem>
                   <MenuItem value="on_hold">On Hold</MenuItem>
                   <MenuItem value="cancelled">Cancelled</MenuItem>
                 </TextField>

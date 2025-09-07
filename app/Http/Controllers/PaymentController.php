@@ -107,7 +107,7 @@ class PaymentController extends Controller
             ], 400);
         }
 
-        $transaction->update(['status' => 'approved']);
+        $transaction->update(['status' => 'paid']);
 
         $appointment = Appointment::find($request->appointment_id);
         if ($appointment) {
@@ -163,24 +163,19 @@ class PaymentController extends Controller
             ->first();
 
         if (!$transaction) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No pending payment found for this appointment.',
-            ], 404);
+            return redirect()->back()->withErrors([
+                'payment' => 'No pending payment found for this appointment.'
+            ]);
         }
 
-        $transaction->update(['status' => 'approved']);
+        $transaction->update(['status' => 'paid']);
 
         $appointment->update([
             'payment_status' => 'approved',
             'status' => 'confirmed'
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Payment approved and appointment confirmed!',
-            'transaction' => $transaction->fresh(),
-        ]);
+        return redirect()->back()->with('success', 'Payment approved and appointment confirmed!');
     }
 
     public function rejectByAppointment(Request $request, $appointmentId)
@@ -194,20 +189,15 @@ class PaymentController extends Controller
             ->first();
 
         if (!$transaction) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No pending payment found for this appointment.',
-            ], 404);
+            return redirect()->back()->withErrors([
+                'payment' => 'No pending payment found for this appointment.'
+            ]);
         }
 
         $transaction->update(['status' => 'cancelled']);
 
         $appointment->update(['payment_status' => 'pending']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Payment rejected.',
-            'transaction' => $transaction->fresh(),
-        ]);
+        return redirect()->back()->with('success', 'Payment rejected.');
     }
 }

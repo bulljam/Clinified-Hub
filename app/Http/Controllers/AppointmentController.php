@@ -220,7 +220,7 @@ class AppointmentController extends Controller
                         // Find and refund the paid transaction
                         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
                             ->where('doctor_id', $appointment->provider_id)
-                            ->whereIn('status', ['paid', 'approved'])
+                            ->where('status', 'paid')
                             ->latest()
                             ->first();
                         
@@ -350,7 +350,7 @@ class AppointmentController extends Controller
         }
 
         // Approve the payment
-        $transaction->update(['status' => 'approved']);
+        $transaction->update(['status' => 'paid']);
 
         // Automatically confirm the appointment
         $appointment->update([
