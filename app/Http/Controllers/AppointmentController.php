@@ -46,7 +46,7 @@ class AppointmentController extends Controller
             $query->whereDate('date', $request->date);
         }
 
-        $appointments = $query->latest()->paginate(15);
+        $appointments = $query->latest()->paginate(5);
 
         // For client users, also provide all appointments for availability checking and providers list
         $allAppointments = [];

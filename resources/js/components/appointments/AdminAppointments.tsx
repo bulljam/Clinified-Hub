@@ -108,9 +108,17 @@ interface Provider {
 interface AdminAppointmentsProps {
   appointments: {
     data: Appointment[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
     from?: number;
     to?: number;
-    total?: number;
+    links: Array<{
+      url: string | null;
+      label: string;
+      active: boolean;
+    }>;
   };
   providers?: Provider[];
   filters?: {
@@ -129,10 +137,8 @@ export default function AdminAppointments({ appointments, providers = [], filter
   const [providerFilter, setProviderFilter] = useState(filters.provider_id || '');
   const [dateFilter, setDateFilter] = useState(filters.date || '');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<{action: string, appointmentId: number, newValue: string} | null>(null);
-  const itemsPerPage = 3;
   const isAdmin = ['admin', 'super_admin'].includes(userRole || '');
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -148,12 +154,13 @@ export default function AdminAppointments({ appointments, providers = [], filter
     paid: appointments.data.filter(a => a.payment_status === 'paid').length,
   };
 
-  const applyFilters = () => {
+  const applyFilters = (page: number = 1) => {
     const filterParams = {
       status: statusFilter || undefined,
       payment_status: paymentFilter || undefined,
       provider_id: providerFilter || undefined,
       date: dateFilter || undefined,
+      page: page > 1 ? page : undefined,
     };
     
     // Remove undefined values
@@ -224,6 +231,10 @@ export default function AdminAppointments({ appointments, providers = [], filter
       preserveScroll: true,
       only: ['appointments', 'filters']
     });
+  };
+
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+    applyFilters(page);
   };
 
   return (
@@ -373,8 +384,8 @@ export default function AdminAppointments({ appointments, providers = [], filter
                 Advanced Filters
               </Typography>
             </Box>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={6} alignItems="center" justifyContent="center" flexWrap="wrap">
-              <FormControl size="medium" sx={{ minWidth: 200 }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="stretch" justifyContent="flex-start" flexWrap="wrap">
+              <FormControl size="medium" sx={{ minWidth: 180, flex: { xs: '1 1 100%', sm: '1 1 auto' } }}>
                 <InputLabel>Appointment Status</InputLabel>
                 <Select
                   value={statusFilter}
@@ -389,7 +400,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
                 </Select>
               </FormControl>
 
-              <FormControl size="medium" sx={{ minWidth: 180 }}>
+              <FormControl size="medium" sx={{ minWidth: 160, flex: { xs: '1 1 100%', sm: '1 1 auto' } }}>
                 <InputLabel>Payment Status</InputLabel>
                 <Select
                   value={paymentFilter}
@@ -405,7 +416,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
                 </Select>
               </FormControl>
 
-              <FormControl size="medium" sx={{ minWidth: 200 }}>
+              <FormControl size="medium" sx={{ minWidth: 180, flex: { xs: '1 1 100%', sm: '1 1 auto' } }}>
                 <InputLabel>Healthcare Provider</InputLabel>
                 <Select
                   value={providerFilter}
@@ -432,23 +443,25 @@ export default function AdminAppointments({ appointments, providers = [], filter
                   shrink: true
                 }}
                 sx={{ 
-                  minWidth: 170,
+                  minWidth: 160,
+                  flex: { xs: '1 1 100%', sm: '1 1 auto' },
                   '& .MuiOutlinedInput-root': { borderRadius: 2 }
                 }}
               />
 
-              <Box display="flex" gap={2}>
+              <Box display="flex" gap={2} sx={{ flex: { xs: '1 1 100%', sm: 'none' }, justifyContent: { xs: 'stretch', sm: 'flex-start' } }}>
                 <Button 
                   variant="contained" 
-                  onClick={applyFilters}
+                  onClick={() => applyFilters()}
                   size="large"
                   sx={{ 
                     bgcolor: '#20a09f',
                     borderRadius: 2,
-                    px: 4,
+                    px: 3,
                     py: 1.5,
                     textTransform: 'none',
                     fontWeight: 600,
+                    flex: { xs: 1, sm: 'none' },
                     '&:hover': {
                       bgcolor: '#178f8e',
                     }
@@ -462,10 +475,11 @@ export default function AdminAppointments({ appointments, providers = [], filter
                   size="large"
                   sx={{ 
                     borderRadius: 2,
-                    px: 4,
+                    px: 3,
                     py: 1.5,
                     textTransform: 'none',
-                    fontWeight: 500
+                    fontWeight: 500,
+                    flex: { xs: 1, sm: 'none' }
                   }}
                 >
                   Clear All
@@ -790,7 +804,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
                               </Tooltip>
                               
                               {appointment.payment_status === 'cancelled' && (
-                                <Typography variant="caption" color="warning.main" fontWeight="600">
+                                <Typography variant="caption" color="warning.main" fontWeight="500" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap' }}>
                                   Refund will be processed
                                 </Typography>
                               )}
@@ -872,59 +886,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
                   </TableBody>
                 </Table>
               </TableContainer>
-              
-              {/* Beautiful Pagination */}
-              {totalPages > 1 && (
-                <Box sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
-                  alignItems: 'center', 
-                  mt: 4, 
-                  mb: 2,
-                  gap: 2
-                }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Showing {startIndex + 1}-{Math.min(endIndex, filteredAppointments.length)} of {filteredAppointments.length} appointments
-                  </Typography>
-                  <Pagination
-                    count={totalPages}
-                    page={currentPage}
-                    onChange={(_event, page) => handlePageChange(page)}
-                    size="large"
-                    shape="rounded"
-                    showFirstButton
-                    showLastButton
-                    sx={{
-                      color: '#20a09f',
-                      '& .MuiPaginationItem-root': {
-                        borderRadius: 2,
-                        fontWeight: 600,
-                        minWidth: 40,
-                        height: 40,
-                        border: '1px solid #e0e0e0',
-                        '&:hover': {
-                          bgcolor: '#20a09f',
-                          color: 'white',
-                          transform: 'scale(1.05)',
-                          boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
-                        },
-                        '&.Mui-selected': {
-                          bgcolor: '#20a09f',
-                          color: 'white',
-                          boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
-                          '&:hover': {
-                            bgcolor: '#178f8e',
-                          },
-                        },
-                        transition: 'all 0.2s ease',
-                      },
-                      '& .MuiPaginationItem-ellipsis': {
-                        color: 'text.secondary',
-                      },
-                    }}
-                  />
-                </Box>
-              )}
             </Card>
           )}
 
@@ -940,10 +901,42 @@ export default function AdminAppointments({ appointments, providers = [], filter
       {/* Pagination Footer - Only show in list view */}
       {appointments.data.length > 0 && activeTab === 0 && (
         <Card elevation={0} sx={{ mt: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-          <CardContent sx={{ textAlign: 'center', py: 3 }}>
-            <Typography variant="body2" color="text.secondary">
-              Showing <strong>{appointments.from || 0}-{appointments.to || 0}</strong> of <strong>{appointments.total || 0}</strong> appointments
-            </Typography>
+          <CardContent sx={{ py: 3 }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} alignItems="center" justifyContent="space-between" spacing={2}>
+              <Typography variant="body2" color="text.secondary">
+                Showing <strong>{appointments.from || 0}-{appointments.to || 0}</strong> of <strong>{appointments.total || 0}</strong> appointments
+              </Typography>
+              {appointments.last_page > 1 && (
+                <Pagination
+                  count={appointments.last_page}
+                  page={appointments.current_page}
+                  onChange={handlePageChange}
+                  color="primary"
+                  size="large"
+                  showFirstButton
+                  showLastButton
+                  sx={{
+                    '& .MuiPagination-ul': {
+                      justifyContent: 'center',
+                    },
+                    '& .MuiPaginationItem-root': {
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      '&.Mui-selected': {
+                        bgcolor: '#20a09f',
+                        color: 'white',
+                        '&:hover': {
+                          bgcolor: '#178f8e',
+                        },
+                      },
+                      '&:hover': {
+                        bgcolor: 'rgba(32, 160, 159, 0.1)',
+                      },
+                    },
+                  }}
+                />
+              )}
+            </Stack>
           </CardContent>
         </Card>
       )}

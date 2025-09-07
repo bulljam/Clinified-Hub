@@ -122,28 +122,39 @@ interface User {
 interface PatientAppointmentsProps {
   appointments: {
     data: Appointment[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
     from?: number;
     to?: number;
-    total?: number;
+    links: Array<{
+      url: string | null;
+      label: string;
+      active: boolean;
+    }>;
   };
   allAppointments: Appointment[];
   providers: Provider[];
+  filters?: {
+    status?: string;
+    payment_status?: string;
+    date?: string;
+  };
   currentUser?: User;
 }
 
-export default function PatientAppointments({ appointments, allAppointments, providers, currentUser }: PatientAppointmentsProps) {
+export default function PatientAppointments({ appointments, allAppointments, providers, filters = {}, currentUser }: PatientAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [viewingAppointment, setViewingAppointment] = useState<Appointment | null>(null);
   const [deletingAppointment, setDeletingAppointment] = useState<Appointment | null>(null);
   const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false);
   const [payingAppointment, setPayingAppointment] = useState<Appointment | null>(null);
-  const [statusFilter, setStatusFilter] = useState('');
-  const [paymentFilter, setPaymentFilter] = useState('');
-  const [dateFilter, setDateFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState(filters.status || '');
+  const [paymentFilter, setPaymentFilter] = useState(filters.payment_status || '');
+  const [dateFilter, setDateFilter] = useState(filters.date || '');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
 
 
   const handleDelete = () => {
@@ -179,58 +190,40 @@ export default function PatientAppointments({ appointments, allAppointments, pro
     setPayingAppointment(null);
   };
 
-  // Filter appointments based on current filter values
-  const filteredAppointments = appointments.data.filter(appointment => {
-    // Status filter
-    if (statusFilter && appointment.status !== statusFilter) {
-      return false;
-    }
+  const applyFilters = (page: number = 1) => {
+    const filterParams = {
+      status: statusFilter || undefined,
+      payment_status: paymentFilter || undefined,
+      date: dateFilter || undefined,
+      page: page > 1 ? page : undefined,
+    };
     
-    // Payment filter
-    if (paymentFilter && appointment.payment_status !== paymentFilter) {
-      return false;
-    }
+    // Remove undefined values
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filterParams).filter(([_, value]) => value !== undefined && value !== '')
+    );
     
-    // Date filter
-    if (dateFilter) {
-      const appointmentDate = appointment.date.split('T')[0]; // Handle both date formats
-      if (appointmentDate !== dateFilter) {
-        return false;
-      }
-    }
-    
-    return true;
-  });
-
-  // Update stats to use filtered data
-  const filteredStats = {
-    total: filteredAppointments.length,
-    confirmed: filteredAppointments.filter(a => a.status === 'confirmed').length,
-    pending: filteredAppointments.filter(a => a.status === 'pending').length,
-    paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
-    onHold: filteredAppointments.filter(a => a.payment_status === 'on_hold').length,
-  };
-
-  // Pagination logic
-  const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedAppointments = filteredAppointments.slice(startIndex, endIndex);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleFilterChange = () => {
-    // Filters are applied automatically through filteredAppointments
-    console.log('Applying filters:', { statusFilter, paymentFilter, dateFilter });
+    router.get('/appointments', cleanFilters, {
+      preserveState: true,
+      preserveScroll: true,
+      only: ['appointments', 'filters']
+    });
   };
 
   const clearFilters = () => {
     setStatusFilter('');
     setPaymentFilter('');
     setDateFilter('');
-    setCurrentPage(1); // Reset to first page when clearing filters
+    // Apply cleared filters to server
+    router.get('/appointments', {}, {
+      preserveState: true,
+      preserveScroll: true,
+      only: ['appointments', 'filters']
+    });
+  };
+
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+    applyFilters(page);
   };
 
   return (
@@ -287,7 +280,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
                   <Typography variant="h4" fontWeight="bold" color="#20a09f">
-                    {filteredStats.total}
+                    {appointmentStats.total}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Total Appointments
@@ -308,7 +301,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
                   <Typography variant="h4" fontWeight="bold" color="success.main">
-                    {filteredStats.confirmed}
+                    {appointmentStats.confirmed}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Confirmed
@@ -329,7 +322,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
                   <Typography variant="h4" fontWeight="bold" color="warning.main">
-                    {filteredStats.pending}
+                    {appointmentStats.pending}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Pending
@@ -350,7 +343,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
                   <Typography variant="h4" fontWeight="bold" color="success.main">
-                    {filteredStats.paid}
+                    {appointmentStats.paid}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Paid
@@ -378,8 +371,8 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                 Filter My Appointments
               </Typography>
             </Box>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={6} alignItems="center" justifyContent="center" flexWrap="wrap">
-              <FormControl size="medium" sx={{ minWidth: 200 }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="stretch" justifyContent="flex-start" flexWrap="wrap">
+              <FormControl size="medium" sx={{ minWidth: 180, flex: { xs: '1 1 100%', sm: '1 1 auto' } }}>
                 <InputLabel>Appointment Status</InputLabel>
                 <Select
                   value={statusFilter}
@@ -394,7 +387,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                 </Select>
               </FormControl>
 
-              <FormControl size="medium" sx={{ minWidth: 180 }}>
+              <FormControl size="medium" sx={{ minWidth: 160, flex: { xs: '1 1 100%', sm: '1 1 auto' } }}>
                 <InputLabel>Payment Status</InputLabel>
                 <Select
                   value={paymentFilter}
@@ -421,28 +414,43 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   shrink: true
                 }}
                 sx={{ 
-                  minWidth: 170,
+                  minWidth: 160,
+                  flex: { xs: '1 1 100%', sm: '1 1 auto' },
                   '& .MuiOutlinedInput-root': { borderRadius: 2 }
                 }}
               />
 
-              <Box display="flex" gap={2}>
+              <Box display="flex" gap={2} sx={{ flex: { xs: '1 1 100%', sm: 'none' }, justifyContent: { xs: 'stretch', sm: 'flex-start' } }}>
+                <Button 
+                  variant="contained" 
+                  onClick={() => applyFilters()}
+                  size="large"
+                  sx={{ 
+                    bgcolor: '#20a09f',
+                    borderRadius: 2,
+                    px: 3,
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    flex: { xs: 1, sm: 'none' },
+                    '&:hover': {
+                      bgcolor: '#178f8e',
+                    }
+                  }}
+                >
+                  Apply Filters
+                </Button>
                 <Button 
                   variant="outlined" 
                   onClick={clearFilters}
                   size="large"
                   sx={{ 
                     borderRadius: 2,
-                    px: 4,
+                    px: 3,
                     py: 1.5,
                     textTransform: 'none',
                     fontWeight: 500,
-                    borderColor: '#20a09f',
-                    color: '#20a09f',
-                    '&:hover': {
-                      borderColor: '#178f8e',
-                      bgcolor: 'rgba(32, 160, 159, 0.08)'
-                    }
+                    flex: { xs: 1, sm: 'none' }
                   }}
                 >
                   Clear All
@@ -491,7 +499,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
         </Box>
       </Card>
 
-      {filteredAppointments.length === 0 ? (
+      {appointments.data.length === 0 ? (
         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ textAlign: 'center', py: 8 }}>
             <Avatar sx={{ bgcolor: 'grey.100', width: 80, height: 80, mx: 'auto', mb: 3 }}>
@@ -579,7 +587,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {paginatedAppointments.map((appointment, index) => (
+                    {appointments.data.map((appointment, index) => (
                       <Fade in={true} timeout={300 + index * 100} key={appointment.id}>
                         <TableRow 
                           hover
@@ -830,64 +838,12 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                 </Table>
               </TableContainer>
               
-              {/* Beautiful Pagination */}
-              {totalPages > 1 && (
-                <Box sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
-                  alignItems: 'center', 
-                  mt: 4, 
-                  mb: 2,
-                  gap: 2
-                }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Showing {startIndex + 1}-{Math.min(endIndex, filteredAppointments.length)} of {filteredAppointments.length} appointments
-                  </Typography>
-                  <Pagination
-                    count={totalPages}
-                    page={currentPage}
-                    onChange={(_event, page) => handlePageChange(page)}
-                    size="large"
-                    shape="rounded"
-                    showFirstButton
-                    showLastButton
-                    sx={{
-                      color: '#20a09f',
-                      '& .MuiPaginationItem-root': {
-                        borderRadius: 2,
-                        fontWeight: 600,
-                        minWidth: 40,
-                        height: 40,
-                        border: '1px solid #e0e0e0',
-                        '&:hover': {
-                          bgcolor: '#20a09f',
-                          color: 'white',
-                          transform: 'scale(1.05)',
-                          boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
-                        },
-                        '&.Mui-selected': {
-                          bgcolor: '#20a09f',
-                          color: 'white',
-                          boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
-                          '&:hover': {
-                            bgcolor: '#178f8e',
-                          },
-                        },
-                        transition: 'all 0.2s ease',
-                      },
-                      '& .MuiPaginationItem-ellipsis': {
-                        color: 'text.secondary',
-                      },
-                    }}
-                  />
-                </Box>
-              )}
             </Card>
           )}
 
           {activeTab === 1 && (
             <AppointmentCalendar
-              appointments={filteredAppointments}
+              appointments={appointments.data}
               userRole="client"
             />
           )}
@@ -895,17 +851,44 @@ export default function PatientAppointments({ appointments, allAppointments, pro
       )}
 
       {/* Pagination Footer - Only show in list view */}
-      {filteredAppointments.length > 0 && activeTab === 0 && (
+      {appointments.data.length > 0 && activeTab === 0 && (
         <Card elevation={0} sx={{ mt: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-          <CardContent sx={{ textAlign: 'center', py: 3 }}>
-            <Typography variant="body2" color="text.secondary">
-              Showing <strong>{filteredAppointments.length}</strong> of <strong>{appointments.data.length}</strong> appointments
-              {(statusFilter || paymentFilter || dateFilter) && (
-                <Box component="span" sx={{ color: '#20a09f', fontWeight: 600, ml: 1 }}>
-                  (filtered)
-                </Box>
+          <CardContent sx={{ py: 3 }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} alignItems="center" justifyContent="space-between" spacing={2}>
+              <Typography variant="body2" color="text.secondary">
+                Showing <strong>{appointments.from || 0}-{appointments.to || 0}</strong> of <strong>{appointments.total || 0}</strong> appointments
+              </Typography>
+              {appointments.last_page > 1 && (
+                <Pagination
+                  count={appointments.last_page}
+                  page={appointments.current_page}
+                  onChange={handlePageChange}
+                  color="primary"
+                  size="large"
+                  showFirstButton
+                  showLastButton
+                  sx={{
+                    '& .MuiPagination-ul': {
+                      justifyContent: 'center',
+                    },
+                    '& .MuiPaginationItem-root': {
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      '&.Mui-selected': {
+                        bgcolor: '#20a09f',
+                        color: 'white',
+                        '&:hover': {
+                          bgcolor: '#178f8e',
+                        },
+                      },
+                      '&:hover': {
+                        bgcolor: 'rgba(32, 160, 159, 0.1)',
+                      },
+                    },
+                  }}
+                />
               )}
-            </Typography>
+            </Stack>
           </CardContent>
         </Card>
       )}

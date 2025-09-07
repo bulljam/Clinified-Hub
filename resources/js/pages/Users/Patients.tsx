@@ -14,7 +14,6 @@ import {
     InputAdornment,
     InputLabel,
     MenuItem,
-    Pagination,
     Select,
     Table,
     TableBody,
@@ -91,7 +90,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Patients({ patients, userRole, cities, filters }: PatientsProps) {
-    const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(true);
     const [localFilters, setLocalFilters] = useState(filters);
@@ -99,9 +97,9 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
     const [openViewModal, setOpenViewModal] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [deleteReason, setDeleteReason] = useState('');
-    const itemsPerPage = 3;
 
-    const filteredPatients = patients.filter(patient => {
+    // Apply search filtering on top of server-filtered results
+    const searchFilteredPatients = patients.filter(patient => {
         if (searchQuery && !(
             patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -112,15 +110,6 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
         return true;
     });
 
-    const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedPatients = filteredPatients.slice(startIndex, endIndex);
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-    };
-
     const handleFilterChange = (key: string, value: string | number) => {
         setLocalFilters(prev => ({
             ...prev,
@@ -129,16 +118,25 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
     };
 
     const applyFilters = () => {
-        const params = new URLSearchParams();
+        const filterParams: Record<string, string> = {};
         Object.entries(localFilters).forEach(([key, value]) => {
-            if (value) params.append(key, value.toString());
+            if (value) filterParams[key] = value.toString();
         });
-        router.get(`/patients?${params.toString()}`);
+        
+        router.get('/patients', filterParams, {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['patients', 'filters']
+        });
     };
 
     const clearFilters = () => {
         setLocalFilters({});
-        router.get('/patients');
+        router.get('/patients', {}, {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['patients', 'filters']
+        });
     };
 
     const handleViewPatient = (patient: Patient) => {
@@ -221,10 +219,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                 fullWidth
                                 placeholder="Search patients by name, email, or city..."
                                 value={searchQuery}
-                                onChange={(e) => {
-                                    setSearchQuery(e.target.value);
-                                    setCurrentPage(1);
-                                }}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
@@ -373,7 +368,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="h3" fontWeight="bold" color="#20a09f" mb={1}>
-                                {filteredPatients.length}
+                                {searchFilteredPatients.length}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 {searchQuery || Object.values(localFilters).some(v => v) ? 'Matching Patients' : userRole === 'provider' ? 'My Patients' : 'Total Patients'}
@@ -384,7 +379,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="h3" fontWeight="bold" color="success.main" mb={1}>
-                                {filteredPatients.reduce((sum, patient) => sum + patient.appointments_count, 0)}
+                                {searchFilteredPatients.reduce((sum, patient) => sum + patient.appointments_count, 0)}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 {searchQuery || Object.values(localFilters).some(v => v) ? 'Filtered Appointments' : 'Total Appointments'}
@@ -395,7 +390,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="h3" fontWeight="bold" color="info.main" mb={1}>
-                                {[...new Set(filteredPatients.map(patient => patient.city).filter(city => city))].length}
+                                {[...new Set(searchFilteredPatients.map(patient => patient.city).filter(city => city))].length}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 {searchQuery || Object.values(localFilters).some(v => v) ? 'Filtered Cities' : 'Cities'}
@@ -405,7 +400,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                 </Box>
 
                 {/* Patients Table */}
-                {filteredPatients.length > 0 ? (
+                {searchFilteredPatients.length > 0 ? (
                     <>
                         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
                             <TableContainer sx={{ 
@@ -477,7 +472,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {paginatedPatients.map((patient, index) => (
+                                        {searchFilteredPatients.map((patient, index) => (
                                             <Fade in={true} timeout={300 + index * 50} key={patient.id}>
                                                 <TableRow 
                                                     hover
@@ -639,59 +634,6 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                     </TableBody>
                                 </Table>
                             </TableContainer>
-                            
-                            {/* Pagination */}
-                            {totalPages > 1 && (
-                                <Box sx={{ 
-                                    display: 'flex', 
-                                    justifyContent: 'center', 
-                                    alignItems: 'center', 
-                                    mt: 4, 
-                                    mb: 2,
-                                    gap: 2
-                                }}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Showing {startIndex + 1}-{Math.min(endIndex, filteredPatients.length)} of {filteredPatients.length} patients
-                                    </Typography>
-                                    <Pagination
-                                        count={totalPages}
-                                        page={currentPage}
-                                        onChange={(_event, page) => handlePageChange(page)}
-                                        size="large"
-                                        shape="rounded"
-                                        showFirstButton
-                                        showLastButton
-                                        sx={{
-                                            color: '#20a09f',
-                                            '& .MuiPaginationItem-root': {
-                                                borderRadius: 2,
-                                                fontWeight: 600,
-                                                minWidth: 40,
-                                                height: 40,
-                                                border: '1px solid #e0e0e0',
-                                                '&:hover': {
-                                                    bgcolor: '#20a09f',
-                                                    color: 'white',
-                                                    transform: 'scale(1.05)',
-                                                    boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
-                                                },
-                                                '&.Mui-selected': {
-                                                    bgcolor: '#20a09f',
-                                                    color: 'white',
-                                                    boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
-                                                    '&:hover': {
-                                                        bgcolor: '#178f8e',
-                                                    },
-                                                },
-                                                transition: 'all 0.2s ease',
-                                            },
-                                            '& .MuiPaginationItem-ellipsis': {
-                                                color: 'text.secondary',
-                                            },
-                                        }}
-                                    />
-                                </Box>
-                            )}
                         </Card>
                     </>
                 ) : (
