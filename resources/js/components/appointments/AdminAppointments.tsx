@@ -99,6 +99,12 @@ interface Appointment {
   };
 }
 
+interface Provider {
+  id: number;
+  name: string;
+  email: string;
+}
+
 interface AdminAppointmentsProps {
   appointments: {
     data: Appointment[];
@@ -106,6 +112,7 @@ interface AdminAppointmentsProps {
     to?: number;
     total?: number;
   };
+  providers?: Provider[];
   filters?: {
     status?: string;
     payment_status?: string;
@@ -115,7 +122,7 @@ interface AdminAppointmentsProps {
   userRole?: string;
 }
 
-export default function AdminAppointments({ appointments, filters = {}, userRole }: AdminAppointmentsProps) {
+export default function AdminAppointments({ appointments, providers = [], filters = {}, userRole }: AdminAppointmentsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [statusFilter, setStatusFilter] = useState(filters.status || '');
   const [paymentFilter, setPaymentFilter] = useState(filters.payment_status || '');
@@ -132,42 +139,7 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
     setActiveTab(newValue);
   };
 
-  // Statistics for medical dashboard feel
-  // Filter appointments based on current filter values
-  const filteredAppointments = appointments.data.filter(appointment => {
-    // Status filter
-    if (statusFilter && appointment.status !== statusFilter) {
-      return false;
-    }
-    
-    // Payment filter
-    if (paymentFilter && appointment.payment_status !== paymentFilter) {
-      return false;
-    }
-    
-    // Provider filter
-    if (providerFilter && appointment.provider.id.toString() !== providerFilter) {
-      return false;
-    }
-    
-    // Date filter
-    if (dateFilter) {
-      const appointmentDate = appointment.date.split('T')[0]; // Handle both date formats
-      if (appointmentDate !== dateFilter) {
-        return false;
-      }
-    }
-    
-    return true;
-  });
-
-  // Update stats to use filtered data
-  const filteredStats = {
-    total: filteredAppointments.length,
-    confirmed: filteredAppointments.filter(a => a.status === 'confirmed').length,
-    pending: filteredAppointments.filter(a => a.status === 'pending').length,
-    paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
-  };
+  // Statistics for medical dashboard feel - using server-filtered data
 
   const appointmentStats = {
     total: appointments.data.length,
@@ -246,17 +218,12 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
     setPaymentFilter('');
     setProviderFilter('');
     setDateFilter('');
-    setCurrentPage(1); // Reset to first page when clearing filters
-  };
-
-  // Pagination logic
-  const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedAppointments = filteredAppointments.slice(startIndex, endIndex);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    // Apply cleared filters to server
+    router.get('/appointments', {}, {
+      preserveState: true,
+      preserveScroll: true,
+      only: ['appointments', 'filters']
+    });
   };
 
   return (
@@ -315,7 +282,7 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
                   <Typography variant="h4" fontWeight="bold" color="#20a09f">
-                    {filteredStats.total}
+                    {appointmentStats.total}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Total Appointments
@@ -438,6 +405,23 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
                 </Select>
               </FormControl>
 
+              <FormControl size="medium" sx={{ minWidth: 200 }}>
+                <InputLabel>Healthcare Provider</InputLabel>
+                <Select
+                  value={providerFilter}
+                  label="Healthcare Provider"
+                  onChange={(e) => setProviderFilter(e.target.value)}
+                  sx={{ borderRadius: 2 }}
+                >
+                  <MenuItem value="">All Providers</MenuItem>
+                  {providers.map((provider) => (
+                    <MenuItem key={provider.id} value={provider.id.toString()}>
+                      Dr. {provider.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
               <TextField
                 size="medium"
                 label="Filter by Date"
@@ -454,6 +438,24 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
               />
 
               <Box display="flex" gap={2}>
+                <Button 
+                  variant="contained" 
+                  onClick={applyFilters}
+                  size="large"
+                  sx={{ 
+                    bgcolor: '#20a09f',
+                    borderRadius: 2,
+                    px: 4,
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    '&:hover': {
+                      bgcolor: '#178f8e',
+                    }
+                  }}
+                >
+                  Apply Filters
+                </Button>
                 <Button 
                   variant="outlined" 
                   onClick={clearFilters}
@@ -593,7 +595,7 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {paginatedAppointments.map((appointment, index) => (
+                    {appointments.data.map((appointment, index) => (
                       <Fade in={true} timeout={300 + index * 100} key={appointment.id}>
                         <TableRow 
                           hover

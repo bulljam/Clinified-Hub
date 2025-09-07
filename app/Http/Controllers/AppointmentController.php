@@ -58,6 +58,11 @@ class AppointmentController extends Controller
             $providers = User::where('role', 'provider')
                 ->select('id', 'name', 'email')
                 ->get();
+        } elseif (in_array($user->role, ['admin', 'super_admin'])) {
+            // For admin users, provide providers list for filtering
+            $providers = User::where('role', 'provider')
+                ->select('id', 'name', 'email')
+                ->get();
         }
 
         return Inertia::render('appointments/Index', [
