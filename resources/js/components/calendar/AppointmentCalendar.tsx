@@ -30,7 +30,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'paid' | 'approved' | 'on_hold' | 'cancelled' | 'refunded';
+  payment_status: 'pending' | 'paid' | 'on_hold' | 'cancelled';
   user: {
     id: number;
     name: string;

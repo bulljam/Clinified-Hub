@@ -112,7 +112,7 @@ class PaymentController extends Controller
         $appointment = Appointment::find($request->appointment_id);
         if ($appointment) {
             $appointment->update([
-                'payment_status' => 'approved',
+                'payment_status' => 'paid',
                 'status' => 'confirmed'
             ]);
         }

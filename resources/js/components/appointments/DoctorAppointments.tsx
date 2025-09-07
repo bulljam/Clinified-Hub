@@ -76,13 +76,11 @@ const getPaymentStatusColor = (paymentStatus: string) => {
   switch (paymentStatus) {
     case 'pending':
       return 'warning';
-    case 'approved':
     case 'paid':
       return 'success';
     case 'on_hold':
       return 'info';
     case 'cancelled':
-    case 'refunded':
       return 'error';
     default:
       return 'default';
@@ -94,7 +92,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'approved' | 'paid' | 'on_hold' | 'cancelled' | 'refunded';
+  payment_status: 'pending' | 'paid' | 'on_hold' | 'cancelled';
   user: {
     id: number;
     name: string;
@@ -145,7 +143,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     total: appointments.data.length,
     confirmed: appointments.data.filter(a => a.status === 'confirmed').length,
     pending: appointments.data.filter(a => a.status === 'pending').length,
-    paid: appointments.data.filter(a => a.payment_status === 'approved' || a.payment_status === 'paid').length,
+    paid: appointments.data.filter(a => a.payment_status === 'paid').length,
     onHold: appointments.data.filter(a => a.payment_status === 'on_hold').length,
   };
 
@@ -177,7 +175,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
     total: filteredAppointments.length,
     confirmed: filteredAppointments.filter(a => a.status === 'confirmed').length,
     pending: filteredAppointments.filter(a => a.status === 'pending').length,
-    paid: filteredAppointments.filter(a => a.payment_status === 'approved' || a.payment_status === 'paid').length,
+    paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
     onHold: filteredAppointments.filter(a => a.payment_status === 'on_hold').length,
   };
 
@@ -260,7 +258,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
         router.patch(`/appointments/${selectedAppointment.id}`, { status: 'cancelled' });
         break;
       case 'payment':
-        router.patch(`/appointments/${selectedAppointment.id}`, { payment_status: 'approved' });
+        router.post(`/appointments/${selectedAppointment.id}/approve-payment`);
         break;
       case 'update':
         setUpdateDialogOpen(true);
@@ -433,7 +431,6 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                   <MenuItem value="">All Payments</MenuItem>
                   <MenuItem value="pending">🟡 Pending</MenuItem>
                   <MenuItem value="on_hold">🔵 On Hold</MenuItem>
-                  <MenuItem value="approved">🟢 Approved</MenuItem>
                   <MenuItem value="paid">🟢 Paid</MenuItem>
                   <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
                   <MenuItem value="refunded">🔴 Refunded</MenuItem>
@@ -715,14 +712,12 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                             <Box display="flex" flexDirection="column" gap={1}>
                               <Chip
                                 label={`${
-                                  appointment.payment_status === 'approved' || appointment.payment_status === 'paid'
-                                    ? '🟢 Approved' 
+                                  appointment.payment_status === 'paid'
+                                    ? '🟢 Paid' 
                                     : appointment.payment_status === 'on_hold' 
                                     ? '🔵 On Hold'
                                     : appointment.payment_status === 'cancelled'
                                     ? '🔴 Cancelled'
-                                    : appointment.payment_status === 'refunded'
-                                    ? '🔴 Refunded'
                                     : '🟡 Pending'
                                 }`}
                                 color={getPaymentStatusColor(appointment.payment_status)}
@@ -755,10 +750,15 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                                 }}
                               />
                               
-                              
                               {appointment.payment_status === 'on_hold' && (
                                 <Typography variant="caption" color="text.secondary">
                                   Click confirm to approve
+                                </Typography>
+                              )}
+                              
+                              {appointment.payment_status === 'cancelled' && (
+                                <Typography variant="caption" color="warning.main" fontWeight="600">
+                                  Refund will be processed for patient
                                 </Typography>
                               )}
                             </Box>
@@ -818,7 +818,7 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                               )}
                               
                               
-                              {appointment.status === 'pending' && (
+                              {appointment.status === 'pending' && appointment.payment_status !== 'paid' && (
                                 <Tooltip title="Cancel Appointment" arrow>
                                   <IconButton
                                     size="medium"
@@ -1133,8 +1133,8 @@ export default function DoctorAppointments({ appointments }: DoctorAppointmentsP
                       <Box mt={0.5}>
                         <Chip
                           label={`${
-                            viewingAppointment.payment_status === 'approved' || viewingAppointment.payment_status === 'paid'
-                              ? '🟢 Approved' 
+                            viewingAppointment.payment_status === 'paid'
+                              ? '🟢 Paid' 
                               : viewingAppointment.payment_status === 'on_hold' 
                               ? '🔵 On Hold'
                               : viewingAppointment.payment_status === 'cancelled'

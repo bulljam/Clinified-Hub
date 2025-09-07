@@ -177,7 +177,7 @@ class AppointmentController extends Controller
 
         $validated = $request->validate([
             'status' => 'required|in:pending,confirmed,cancelled',
-            'payment_status' => 'sometimes|in:pending,on_hold,paid,approved,cancelled,refunded',
+            'payment_status' => 'sometimes|in:pending,on_hold,paid,cancelled',
         ]);
 
         // Handle combined appointment and payment status logic
@@ -216,7 +216,7 @@ class AppointmentController extends Controller
                         }
                         
                         $validated['payment_status'] = 'cancelled';
-                    } elseif ($appointment->payment_status === 'paid' || $appointment->payment_status === 'approved') {
+                    } elseif ($appointment->payment_status === 'paid') {
                         // Find and refund the paid transaction
                         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
                             ->where('doctor_id', $appointment->provider_id)
@@ -225,10 +225,10 @@ class AppointmentController extends Controller
                             ->first();
                         
                         if ($transaction) {
-                            $transaction->update(['status' => 'refunded']);
+                            $transaction->update(['status' => 'cancelled']);
                         }
                         
-                        $validated['payment_status'] = 'refunded';
+                        $validated['payment_status'] = 'cancelled';
                     } else {
                         // For pending payments, just cancel the payment status
                         $validated['payment_status'] = 'cancelled';
@@ -354,7 +354,7 @@ class AppointmentController extends Controller
 
         // Automatically confirm the appointment
         $appointment->update([
-            'payment_status' => 'approved',
+            'payment_status' => 'paid',
             'status' => 'confirmed'
         ]);
 

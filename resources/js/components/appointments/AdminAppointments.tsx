@@ -27,6 +27,11 @@ import {
   Divider,
   LinearProgress,
   Pagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -67,6 +72,10 @@ const getPaymentStatusColor = (paymentStatus: string) => {
       return 'warning';
     case 'paid':
       return 'success';
+    case 'on_hold':
+      return 'info';
+    case 'cancelled':
+      return 'error';
     default:
       return 'default';
   }
@@ -77,7 +86,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'paid';
+  payment_status: 'pending' | 'paid' | 'on_hold' | 'cancelled';
   user: {
     id: number;
     name: string;
@@ -114,7 +123,10 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
   const [dateFilter, setDateFilter] = useState(filters.date || '');
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<{action: string, appointmentId: number, newValue: string} | null>(null);
   const itemsPerPage = 3;
+  const isAdmin = ['admin', 'super_admin'].includes(userRole || '');
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -164,9 +176,24 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
     paid: appointments.data.filter(a => a.payment_status === 'paid').length,
   };
 
-  const handleFilterChange = () => {
-    // Filters are applied automatically through filteredAppointments
-    console.log('Applying filters:', { statusFilter, paymentFilter, providerFilter, dateFilter });
+  const applyFilters = () => {
+    const filterParams = {
+      status: statusFilter || undefined,
+      payment_status: paymentFilter || undefined,
+      provider_id: providerFilter || undefined,
+      date: dateFilter || undefined,
+    };
+    
+    // Remove undefined values
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filterParams).filter(([_, value]) => value !== undefined && value !== '')
+    );
+    
+    router.get('/appointments', cleanFilters, {
+      preserveState: true,
+      preserveScroll: true,
+      only: ['appointments', 'filters']
+    });
   };
 
   const handleDelete = (appointmentId: number) => {
@@ -176,13 +203,42 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
   };
 
   const handleQuickStatusUpdate = (appointmentId: number, status: string) => {
-    router.patch(`/appointments/${appointmentId}`, { status });
+    if (isAdmin) {
+      setPendingAction({action: 'status', appointmentId, newValue: status});
+      setAuthDialogOpen(true);
+    } else {
+      router.patch(`/appointments/${appointmentId}`, { status });
+    }
   };
 
   const handlePaymentStatusUpdate = (appointmentId: number, paymentStatus: string) => {
-    router.patch(`/appointments/${appointmentId}`, {
-      payment_status: paymentStatus,
-    });
+    if (isAdmin) {
+      setPendingAction({action: 'payment', appointmentId, newValue: paymentStatus});
+      setAuthDialogOpen(true);
+    } else {
+      router.patch(`/appointments/${appointmentId}`, {
+        payment_status: paymentStatus,
+      });
+    }
+  };
+
+  const handleAuthConfirm = () => {
+    if (pendingAction) {
+      if (pendingAction.action === 'status') {
+        router.patch(`/appointments/${pendingAction.appointmentId}`, { status: pendingAction.newValue });
+      } else if (pendingAction.action === 'payment') {
+        router.patch(`/appointments/${pendingAction.appointmentId}`, {
+          payment_status: pendingAction.newValue,
+        });
+      }
+    }
+    setAuthDialogOpen(false);
+    setPendingAction(null);
+  };
+
+  const handleAuthCancel = () => {
+    setAuthDialogOpen(false);
+    setPendingAction(null);
   };
 
   const clearFilters = () => {
@@ -377,6 +433,8 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
                   <MenuItem value="">All Payments</MenuItem>
                   <MenuItem value="pending">🟡 Pending</MenuItem>
                   <MenuItem value="paid">🟢 Paid</MenuItem>
+                  <MenuItem value="on_hold">🔵 On Hold</MenuItem>
+                  <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
                 </Select>
               </FormControl>
 
@@ -640,27 +698,28 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
                             </Box>
                           </TableCell>
                           <TableCell sx={{ py: 3, minWidth: 120 }}>
-                            <Tooltip title="Click to cycle: Pending → Confirmed → Cancelled" arrow>
+                            <Tooltip title={isAdmin ? "Read-only for admin users" : "Click to cycle: Pending → Confirmed → Cancelled"} arrow>
                               <Chip
                                 label={`${appointment.status === 'confirmed' ? '🟢' : appointment.status === 'pending' ? '🟡' : '🔴'} ${appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}`}
                                 color={getStatusColor(appointment.status)}
                                 size="medium"
-                                onClick={() => {
+                                onClick={isAdmin ? undefined : () => {
                                   const newStatus = appointment.status === 'pending' ? 'confirmed' : 
                                                   appointment.status === 'confirmed' ? 'cancelled' : 'pending';
                                   handleQuickStatusUpdate(appointment.id, newStatus);
                                 }}
                                 sx={{ 
-                                  cursor: 'pointer',
+                                  cursor: isAdmin ? 'default' : 'pointer',
                                   fontWeight: 600,
                                   minWidth: 100,
                                   height: 32,
                                   borderRadius: 2,
                                   '&:hover': {
-                                    transform: 'scale(1.05)',
-                                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                                    transform: isAdmin ? 'none' : 'scale(1.05)',
+                                    boxShadow: isAdmin ? 'none' : '0 4px 8px rgba(0,0,0,0.2)',
                                   },
                                   transition: 'all 0.2s ease',
+                                  opacity: isAdmin ? 0.7 : 1,
                                   '&.MuiChip-colorWarning': {
                                     bgcolor: '#fff3cd',
                                     color: '#856404',
@@ -681,40 +740,59 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
                             </Tooltip>
                           </TableCell>
                           <TableCell sx={{ py: 3, minWidth: 120 }}>
-                            <Tooltip title="Click to toggle: Pending ↔ Paid" arrow>
-                              <Chip
-                                icon={<PaymentIcon fontSize="small" />}
-                                label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
-                                color={getPaymentStatusColor(appointment.payment_status)}
-                                size="medium"
-                                onClick={() => {
-                                  const newPaymentStatus = appointment.payment_status === 'pending' ? 'paid' : 'pending';
-                                  handlePaymentStatusUpdate(appointment.id, newPaymentStatus);
-                                }}
-                                sx={{ 
-                                  cursor: 'pointer',
-                                  fontWeight: 600,
-                                  minWidth: 100,
-                                  height: 32,
-                                  borderRadius: 2,
-                                  '&:hover': {
-                                    transform: 'scale(1.05)',
-                                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-                                  },
-                                  transition: 'all 0.2s ease',
-                                  '&.MuiChip-colorWarning': {
-                                    bgcolor: '#fff3cd',
-                                    color: '#856404',
-                                    borderColor: '#ffeaa7',
-                                  },
-                                  '&.MuiChip-colorSuccess': {
-                                    bgcolor: '#d4edda',
-                                    color: '#155724',
-                                    borderColor: '#a7d8a7',
-                                  }
-                                }}
-                              />
-                            </Tooltip>
+                            <Box display="flex" flexDirection="column" gap={1}>
+                              <Tooltip title={isAdmin ? "Read-only for admin users" : "Click to toggle payment status"} arrow>
+                                <Chip
+                                  icon={<PaymentIcon fontSize="small" />}
+                                  label={appointment.payment_status.charAt(0).toUpperCase() + appointment.payment_status.slice(1)}
+                                  color={getPaymentStatusColor(appointment.payment_status)}
+                                  size="medium"
+                                  onClick={isAdmin ? undefined : () => {
+                                    const newPaymentStatus = appointment.payment_status === 'pending' ? 'paid' : 'pending';
+                                    handlePaymentStatusUpdate(appointment.id, newPaymentStatus);
+                                  }}
+                                  sx={{ 
+                                    cursor: isAdmin ? 'default' : 'pointer',
+                                    fontWeight: 600,
+                                    minWidth: 100,
+                                    height: 32,
+                                    borderRadius: 2,
+                                    '&:hover': {
+                                      transform: isAdmin ? 'none' : 'scale(1.05)',
+                                      boxShadow: isAdmin ? 'none' : '0 4px 8px rgba(0,0,0,0.2)',
+                                    },
+                                    transition: 'all 0.2s ease',
+                                    opacity: isAdmin ? 0.7 : 1,
+                                    '&.MuiChip-colorWarning': {
+                                      bgcolor: '#fff3cd',
+                                      color: '#856404',
+                                      borderColor: '#ffeaa7',
+                                    },
+                                    '&.MuiChip-colorSuccess': {
+                                      bgcolor: '#d4edda',
+                                      color: '#155724',
+                                      borderColor: '#a7d8a7',
+                                    },
+                                    '&.MuiChip-colorInfo': {
+                                      bgcolor: '#d1ecf1',
+                                      color: '#0c5460',
+                                      borderColor: '#bee5eb',
+                                    },
+                                    '&.MuiChip-colorError': {
+                                      bgcolor: '#f8d7da',
+                                      color: '#721c24',
+                                      borderColor: '#f1aeb5',
+                                    }
+                                  }}
+                                />
+                              </Tooltip>
+                              
+                              {appointment.payment_status === 'cancelled' && (
+                                <Typography variant="caption" color="warning.main" fontWeight="600">
+                                  Refund will be processed
+                                </Typography>
+                              )}
+                            </Box>
                           </TableCell>
                           <TableCell align="right" sx={{ py: 3, minWidth: 180 }}>
                             <Stack direction="row" spacing={1} justifyContent="flex-end">
@@ -867,6 +945,56 @@ export default function AdminAppointments({ appointments, filters = {}, userRole
           </CardContent>
         </Card>
       )}
+
+      {/* Admin Authorization Dialog */}
+      <Dialog
+        open={authDialogOpen}
+        onClose={handleAuthCancel}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
+          ⚠️ Administrative Action Required
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            You are about to modify an appointment {pendingAction?.action === 'payment' ? 'payment status' : 'status'}.
+          </DialogContentText>
+          <DialogContentText sx={{ 
+            backgroundColor: '#fff3cd', 
+            padding: 2, 
+            borderRadius: 1, 
+            border: '1px solid #ffeaa7',
+            color: '#856404'
+          }}>
+            <strong>Important:</strong> This action is primarily intended for healthcare providers. 
+            Admin access is provided for exceptional circumstances only, such as:
+            <br />• Provider is unable to access their account
+            <br />• Technical issues preventing provider action
+            <br />• Emergency situations requiring immediate intervention
+          </DialogContentText>
+          <DialogContentText sx={{ mt: 2, fontWeight: 'bold' }}>
+            Do you confirm that you have the necessary authorization to proceed with this action?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, gap: 2 }}>
+          <Button 
+            onClick={handleAuthCancel}
+            variant="outlined"
+            sx={{ px: 4, py: 1 }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleAuthConfirm}
+            variant="contained"
+            color="error"
+            sx={{ px: 4, py: 1 }}
+          >
+            Proceed with Administrative Override
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

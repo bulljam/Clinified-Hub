@@ -140,7 +140,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
   });
 
   const totalAmount = filteredTransactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
-  const approvedAmount = filteredTransactions
+  const paidAmount = filteredTransactions
     .filter(t => t.status === 'paid')
     .reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
@@ -198,7 +198,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
             <CardContent sx={{ p: 3, textAlign: 'center' }}>
               <PaymentIcon sx={{ fontSize: 40, color: '#4caf50', mb: 1 }} />
               <Typography variant="h5" fontWeight="600" color="#4caf50">
-                ${approvedAmount.toFixed(2)}
+                ${paidAmount.toFixed(2)}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Approved Amount

@@ -76,12 +76,10 @@ const getPaymentStatusColor = (paymentStatus: string) => {
     case 'pending':
       return 'warning';
     case 'paid':
-    case 'approved':
       return 'success';
     case 'on_hold':
       return 'info';
     case 'cancelled':
-    case 'refunded':
       return 'error';
     default:
       return 'default';
@@ -100,7 +98,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  payment_status: 'pending' | 'paid' | 'approved' | 'on_hold' | 'cancelled' | 'refunded';
+  payment_status: 'pending' | 'paid' | 'on_hold' | 'cancelled';
   notes?: string;
   user: {
     id: number;
@@ -167,7 +165,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
     total: appointments.data.length,
     confirmed: appointments.data.filter(a => a.status === 'confirmed').length,
     pending: appointments.data.filter(a => a.status === 'pending').length,
-    paid: appointments.data.filter(a => a.payment_status === 'paid' || a.payment_status === 'approved').length,
+    paid: appointments.data.filter(a => a.payment_status === 'paid').length,
     onHold: appointments.data.filter(a => a.payment_status === 'on_hold').length,
   };
 
@@ -209,7 +207,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
     total: filteredAppointments.length,
     confirmed: filteredAppointments.filter(a => a.status === 'confirmed').length,
     pending: filteredAppointments.filter(a => a.status === 'pending').length,
-    paid: filteredAppointments.filter(a => a.payment_status === 'paid' || a.payment_status === 'approved').length,
+    paid: filteredAppointments.filter(a => a.payment_status === 'paid').length,
     onHold: filteredAppointments.filter(a => a.payment_status === 'on_hold').length,
   };
 
@@ -408,7 +406,6 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   <MenuItem value="pending">🟡 Pending</MenuItem>
                   <MenuItem value="on_hold">🔵 On Hold</MenuItem>
                   <MenuItem value="paid">🟢 Paid</MenuItem>
-                  <MenuItem value="approved">🟢 Approved</MenuItem>
                   <MenuItem value="cancelled">🔴 Cancelled</MenuItem>
                   <MenuItem value="refunded">🔴 Refunded</MenuItem>
                 </Select>
@@ -699,7 +696,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                                     ? appointment.payment_status === 'refunded'
                                       ? '🔴 Refunded'
                                       : '🔴 Cancelled'
-                                    : appointment.payment_status === 'paid' || appointment.payment_status === 'approved'
+                                    : appointment.payment_status === 'paid'
                                     ? '🟢 Paid' 
                                     : appointment.payment_status === 'on_hold' 
                                     ? '🔵 On Hold' 
@@ -979,22 +976,14 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                     <strong>Payment:</strong> 
                     <Chip
-                      label={viewingAppointment.status === 'cancelled' 
-                        ? viewingAppointment.payment_status === 'refunded'
-                          ? 'Refunded'
-                          : 'Cancelled'
-                        : viewingAppointment.payment_status.charAt(0).toUpperCase() + viewingAppointment.payment_status.slice(1)
-                      }
-                      color={viewingAppointment.status === 'cancelled' ? 'error' : getPaymentStatusColor(viewingAppointment.payment_status)}
+                      label={viewingAppointment.payment_status.charAt(0).toUpperCase() + viewingAppointment.payment_status.slice(1)}
+                      color={getPaymentStatusColor(viewingAppointment.payment_status)}
                       size="small"
                     />
                   </Typography>
-                  {viewingAppointment.status === 'cancelled' && (viewingAppointment.payment_status === 'refunded' || viewingAppointment.payment_status === 'cancelled') && viewingAppointment.payment_status !== 'pending' && (
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', fontStyle: 'italic', ml: 9 }}>
-                      {viewingAppointment.payment_status === 'refunded' 
-                        ? 'Refund has been processed to your original payment method'
-                        : 'Refund will be processed within 3-5 business days'
-                      }
+                  {viewingAppointment.payment_status === 'cancelled' && (
+                    <Typography variant="caption" color="warning.main" fontWeight="600" sx={{ fontSize: '0.75rem', ml: 9 }}>
+                      Refund will be processed within 3-5 business days
                     </Typography>
                   )}
                 </Box>
