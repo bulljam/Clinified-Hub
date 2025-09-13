@@ -173,7 +173,6 @@ export default function DoctorAppointments({ appointments, filters = {} }: Docto
       page: page > 1 ? page : undefined,
     };
     
-    // Remove undefined values
     const cleanFilters = Object.fromEntries(
       Object.entries(filterParams).filter(([_, value]) => value !== undefined && value !== '')
     );
@@ -189,7 +188,6 @@ export default function DoctorAppointments({ appointments, filters = {} }: Docto
     setStatusFilter('');
     setPaymentFilter('');
     setDateFilter('');
-    // Apply cleared filters to server
     router.get('/appointments', {}, {
       preserveState: true,
       preserveScroll: true,

@@ -147,8 +147,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
     setActiveTab(newValue);
   };
 
-  // Statistics for medical dashboard feel - using server-filtered data
-
   const appointmentStats = {
     total: appointments.data.length,
     confirmed: appointments.data.filter(a => a.status === 'confirmed').length,
@@ -164,8 +162,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
       date: dateFilter || undefined,
       page: page > 1 ? page : undefined,
     };
-    
-    // Remove undefined values
+
     const cleanFilters = Object.fromEntries(
       Object.entries(filterParams).filter(([_, value]) => value !== undefined && value !== '')
     );
@@ -227,7 +224,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
     setPaymentFilter('');
     setProviderFilter('');
     setDateFilter('');
-    // Apply cleared filters to server
     router.get('/appointments', {}, {
       preserveState: true,
       preserveScroll: true,
@@ -241,8 +237,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, minHeight: '100vh', bgcolor: '#fafafa' }}>
-      
-      {/* Header Section */}
       <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
         <CardContent sx={{ p: 4 }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
@@ -286,7 +280,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
         </CardContent>
       </Card>
 
-      {/* Statistics Cards - Only show in list view */}
       {activeTab === 0 && (
         <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={3} mb={4}>
           <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
@@ -375,12 +368,10 @@ export default function AdminAppointments({ appointments, providers = [], filter
         </Box>
       )}
 
-      {/* Advanced Filters Section - Only show in list view */}
       {activeTab === 0 && (
         <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ p: 3 }}>
             <Stack spacing={3}>
-              {/* Filter Toggle */}
               <Box display="flex" alignItems="center" gap={2}>
                 <Button
                   startIcon={<FilterIcon />}
@@ -410,7 +401,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
                 )}
               </Box>
 
-              {/* Filters */}
               <Collapse in={showFilters}>
                 <Box sx={{ 
                   border: '1px solid #e0e0e0', 
@@ -570,7 +560,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
         </Card>
       )}
 
-      {/* View Toggle Tabs */}
       <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs 
@@ -1028,7 +1017,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
         </Box>
       )}
 
-      {/* Pagination Footer - Only show in list view */}
       {appointments.data.length > 0 && activeTab === 0 && (
         <Card elevation={0} sx={{ mt: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ py: 3 }}>
@@ -1071,7 +1059,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
         </Card>
       )}
 
-      {/* Admin Authorization Dialog */}
       <Dialog
         open={authDialogOpen}
         onClose={handleAuthCancel}

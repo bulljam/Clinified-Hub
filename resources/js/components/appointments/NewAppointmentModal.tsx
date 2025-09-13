@@ -84,9 +84,7 @@ export default function NewAppointmentModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Frontend validation: Check if patient already has appointment with this provider on this date
     if (hasAppointmentWithProvider(data.provider_id, data.date)) {
-      // This validation should be handled by backend, but we can prevent the request
       return;
     }
     
@@ -109,18 +107,16 @@ export default function NewAppointmentModal({
   const today = dayjs();
   const minDate = today.add(1, 'day');
 
-  // Filter appointments for the selected provider and date
   const getProviderAppointmentsForDate = (providerId: string, date: string): Appointment[] => {
     if (!providerId || !date) return [];
     
     return allAppointments.filter(appointment => 
       appointment.provider_id === parseInt(providerId) &&
-      appointment.date.substring(0, 10) === date && // Compare only YYYY-MM-DD part
+      appointment.date.substring(0, 10) === date &&
       appointment.status !== 'cancelled'
     );
   };
 
-  // Get patient's own appointments for the selected date (to prevent self-conflicts)
   const getPatientAppointmentsForDate = (date: string): Appointment[] => {
     if (!date) return [];
     
@@ -131,7 +127,6 @@ export default function NewAppointmentModal({
     );
   };
 
-  // Check if patient already has an appointment with the selected provider on the selected date
   const hasAppointmentWithProvider = (providerId: string, date: string): boolean => {
     if (!providerId || !date) return false;
     
@@ -143,18 +138,15 @@ export default function NewAppointmentModal({
     );
   };
 
-  // Check if a time slot is available for the selected provider and date, and if patient doesn't have conflict
   const isTimeSlotAvailable = (timeStr: string) => {
     if (!data.provider_id || !data.date) return true;
     
-    // Check if provider is already booked at this time
     const providerAppointments = getProviderAppointmentsForDate(data.provider_id, data.date);
     const isProviderBooked = providerAppointments.some(appointment => {
       const appointmentTime = appointment.time ? appointment.time.substring(0, 5) : '';
       return appointmentTime === timeStr;
     });
     
-    // Check if patient has a conflict (appointment with any provider at this time)
     const patientAppointments = getPatientAppointmentsForDate(data.date);
     const hasPatientConflict = patientAppointments.some(appointment => {
       const appointmentTime = appointment.time ? appointment.time.substring(0, 5) : '';
@@ -164,7 +156,6 @@ export default function NewAppointmentModal({
     return !isProviderBooked && !hasPatientConflict;
   };
 
-  // Generate available time slots
   const getAvailableTimeSlots = () => {
     if (!data.provider_id || !data.date) return [];
     

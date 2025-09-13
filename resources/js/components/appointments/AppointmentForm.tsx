@@ -62,7 +62,6 @@ export default function AppointmentForm({
     payment_status: appointment?.payment_status || 'pending',
   });
 
-  // Transform data before submission
   transform((data) => ({
     ...data,
     date: data.date ? data.date.format('YYYY-MM-DD') : '',

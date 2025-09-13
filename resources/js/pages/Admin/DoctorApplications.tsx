@@ -165,7 +165,7 @@ export default function DoctorApplications({ applications }: Props) {
 
   const handleApprove = (application: DoctorApplication) => {
     setApprovingApplication(application);
-    setIsApproving(false); // Reset loading state when opening dialog
+    setIsApproving(false);
   };
 
   const confirmApproval = () => {
