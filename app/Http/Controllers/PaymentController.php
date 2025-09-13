@@ -156,22 +156,28 @@ class PaymentController extends Controller
     {
         $appointment = Appointment::findOrFail($appointmentId);
         
+        if ($appointment->payment_status === 'paid') {
+            return redirect()->back()->withErrors([
+                'payment' => 'This payment has already been approved.'
+            ]);
+        }
+        
         $transaction = Transaction::where('user_id', $appointment->user_id)
             ->where('doctor_id', $appointment->provider_id)
-            ->where('status', 'on_hold')
+            ->whereIn('status', ['on_hold', 'paid'])
             ->latest()
             ->first();
 
         if (!$transaction) {
             return redirect()->back()->withErrors([
-                'payment' => 'No pending payment found for this appointment.'
+                'payment' => 'No payment found for this appointment.'
             ]);
         }
 
         $transaction->update(['status' => 'paid']);
 
         $appointment->update([
-            'payment_status' => 'approved',
+            'payment_status' => 'paid',
             'status' => 'confirmed'
         ]);
 

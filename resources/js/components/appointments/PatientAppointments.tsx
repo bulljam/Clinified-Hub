@@ -847,7 +847,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                                   </IconButton>
                                 </Tooltip>
                               )}
-                              {appointment.status !== 'cancelled' && (
+                              {appointment.status !== 'cancelled' && appointment.payment_status !== 'paid' && (
                                 <Tooltip title="Edit Appointment" arrow>
                                   <IconButton
                                     size="medium"
@@ -1057,7 +1057,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             >
               Close
             </Button>
-            {viewingAppointment.status !== 'cancelled' && (
+            {viewingAppointment.status !== 'cancelled' && viewingAppointment.payment_status !== 'paid' && (
               <Button
                 variant="contained"
                 onClick={() => {
