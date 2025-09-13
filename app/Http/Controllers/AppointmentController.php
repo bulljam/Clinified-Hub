@@ -221,6 +221,7 @@ class AppointmentController extends Controller
                         }
                         
                         $validated['payment_status'] = 'cancelled';
+                        $validated['requires_refund'] = true;
                     } elseif ($appointment->payment_status === 'paid') {
                         // Find and refund the paid transaction
                         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
@@ -234,9 +235,11 @@ class AppointmentController extends Controller
                         }
                         
                         $validated['payment_status'] = 'cancelled';
+                        $validated['requires_refund'] = true;
                     } else {
-                        // For pending payments, just cancel the payment status
+                        // For pending payments, just cancel the payment status, no refund needed
                         $validated['payment_status'] = 'cancelled';
+                        $validated['requires_refund'] = false;
                     }
                     break;
             }
