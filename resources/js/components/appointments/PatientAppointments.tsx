@@ -104,6 +104,7 @@ interface Appointment {
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   payment_status: 'pending' | 'paid' | 'on_hold' | 'cancelled';
+  requires_refund?: boolean;
   notes?: string;
   user: {
     id: number;
@@ -811,7 +812,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                                   }
                                 }}
                               />
-                              {appointment.status === 'cancelled' && appointment.payment_status === 'cancelled' && (
+                              {!!appointment.requires_refund && (
                                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', lineHeight: 1.2 }}>
                                   Refund will be processed
                                 </Typography>
@@ -1036,7 +1037,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                       size="small"
                     />
                   </Typography>
-                  {viewingAppointment.payment_status === 'cancelled' && (
+                  {!!viewingAppointment.requires_refund && (
                     <Typography variant="caption" color="warning.main" fontWeight="600" sx={{ fontSize: '0.75rem', ml: 9 }}>
                       Refund will be processed within 3-5 business days
                     </Typography>
