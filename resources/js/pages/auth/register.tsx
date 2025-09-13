@@ -66,7 +66,6 @@ export default function Register() {
         >
             <Head title="Register" />
 
-            {/* Left Side Medical Icons */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -135,7 +134,6 @@ export default function Register() {
                 <BiotechIcon sx={{ fontSize: 44, color: 'rgba(255,255,255,0.9)' }} />
             </Box>
 
-            {/* Right Side Medical Icons */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -203,7 +201,6 @@ export default function Register() {
                 <EmergencyIcon sx={{ fontSize: 44, color: 'rgba(255,255,255,0.9)' }} />
             </Box>
 
-            {/* Additional Medical Icons for Balance */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -238,7 +235,6 @@ export default function Register() {
                 <MedicalServices sx={{ fontSize: 45, color: 'rgba(255,255,255,0.9)' }} />
             </Box>
 
-            {/* Home Button */}
             <IconButton
                 component={Link}
                 href="/"
@@ -285,9 +281,7 @@ export default function Register() {
                             }}
                         >
                             <CardContent sx={{ p: { xs: 4, sm: 6, md: 8 } }}>
-                                {/* Header with Logo */}
                                 <Box sx={{ textAlign: 'center', mb: 6 }}>
-                                    {/* Company Logo */}
                                     <Box
                                         sx={{
                                             width: 80,
@@ -346,7 +340,6 @@ export default function Register() {
                                 >
                                     {({ processing, errors }) => (
                                         <Stack spacing={3}>
-                                            {/* Personal Information Section */}
                                             <Typography
                                                 variant="h6"
                                                 color="#20a09f"
@@ -355,7 +348,6 @@ export default function Register() {
                                                 <PersonIcon /> Personal Information
                                             </Typography>
 
-                                            {/* Name and Email Row */}
                                             <Box
                                                 sx={{
                                                     display: 'grid',
@@ -422,7 +414,6 @@ export default function Register() {
                                                 />
                                             </Box>
 
-                                            {/* Phone and Gender Row */}
                                             <Box
                                                 sx={{
                                                     display: 'grid',
@@ -488,7 +479,6 @@ export default function Register() {
                                                 </FormControl>
                                             </Box>
 
-                                            {/* Date of Birth and City Row */}
                                             <Box
                                                 sx={{
                                                     display: 'grid',
@@ -555,7 +545,6 @@ export default function Register() {
 
                                             <Divider sx={{ my: 2 }} />
 
-                                            {/* Security Section */}
                                             <Typography
                                                 variant="h6"
                                                 color="#20a09f"
@@ -564,7 +553,6 @@ export default function Register() {
                                                 <LockIcon /> Security
                                             </Typography>
 
-                                            {/* Password Fields */}
                                             <Box
                                                 sx={{
                                                     display: 'grid',
@@ -652,7 +640,6 @@ export default function Register() {
                                                 />
                                             </Box>
 
-                                            {/* Submit Button */}
                                             <Button
                                                 type="submit"
                                                 variant="contained"
@@ -684,7 +671,6 @@ export default function Register() {
                                                 {processing ? 'Creating Account...' : 'Create Account'}
                                             </Button>
 
-                                            {/* Sign In Link */}
                                             <Box sx={{ textAlign: 'center', mt: 2 }}>
                                                 <Typography variant="body2" color="text.secondary">
                                                     Already have an account?{' '}
@@ -712,7 +698,6 @@ export default function Register() {
                 </Box>
             </Container>
 
-            {/* Doctor Application Dialog */}
             <Dialog
                 open={isDoctorDialogOpen}
                 onClose={() => setIsDoctorDialogOpen(false)}
