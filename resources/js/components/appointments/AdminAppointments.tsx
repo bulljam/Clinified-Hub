@@ -8,7 +8,6 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   Tab,
   Tabs,
@@ -24,8 +23,6 @@ import {
   Tooltip,
   Fade,
   Stack,
-  Divider,
-  LinearProgress,
   Pagination,
   Dialog,
   DialogTitle,
@@ -34,7 +31,6 @@ import {
   DialogActions,
   Collapse,
   Grid,
-  InputAdornment,
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -47,7 +43,6 @@ import {
   AccessTime as TimeIcon,
   AttachMoney as PaymentIcon,
   TrendingUp as StatsIcon,
-  Search as SearchIcon,
   FilterAlt as FilterIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
@@ -142,13 +137,13 @@ export default function AdminAppointments({ appointments, providers = [], filter
   const [paymentFilter, setPaymentFilter] = useState(filters.payment_status || '');
   const [providerFilter, setProviderFilter] = useState(filters.provider_id || '');
   const [dateFilter, setDateFilter] = useState(filters.date || '');
-  const [isLoading, setIsLoading] = useState(false);
+  const [calendarProviderFilter, setCalendarProviderFilter] = useState('');
   const [showFilters, setShowFilters] = useState(true);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<{action: string, appointmentId: number, newValue: string} | null>(null);
   const isAdmin = ['admin', 'super_admin'].includes(userRole || '');
 
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
@@ -246,7 +241,6 @@ export default function AdminAppointments({ appointments, providers = [], filter
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, minHeight: '100vh', bgcolor: '#fafafa' }}>
-      {isLoading && <LinearProgress sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }} />}
       
       {/* Header Section */}
       <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
@@ -976,10 +970,60 @@ export default function AdminAppointments({ appointments, providers = [], filter
           )}
 
           {activeTab === 1 && (
-            <AppointmentCalendar
-              appointments={appointments.data || []}
-              userRole="admin"
-            />
+            <Box>
+              <Card elevation={0} sx={{ mb: 3, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Stack direction="row" alignItems="center" spacing={3}>
+                    <Typography variant="h6" fontWeight="600" color="#20a09f">
+                      Calendar Filters
+                    </Typography>
+                    <FormControl sx={{ minWidth: 250 }}>
+                      <InputLabel>Filter by Healthcare Provider</InputLabel>
+                      <Select
+                        value={calendarProviderFilter}
+                        label="Filter by Healthcare Provider"
+                        onChange={(e) => setCalendarProviderFilter(e.target.value)}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            '&:hover fieldset': {
+                              borderColor: '#20a09f',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#20a09f',
+                            },
+                          },
+                        }}
+                      >
+                        <MenuItem value="">All Providers</MenuItem>
+                        {providers.map((provider) => (
+                          <MenuItem key={provider.id} value={provider.id.toString()}>
+                            Dr. {provider.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    {calendarProviderFilter && (
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        onClick={() => setCalendarProviderFilter('')}
+                      >
+                        Clear Filter
+                      </Button>
+                    )}
+                  </Stack>
+                </CardContent>
+              </Card>
+              <AppointmentCalendar
+                appointments={calendarProviderFilter
+                  ? appointments.data.filter(apt => apt.provider.id.toString() === calendarProviderFilter)
+                  : appointments.data || []
+                }
+                userRole="admin"
+                selectedProvider={calendarProviderFilter ? providers.find(p => p.id.toString() === calendarProviderFilter) : undefined}
+              />
+            </Box>
           )}
         </Box>
       )}
