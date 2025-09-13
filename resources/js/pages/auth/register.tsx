@@ -26,6 +26,8 @@ import {
     MedicalServices,
     Visibility,
     VisibilityOff,
+    LocationCity as CityIcon,
+    CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
 import { useState } from 'react';
 
@@ -143,6 +145,81 @@ export default function Register() {
                             }}
                         />
 
+                        {/* Date of Birth Field */}
+                        <TextField
+                            fullWidth
+                            label="Date of Birth"
+                            name="date_of_birth"
+                            type="date"
+                            required
+                            tabIndex={3}
+                            error={!!errors.date_of_birth}
+                            helperText={errors.date_of_birth}
+                            variant="outlined"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <CalendarIcon sx={{ color: '#20a09f' }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '&:hover fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    '&.Mui-focused': {
+                                        color: '#20a09f',
+                                    },
+                                },
+                            }}
+                        />
+
+                        {/* City Field */}
+                        <TextField
+                            fullWidth
+                            label="City"
+                            name="city"
+                            type="text"
+                            required
+                            tabIndex={4}
+                            autoComplete="address-level2"
+                            placeholder="Enter your city"
+                            error={!!errors.city}
+                            helperText={errors.city}
+                            variant="outlined"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <CityIcon sx={{ color: '#20a09f' }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '&:hover fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#20a09f',
+                                    },
+                                },
+                                '& .MuiInputLabel-root': {
+                                    '&.Mui-focused': {
+                                        color: '#20a09f',
+                                    },
+                                },
+                            }}
+                        />
+
                         {/* Password Field */}
                         <TextField
                             fullWidth
@@ -150,7 +227,7 @@ export default function Register() {
                             name="password"
                             type={showPassword ? 'text' : 'password'}
                             required
-                            tabIndex={3}
+                            tabIndex={5}
                             autoComplete="new-password"
                             placeholder="Create a strong password"
                             error={!!errors.password}
@@ -202,7 +279,7 @@ export default function Register() {
                             name="password_confirmation"
                             type={showConfirmPassword ? 'text' : 'password'}
                             required
-                            tabIndex={4}
+                            tabIndex={6}
                             autoComplete="new-password"
                             placeholder="Confirm your password"
                             error={!!errors.password_confirmation}
@@ -253,7 +330,7 @@ export default function Register() {
                             variant="contained"
                             fullWidth
                             size="large"
-                            tabIndex={5}
+                            tabIndex={7}
                             disabled={processing}
                             startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <RegisterIcon />}
                             sx={{
@@ -293,7 +370,7 @@ export default function Register() {
                                         textDecoration: 'none',
                                         fontWeight: 600,
                                     }}
-                                    tabIndex={6}
+                                    tabIndex={8}
                                     onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
                                     onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
                                 >

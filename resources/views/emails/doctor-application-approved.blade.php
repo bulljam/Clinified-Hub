@@ -142,7 +142,7 @@
                 <a href="{{ config('app.url') }}/login" class="btn">Login to Your Account</a>
             </div>
 
-            <h3>🚀 Next Steps</h3>
+            <h3>💡 Next Steps</h3>
             <ol>
                 <li><strong>Login:</strong> Use the credentials above to access your account</li>
                 <li><strong>Complete Profile:</strong> Update your profile with additional information</li>

@@ -183,7 +183,7 @@
             </ul>
             @endif
 
-            <h3>🚀 Getting Started</h3>
+            <h3>💡 Getting Started</h3>
             <ol>
                 <li><strong>Login:</strong> Use the credentials above to access your admin dashboard</li>
                 <li><strong>Change Password:</strong> Immediately update your password for security</li>
