@@ -18,15 +18,14 @@ class Appointment extends Model
         'status',
         'payment_status',
         'notes',
+        'requires_refund',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'date' => 'date',
-            'time' => 'datetime:H:i:s',
-        ];
-    }
+    protected $casts = [
+        'date' => 'date',
+        'time' => 'datetime:H:i:s',
+        'requires_refund' => 'boolean',
+    ];
 
     public function user(): BelongsTo
     {
@@ -41,5 +40,10 @@ class Appointment extends Model
     public function provider(): BelongsTo
     {
         return $this->belongsTo(User::class, 'provider_id');
+    }
+
+    public function getRequiresRefundAttribute($value): bool
+    {
+        return (bool) $value;
     }
 }
