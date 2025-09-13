@@ -298,15 +298,31 @@ export default function AppointmentCalendar({
     if (currentView !== 'month') {
       return {};
     }
-    
+
     // Use local date string instead of UTC to avoid timezone issues
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const dateString = `${year}-${month}-${day}`;
-    
+
     const count = appointmentCounts.get(dateString) || 0;
-    
+    const today = new Date();
+    const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const isToday = dateString === todayString;
+
+    // Handle today separately - show count and today indicator
+    if (isToday) {
+      return {
+        style: {
+          position: 'relative',
+          '--appointment-count': `"${count}"`,
+          '--today-indicator': '"Today"',
+        } as React.CSSProperties & { '--appointment-count': string; '--today-indicator': string },
+        className: count > 0 ? 'today-with-appointments' : 'today-without-appointments',
+      };
+    }
+
+    // Handle other days with appointments
     if (count > 0) {
       return {
         style: {
@@ -317,7 +333,7 @@ export default function AppointmentCalendar({
           cursor: 'pointer',
           '--appointment-count': `"${count}"`,
         } as React.CSSProperties & { '--appointment-count': string },
-        className: userRole === 'provider' ? 'day-with-appointments' : '',
+        className: 'day-with-appointments',
       };
     }
     return {};
@@ -529,34 +545,158 @@ export default function AppointmentCalendar({
           font-weight: 600 !important;
         }
         
-        /* Provider appointment count display in month view */
+        /* Appointment count display in month view */
         .day-with-appointments::after {
           content: var(--appointment-count);
           position: absolute;
           bottom: 2px;
           right: 2px;
-          background: #ff9800;
+          background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
           color: white;
           font-weight: bold;
           font-size: 10px;
           border-radius: 50%;
-          width: 16px;
-          height: 16px;
+          width: 18px;
+          height: 18px;
           display: flex;
           align-items: center;
           justify-content: center;
           line-height: 1;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+          box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+          border: 2px solid white;
           z-index: 10;
+          min-width: 18px;
+          font-family: 'Roboto', sans-serif;
         }
         
         .day-with-appointments {
           transition: all 0.2s ease !important;
         }
-        
+
         .day-with-appointments:hover {
-          transform: scale(1.05);
-          box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+          transform: scale(1.03);
+          box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+          border-color: #f57c00 !important;
+          background-color: #fff8e1 !important;
+        }
+
+        .day-with-appointments:hover::after {
+          transform: scale(1.1);
+          box-shadow: 0 3px 6px rgba(255, 152, 0, 0.5);
+        }
+
+        /* Today indicators */
+        .today-with-appointments::before {
+          content: var(--today-indicator);
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          background: linear-gradient(135deg, #20a09f 0%, #178f8e 100%);
+          color: white;
+          font-weight: bold;
+          font-size: 8px;
+          border-radius: 8px;
+          padding: 2px 6px;
+          line-height: 1;
+          box-shadow: 0 2px 4px rgba(32, 160, 159, 0.3);
+          border: 1px solid white;
+          z-index: 10;
+          font-family: 'Roboto', sans-serif;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .today-with-appointments::after {
+          content: var(--appointment-count);
+          position: absolute;
+          bottom: 2px;
+          right: 2px;
+          background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+          color: white;
+          font-weight: bold;
+          font-size: 10px;
+          border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+          box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+          border: 2px solid white;
+          z-index: 10;
+          min-width: 18px;
+          font-family: 'Roboto', sans-serif;
+        }
+
+        .today-without-appointments::before {
+          content: var(--today-indicator);
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          background: linear-gradient(135deg, #20a09f 0%, #178f8e 100%);
+          color: white;
+          font-weight: bold;
+          font-size: 8px;
+          border-radius: 8px;
+          padding: 2px 6px;
+          line-height: 1;
+          box-shadow: 0 2px 4px rgba(32, 160, 159, 0.3);
+          border: 1px solid white;
+          z-index: 10;
+          font-family: 'Roboto', sans-serif;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .today-without-appointments::after {
+          content: "0";
+          position: absolute;
+          bottom: 2px;
+          right: 2px;
+          background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
+          color: white;
+          font-weight: bold;
+          font-size: 10px;
+          border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+          box-shadow: 0 2px 4px rgba(158, 158, 158, 0.3);
+          border: 2px solid white;
+          z-index: 10;
+          min-width: 18px;
+          font-family: 'Roboto', sans-serif;
+        }
+
+        .today-with-appointments,
+        .today-without-appointments {
+          transition: all 0.2s ease !important;
+        }
+
+        .today-with-appointments:hover,
+        .today-without-appointments:hover {
+          transform: scale(1.03);
+          box-shadow: 0 4px 12px rgba(32, 160, 159, 0.3);
+        }
+
+        .today-with-appointments:hover::before,
+        .today-without-appointments:hover::before {
+          transform: scale(1.1);
+          box-shadow: 0 3px 6px rgba(32, 160, 159, 0.5);
+        }
+
+        .today-with-appointments:hover::after {
+          transform: scale(1.1);
+          box-shadow: 0 3px 6px rgba(255, 152, 0, 0.5);
+        }
+
+        .today-without-appointments:hover::after {
+          transform: scale(1.1);
+          box-shadow: 0 3px 6px rgba(158, 158, 158, 0.5);
         }
       `}</style>
       
