@@ -92,6 +92,7 @@ interface Appointment {
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   payment_status: 'pending' | 'paid' | 'on_hold' | 'cancelled';
+  requires_refund?: boolean;
   user: {
     id: number;
     name: string;
@@ -888,7 +889,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
                                 />
                               </Tooltip>
                               
-                              {appointment.payment_status === 'cancelled' && (
+                              {!!appointment.requires_refund && (
                                 <Typography variant="caption" color="warning.main" fontWeight="500" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap' }}>
                                   Refund will be processed
                                 </Typography>
