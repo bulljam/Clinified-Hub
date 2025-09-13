@@ -86,7 +86,7 @@ export default function CreatePayment({
             ...prev,
             [field]: value,
         }));
-        
+
         if (errors[field]) {
             setErrors(prev => ({
                 ...prev,
@@ -98,13 +98,11 @@ export default function CreatePayment({
     const formatCardNumber = (value: string) => {
         const cleaned = value.replace(/\D/g, '');
         const limited = cleaned.slice(0, 16);
-        
-        // Add spaces every 4 digits for display
+
         return limited.replace(/(\d{4})(?=\d)/g, '$1 ');
     };
 
     const getCardNumberForStorage = (value: string) => {
-        // Remove spaces for storage
         return value.replace(/\s/g, '');
     };
 
@@ -124,10 +122,9 @@ export default function CreatePayment({
             ...prev,
             card_number: cleanedForStorage,
         }));
-        
-        // Update the input field to show formatted version
+
         event.target.value = formatted;
-        
+
         if (errors.card_number) {
             setErrors(prev => ({
                 ...prev,
@@ -142,7 +139,7 @@ export default function CreatePayment({
             ...prev,
             expiration: formatted,
         }));
-        
+
         if (errors.expiration) {
             setErrors(prev => ({
                 ...prev,
@@ -266,8 +263,7 @@ export default function CreatePayment({
                 }}
             >
                 <Box sx={{ p: 0 }}>
-                    {/* Header */}
-                    <Box sx={{ 
+                    <Box sx={{
                         p: 4, 
                         pb: 2,
                         background: 'linear-gradient(135deg, #20a09f 0%, #17a2b8 100%)',
@@ -291,7 +287,6 @@ export default function CreatePayment({
                     <form onSubmit={handleSubmit}>
                         <DialogContent sx={{ p: 4, pt: 3 }}>
                             <Stack spacing={3}>
-                                {/* Payment Method Section */}
                                 <Box>
                                     <Typography variant="subtitle1" fontWeight="600" gutterBottom>
                                         Payment Method
@@ -307,7 +302,6 @@ export default function CreatePayment({
                                                 <Typography variant="body2" fontWeight="500">
                                                     Credit or Debit Card
                                                 </Typography>
-                                                {/* Card Brand Icons */}
                                                 <Box sx={{ ml: 'auto', display: 'flex', gap: 0.5 }}>
                                                     <Box sx={{ 
                                                         width: 32, height: 20, bgcolor: '#20a09f', 
@@ -336,7 +330,6 @@ export default function CreatePayment({
                                     </Card>
                                 </Box>
 
-                                {/* Card Information */}
                                 <Box>
                                     <Typography variant="subtitle1" fontWeight="600" gutterBottom>
                                         Card Information
@@ -358,7 +351,7 @@ export default function CreatePayment({
                                                 ),
                                             }}
                                             inputProps={{
-                                                maxLength: 19, // 16 digits + 3 spaces
+                                                maxLength: 19,
                                                 pattern: '[0-9\\s]*',
                                             }}
                                             sx={{
@@ -434,8 +427,7 @@ export default function CreatePayment({
                                     </Stack>
                                 </Box>
 
-                                {/* Security Notice */}
-                                <Paper 
+                                <Paper
                                     elevation={0} 
                                     sx={{ 
                                         p: 2, 
