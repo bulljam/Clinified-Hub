@@ -12,12 +12,9 @@
 export const getImageUrl = (photo?: string | null): string | undefined => {
     if (!photo) return undefined;
     
-    // If photo starts with '/', it's an absolute path (seeded data)
     if (photo.startsWith('/')) {
         return photo;
     }
-    
-    // Otherwise, it's a relative path in storage (uploaded data)
     return `/storage/${photo}`;
 };
 
