@@ -42,6 +42,7 @@ const getGenderIcon = (gender?: string) => {
     switch (gender) {
         case 'male': return '👨';
         case 'female': return '👩';
+        case 'other': return '';
         default: return '👤';
     }
 };

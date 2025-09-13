@@ -181,6 +181,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
         switch (gender) {
             case 'male': return '👨';
             case 'female': return '👩';
+            case 'other': return '';
             default: return '👤';
         }
     };
@@ -289,6 +290,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                 <MenuItem value="">All Genders</MenuItem>
                                                 <MenuItem value="male">👨 Male</MenuItem>
                                                 <MenuItem value="female">👩 Female</MenuItem>
+                                                <MenuItem value="other">Other</MenuItem>
                                             </Select>
                                         </FormControl>
                                         <FormControl fullWidth variant="outlined">

@@ -312,7 +312,7 @@ export default function DoctorApplicationCreate() {
                                             }}
                                         />
 
-                                        <FormControl fullWidth required error={!!errors.gender}>
+                                        <FormControl fullWidth error={!!errors.gender}>
                                             <InputLabel>Gender</InputLabel>
                                             <Select
                                                 value={data.gender}
@@ -322,8 +322,10 @@ export default function DoctorApplicationCreate() {
                                                     <PersonIcon sx={{ color: '#20a09f', mr: 1 }} />
                                                 }
                                             >
+                                                <MenuItem value="">Select Gender</MenuItem>
                                                 <MenuItem value="male">👨 Male</MenuItem>
                                                 <MenuItem value="female">👩 Female</MenuItem>
+                                                <MenuItem value="other">Other</MenuItem>
                                             </Select>
                                             {errors.gender && (
                                                 <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 2 }}>

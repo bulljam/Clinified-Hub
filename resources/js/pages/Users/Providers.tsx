@@ -352,6 +352,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                     <MenuItem value="">All Genders</MenuItem>
                                                     <MenuItem value="male">👨 Male</MenuItem>
                                                     <MenuItem value="female">👩 Female</MenuItem>
+                                                    <MenuItem value="other">Other</MenuItem>
                                                 </Select>
                                             </FormControl>
                                         </Grid>

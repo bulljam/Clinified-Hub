@@ -641,7 +641,7 @@ export default function DoctorApplications({ applications }: Props) {
                           Gender
                         </Typography>
                         <Typography variant="body1" fontWeight="500">
-                          {viewingApplication.gender === 'male' ? '👨 Male' : '👩 Female'}
+                          {viewingApplication.gender === 'male' ? '👨 Male' : viewingApplication.gender === 'female' ? '👩 Female' : 'Other'}
                         </Typography>
                       </Box>
                     )}
