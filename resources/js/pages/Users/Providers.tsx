@@ -78,17 +78,16 @@ export default function Providers({ providers, userRole, specialties, cities, fi
     const [showFilters, setShowFilters] = useState(true);
     const [localFilters, setLocalFilters] = useState(filters);
 
-    // Calculate filtered statistics based on current providers
     const filteredSpecialties = Array.from(new Set(
         providers.data
             .map(provider => provider.specialty)
-            .filter(specialty => specialty) // Remove null/undefined
+            .filter(specialty => specialty)
     )).length;
 
     const filteredCities = Array.from(new Set(
         providers.data
             .map(provider => provider.city)
-            .filter(city => city) // Remove null/undefined
+            .filter(city => city)
     )).length;
 
     const handlePageChange = (page: number) => {
@@ -129,7 +128,6 @@ export default function Providers({ providers, userRole, specialties, cities, fi
         };
         setLocalFilters(newFilters);
         
-        // Auto-apply filters when they change
         const params = new URLSearchParams();
         Object.entries(newFilters).forEach(([filterKey, filterValue]) => {
             if (filterValue) params.append(filterKey, filterValue.toString());

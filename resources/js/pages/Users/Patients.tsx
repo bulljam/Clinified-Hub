@@ -98,7 +98,6 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [deleteReason, setDeleteReason] = useState('');
 
-    // Apply search filtering on top of server-filtered results
     const searchFilteredPatients = patients.filter(patient => {
         if (searchQuery && !(
             patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
