@@ -98,6 +98,7 @@ interface Appointment {
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   payment_status: 'pending' | 'paid' | 'on_hold' | 'cancelled';
+  requires_refund?: boolean;
   user: {
     id: number;
     name: string;
@@ -838,7 +839,7 @@ export default function DoctorAppointments({ appointments, filters = {} }: Docto
                                 </Typography>
                               )}
                               
-                              {appointment.payment_status === 'cancelled' && (
+                              {!!appointment.requires_refund && (
                                 <Typography variant="caption" color="warning.main" fontWeight="600">
                                   Refund will be processed
                                 </Typography>
