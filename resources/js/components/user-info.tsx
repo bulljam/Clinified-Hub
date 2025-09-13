@@ -5,10 +5,27 @@ import { type User } from '@/types';
 export function UserInfo({ user, showEmail = false }: { user: User; showEmail?: boolean }) {
     const getInitials = useInitials();
 
+    const getPhotoUrl = (photo: string | undefined) => {
+        if (!photo) return undefined;
+
+        if (photo.startsWith('/')) {
+            return photo;
+        }
+
+        return `/storage/${photo}`;
+    };
+
+    const getAvatarSrc = () => {
+        if (user.role === 'provider' && user.photo) {
+            return getPhotoUrl(user.photo);
+        }
+        return user.avatar;
+    };
+
     return (
         <>
             <Avatar className="h-8 w-8 overflow-hidden rounded-full">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={getAvatarSrc()} alt={user.name} className="object-cover object-top" />
                 <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
                     {getInitials(user.name)}
                 </AvatarFallback>

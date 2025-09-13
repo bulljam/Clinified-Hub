@@ -156,6 +156,16 @@ export default function Payments({ transactions, users = [], providers = [] }: P
     return 'Track your payments to healthcare providers';
   };
 
+  const getPhotoUrl = (photo: string | null) => {
+    if (!photo) return undefined;
+
+    if (photo.startsWith('/')) {
+      return photo;
+    }
+
+    return `/storage/${photo}`;
+  };
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Payments" />
@@ -344,8 +354,8 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                         {!isProvider && (
                           <TableCell>
                             <Box display="flex" alignItems="center" gap={2}>
-                              <Avatar 
-                                src={transaction.user.photo || undefined}
+                              <Avatar
+                                src={getPhotoUrl(transaction.user.photo)}
                                 sx={{ width: 32, height: 32 }}
                               >
                                 {transaction.user.name.charAt(0)}
@@ -365,8 +375,8 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                         {!isPatient && (
                           <TableCell>
                             <Box display="flex" alignItems="center" gap={2}>
-                              <Avatar 
-                                src={transaction.doctor.photo || undefined}
+                              <Avatar
+                                src={getPhotoUrl(transaction.doctor.photo)}
                                 sx={{ width: 32, height: 32 }}
                               >
                                 {transaction.doctor.name.charAt(0)}
