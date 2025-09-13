@@ -26,7 +26,7 @@ class DoctorApplicationController extends Controller
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|unique:doctor_applications,email',
             'phone' => 'required|string|max:20',
-            'gender' => 'required|in:male,female',
+            'gender' => 'nullable|in:male,female,other',
             'bio' => 'nullable|string|max:1000',
             'specialty' => 'required|string|max:255',
             'license_number' => 'required|string|max:50|unique:doctor_applications,license_number',
