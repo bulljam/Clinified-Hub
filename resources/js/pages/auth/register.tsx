@@ -22,8 +22,6 @@ import {
     Stack,
     TextField,
     Typography,
-    useTheme,
-    useMediaQuery,
 } from '@mui/material';
 import {
     Email as EmailIcon,
@@ -39,19 +37,13 @@ import {
     CalendarToday as CalendarIcon,
     Phone as PhoneIcon,
     LocalHospital as HospitalIcon,
-    Healing as HealingIcon,
     Favorite as HeartIcon,
-    Psychology as BrainIcon,
-    Vaccines as VaccineIcon,
-    Emergency as EmergencyIcon,
-    Biotech as BiotechIcon,
-    Science as ScienceIcon,
-    MedicalInformation as MedicalInfoIcon,
     HealthAndSafety as HealthIcon,
-    Medication as MedicationIcon,
-    MonitorWeight as MonitorIcon,
-    Spa as WellnessIcon,
-    FitnessCenter as FitnessIcon,
+    Vaccines as VaccineIcon,
+    Psychology as BrainIcon,
+    Emergency as EmergencyIcon,
+    Healing as HealingIcon,
+    Biotech as BiotechIcon,
 } from '@mui/icons-material';
 import { useState } from 'react';
 
@@ -74,93 +66,176 @@ export default function Register() {
         >
             <Head title="Register" />
 
-            {/* Animated Medical Shapes */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: '10%',
-                    left: '5%',
-                    animation: 'float 6s ease-in-out infinite',
-                    zIndex: 1,
-                    '@keyframes float': {
-                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                        '50%': { transform: 'translateY(-30px) rotate(10deg)' },
-                    },
-                }}
-            >
-                <HospitalIcon sx={{ fontSize: 60, color: 'rgba(255,255,255,0.2)' }} />
-            </Box>
-
+            {/* Left Side Medical Icons */}
             <Box
                 sx={{
                     position: 'absolute',
                     top: '20%',
-                    right: '8%',
-                    animation: 'float 7s ease-in-out infinite 1s',
-                    zIndex: 1,
+                    left: '5%',
+                    animation: 'float1 7s ease-in-out infinite',
+                    zIndex: 0,
+                    opacity: 0.2,
+                    '@keyframes float1': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-15px) rotate(3deg)' },
+                    },
                 }}
             >
-                <HeartIcon sx={{ fontSize: 45, color: 'rgba(255,255,255,0.15)' }} />
-            </Box>
-
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: '60%',
-                    left: '3%',
-                    animation: 'float 8s ease-in-out infinite 2s',
-                    zIndex: 1,
-                }}
-            >
-                <HealingIcon sx={{ fontSize: 50, color: 'rgba(255,255,255,0.18)' }} />
-            </Box>
-
-            <Box
-                sx={{
-                    position: 'absolute',
-                    bottom: '15%',
-                    right: '12%',
-                    animation: 'float 5.5s ease-in-out infinite 0.5s',
-                    zIndex: 1,
-                }}
-            >
-                <BrainIcon sx={{ fontSize: 55, color: 'rgba(255,255,255,0.25)' }} />
-            </Box>
-
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: '35%',
-                    left: '8%',
-                    animation: 'float 9s ease-in-out infinite 3s',
-                    zIndex: 1,
-                }}
-            >
-                <VaccineIcon sx={{ fontSize: 40, color: 'rgba(255,255,255,0.12)' }} />
-            </Box>
-
-            <Box
-                sx={{
-                    position: 'absolute',
-                    bottom: '30%',
-                    left: '6%',
-                    animation: 'float 6.5s ease-in-out infinite 1.5s',
-                    zIndex: 1,
-                }}
-            >
-                <EmergencyIcon sx={{ fontSize: 48, color: 'rgba(255,255,255,0.2)' }} />
+                <HospitalIcon sx={{ fontSize: 52, color: 'rgba(255,255,255,0.9)' }} />
             </Box>
 
             <Box
                 sx={{
                     position: 'absolute',
                     top: '45%',
-                    right: '5%',
-                    animation: 'float 7.5s ease-in-out infinite 2.5s',
-                    zIndex: 1,
+                    left: '3%',
+                    animation: 'float2 9s ease-in-out infinite 1.5s',
+                    zIndex: 0,
+                    opacity: 0.18,
+                    '@keyframes float2': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-20px) rotate(-4deg)' },
+                    },
                 }}
             >
-                <DoctorIcon sx={{ fontSize: 42, color: 'rgba(255,255,255,0.16)' }} />
+                <VaccineIcon sx={{ fontSize: 46, color: 'rgba(255,255,255,0.9)' }} />
+            </Box>
+
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '25%',
+                    left: '6%',
+                    animation: 'float3 8s ease-in-out infinite 3s',
+                    zIndex: 0,
+                    opacity: 0.22,
+                    '@keyframes float3': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-18px) rotate(5deg)' },
+                    },
+                }}
+            >
+                <HealingIcon sx={{ fontSize: 48, color: 'rgba(255,255,255,0.9)' }} />
+            </Box>
+
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '70%',
+                    left: '2%',
+                    animation: 'float4 10s ease-in-out infinite 2s',
+                    zIndex: 0,
+                    opacity: 0.16,
+                    '@keyframes float4': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-12px) rotate(-2deg)' },
+                    },
+                }}
+            >
+                <BiotechIcon sx={{ fontSize: 44, color: 'rgba(255,255,255,0.9)' }} />
+            </Box>
+
+            {/* Right Side Medical Icons */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '18%',
+                    right: '4%',
+                    animation: 'float5 8.5s ease-in-out infinite 0.5s',
+                    zIndex: 0,
+                    opacity: 0.2,
+                    '@keyframes float5': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-16px) rotate(-3deg)' },
+                    },
+                }}
+            >
+                <HeartIcon sx={{ fontSize: 50, color: 'rgba(255,255,255,0.9)' }} />
+            </Box>
+
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '42%',
+                    right: '6%',
+                    animation: 'float6 9.5s ease-in-out infinite 2.5s',
+                    zIndex: 0,
+                    opacity: 0.19,
+                    '@keyframes float6': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-22px) rotate(4deg)' },
+                    },
+                }}
+            >
+                <BrainIcon sx={{ fontSize: 48, color: 'rgba(255,255,255,0.9)' }} />
+            </Box>
+
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '30%',
+                    right: '3%',
+                    animation: 'float7 7.5s ease-in-out infinite 1s',
+                    zIndex: 0,
+                    opacity: 0.21,
+                    '@keyframes float7': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-14px) rotate(-5deg)' },
+                    },
+                }}
+            >
+            </Box>
+
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '65%',
+                    right: '2%',
+                    animation: 'float8 11s ease-in-out infinite 4s',
+                    zIndex: 0,
+                    opacity: 0.17,
+                    '@keyframes float8': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-19px) rotate(3deg)' },
+                    },
+                }}
+            >
+                <EmergencyIcon sx={{ fontSize: 44, color: 'rgba(255,255,255,0.9)' }} />
+            </Box>
+
+            {/* Additional Medical Icons for Balance */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '15%',
+                    right: '8%',
+                    animation: 'float9 6.5s ease-in-out infinite 3.5s',
+                    zIndex: 0,
+                    opacity: 0.15,
+                    '@keyframes float9': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-10px) rotate(2deg)' },
+                    },
+                }}
+            >
+                <HealthIcon sx={{ fontSize: 42, color: 'rgba(255,255,255,0.9)' }} />
+            </Box>
+
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '12%',
+                    left: '8%',
+                    animation: 'float10 8.8s ease-in-out infinite 1.8s',
+                    zIndex: 0,
+                    opacity: 0.16,
+                    '@keyframes float10': {
+                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                        '50%': { transform: 'translateY(-13px) rotate(-1deg)' },
+                    },
+                }}
+            >
+                <MedicalServices sx={{ fontSize: 45, color: 'rgba(255,255,255,0.9)' }} />
             </Box>
 
             {/* Home Button */}
@@ -170,7 +245,7 @@ export default function Register() {
                 sx={{
                     position: 'absolute',
                     top: 24,
-                    right: 24,
+                    left: 24,
                     bgcolor: 'rgba(255, 255, 255, 0.9)',
                     color: '#20a09f',
                     '&:hover': {
@@ -184,259 +259,8 @@ export default function Register() {
                 <HomeIcon />
             </IconButton>
 
-            {/* Diverse Medical Animated Shapes */}
 
-            {/* Hospital - Top Left */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    left: '3%',
-                    top: '12%',
-                    animation: 'hospitalFloat 11s ease-in-out infinite',
-                    '@keyframes hospitalFloat': {
-                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                        '50%': { transform: 'translateY(-35px) rotate(15deg)' },
-                    },
-                }}
-            >
-                <Box
-                    sx={{
-                        width: 85,
-                        height: 85,
-                        borderRadius: '22px',
-                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)',
-                        backdropFilter: 'blur(15px)',
-                        border: '2px solid rgba(255, 255, 255, 0.25)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 8px 32px rgba(255, 255, 255, 0.1)',
-                    }}
-                >
-                    <HospitalIcon sx={{ fontSize: 42, color: 'rgba(255,255,255,0.9)' }} />
-                </Box>
-            </Box>
-
-            {/* Stethoscope/Heart - Top Right */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    right: '4%',
-                    top: '18%',
-                    animation: 'heartPulse 9s ease-in-out infinite 1.5s',
-                    '@keyframes heartPulse': {
-                        '0%, 100%': { transform: 'translateY(0px) scale(1)' },
-                        '30%': { transform: 'translateY(-25px) scale(1.1)' },
-                        '60%': { transform: 'translateY(10px) scale(0.95)' },
-                    },
-                }}
-            >
-                <Box
-                    sx={{
-                        width: 72,
-                        height: 72,
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, rgba(255, 182, 193, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
-                        backdropFilter: 'blur(12px)',
-                        border: '2px solid rgba(255, 192, 203, 0.3)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <HeartIcon sx={{ fontSize: 36, color: 'rgba(255, 192, 203, 0.9)' }} />
-                </Box>
-            </Box>
-
-            {/* DNA/Science - Left Middle */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    left: '1%',
-                    top: '45%',
-                    animation: 'dnaRotate 13s linear infinite',
-                    '@keyframes dnaRotate': {
-                        '0%': { transform: 'rotate(0deg) translateY(0px)' },
-                        '25%': { transform: 'rotate(90deg) translateY(-20px)' },
-                        '50%': { transform: 'rotate(180deg) translateY(0px)' },
-                        '75%': { transform: 'rotate(270deg) translateY(20px)' },
-                        '100%': { transform: 'rotate(360deg) translateY(0px)' },
-                    },
-                }}
-            >
-                <Box
-                    sx={{
-                        width: 78,
-                        height: 78,
-                        borderRadius: '18px',
-                        background: 'linear-gradient(135deg, rgba(144, 238, 144, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%)',
-                        backdropFilter: 'blur(10px)',
-                        border: '2px solid rgba(144, 238, 144, 0.25)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <BiotechIcon sx={{ fontSize: 38, color: 'rgba(144, 238, 144, 0.9)' }} />
-                </Box>
-            </Box>
-
-            {/* Medical Services - Right Middle */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    right: '2%',
-                    top: '40%',
-                    animation: 'medicalBob 10s ease-in-out infinite 2s',
-                    '@keyframes medicalBob': {
-                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                        '25%': { transform: 'translateY(-30px) rotate(5deg)' },
-                        '50%': { transform: 'translateY(0px) rotate(0deg)' },
-                        '75%': { transform: 'translateY(15px) rotate(-5deg)' },
-                    },
-                }}
-            >
-                <Box
-                    sx={{
-                        width: 68,
-                        height: 68,
-                        borderRadius: '16px',
-                        background: 'linear-gradient(135deg, rgba(173, 216, 230, 0.18) 0%, rgba(255, 255, 255, 0.06) 100%)',
-                        backdropFilter: 'blur(12px)',
-                        border: '2px solid rgba(173, 216, 230, 0.3)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <MedicalServices sx={{ fontSize: 34, color: 'rgba(173, 216, 230, 0.9)' }} />
-                </Box>
-            </Box>
-
-            {/* Brain/Psychology - Bottom Left */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    left: '6%',
-                    bottom: '25%',
-                    animation: 'brainThink 15s ease-in-out infinite 0.5s',
-                    '@keyframes brainThink': {
-                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg) scale(1)' },
-                        '33%': { transform: 'translateY(-40px) rotate(10deg) scale(1.05)' },
-                        '66%': { transform: 'translateY(20px) rotate(-5deg) scale(0.95)' },
-                    },
-                }}
-            >
-                <Box
-                    sx={{
-                        width: 82,
-                        height: 82,
-                        borderRadius: '25px',
-                        background: 'linear-gradient(135deg, rgba(221, 160, 221, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%)',
-                        backdropFilter: 'blur(14px)',
-                        border: '2px solid rgba(221, 160, 221, 0.28)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <BrainIcon sx={{ fontSize: 40, color: 'rgba(221, 160, 221, 0.9)' }} />
-                </Box>
-            </Box>
-
-            {/* Medication/Pills - Bottom Right */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    right: '5%',
-                    bottom: '20%',
-                    animation: 'pillFloat 8s ease-in-out infinite 3s',
-                    '@keyframes pillFloat': {
-                        '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                        '50%': { transform: 'translateY(-28px) rotate(180deg)' },
-                    },
-                }}
-            >
-                <Box
-                    sx={{
-                        width: 74,
-                        height: 74,
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, rgba(255, 228, 196, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
-                        backdropFilter: 'blur(11px)',
-                        border: '2px solid rgba(255, 228, 196, 0.32)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <MedicationIcon sx={{ fontSize: 36, color: 'rgba(255, 165, 0, 0.9)' }} />
-                </Box>
-            </Box>
-
-            {/* Emergency/Ambulance - Far Left */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    left: '0.5%',
-                    top: '70%',
-                    animation: 'emergencyFlash 7s ease-in-out infinite 4s',
-                    '@keyframes emergencyFlash': {
-                        '0%, 100%': { transform: 'translateY(0px)', opacity: 0.8 },
-                        '25%': { transform: 'translateY(-20px)', opacity: 1 },
-                        '50%': { transform: 'translateY(0px)', opacity: 0.9 },
-                        '75%': { transform: 'translateY(10px)', opacity: 0.7 },
-                    },
-                }}
-            >
-                <Box
-                    sx={{
-                        width: 70,
-                        height: 70,
-                        borderRadius: '12px',
-                        background: 'linear-gradient(135deg, rgba(255, 99, 71, 0.18) 0%, rgba(255, 255, 255, 0.06) 100%)',
-                        backdropFilter: 'blur(13px)',
-                        border: '2px solid rgba(255, 99, 71, 0.3)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <EmergencyIcon sx={{ fontSize: 34, color: 'rgba(255, 99, 71, 0.9)' }} />
-                </Box>
-            </Box>
-
-            {/* Wellness/Spa - Far Right */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    right: '1%',
-                    bottom: '35%',
-                    animation: 'wellnessGlow 12s ease-in-out infinite 1s',
-                    '@keyframes wellnessGlow': {
-                        '0%, 100%': { transform: 'translateY(0px) scale(1)', filter: 'brightness(1)' },
-                        '50%': { transform: 'translateY(-32px) scale(1.08)', filter: 'brightness(1.2)' },
-                    },
-                }}
-            >
-                <Box
-                    sx={{
-                        width: 76,
-                        height: 76,
-                        borderRadius: '20px',
-                        background: 'linear-gradient(135deg, rgba(152, 251, 152, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%)',
-                        backdropFilter: 'blur(12px)',
-                        border: '2px solid rgba(152, 251, 152, 0.28)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <WellnessIcon sx={{ fontSize: 38, color: 'rgba(152, 251, 152, 0.9)' }} />
-                </Box>
-            </Box>
-
-            <Container maxWidth="xl">
+            <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
                 <Box
                     sx={{
                         display: 'flex',
@@ -446,17 +270,18 @@ export default function Register() {
                         py: 4,
                     }}
                 >
-                    {/* Centered Registration Form */}
                     <Box sx={{ width: '100%', maxWidth: '1200px' }}>
                         <Card
                             elevation={24}
                             sx={{
                                 borderRadius: 4,
                                 overflow: 'visible',
-                                background: 'rgba(255, 255, 255, 0.95)',
+                                background: 'rgba(255, 255, 255, 0.98)',
                                 backdropFilter: 'blur(20px)',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                boxShadow: '0 32px 64px rgba(0, 0, 0, 0.1)',
+                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                boxShadow: '0 32px 64px rgba(0, 0, 0, 0.15)',
+                                position: 'relative',
+                                zIndex: 2,
                             }}
                         >
                             <CardContent sx={{ p: { xs: 4, sm: 6, md: 8 } }}>
