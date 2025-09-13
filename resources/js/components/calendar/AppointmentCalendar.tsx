@@ -11,7 +11,7 @@ import {
   Button,
   ButtonGroup
 } from '@mui/material';
-import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
+import { Calendar, momentLocalizer, Views, NavigateAction, ToolbarProps } from 'react-big-calendar';
 import moment from 'moment';
 import React, { useState } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -59,12 +59,25 @@ interface AppointmentCalendarProps {
   onSelectEvent?: (event: CalendarEvent) => void;
   view?: CalendarView;
   userRole?: 'admin' | 'provider' | 'client';
+  selectedProvider?: {
+    id: number;
+    name: string;
+    email: string;
+  };
 }
 
 
 
 // Custom Toolbar Component
-const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
+interface CustomToolbarProps extends ToolbarProps<CalendarEvent, object> {
+  selectedProvider?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
+const CustomToolbar = ({ label, onNavigate, onView, view, selectedProvider }: CustomToolbarProps) => {
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} p={2}>
       <Stack direction="row" spacing={2} alignItems="center">
@@ -76,7 +89,10 @@ const CustomToolbar = ({ label, onNavigate, onView, view }: any) => {
             {label}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Healthcare Appointment Schedule
+            {selectedProvider
+              ? `Dr. ${selectedProvider.name} - Appointment Schedule`
+              : 'Healthcare Appointment Schedule'
+            }
           </Typography>
         </Box>
       </Stack>
@@ -231,6 +247,7 @@ export default function AppointmentCalendar({
   onSelectEvent,
   view: initialView = 'month',
   userRole = 'admin',
+  selectedProvider,
 }: AppointmentCalendarProps) {
   const [currentView, setCurrentView] = useState<CalendarView>(initialView);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
@@ -579,7 +596,7 @@ export default function AppointmentCalendar({
               onSelectSlot={handleSelectSlot}
               selectable={currentView === 'month'}
               components={{
-                toolbar: CustomToolbar,
+                toolbar: (props: ToolbarProps<CalendarEvent, object>) => <CustomToolbar {...props} selectedProvider={selectedProvider} />,
                 event: EventComponent,
               }}
               formats={{
