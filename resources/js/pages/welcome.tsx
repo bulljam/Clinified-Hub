@@ -123,7 +123,6 @@ export default function Welcome() {
         setIsVisible(true);
     }, []);
 
-    // Back to top functionality
     useEffect(() => {
         const handleScroll = () => {
             setShowBackToTop(window.scrollY > 300);
@@ -140,7 +139,6 @@ export default function Welcome() {
         });
     };
 
-    // Scroll animations
     useEffect(() => {
         const observerOptions = {
             threshold: 0.1,
@@ -175,11 +173,9 @@ export default function Welcome() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-muted/20">
-            {/* Top Navigation */}
             <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md pt-3">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
-                        {/* Logo */}
                         <Link href="/" className="flex items-center space-x-3">
                             <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
                                 <Stethoscope className="size-5 text-white" />
@@ -189,7 +185,6 @@ export default function Welcome() {
                             </div>
                         </Link>
 
-                        {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center space-x-4">
                             {auth?.user ? (
                                 <DropdownMenu>
@@ -238,7 +233,6 @@ export default function Welcome() {
                             )}
                         </div>
 
-                        {/* Mobile menu button */}
                         <div className="md:hidden">
                             <Button
                                 variant="ghost"
@@ -250,7 +244,6 @@ export default function Welcome() {
                         </div>
                     </div>
 
-                    {/* Mobile Navigation */}
                     {mobileMenuOpen && (
                         <div className="md:hidden bg-background">
                             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -436,11 +429,9 @@ export default function Welcome() {
                 }
             `}</style>
 
-            {/* Hero Section */}
-<section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-24">
+            <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-24">
                 {/* Animated Background Shapes */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Floating Medical Icons */}
                     <div className="absolute top-20 left-10 text-teal-200/20 animate-bounce" style={{ animationDelay: '0s', animationDuration: '4s' }}>
                         <Stethoscope className="w-12 h-12" />
                     </div>
@@ -459,8 +450,7 @@ export default function Welcome() {
                     <div className="absolute top-1/2 right-10 text-cyan-200/20 animate-bounce" style={{ animationDelay: '3s', animationDuration: '4.2s' }}>
                         <CheckCircle className="w-9 h-9" />
                     </div>
-                    
-                    {/* Medical Cross Pattern */}
+
                     <div className="absolute top-32 right-1/3 w-16 h-16 opacity-5">
                         <div className="absolute top-1/2 left-0 w-full h-2 bg-teal-400 transform -translate-y-1/2"></div>
                         <div className="absolute left-1/2 top-0 w-2 h-full bg-teal-400 transform -translate-x-1/2"></div>
@@ -469,8 +459,7 @@ export default function Welcome() {
                         <div className="absolute top-1/2 left-0 w-full h-1.5 bg-cyan-400 transform -translate-y-1/2"></div>
                         <div className="absolute left-1/2 top-0 w-1.5 h-full bg-cyan-400 transform -translate-x-1/2"></div>
                     </div>
-                    
-                    {/* DNA Helix Pattern */}
+
                     <div className="absolute top-16 left-1/2 w-1 h-40 opacity-10">
                         <div className="w-full h-full bg-gradient-to-b from-teal-400 via-cyan-400 to-teal-400 transform rotate-12 animate-pulse"></div>
                         <div className="absolute top-0 left-2 w-4 h-4 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '0s' }}></div>
@@ -479,16 +468,14 @@ export default function Welcome() {
                         <div className="absolute top-24 -left-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
                         <div className="absolute top-32 left-2 w-4 h-4 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
                     </div>
-                    
-                    {/* Pill Capsules */}
+
                     <div className="absolute bottom-32 right-16 transform rotate-45">
                         <div className="w-16 h-8 bg-gradient-to-r from-teal-300/20 to-cyan-300/20 rounded-full animate-pulse"></div>
                     </div>
                     <div className="absolute top-2/3 left-16 transform -rotate-12">
                         <div className="w-12 h-6 bg-gradient-to-r from-cyan-300/15 to-teal-300/15 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
                     </div>
-                    {/* Large turquoise floating circles with blur */}
-                    <div 
+                    <div
                         className="absolute top-48 left-16 w-32 h-32 bg-teal-400/4 rounded-full"
                         style={{
                             filter: 'blur(15px)',
@@ -546,7 +533,6 @@ export default function Welcome() {
                     />
                 </div>
 
-                {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-5">
                     <div className="absolute top-20 left-20 w-32 h-32 border border-primary/20 rounded-full"></div>
                     <div className="absolute top-40 right-20 w-24 h-24 border border-primary/20 rounded-full"></div>
@@ -554,10 +540,8 @@ export default function Welcome() {
                     <div className="absolute bottom-20 right-40 w-28 h-28 border border-primary/20 rounded-full"></div>
                 </div>
 
-                {/* Fog/Cloud Overlay */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {/* Large floating clouds */}
-                    <div 
+                    <div
                         className="absolute -top-32 -left-32 w-96 h-96 opacity-5"
                         style={{
                             background: `radial-gradient(ellipse 400px 200px at center, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 30%, transparent 70%)`,
@@ -589,9 +573,8 @@ export default function Welcome() {
                             animation: 'float-cloud-4 18s ease-in-out infinite'
                         }}
                     />
-                    
-                    {/* Subtle fog base layer */}
-                    <div 
+
+                    <div
                         className="absolute inset-0 opacity-3"
                         style={{
                             background: `
@@ -604,7 +587,6 @@ export default function Welcome() {
                 </div>
 
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-                    {/* Left Content */}
                     <div className={`space-y-8 transform transition-all duration-1000 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'}`}>
 
                         <div className="space-y-4">
@@ -635,7 +617,6 @@ export default function Welcome() {
                             </Link>
                         </div>
 
-                        {/* App Benefits */}
                         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-8">
                             <div className="flex items-center space-x-3 bg-card/50 rounded-lg p-4 backdrop-blur-sm border border-primary/10">
                                 <div className="flex items-center justify-center w-10 h-10 bg-teal-500/10 rounded-lg">
@@ -684,7 +665,6 @@ export default function Welcome() {
                         </div>
                     </div>
 
-                    {/* Right Content - ECG Animation */}
                     <div className={`relative transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}`}>
                         <div className="relative bg-card rounded-2xl border p-8 shadow-2xl">
                             <div className="absolute top-4 left-4 flex space-x-2">
@@ -713,8 +693,7 @@ export default function Welcome() {
                                 </div>
                             </div>
                         </div>
-                        
-                        {/* Floating elements */}
+
                         <FloatingCard delay={0.2}>
                             <div className="absolute -top-4 -right-4 bg-primary text-primary-foreground p-3 rounded-full shadow-lg">
                                 <Heart className="h-6 w-6" />
@@ -730,11 +709,9 @@ export default function Welcome() {
                 </div>
             </section>
 
-            {/* Medical Specialties Section */}
             <section className="py-20 px-4 bg-white dark:bg-gray-950 relative overflow-hidden">
                 {/* Medical Background Elements */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Floating Medical Symbols */}
                     <div className="absolute top-10 left-1/4 text-teal-100/30 dark:text-teal-900/30 animate-spin" style={{ animationDuration: '20s' }}>
                         <div className="w-20 h-20 relative">
                             <div className="absolute top-1/2 left-0 w-full h-1 bg-current transform -translate-y-1/2"></div>
@@ -742,8 +719,7 @@ export default function Welcome() {
                             <div className="absolute top-1/2 left-1/2 w-8 h-8 border-2 border-current rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
                         </div>
                     </div>
-                    
-                    {/* EKG/ECG Line Pattern */}
+
                     <div className="absolute top-1/3 right-10 w-40 h-2 opacity-10">
                         <svg className="w-full h-full" viewBox="0 0 160 8">
                             <path 
@@ -755,8 +731,7 @@ export default function Welcome() {
                             />
                         </svg>
                     </div>
-                    
-                    {/* Molecular Structure */}
+
                     <div className="absolute bottom-20 left-10 opacity-10">
                         <div className="relative w-24 h-24">
                             <div className="absolute top-0 left-1/2 w-3 h-3 bg-teal-400 rounded-full transform -translate-x-1/2"></div>
@@ -770,8 +745,7 @@ export default function Welcome() {
                             <div className="absolute bottom-1/4 right-1/4 w-0.5 h-6 bg-teal-400 transform rotate-45"></div>
                         </div>
                     </div>
-                    
-                    {/* Medical Capsules Floating */}
+
                     <div className="absolute top-1/2 right-1/4 transform rotate-12 animate-pulse">
                         <div className="w-8 h-16 bg-gradient-to-b from-teal-200/20 to-cyan-200/20 rounded-full"></div>
                     </div>
@@ -876,7 +850,6 @@ export default function Welcome() {
                 </div>
             </section>
 
-            {/* Testimonials Section */}
             <section className="py-20 px-4 bg-muted/30">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16 animate-on-scroll">
@@ -968,11 +941,9 @@ export default function Welcome() {
                 </div>
             </section>
 
-            {/* CTA Section */}
             <section className="py-20 px-4 bg-gradient-to-br from-teal-400 via-teal-500 to-teal-600 relative overflow-hidden">
                 {/* Medical Background Elements for CTA */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Floating Medical Icons */}
                     <div className="absolute top-10 left-10 text-white/10 animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}>
                         <Stethoscope className="w-16 h-16" />
                     </div>
@@ -985,8 +956,7 @@ export default function Welcome() {
                     <div className="absolute bottom-1/3 left-20 text-white/8 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}>
                         <Shield className="w-10 h-10" />
                     </div>
-                    
-                    {/* Medical Cross Patterns */}
+
                     <div className="absolute top-20 right-1/4 w-12 h-12 opacity-10">
                         <div className="absolute top-1/2 left-0 w-full h-1.5 bg-white transform -translate-y-1/2"></div>
                         <div className="absolute left-1/2 top-0 w-1.5 h-full bg-white transform -translate-x-1/2"></div>
@@ -995,8 +965,7 @@ export default function Welcome() {
                         <div className="absolute top-1/2 left-0 w-full h-1 bg-white transform -translate-y-1/2"></div>
                         <div className="absolute left-1/2 top-0 w-1 h-full bg-white transform -translate-x-1/2"></div>
                     </div>
-                    
-                    {/* Heartbeat Line */}
+
                     <div className="absolute top-1/2 left-0 w-full h-0.5 opacity-10 transform -translate-y-1/2">
                         <svg className="w-full h-full" viewBox="0 0 400 2">
                             <path 
@@ -1028,7 +997,6 @@ export default function Welcome() {
                 </div>
             </section>
 
-            {/* Footer */}
             <footer className="border-t py-12 px-4 bg-muted/10">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -1094,7 +1062,6 @@ export default function Welcome() {
                 </div>
             </footer>
 
-            {/* Back to Top Button */}
             {showBackToTop && (
                 <button
                     onClick={scrollToTop}

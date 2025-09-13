@@ -147,20 +147,19 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
 
     const getIconForStat = (title: string, index: number, role: string) => {
         const lowerTitle = title.toLowerCase();
-        
+
         if (lowerTitle.includes('appointment')) return Calendar;
         if (lowerTitle.includes('payment') || lowerTitle.includes('revenue')) return CreditCard;
         if (lowerTitle.includes('patient')) return Users;
         if (lowerTitle.includes('provider') || lowerTitle.includes('doctor')) return UserCheck;
         if (lowerTitle.includes('total') || lowerTitle.includes('growth')) return TrendingUp;
         if (lowerTitle.includes('pending')) return ClipboardList;
-        
-        // Role-specific default icons
+
         if (role === 'client') return [Heart, Calendar, Activity][index] || Heart;
         if (role === 'provider') return [Stethoscope, Users, Calendar][index] || Stethoscope;
         if (role === 'admin') return [Shield, Building2, Settings][index] || Shield;
         if (role === 'super_admin') return [Settings, Globe, TrendingUp][index] || Settings;
-        
+
         return [Calendar, Users, TrendingUp][index] || Calendar;
     };
 
@@ -175,7 +174,6 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6">
-                {/* Role-specific Header */}
                 <div className={`relative mb-6 overflow-hidden rounded-2xl shadow-lg ${userRole === 'super_admin' ? 'border border-slate-600' : ''}`}>
                     <div 
                         className="px-8 py-6 text-white relative"
@@ -227,8 +225,7 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                                 </div>
                             </div>
                         </div>
-                        
-                        {/* Decorative elements */}
+
                         {userRole === 'super_admin' ? (
                             <>
                                 <div className="absolute top-4 right-4 w-1 h-8 bg-slate-400/30 rounded-full"></div>
