@@ -68,7 +68,6 @@ interface AppointmentCalendarProps {
 
 
 
-// Custom Toolbar Component
 interface CustomToolbarProps extends ToolbarProps<CalendarEvent, object> {
   selectedProvider?: {
     id: number;
@@ -205,7 +204,6 @@ const CustomToolbar = ({ label, onNavigate, onView, view, selectedProvider }: Cu
   );
 };
 
-// Custom Event Component
 const EventComponent = ({ event }: { event: CalendarEvent }) => {
   const appointment = event.resource;
   const isConfirmed = appointment.status === 'confirmed';
@@ -273,33 +271,26 @@ export default function AppointmentCalendar({
   });
 
 
-  // Create sets of appointment days and exact time slots for efficient lookup
   const appointmentDays = new Set();
   const appointmentSlots = new Set();
   const appointmentCounts = new Map<string, number>();
   
   appointments.forEach(appointment => {
-    // Extract date and parse appointment datetime
     const dateOnly = appointment.date.split('T')[0];
     
-    // For day-level highlighting (month view): store just the date string
-    appointmentDays.add(dateOnly); // e.g., "2025-08-31"
+    appointmentDays.add(dateOnly);
     
-    // Count appointments per day for provider view
     appointmentCounts.set(dateOnly, (appointmentCounts.get(dateOnly) || 0) + 1);
     
-    // For slot-level highlighting (week/day views): store full datetime string
-    const slotKey = `${dateOnly}T${appointment.time.substring(0, 5)}`; // e.g., "2025-08-31T09:30"
+    const slotKey = `${dateOnly}T${appointment.time.substring(0, 5)}`;
     appointmentSlots.add(slotKey);
   });
   
   const dayPropGetter = (date: Date) => {
-    // Only highlight in month view - show days that have appointments
     if (currentView !== 'month') {
       return {};
     }
 
-    // Use local date string instead of UTC to avoid timezone issues
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -310,7 +301,6 @@ export default function AppointmentCalendar({
     const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
     const isToday = dateString === todayString;
 
-    // Handle today separately - show count and today indicator
     if (isToday) {
       return {
         style: {
@@ -322,7 +312,6 @@ export default function AppointmentCalendar({
       };
     }
 
-    // Handle other days with appointments
     if (count > 0) {
       return {
         style: {
@@ -340,12 +329,10 @@ export default function AppointmentCalendar({
   };
 
   const slotPropGetter = (date: Date) => {
-    // For week/day views: highlight specific time slots with appointments
     if (currentView === 'month') {
       return {};
     }
     
-    // Use local date string instead of UTC to avoid timezone issues
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -353,16 +340,13 @@ export default function AppointmentCalendar({
     const minutes = String(date.getMinutes()).padStart(2, '0');
   
     
-    // Find appointment that matches this time slot
     let matchingAppointment = null;
     
     for (const appointment of appointments) {
-      // Handle both date formats - with or without time component
       const appointmentDate = appointment.date.includes('T') 
         ? appointment.date.split('T')[0] 
         : appointment.date;
       
-      // Extract time - handle both HH:MM:SS and HH:MM formats
       const timeStr = appointment.time.includes(':') 
         ? appointment.time.split(':').slice(0, 2).join(':')
         : appointment.time;
@@ -370,11 +354,10 @@ export default function AppointmentCalendar({
       if (appointmentDate === `${year}-${month}-${day}`) {
         const [appointmentHours, appointmentMinutes] = timeStr.split(':').map(Number);
         const appointmentStart = appointmentHours * 60 + appointmentMinutes;
-        const appointmentEnd = appointmentStart + 30; // 30-minute slots
+        const appointmentEnd = appointmentStart + 30;
         
         const currentSlot = parseInt(hours) * 60 + parseInt(minutes);
         
-        // Check if this slot falls within the appointment time window
         if (currentSlot >= appointmentStart && currentSlot < appointmentEnd) {
           matchingAppointment = appointment;
           break;
