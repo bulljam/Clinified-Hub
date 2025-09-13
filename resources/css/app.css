@@ -92,13 +92,13 @@
     --sidebar-accent-foreground: #2c3e50;
     --sidebar-border: oklch(0.781 0.035 190.14);
     --sidebar-ring: #20a09f;
-    --clinify-primary: #20a09f;
-    --clinify-primary-light: oklch(0.984 0.016 185.43);
-    --clinify-primary-dark: oklch(0.781 0.035 190.14);
-    --clinify-success: oklch(0.646 0.122 145.7);
-    --clinify-warning: oklch(0.753 0.126 73.57);
-    --clinify-error: oklch(0.638 0.192 27.325);
-    --clinify-text-dark: oklch(0.196 0 0);
+    --clinifiedhub-primary: #20a09f;
+    --clinifiedhub-primary-light: oklch(0.984 0.016 185.43);
+    --clinifiedhub-primary-dark: oklch(0.781 0.035 190.14);
+    --clinifiedhub-success: oklch(0.646 0.122 145.7);
+    --clinifiedhub-warning: oklch(0.753 0.126 73.57);
+    --clinifiedhub-error: oklch(0.638 0.192 27.325);
+    --clinifiedhub-text-dark: oklch(0.196 0 0);
 }
 
 

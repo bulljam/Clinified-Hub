@@ -139,7 +139,7 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                     gradientTo: '#178f8e',
                     icon: Activity,
                     title: 'Dashboard',
-                    subtitle: 'Welcome to Clinify',
+                    subtitle: 'Welcome to ClinifiedHub',
                     accentColor: '#20a09f'
                 };
         }

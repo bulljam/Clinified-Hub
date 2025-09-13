@@ -5,7 +5,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import clinifyTheme from './theme/mui-theme';
+import clinifiedHubTheme from './theme/mui-theme';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -16,7 +16,7 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <ThemeProvider theme={clinifyTheme}>
+            <ThemeProvider theme={clinifiedHubTheme}>
                 <CssBaseline />
                 <App {...props} />
             </ThemeProvider>

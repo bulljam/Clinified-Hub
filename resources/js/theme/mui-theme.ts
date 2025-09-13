@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
-const clinifyTheme = createTheme({
+const clinifiedHubTheme = createTheme({
   palette: {
     primary: {
       main: '#20a09f',
@@ -110,4 +110,4 @@ const clinifyTheme = createTheme({
   },
 });
 
-export default clinifyTheme;
+export default clinifiedHubTheme;
