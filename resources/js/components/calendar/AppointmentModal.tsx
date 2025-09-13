@@ -27,6 +27,7 @@ interface Appointment {
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   payment_status: 'pending' | 'paid';
+  requires_refund?: boolean;
   user: {
     id: number;
     name: string;
