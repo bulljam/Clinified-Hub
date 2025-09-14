@@ -624,7 +624,7 @@ export default function Welcome() {
                                 </div>
                                 <div>
                                     <div className="font-semibold text-sm">Smart Scheduling</div>
-                                    <div className="text-xs text-muted-foreground">AI-powered</div>
+                                    <div className="text-xs text-muted-foreground">User-friendly</div>
                                 </div>
                             </div>
                             
@@ -694,17 +694,6 @@ export default function Welcome() {
                             </div>
                         </div>
 
-                        <FloatingCard delay={0.2}>
-                            <div className="absolute -top-4 -right-4 bg-primary text-primary-foreground p-3 rounded-full shadow-lg">
-                                <Heart className="h-6 w-6" />
-                            </div>
-                        </FloatingCard>
-                        
-                        <FloatingCard delay={0.5}>
-                            <div className="absolute -bottom-4 -left-4 bg-green-500 text-white p-3 rounded-full shadow-lg">
-                                <CheckCircle className="h-6 w-6" />
-                            </div>
-                        </FloatingCard>
                     </div>
                 </div>
             </section>
