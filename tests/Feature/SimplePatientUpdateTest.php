@@ -58,7 +58,6 @@ test('patient cannot update confirmed appointment', function () {
         'notes' => 'Should not update',
     ]);
 
-    // Should be blocked by policy since confirmed appointments can't be updated by patients
     $response->assertForbidden();
 });
 
