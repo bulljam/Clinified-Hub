@@ -44,7 +44,6 @@ class DoctorApplicationController extends Controller
             }
         }
 
-        // Handle photo upload
         $photoPath = null;
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('doctor-photos', 'public');
