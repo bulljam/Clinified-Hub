@@ -47,7 +47,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                 <IconButton
                     component={Link}
                     href="/"
-                    size={{ xs: 'small', md: 'medium' }}
+                    size="medium"
                     sx={{
                         bgcolor: 'rgba(255, 255, 255, 0.9)',
                         color: '#20a09f',
@@ -216,10 +216,10 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             type="submit"
                             variant="contained"
                             fullWidth
-                            size={{ xs: 'medium', md: 'large' }}
+                            size="large"
                             tabIndex={4}
                             disabled={processing}
-                            startIcon={processing ? <CircularProgress size={{ xs: 16, md: 18 }} color="inherit" /> : <LoginIcon sx={{ fontSize: { xs: 20, md: 24 } }} />}
+                            startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <LoginIcon sx={{ fontSize: { xs: 20, md: 24 } }} />}
                             sx={{
                                 bgcolor: '#20a09f',
                                 py: { xs: 1.2, md: 1.5 },
