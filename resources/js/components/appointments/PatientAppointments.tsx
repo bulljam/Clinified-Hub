@@ -244,7 +244,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                 <PersonIcon sx={{ fontSize: { xs: 20, md: 28 } }} />
               </Avatar>
               <Box>
-                <Typography variant={{ xs: 'h5', md: 'h4' }} component="h1" fontWeight="bold" color="#20a09f">
+                <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f">
                   My Appointments
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -254,7 +254,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             </Box>
             <Button
               variant="contained"
-              size={{ xs: 'medium', md: 'large' }}
+              size="large"
               onClick={() => setShowNewAppointmentModal(true)}
               sx={{
                 bgcolor: '#20a09f',
@@ -285,7 +285,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             <CardContent sx={{ p: { xs: 2, md: 3 }, position: 'relative', overflow: 'hidden' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant={{ xs: 'h5', md: 'h4' }} fontWeight="bold" color="#20a09f">
+                  <Typography variant="h4" fontWeight="bold" color="#20a09f">
                     {appointmentStats.total}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
@@ -306,7 +306,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             <CardContent sx={{ p: { xs: 2, md: 3 }, position: 'relative' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant={{ xs: 'h5', md: 'h4' }} fontWeight="bold" color="success.main">
+                  <Typography variant="h4" fontWeight="bold" color="success.main">
                     {appointmentStats.confirmed}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
@@ -327,7 +327,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             <CardContent sx={{ p: { xs: 2, md: 3 }, position: 'relative' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant={{ xs: 'h5', md: 'h4' }} fontWeight="bold" color="warning.main">
+                  <Typography variant="h4" fontWeight="bold" color="warning.main">
                     {appointmentStats.pending}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
@@ -348,7 +348,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             <CardContent sx={{ p: { xs: 2, md: 3 }, position: 'relative' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant={{ xs: 'h5', md: 'h4' }} fontWeight="bold" color="success.main">
+                  <Typography variant="h4" fontWeight="bold" color="success.main">
                     {appointmentStats.paid}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
@@ -379,7 +379,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   endIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outlined"
-                  size={{ xs: 'medium', md: 'medium' }}
+                  size="medium"
                   sx={{
                     borderColor: '#20a09f',
                     color: '#20a09f',
@@ -590,7 +590,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             <Avatar sx={{ bgcolor: 'grey.100', width: { xs: 60, md: 80 }, height: { xs: 60, md: 80 }, mx: 'auto', mb: { xs: 2, md: 3 } }}>
               <PersonIcon sx={{ fontSize: { xs: 30, md: 40 }, color: 'grey.400' }} />
             </Avatar>
-            <Typography variant={{ xs: 'subtitle1', md: 'h6' }} fontWeight="600" color="text.primary" mb={1}>
+            <Typography variant="h6" fontWeight="600" color="text.primary" mb={1}>
               No Appointments Found
             </Typography>
             <Typography variant="body2" color="text.secondary" mb={{ xs: 2, md: 3 }} sx={{ maxWidth: '400px', mx: 'auto' }}>

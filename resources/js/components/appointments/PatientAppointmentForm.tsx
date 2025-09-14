@@ -85,7 +85,7 @@ export default function PatientAppointmentForm({
     <>
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ pb: { xs: 1, md: 2 } }}>
-          <Typography variant={{ xs: 'h6', md: 'h5' }} component="h2">
+          <Typography variant="h5" component="h2">
             Edit Appointment
           </Typography>
         </DialogTitle>
