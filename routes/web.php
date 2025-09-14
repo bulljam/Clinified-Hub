@@ -42,7 +42,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('doctor-applications/{application}/credential/{filename}', [DoctorApplicationController::class, 'viewCredential'])->name('doctor-applications.view-credential');
     });
 
-    // Super Admin only routes
     Route::prefix('super-admin')->name('super-admin.')->middleware(['auth', 'verified'])->group(function () {
         Route::resource('admins', App\Http\Controllers\AdminController::class);
         Route::post('admins/{admin}/reset-password', [App\Http\Controllers\AdminController::class, 'resetPassword'])->name('admins.reset-password');
