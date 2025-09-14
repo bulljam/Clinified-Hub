@@ -62,21 +62,21 @@ interface RoleConfig {
 function StatCard({ title, value, description, icon: Icon, trend }: StatCardProps & { roleConfig?: RoleConfig }) {
     return (
         <div className="bg-card rounded-xl border border-border overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="bg-gradient-to-r from-[#20a09f] to-[#178f8e] px-6 py-4 text-white">
+            <div className="bg-gradient-to-r from-[#20a09f] to-[#178f8e] px-4 py-3 md:px-6 md:py-4 text-white">
                 <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-sm">{title}</h3>
-                    <div className="p-2 bg-white/20 rounded-lg">
-                        <Icon className="size-5" />
+                    <h3 className="font-semibold text-xs md:text-sm">{title}</h3>
+                    <div className="p-1.5 md:p-2 bg-white/20 rounded-lg">
+                        <Icon className="size-4 md:size-5" />
                     </div>
                 </div>
             </div>
-            <div className="px-6 py-4">
-                <div className="text-3xl font-bold text-foreground">{value}</div>
-                <p className="text-sm text-muted-foreground mt-1">{description}</p>
+            <div className="px-4 py-3 md:px-6 md:py-4">
+                <div className="text-2xl md:text-3xl font-bold text-foreground">{value}</div>
+                <p className="text-xs md:text-sm text-muted-foreground mt-1">{description}</p>
                 {trend && (
-                    <div className="flex items-center mt-3 p-2 bg-accent/10 rounded-lg">
-                        <TrendingUp className="size-4 text-accent mr-2" />
-                        <span className="text-sm text-accent font-semibold">{trend}</span>
+                    <div className="flex items-center mt-2 md:mt-3 p-1.5 md:p-2 bg-accent/10 rounded-lg">
+                        <TrendingUp className="size-3 md:size-4 text-accent mr-1.5 md:mr-2" />
+                        <span className="text-xs md:text-sm text-accent font-semibold">{trend}</span>
                     </div>
                 )}
             </div>
@@ -173,10 +173,10 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6">
-                <div className={`relative mb-6 overflow-hidden rounded-2xl shadow-lg ${userRole === 'super_admin' ? 'border border-slate-600' : ''}`}>
-                    <div 
-                        className="px-8 py-6 text-white relative"
+            <div className="flex h-full flex-1 flex-col gap-4 md:gap-6 overflow-x-auto p-4 md:p-6">
+                <div className={`relative mb-4 md:mb-6 overflow-hidden rounded-2xl shadow-lg ${userRole === 'super_admin' ? 'border border-slate-600' : ''}`}>
+                    <div
+                        className="px-4 py-4 md:px-8 md:py-6 text-white relative"
                         style={{
                             background: userRole === 'super_admin' 
                                 ? `linear-gradient(135deg, ${roleConfig.gradientFrom} 0%, ${roleConfig.gradientTo} 100%), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -184,29 +184,29 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                         }}
                     >
                         <div className={`absolute inset-0 ${userRole === 'super_admin' ? 'bg-black/20' : 'bg-black/10'}`}></div>
-                        <div className="relative z-10 flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className={`p-3 rounded-xl backdrop-blur-sm ${
-                                    userRole === 'super_admin' 
-                                        ? 'bg-slate-700/50 border border-slate-500/30' 
+                        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div className="flex items-center gap-3 md:gap-4">
+                                <div className={`p-2 md:p-3 rounded-xl backdrop-blur-sm ${
+                                    userRole === 'super_admin'
+                                        ? 'bg-slate-700/50 border border-slate-500/30'
                                         : 'bg-white/20'
                                 }`}>
-                                    <roleConfig.icon className="size-8" />
+                                    <roleConfig.icon className="size-6 md:size-8" />
                                 </div>
                                 <div>
-                                    <h1 className={`text-3xl font-bold ${
+                                    <h1 className={`text-xl md:text-3xl font-bold ${
                                         userRole === 'super_admin' ? 'text-slate-100' : ''
                                     }`}>
                                         {roleConfig.title}
                                     </h1>
-                                    <p className={`text-base ${
+                                    <p className={`text-sm md:text-base ${
                                         userRole === 'super_admin' ? 'text-slate-300' : 'text-white/90'
                                     }`}>
                                         {roleConfig.subtitle}
                                     </p>
                                 </div>
                             </div>
-                            <div className="hidden md:block">
+                            <div className="flex md:block justify-end">
                                 <div className="text-right">
                                     <div className={`text-sm ${
                                         userRole === 'super_admin' ? 'text-slate-400' : 'text-white/70'
@@ -242,45 +242,45 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                     </div>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-3">
+                <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {statsWithIcons.map((stat, index) => (
                         <StatCard key={index} {...stat} />
                     ))}
                 </div>
 
                 <div className="bg-card rounded-xl border border-border shadow-lg">
-                    <div 
-                        className="px-6 py-4 text-white rounded-t-xl"
+                    <div
+                        className="px-4 py-3 md:px-6 md:py-4 text-white rounded-t-xl"
                         style={{
                             background: `linear-gradient(135deg, ${roleConfig.gradientFrom} 0%, ${roleConfig.gradientTo} 100%)`
                         }}
                     >
-                        <div className="flex items-center gap-3">
-                            <Calendar className="size-5" />
-                            <h3 className="font-semibold text-lg">Upcoming Appointments</h3>
+                        <div className="flex items-center gap-2 md:gap-3">
+                            <Calendar className="size-4 md:size-5" />
+                            <h3 className="font-semibold text-base md:text-lg">Upcoming Appointments</h3>
                         </div>
                     </div>
-                    <div className="p-6">
+                    <div className="p-4 md:p-6">
                         {upcomingAppointments.length > 0 ? (
-                            <div className="space-y-4">
+                            <div className="space-y-3 md:space-y-4">
                                 {upcomingAppointments.map((appointment, index) => (
-                                    <div 
-                                        key={index} 
-                                        className="flex items-center justify-between p-4 border border-border rounded-lg hover:shadow-md transition-all duration-200 hover:border-accent/50"
+                                    <div
+                                        key={index}
+                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 md:p-4 border border-border rounded-lg hover:shadow-md transition-all duration-200 hover:border-accent/50"
                                     >
-                                        <div className="flex items-center gap-4">
-                                            <div 
-                                                className="p-2 rounded-lg"
+                                        <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
+                                            <div
+                                                className="p-1.5 md:p-2 rounded-lg flex-shrink-0"
                                                 style={{ backgroundColor: `${roleConfig.primaryColor}20` }}
                                             >
-                                                <Calendar className="size-4" style={{ color: roleConfig.primaryColor }} />
+                                                <Calendar className="size-3 md:size-4" style={{ color: roleConfig.primaryColor }} />
                                             </div>
-                                            <div>
-                                                <div className="text-sm font-medium text-muted-foreground">
+                                            <div className="min-w-0 flex-1">
+                                                <div className="text-xs md:text-sm font-medium text-muted-foreground">
                                                     {appointment.time}
                                                     {appointment.date && ` • ${appointment.date}`}
                                                 </div>
-                                                <div className="text-base font-semibold text-foreground mt-1">
+                                                <div className="text-sm md:text-base font-semibold text-foreground mt-1 truncate">
                                                     {userRole === 'admin' || userRole === 'super_admin'
                                                         ? `${appointment.patient} with Dr. ${appointment.provider}`
                                                         : userRole === 'provider'
@@ -290,9 +290,9 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                                                 </div>
                                             </div>
                                         </div>
-                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                            appointment.status === 'confirmed' 
-                                                ? 'bg-green-100 text-green-700 border border-green-200' 
+                                        <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-center ${
+                                            appointment.status === 'confirmed'
+                                                ? 'bg-green-100 text-green-700 border border-green-200'
                                                 : appointment.status === 'pending'
                                                 ? 'bg-yellow-100 text-yellow-700 border border-yellow-200'
                                                 : 'bg-red-100 text-red-700 border border-red-200'
@@ -303,15 +303,15 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-12">
-                                <div 
-                                    className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
+                            <div className="text-center py-8 md:py-12">
+                                <div
+                                    className="w-12 h-12 md:w-16 md:h-16 rounded-full mx-auto mb-3 md:mb-4 flex items-center justify-center"
                                     style={{ backgroundColor: `${roleConfig.primaryColor}20` }}
                                 >
-                                    <Calendar className="size-8" style={{ color: roleConfig.primaryColor }} />
+                                    <Calendar className="size-6 md:size-8" style={{ color: roleConfig.primaryColor }} />
                                 </div>
-                                <h3 className="text-lg font-semibold text-foreground mb-2">No Upcoming Appointments</h3>
-                                <p className="text-muted-foreground max-w-md mx-auto">
+                                <h3 className="text-base md:text-lg font-semibold text-foreground mb-2">No Upcoming Appointments</h3>
+                                <p className="text-sm md:text-base text-muted-foreground max-w-md mx-auto px-4">
                                     {userRole === 'admin' || userRole === 'super_admin'
                                         ? 'No upcoming appointments in the system. New appointments will appear here once scheduled.'
                                         : userRole === 'provider'
