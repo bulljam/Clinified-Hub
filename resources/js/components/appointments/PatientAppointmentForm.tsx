@@ -84,25 +84,29 @@ export default function PatientAppointmentForm({
   return (
     <>
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          Edit Appointment
+        <DialogTitle sx={{ pb: { xs: 1, md: 2 } }}>
+          <Typography variant={{ xs: 'h6', md: 'h5' }} component="h2">
+            Edit Appointment
+          </Typography>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ px: { xs: 2, md: 3 } }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Box component="form" onSubmit={handleSubmit} sx={{ pt: 1 }}>
-              <Alert severity="info" sx={{ mb: 3 }}>
-                <Typography variant="body2">
+              <Alert severity="info" sx={{ mb: { xs: 2, md: 3 } }}>
+                <Typography variant="body2" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
                   <strong>Provider:</strong> {appointment.provider.name}
                 </Typography>
               </Alert>
 
               {!canEdit && (
-                <Alert severity="warning" sx={{ mb: 3 }}>
-                  This appointment cannot be modified because it is {appointment.status}.
+                <Alert severity="warning" sx={{ mb: { xs: 2, md: 3 } }}>
+                  <Typography variant="body2" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
+                    This appointment cannot be modified because it is {appointment.status}.
+                  </Typography>
                 </Alert>
               )}
 
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
                 <DatePicker
                   label="Appointment Date"
                   value={data.date ? dayjs(data.date) : null}
@@ -163,11 +167,12 @@ export default function PatientAppointmentForm({
             </Box>
           </LocalizationProvider>
         </DialogContent>
-        <DialogActions sx={{ p: 3, gap: 1 }}>
+        <DialogActions sx={{ p: { xs: 2, md: 3 }, gap: 1, flexDirection: { xs: 'column', sm: 'row' } }}>
           <Button
             variant="outlined"
             onClick={onClose}
             disabled={processing}
+            sx={{ order: { xs: 2, sm: 1 }, width: { xs: '100%', sm: 'auto' } }}
           >
             Close
           </Button>
@@ -177,6 +182,7 @@ export default function PatientAppointmentForm({
               variant="contained"
               disabled={processing || !data.date || !data.time}
               onClick={handleSubmit}
+              sx={{ order: { xs: 1, sm: 2 }, width: { xs: '100%', sm: 'auto' } }}
             >
               {processing ? 'Updating...' : 'Update'}
             </Button>

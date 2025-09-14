@@ -236,15 +236,15 @@ export default function PatientAppointments({ appointments, allAppointments, pro
       {isLoading && <LinearProgress sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }} />}
       
       {/* Header Section */}
-      <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-        <CardContent sx={{ p: 4 }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Avatar sx={{ bgcolor: '#20a09f', width: 56, height: 56 }}>
-                <PersonIcon sx={{ fontSize: 28 }} />
+      <Card elevation={0} sx={{ mb: { xs: 2, md: 4 }, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+        <CardContent sx={{ p: { xs: 2, md: 4 } }}>
+          <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} gap={2}>
+            <Box display="flex" alignItems="center" gap={{ xs: 1.5, md: 2 }}>
+              <Avatar sx={{ bgcolor: '#20a09f', width: { xs: 40, md: 56 }, height: { xs: 40, md: 56 } }}>
+                <PersonIcon sx={{ fontSize: { xs: 20, md: 28 } }} />
               </Avatar>
               <Box>
-                <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f">
+                <Typography variant={{ xs: 'h5', md: 'h4' }} component="h1" fontWeight="bold" color="#20a09f">
                   My Appointments
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -254,16 +254,17 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             </Box>
             <Button
               variant="contained"
-              size="large"
+              size={{ xs: 'medium', md: 'large' }}
               onClick={() => setShowNewAppointmentModal(true)}
-              sx={{ 
+              sx={{
                 bgcolor: '#20a09f',
                 borderRadius: 3,
-                px: 4,
-                py: 1.5,
+                px: { xs: 2, md: 4 },
+                py: { xs: 1, md: 1.5 },
                 textTransform: 'none',
                 fontWeight: 600,
                 boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                alignSelf: { xs: 'stretch', sm: 'auto' },
                 '&:hover': {
                   bgcolor: '#178f8e',
                   boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
@@ -279,86 +280,86 @@ export default function PatientAppointments({ appointments, allAppointments, pro
 
       {/* Statistics Cards - Only show in list view */}
       {activeTab === 0 && (
-        <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={3} mb={4}>
+        <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={{ xs: 2, md: 3 }} mb={{ xs: 2, md: 4 }}>
           <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-            <CardContent sx={{ p: 3, position: 'relative', overflow: 'hidden' }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 }, position: 'relative', overflow: 'hidden' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="#20a09f">
+                  <Typography variant={{ xs: 'h5', md: 'h4' }} fontWeight="bold" color="#20a09f">
                     {appointmentStats.total}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
                     Total Appointments
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: '#20a09f', width: 48, height: 48 }}>
-                  <StatsIcon />
+                <Avatar sx={{ bgcolor: '#20a09f', width: { xs: 36, md: 48 }, height: { xs: 36, md: 48 } }}>
+                  <StatsIcon sx={{ fontSize: { xs: 18, md: 24 } }} />
                 </Avatar>
               </Box>
-              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1, display: { xs: 'none', md: 'block' } }}>
                 <StatsIcon sx={{ fontSize: 80 }} />
               </Box>
             </CardContent>
           </Card>
 
           <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-            <CardContent sx={{ p: 3, position: 'relative' }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 }, position: 'relative' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="success.main">
+                  <Typography variant={{ xs: 'h5', md: 'h4' }} fontWeight="bold" color="success.main">
                     {appointmentStats.confirmed}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
                     Confirmed
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
-                  <MedicalIcon />
+                <Avatar sx={{ bgcolor: 'success.main', width: { xs: 36, md: 48 }, height: { xs: 36, md: 48 } }}>
+                  <MedicalIcon sx={{ fontSize: { xs: 18, md: 24 } }} />
                 </Avatar>
               </Box>
-              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1, display: { xs: 'none', md: 'block' } }}>
                 <MedicalIcon sx={{ fontSize: 80 }} />
               </Box>
             </CardContent>
           </Card>
 
           <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-            <CardContent sx={{ p: 3, position: 'relative' }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 }, position: 'relative' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="warning.main">
+                  <Typography variant={{ xs: 'h5', md: 'h4' }} fontWeight="bold" color="warning.main">
                     {appointmentStats.pending}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
                     Pending
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: 'warning.main', width: 48, height: 48 }}>
-                  <TimeIcon />
+                <Avatar sx={{ bgcolor: 'warning.main', width: { xs: 36, md: 48 }, height: { xs: 36, md: 48 } }}>
+                  <TimeIcon sx={{ fontSize: { xs: 18, md: 24 } }} />
                 </Avatar>
               </Box>
-              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1, display: { xs: 'none', md: 'block' } }}>
                 <TimeIcon sx={{ fontSize: 80 }} />
               </Box>
             </CardContent>
           </Card>
 
           <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-            <CardContent sx={{ p: 3, position: 'relative' }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 }, position: 'relative' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="success.main">
+                  <Typography variant={{ xs: 'h5', md: 'h4' }} fontWeight="bold" color="success.main">
                     {appointmentStats.paid}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
                     Paid
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: 'success.main', width: 48, height: 48 }}>
-                  <PaymentIcon />
+                <Avatar sx={{ bgcolor: 'success.main', width: { xs: 36, md: 48 }, height: { xs: 36, md: 48 } }}>
+                  <PaymentIcon sx={{ fontSize: { xs: 18, md: 24 } }} />
                 </Avatar>
               </Box>
-              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1 }}>
+              <Box sx={{ position: 'absolute', bottom: -20, right: -20, opacity: 0.1, display: { xs: 'none', md: 'block' } }}>
                 <PaymentIcon sx={{ fontSize: 80 }} />
               </Box>
             </CardContent>
@@ -368,16 +369,17 @@ export default function PatientAppointments({ appointments, allAppointments, pro
 
       {/* Advanced Filters Section - Only show in list view */}
       {activeTab === 0 && (
-        <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-          <CardContent sx={{ p: 3 }}>
-            <Stack spacing={3}>
+        <Card elevation={0} sx={{ mb: { xs: 2, md: 4 }, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+          <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+            <Stack spacing={{ xs: 2, md: 3 }}>
               {/* Filter Toggle */}
-              <Box display="flex" alignItems="center" gap={2}>
+              <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'center' }} gap={2}>
                 <Button
                   startIcon={<FilterIcon />}
                   endIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outlined"
+                  size={{ xs: 'medium', md: 'medium' }}
                   sx={{
                     borderColor: '#20a09f',
                     color: '#20a09f',
@@ -395,6 +397,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                     color="error"
                     onClick={clearFilters}
                     size="small"
+                    sx={{ alignSelf: { xs: 'flex-start', sm: 'auto' } }}
                   >
                     Clear All
                   </Button>
@@ -403,12 +406,12 @@ export default function PatientAppointments({ appointments, allAppointments, pro
 
               {/* Filters */}
               <Collapse in={showFilters}>
-                <Box sx={{ 
-                  border: '1px solid #e0e0e0', 
-                  borderRadius: 2, 
-                  p: 3, 
+                <Box sx={{
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 2,
+                  p: { xs: 2, md: 3 },
                   mt: 2,
-                  bgcolor: 'rgba(32, 160, 159, 0.02)' 
+                  bgcolor: 'rgba(32, 160, 159, 0.02)'
                 }}>
                   <Grid container spacing={3} alignItems="flex-end">
                     <Grid size={{ xs: 12, sm: 6, md: 4 }}>
@@ -535,18 +538,19 @@ export default function PatientAppointments({ appointments, allAppointments, pro
       )}
 
       {/* View Toggle Tabs */}
-      <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+      <Card elevation={0} sx={{ mb: { xs: 2, md: 4 }, borderRadius: 3, border: '1px solid #e0e0e0' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs 
-            value={activeTab} 
-            onChange={handleTabChange} 
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
             variant="fullWidth"
             sx={{
               '& .MuiTab-root': {
                 textTransform: 'none',
                 fontWeight: 600,
-                fontSize: '1rem',
-                py: 2,
+                fontSize: { xs: '0.875rem', md: '1rem' },
+                py: { xs: 1.5, md: 2 },
+                minHeight: { xs: 56, md: 72 },
                 '&.Mui-selected': {
                   bgcolor: '#20a09f',
                   color: 'white',
@@ -559,13 +563,21 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             }}
           >
             <Tab
-              icon={<ListIcon />}
-              label="My Appointments List"
+              icon={<ListIcon sx={{ fontSize: { xs: 18, md: 24 } }} />}
+              label={
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                  My Appointments List
+                </Box>
+              }
               iconPosition="start"
             />
             <Tab
-              icon={<CalendarIcon />}
-              label="Calendar View"
+              icon={<CalendarIcon sx={{ fontSize: { xs: 18, md: 24 } }} />}
+              label={
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                  Calendar View
+                </Box>
+              }
               iconPosition="start"
             />
           </Tabs>
@@ -574,23 +586,30 @@ export default function PatientAppointments({ appointments, allAppointments, pro
 
       {appointments.data.length === 0 ? (
         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
-          <CardContent sx={{ textAlign: 'center', py: 8 }}>
-            <Avatar sx={{ bgcolor: 'grey.100', width: 80, height: 80, mx: 'auto', mb: 3 }}>
-              <PersonIcon sx={{ fontSize: 40, color: 'grey.400' }} />
+          <CardContent sx={{ textAlign: 'center', py: { xs: 4, md: 8 }, px: { xs: 2, md: 4 } }}>
+            <Avatar sx={{ bgcolor: 'grey.100', width: { xs: 60, md: 80 }, height: { xs: 60, md: 80 }, mx: 'auto', mb: { xs: 2, md: 3 } }}>
+              <PersonIcon sx={{ fontSize: { xs: 30, md: 40 }, color: 'grey.400' }} />
             </Avatar>
-            <Typography variant="h6" fontWeight="600" color="text.primary" mb={1}>
+            <Typography variant={{ xs: 'subtitle1', md: 'h6' }} fontWeight="600" color="text.primary" mb={1}>
               No Appointments Found
             </Typography>
-            <Typography variant="body2" color="text.secondary" mb={3}>
-              {appointments.data.length === 0 
+            <Typography variant="body2" color="text.secondary" mb={{ xs: 2, md: 3 }} sx={{ maxWidth: '400px', mx: 'auto' }}>
+              {appointments.data.length === 0
                 ? "You haven't booked any appointments yet. Book your first appointment to get started!"
                 : "No appointments match your current filter criteria. Try adjusting your filters."
               }
             </Typography>
-            <Button 
+            <Button
               variant="contained"
               onClick={() => setShowNewAppointmentModal(true)}
-              sx={{ borderRadius: 2, px: 4, textTransform: 'none', fontWeight: 600 }}
+              sx={{
+                borderRadius: 2,
+                px: { xs: 3, md: 4 },
+                py: { xs: 1, md: 1.5 },
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: { xs: '0.875rem', md: '1rem' }
+              }}
             >
               Book Your First Appointment
             </Button>
