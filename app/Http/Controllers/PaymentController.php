@@ -14,10 +14,8 @@ class PaymentController extends Controller
     {
         $user = auth()->user();
         
-        // Base query with relationships
         $transactionsQuery = Transaction::with(['user', 'doctor']);
-        
-        // Filter based on user role
+
         if ($user->role === 'provider') {
             $transactionsQuery->where('doctor_id', $user->id);
         } elseif ($user->role === 'client') {
@@ -25,8 +23,7 @@ class PaymentController extends Controller
         }
         
         $transactions = $transactionsQuery->latest()->paginate(10);
-        
-        // Get additional data for admin filters
+
         $users = [];
         $providers = [];
         
