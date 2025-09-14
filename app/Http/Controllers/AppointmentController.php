@@ -48,7 +48,6 @@ class AppointmentController extends Controller
 
         $appointments = $query->latest()->paginate(5);
 
-        // For client users, also provide all appointments for availability checking and providers list
         $allAppointments = [];
         $providers = [];
         if ($user->role === 'client') {
@@ -59,7 +58,6 @@ class AppointmentController extends Controller
                 ->select('id', 'name', 'email')
                 ->get();
         } elseif (in_array($user->role, ['admin', 'super_admin'])) {
-            // For admin users, provide providers list for filtering
             $providers = User::where('role', 'provider')
                 ->select('id', 'name', 'email')
                 ->get();
@@ -106,7 +104,6 @@ class AppointmentController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        // Check if the time slot is already booked for this provider on this date
         $existingAppointment = Appointment::where('provider_id', $validated['provider_id'])
             ->where('date', $validated['date'])
             ->where('time', $validated['time'])
@@ -119,7 +116,6 @@ class AppointmentController extends Controller
                 ->withInput();
         }
 
-        // Check if the patient already has an appointment with this provider on this date
         $patientExistingAppointment = Appointment::where('user_id', $request->user()->id)
             ->where('provider_id', $validated['provider_id'])
             ->where('date', $validated['date'])
@@ -185,13 +181,10 @@ class AppointmentController extends Controller
             'payment_status' => 'sometimes|in:pending,on_hold,paid,cancelled',
         ]);
 
-        // Handle combined appointment and payment status logic
         if (isset($validated['status'])) {
             switch ($validated['status']) {
                 case 'confirmed':
-                    // When confirming appointment, also approve any on_hold payments
                     if ($appointment->payment_status === 'on_hold') {
-                        // Find and approve the on_hold transaction
                         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
                             ->where('doctor_id', $appointment->provider_id)
                             ->where('status', 'on_hold')
@@ -207,9 +200,7 @@ class AppointmentController extends Controller
                     break;
                     
                 case 'cancelled':
-                    // When cancelling appointment, handle payments based on current status
                     if ($appointment->payment_status === 'on_hold') {
-                        // Find and reject the on_hold transaction
                         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
                             ->where('doctor_id', $appointment->provider_id)
                             ->where('status', 'on_hold')
@@ -223,7 +214,6 @@ class AppointmentController extends Controller
                         $validated['payment_status'] = 'cancelled';
                         $validated['requires_refund'] = true;
                     } elseif ($appointment->payment_status === 'paid') {
-                        // Find and refund the paid transaction
                         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
                             ->where('doctor_id', $appointment->provider_id)
                             ->where('status', 'paid')
@@ -237,7 +227,6 @@ class AppointmentController extends Controller
                         $validated['payment_status'] = 'cancelled';
                         $validated['requires_refund'] = true;
                     } else {
-                        // For pending payments, just cancel the payment status, no refund needed
                         $validated['payment_status'] = 'cancelled';
                         $validated['requires_refund'] = false;
                     }
@@ -269,7 +258,6 @@ class AppointmentController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        // Check if the time slot is already booked for this provider on this date (excluding current appointment)
         $existingAppointment = Appointment::where('provider_id', $appointment->provider_id)
             ->where('date', $validated['date'])
             ->where('time', $validated['time'])
@@ -283,7 +271,6 @@ class AppointmentController extends Controller
                 ->withInput();
         }
 
-        // Check if the patient already has another appointment with this provider on this date
         if ($appointment->provider_id === $appointment->provider_id && $appointment->date !== $validated['date']) {
             $patientExistingAppointment = Appointment::where('user_id', $appointment->user_id)
                 ->where('provider_id', $appointment->provider_id)
@@ -343,7 +330,6 @@ class AppointmentController extends Controller
     {
         $this->authorize('update', $appointment);
 
-        // Find the transaction for this appointment
         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
             ->where('doctor_id', $appointment->provider_id)
             ->where('status', 'on_hold')
@@ -357,10 +343,8 @@ class AppointmentController extends Controller
             ], 404);
         }
 
-        // Approve the payment
         $transaction->update(['status' => 'paid']);
 
-        // Automatically confirm the appointment
         $appointment->update([
             'payment_status' => 'paid',
             'status' => 'confirmed'
@@ -386,7 +370,6 @@ class AppointmentController extends Controller
     {
         $this->authorize('update', $appointment);
 
-        // Find the transaction for this appointment
         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
             ->where('doctor_id', $appointment->provider_id)
             ->where('status', 'on_hold')
@@ -400,10 +383,8 @@ class AppointmentController extends Controller
             ], 404);
         }
 
-        // Reject the payment
         $transaction->update(['status' => 'cancelled']);
 
-        // Reset appointment payment status
         $appointment->update(['payment_status' => 'pending']);
 
         if ($request->wantsJson()) {
