@@ -105,11 +105,63 @@
 @layer base {
     * {
         @apply border-border;
+        cursor: pointer !important;
     }
 
     body {
         @apply bg-background text-foreground;
     }
+
+    /* Global interactive elements pointer cursor styling */
+    button,
+    [role="button"],
+    [tabindex="0"]:not(input):not(textarea):not(select),
+    .cursor-pointer,
+    svg[onclick],
+    svg:hover,
+    /* All clickable/interactive elements */
+    a,
+    [onclick],
+    label,
+    select,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    input[type="checkbox"],
+    input[type="radio"],
+    input[type="file"],
+    /* Cards and containers with hover effects */
+    .hover\\:shadow-xl,
+    .hover\\:shadow-lg,
+    .hover\\:shadow-md,
+    .hover\\:-translate-y-1,
+    .hover\\:scale-105,
+    /* Material UI and common interactive classes */
+    .MuiButton-root,
+    .MuiIconButton-root,
+    .MuiChip-root,
+    .MuiCard-root,
+    .MuiListItem-root,
+    .MuiMenuItem-root,
+    .MuiTabs-root,
+    .MuiTab-root,
+    /* Common interactive class patterns */
+    [class*="hover:"],
+    [class*="clickable"],
+    [class*="interactive"] {
+        cursor: pointer;
+    }
+
+    /* Ensure all Lucide icons have pointer cursor and hover effects */
+    svg[data-lucide] {
+        cursor: pointer;
+        transition: opacity 0.15s ease-in-out;
+    }
+
+    svg[data-lucide]:hover {
+        opacity: 0.75;
+    }
+
 }
 
 /* React Big Calendar custom styles */
