@@ -1047,6 +1047,24 @@ export default function Welcome() {
                     
                     <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
                         <p>&copy; 2025 Clinified Hub. All rights reserved.</p>
+                        <div className="mt-6 relative">
+                            <div className="flex items-center justify-center">
+                                <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent w-32"></div>
+                                <div className="mx-4 relative group cursor-pointer">
+                                    <div className="bg-gradient-to-r from-primary/10 to-teal-500/10 px-6 py-3 rounded-full border border-primary/20 backdrop-blur-sm hover:border-primary/40 transition-all duration-500 hover:scale-105">
+                                        <div className="flex items-center space-x-2">
+                                            <div className="w-2 h-2 bg-gradient-to-r from-primary to-teal-500 rounded-full animate-pulse"></div>
+                                            <span className="text-xs font-medium bg-gradient-to-r from-primary to-teal-600 bg-clip-text text-transparent group-hover:from-primary/80 group-hover:to-teal-600/80 transition-all duration-300">
+                                                Made by Aymane Bouljam
+                                            </span>
+                                            <div className="w-2 h-2 bg-gradient-to-r from-teal-500 to-primary rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                                        </div>
+                                    </div>
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-teal-500/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                </div>
+                                <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent w-32"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </footer>
