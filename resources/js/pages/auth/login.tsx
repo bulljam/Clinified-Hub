@@ -43,10 +43,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         >
             <Head title="Log in" />
             
-            <Box sx={{ position: 'absolute', top: 24, right: 24 }}>
+            <Box sx={{ position: 'absolute', top: { xs: 16, md: 24 }, right: { xs: 16, md: 24 } }}>
                 <IconButton
                     component={Link}
                     href="/"
+                    size={{ xs: 'small', md: 'medium' }}
                     sx={{
                         bgcolor: 'rgba(255, 255, 255, 0.9)',
                         color: '#20a09f',
@@ -57,16 +58,17 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     }}
                     title="Go to Home"
                 >
-                    <HomeIcon />
+                    <HomeIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
                 </IconButton>
             </Box>
 
             {status && (
-                <Alert 
-                    severity="success" 
-                    sx={{ 
-                        mb: 3, 
+                <Alert
+                    severity="success"
+                    sx={{
+                        mb: { xs: 2, md: 3 },
                         borderRadius: 2,
+                        fontSize: { xs: '0.875rem', md: '1rem' },
                         '& .MuiAlert-icon': {
                             color: '#20a09f',
                         },
@@ -78,7 +80,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
             <Form {...AuthenticatedSessionController.store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
                         {/* Email Field */}
                         <TextField
                             fullWidth
@@ -170,7 +172,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         />
 
                         {/* Remember Me and Forgot Password */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, justifyContent: 'space-between', gap: { xs: 2, sm: 0 } }}>
                             <FormControlLabel
                                 control={
                                     <Checkbox 
@@ -214,16 +216,16 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             type="submit"
                             variant="contained"
                             fullWidth
-                            size="large"
+                            size={{ xs: 'medium', md: 'large' }}
                             tabIndex={4}
                             disabled={processing}
-                            startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <LoginIcon />}
+                            startIcon={processing ? <CircularProgress size={{ xs: 16, md: 18 }} color="inherit" /> : <LoginIcon sx={{ fontSize: { xs: 20, md: 24 } }} />}
                             sx={{
                                 bgcolor: '#20a09f',
-                                py: 1.5,
+                                py: { xs: 1.2, md: 1.5 },
                                 textTransform: 'none',
                                 fontWeight: 600,
-                                fontSize: '1rem',
+                                fontSize: { xs: '0.875rem', md: '1rem' },
                                 boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
                                 '&:hover': {
                                     bgcolor: '#178f8e',
@@ -238,15 +240,15 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         </Button>
 
                         {/* Divider */}
-                        <Divider sx={{ my: 1 }}>
-                            <Typography variant="body2" sx={{ color: 'text.secondary', px: 2 }}>
+                        <Divider sx={{ my: { xs: 1, md: 2 } }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', px: 2, fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
                                 New to Clinified Hub?
                             </Typography>
                         </Divider>
 
                         {/* Sign Up Link */}
                         <Box sx={{ textAlign: 'center' }}>
-                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: { xs: '0.875rem', md: '1rem' } }}>
                                 Don't have an account?{' '}
                                 <Link
                                     href={register()}
