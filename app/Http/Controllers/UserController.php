@@ -16,7 +16,6 @@ class UserController extends Controller
         $query = User::where('role', 'provider')
             ->withCount(['providedAppointments as appointments_count']);
             
-        // Apply search
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -25,8 +24,7 @@ class UserController extends Controller
                   ->orWhere('city', 'like', '%' . $search . '%');
             });
         }
-        
-        // Apply filters
+
         if ($request->filled('specialty')) {
             $query->where('specialty', 'like', '%' . $request->specialty . '%');
         }
@@ -64,8 +62,7 @@ class UserController extends Controller
         }
         
         $providers = $query->orderBy('name')->paginate(6);
-        
-        // Get unique values for filters
+
         $specialties = User::where('role', 'provider')
             ->whereNotNull('specialty')
             ->distinct()
@@ -106,8 +103,7 @@ class UserController extends Controller
                 $q->where('provider_id', $currentUserId);
             });
         }
-        
-        // Apply filters
+
         if ($request->filled('gender')) {
             $query->where('gender', $request->gender);
         }
@@ -136,13 +132,11 @@ class UserController extends Controller
         }
         
         $patients = $query->orderBy('name')->get();
-        
-        // Add age calculation to each patient
+
         $patients->each(function ($patient) {
             $patient->age = $patient->date_of_birth ? (int) $patient->date_of_birth->diffInYears(now()) : null;
         });
-        
-        // Get unique cities for filter
+
         $cities = User::where('role', 'client')
             ->whereNotNull('city')
             ->distinct()

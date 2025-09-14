@@ -147,7 +147,6 @@ class AdminController extends Controller
             abort(404);
         }
 
-        // Prevent self-deletion
         if ($admin->id === auth()->id()) {
             return redirect()
                 ->back()
