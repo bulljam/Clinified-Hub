@@ -189,7 +189,7 @@ export default function Welcome() {
                             {auth?.user ? (
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="flex items-center space-x-2 hover:bg-teal-500/10 hover:text-teal-600">
+                                        <Button variant="ghost" className="flex items-center space-x-2 hover:bg-indigo-500/10 hover:text-indigo-600">
                                             <Avatar className="h-8 w-8">
                                                 <AvatarImage src={auth.user.avatar || auth.user.photo} alt={auth.user.name} />
                                                 <AvatarFallback>
@@ -201,14 +201,14 @@ export default function Welcome() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-48">
                                         <DropdownMenuItem asChild>
-                                            <Link href="/dashboard" className="flex items-center hover:bg-teal-500/10 hover:text-teal-600 focus:bg-teal-500/10 focus:text-teal-600">
+                                            <Link href="/dashboard" className="flex items-center hover:bg-indigo-500/10 hover:text-indigo-600 focus:bg-indigo-500/10 focus:text-indigo-600">
                                                 <Activity className="h-4 w-4 mr-2" />
                                                 Dashboard
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem asChild>
-                                            <Link href="/logout" method="post" className="flex items-center text-red-600 hover:bg-teal-500/10 hover:text-red-700 focus:bg-teal-500/10 focus:text-red-700">
+                                            <Link href="/logout" method="post" className="flex items-center text-red-600 hover:bg-indigo-500/10 hover:text-red-700 focus:bg-indigo-500/10 focus:text-red-700">
                                                 <LogOut className="h-4 w-4 mr-2" />
                                                 Log Out
                                             </Link>
@@ -262,13 +262,13 @@ export default function Welcome() {
                                             </div>
                                         </div>
                                         <Link href="/dashboard" className="block">
-                                            <Button variant="ghost" className="w-full justify-start hover:bg-teal-500/10 hover:text-teal-600">
+                                            <Button variant="ghost" className="w-full justify-start hover:bg-indigo-500/10 hover:text-indigo-600">
                                                 <Activity className="h-4 w-4 mr-2" />
                                                 Dashboard
                                             </Button>
                                         </Link>
                                         <Link href="/logout" method="post" className="block">
-                                            <Button variant="ghost" className="w-full justify-start text-red-600 hover:bg-teal-500/10 hover:text-red-700">
+                                            <Button variant="ghost" className="w-full justify-start text-red-600 hover:bg-indigo-500/10 hover:text-red-700">
                                                 <LogOut className="h-4 w-4 mr-2" />
                                                 Log Out
                                             </Button>
@@ -321,8 +321,8 @@ export default function Welcome() {
                     100% { opacity: 1; transform: scale(1); }
                 }
                 @keyframes pulse-glow {
-                    0%, 100% { box-shadow: 0 0 20px rgba(20, 184, 166, 0.3); }
-                    50% { box-shadow: 0 0 40px rgba(20, 184, 166, 0.6); }
+                    0%, 100% { box-shadow: 0 0 20px rgba(92, 107, 192, 0.3); }
+                    50% { box-shadow: 0 0 40px rgba(92, 107, 192, 0.6); }
                 }
                 @keyframes bounce-gentle {
                     0%, 100% { transform: translateY(0px); }
@@ -432,100 +432,100 @@ export default function Welcome() {
             <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-24">
                 {/* Animated Background Shapes */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-20 left-10 text-teal-200/20 animate-bounce" style={{ animationDelay: '0s', animationDuration: '4s' }}>
+                    <div className="absolute top-20 left-10 text-indigo-200/20 animate-bounce" style={{ animationDelay: '0s', animationDuration: '4s' }}>
                         <Stethoscope className="w-12 h-12" />
                     </div>
-                    <div className="absolute top-40 right-20 text-cyan-200/20 animate-bounce" style={{ animationDelay: '1s', animationDuration: '5s' }}>
+                    <div className="absolute top-40 right-20 text-indigo-200/20 animate-bounce" style={{ animationDelay: '1s', animationDuration: '5s' }}>
                         <Heart className="w-10 h-10" />
                     </div>
-                    <div className="absolute bottom-40 left-20 text-teal-300/20 animate-bounce" style={{ animationDelay: '2s', animationDuration: '6s' }}>
+                    <div className="absolute bottom-40 left-20 text-indigo-300/20 animate-bounce" style={{ animationDelay: '2s', animationDuration: '6s' }}>
                         <Activity className="w-14 h-14" />
                     </div>
-                    <div className="absolute top-1/3 left-1/4 text-cyan-300/15 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '4.5s' }}>
+                    <div className="absolute top-1/3 left-1/4 text-indigo-300/15 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '4.5s' }}>
                         <Shield className="w-8 h-8" />
                     </div>
-                    <div className="absolute bottom-20 right-1/4 text-teal-200/25 animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '5.5s' }}>
+                    <div className="absolute bottom-20 right-1/4 text-indigo-200/25 animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '5.5s' }}>
                         <Calendar className="w-11 h-11" />
                     </div>
-                    <div className="absolute top-1/2 right-10 text-cyan-200/20 animate-bounce" style={{ animationDelay: '3s', animationDuration: '4.2s' }}>
+                    <div className="absolute top-1/2 right-10 text-indigo-200/20 animate-bounce" style={{ animationDelay: '3s', animationDuration: '4.2s' }}>
                         <CheckCircle className="w-9 h-9" />
                     </div>
 
                     <div className="absolute top-32 right-1/3 w-16 h-16 opacity-5">
-                        <div className="absolute top-1/2 left-0 w-full h-2 bg-teal-400 transform -translate-y-1/2"></div>
-                        <div className="absolute left-1/2 top-0 w-2 h-full bg-teal-400 transform -translate-x-1/2"></div>
+                        <div className="absolute top-1/2 left-0 w-full h-2 bg-indigo-400 transform -translate-y-1/2"></div>
+                        <div className="absolute left-1/2 top-0 w-2 h-full bg-indigo-400 transform -translate-x-1/2"></div>
                     </div>
                     <div className="absolute bottom-1/3 left-1/3 w-12 h-12 opacity-5">
-                        <div className="absolute top-1/2 left-0 w-full h-1.5 bg-cyan-400 transform -translate-y-1/2"></div>
-                        <div className="absolute left-1/2 top-0 w-1.5 h-full bg-cyan-400 transform -translate-x-1/2"></div>
+                        <div className="absolute top-1/2 left-0 w-full h-1.5 bg-indigo-400 transform -translate-y-1/2"></div>
+                        <div className="absolute left-1/2 top-0 w-1.5 h-full bg-indigo-400 transform -translate-x-1/2"></div>
                     </div>
 
                     <div className="absolute top-16 left-1/2 w-1 h-40 opacity-10">
-                        <div className="w-full h-full bg-gradient-to-b from-teal-400 via-cyan-400 to-teal-400 transform rotate-12 animate-pulse"></div>
-                        <div className="absolute top-0 left-2 w-4 h-4 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '0s' }}></div>
-                        <div className="absolute top-8 -left-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                        <div className="absolute top-16 left-2 w-4 h-4 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-                        <div className="absolute top-24 -left-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-                        <div className="absolute top-32 left-2 w-4 h-4 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+                        <div className="w-full h-full bg-gradient-to-b from-indigo-400 via-indigo-500 to-indigo-400 transform rotate-12 animate-pulse"></div>
+                        <div className="absolute top-0 left-2 w-4 h-4 bg-indigo-400 rounded-full animate-pulse" style={{ animationDelay: '0s' }}></div>
+                        <div className="absolute top-8 -left-1 w-3 h-3 bg-indigo-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                        <div className="absolute top-16 left-2 w-4 h-4 bg-indigo-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                        <div className="absolute top-24 -left-1 w-3 h-3 bg-indigo-500 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+                        <div className="absolute top-32 left-2 w-4 h-4 bg-indigo-400 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
                     </div>
 
                     <div className="absolute bottom-32 right-16 transform rotate-45">
-                        <div className="w-16 h-8 bg-gradient-to-r from-teal-300/20 to-cyan-300/20 rounded-full animate-pulse"></div>
+                        <div className="w-16 h-8 bg-gradient-to-r from-indigo-300/20 to-indigo-400/20 rounded-full animate-pulse"></div>
                     </div>
                     <div className="absolute top-2/3 left-16 transform -rotate-12">
-                        <div className="w-12 h-6 bg-gradient-to-r from-cyan-300/15 to-teal-300/15 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                        <div className="w-12 h-6 bg-gradient-to-r from-indigo-300/15 to-indigo-400/15 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
                     </div>
                     <div
-                        className="absolute top-48 left-16 w-32 h-32 bg-teal-400/4 rounded-full"
+                        className="absolute top-48 left-16 w-32 h-32 bg-indigo-400/4 rounded-full"
                         style={{
                             filter: 'blur(15px)',
                             animation: 'float-circle-1 12s ease-in-out infinite'
                         }}
                     />
                     <div 
-                        className="absolute top-72 right-20 w-28 h-28 bg-cyan-300/5 rounded-full"
+                        className="absolute top-72 right-20 w-28 h-28 bg-indigo-300/5 rounded-full"
                         style={{
                             filter: 'blur(12px)',
                             animation: 'float-circle-2 15s ease-in-out infinite'
                         }}
                     />
                     <div 
-                        className="absolute bottom-32 left-32 w-40 h-40 bg-cyan-400/3 rounded-full"
+                        className="absolute bottom-32 left-32 w-40 h-40 bg-indigo-400/3 rounded-full"
                         style={{
                             filter: 'blur(20px)',
                             animation: 'float-circle-3 18s ease-in-out infinite'
                         }}
                     />
                     <div 
-                        className="absolute top-1/2 right-12 w-24 h-24 bg-teal-300/6 rounded-full"
+                        className="absolute top-1/2 right-12 w-24 h-24 bg-indigo-300/6 rounded-full"
                         style={{
                             filter: 'blur(10px)',
                             animation: 'float-circle-4 10s ease-in-out infinite'
                         }}
                     />
                     <div 
-                        className="absolute bottom-20 right-40 w-36 h-36 bg-cyan-400/4 rounded-full"
+                        className="absolute bottom-20 right-40 w-36 h-36 bg-indigo-400/4 rounded-full"
                         style={{
                             filter: 'blur(18px)',
                             animation: 'float-circle-5 20s ease-in-out infinite'
                         }}
                     />
                     <div 
-                        className="absolute top-3/4 left-1/2 w-30 h-30 bg-teal-200/5 rounded-full"
+                        className="absolute top-3/4 left-1/2 w-30 h-30 bg-indigo-200/5 rounded-full"
                         style={{
                             filter: 'blur(14px)',
                             animation: 'float-circle-6 14s ease-in-out infinite'
                         }}
                     />
                     <div 
-                        className="absolute bottom-1/4 left-20 w-20 h-20 bg-cyan-200/7 rounded-full"
+                        className="absolute bottom-1/4 left-20 w-20 h-20 bg-indigo-200/7 rounded-full"
                         style={{
                             filter: 'blur(8px)',
                             animation: 'float-circle-7 16s ease-in-out infinite'
                         }}
                     />
                     <div 
-                        className="absolute top-2/3 right-1/3 w-44 h-44 bg-teal-100/3 rounded-full"
+                        className="absolute top-2/3 right-1/3 w-44 h-44 bg-indigo-100/3 rounded-full"
                         style={{
                             filter: 'blur(25px)',
                             animation: 'float-circle-8 22s ease-in-out infinite'
@@ -592,7 +592,7 @@ export default function Welcome() {
                         <div className="space-y-4">
                             <h2 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
                                 Healthcare 
-                                <span className="bg-gradient-to-r from-primary to-teal-600 bg-clip-text text-transparent"> Simplified</span>
+                                <span className="bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent"> Simplified</span>
                             </h2>
                             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
                                 Streamline your medical practice with our comprehensive appointment scheduling system. Connect patients with healthcare providers seamlessly.
@@ -603,7 +603,7 @@ export default function Welcome() {
                             <Link href="/register">
                                 <Button 
                                     size="lg" 
-                                    className="group relative overflow-hidden bg-gradient-to-r from-primary via-teal-600 to-cyan-600 hover:from-primary/90 hover:via-teal-600/90 hover:to-cyan-600/90 text-white font-bold px-12 py-6 text-xl rounded-full shadow-2xl hover:shadow-cyan-500/25 transition-all duration-500 transform hover:scale-105 border-0"
+                                    className="group relative overflow-hidden bg-gradient-to-r from-primary via-indigo-600 to-indigo-700 hover:from-primary/90 hover:via-indigo-600/90 hover:to-indigo-700/90 text-white font-bold px-12 py-6 text-xl rounded-full shadow-2xl hover:shadow-indigo-500/25 transition-all duration-500 transform hover:scale-105 border-0"
                                 >
                                     <span className="relative z-10 flex items-center">
                                         <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4">
@@ -619,8 +619,8 @@ export default function Welcome() {
 
                         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-8">
                             <div className="flex items-center space-x-3 bg-card/50 rounded-lg p-4 backdrop-blur-sm border border-primary/10">
-                                <div className="flex items-center justify-center w-10 h-10 bg-teal-500/10 rounded-lg">
-                                    <Calendar className="h-5 w-5 text-teal-500" />
+                                <div className="flex items-center justify-center w-10 h-10 bg-indigo-500/10 rounded-lg">
+                                    <Calendar className="h-5 w-5 text-indigo-500" />
                                 </div>
                                 <div>
                                     <div className="font-semibold text-sm">Smart Scheduling</div>
@@ -698,10 +698,10 @@ export default function Welcome() {
                 </div>
             </section>
 
-            <section className="py-20 px-4 bg-white dark:bg-gray-950 relative overflow-hidden">
+            <section className="py-20 px-4 bg-white  relative overflow-hidden">
                 {/* Medical Background Elements */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-10 left-1/4 text-teal-100/30 dark:text-teal-900/30 animate-spin" style={{ animationDuration: '20s' }}>
+                    <div className="absolute top-10 left-1/4 text-indigo-100/30  animate-spin" style={{ animationDuration: '20s' }}>
                         <div className="w-20 h-20 relative">
                             <div className="absolute top-1/2 left-0 w-full h-1 bg-current transform -translate-y-1/2"></div>
                             <div className="absolute left-1/2 top-0 w-1 h-full bg-current transform -translate-x-1/2"></div>
@@ -716,30 +716,30 @@ export default function Welcome() {
                                 stroke="currentColor" 
                                 strokeWidth="1" 
                                 fill="none"
-                                className="text-teal-300/20 dark:text-teal-700/20"
+                                className="text-indigo-300/20"
                             />
                         </svg>
                     </div>
 
                     <div className="absolute bottom-20 left-10 opacity-10">
                         <div className="relative w-24 h-24">
-                            <div className="absolute top-0 left-1/2 w-3 h-3 bg-teal-400 rounded-full transform -translate-x-1/2"></div>
-                            <div className="absolute bottom-0 left-1/2 w-3 h-3 bg-cyan-400 rounded-full transform -translate-x-1/2"></div>
-                            <div className="absolute top-1/2 left-0 w-3 h-3 bg-teal-400 rounded-full transform -translate-y-1/2"></div>
-                            <div className="absolute top-1/2 right-0 w-3 h-3 bg-cyan-400 rounded-full transform -translate-y-1/2"></div>
-                            <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-teal-500 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
-                            <div className="absolute top-1/4 left-1/4 w-0.5 h-6 bg-teal-400 transform rotate-45"></div>
-                            <div className="absolute top-1/4 right-1/4 w-0.5 h-6 bg-teal-400 transform -rotate-45"></div>
-                            <div className="absolute bottom-1/4 left-1/4 w-0.5 h-6 bg-teal-400 transform -rotate-45"></div>
-                            <div className="absolute bottom-1/4 right-1/4 w-0.5 h-6 bg-teal-400 transform rotate-45"></div>
+                            <div className="absolute top-0 left-1/2 w-3 h-3 bg-indigo-400 rounded-full transform -translate-x-1/2"></div>
+                            <div className="absolute bottom-0 left-1/2 w-3 h-3 bg-indigo-400 rounded-full transform -translate-x-1/2"></div>
+                            <div className="absolute top-1/2 left-0 w-3 h-3 bg-indigo-400 rounded-full transform -translate-y-1/2"></div>
+                            <div className="absolute top-1/2 right-0 w-3 h-3 bg-indigo-400 rounded-full transform -translate-y-1/2"></div>
+                            <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-indigo-500 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+                            <div className="absolute top-1/4 left-1/4 w-0.5 h-6 bg-indigo-400 transform rotate-45"></div>
+                            <div className="absolute top-1/4 right-1/4 w-0.5 h-6 bg-indigo-400 transform -rotate-45"></div>
+                            <div className="absolute bottom-1/4 left-1/4 w-0.5 h-6 bg-indigo-400 transform -rotate-45"></div>
+                            <div className="absolute bottom-1/4 right-1/4 w-0.5 h-6 bg-indigo-400 transform rotate-45"></div>
                         </div>
                     </div>
 
                     <div className="absolute top-1/2 right-1/4 transform rotate-12 animate-pulse">
-                        <div className="w-8 h-16 bg-gradient-to-b from-teal-200/20 to-cyan-200/20 rounded-full"></div>
+                        <div className="w-8 h-16 bg-gradient-to-b from-indigo-200/20 to-indigo-300/20 rounded-full"></div>
                     </div>
                     <div className="absolute bottom-1/3 right-1/3 transform -rotate-45 animate-pulse" style={{ animationDelay: '1s' }}>
-                        <div className="w-6 h-12 bg-gradient-to-b from-cyan-200/15 to-teal-200/15 rounded-full"></div>
+                        <div className="w-6 h-12 bg-gradient-to-b from-indigo-200/15 to-indigo-300/15 rounded-full"></div>
                     </div>
                 </div>
                 
@@ -753,7 +753,7 @@ export default function Welcome() {
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <FloatingCard delay={0.1}>
-                            <Card className="h-full hover:shadow-xl hover-lift transition-all duration-500 border-0 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/50 dark:to-red-900/50 group cursor-pointer animate-on-scroll">
+                            <Card className="h-full hover:shadow-xl hover-lift transition-all duration-500 border-0 bg-gradient-to-br from-red-50 to-red-100   group cursor-pointer animate-on-scroll">
                                 <CardHeader className="text-center">
                                     <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-125 group-hover:rotate-12 transition-all duration-500">
                                         <Heart className="h-8 w-8 text-white group-hover:animate-pulse" />
@@ -767,7 +767,7 @@ export default function Welcome() {
                         </FloatingCard>
 
                         <FloatingCard delay={0.2}>
-                            <Card className="h-full hover:shadow-xl hover-lift transition-all duration-500 border-0 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 group cursor-pointer animate-on-scroll">
+                            <Card className="h-full hover:shadow-xl hover-lift transition-all duration-500 border-0 bg-gradient-to-br from-purple-50 to-purple-100   group cursor-pointer animate-on-scroll">
                                 <CardHeader className="text-center">
                                     <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500">
                                         <Brain className="h-8 w-8 text-white group-hover:animate-bounce" />
@@ -781,9 +781,9 @@ export default function Welcome() {
                         </FloatingCard>
 
                         <FloatingCard delay={0.3}>
-                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950/50 dark:to-cyan-900/50 group cursor-pointer">
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100   group cursor-pointer">
                                 <CardHeader className="text-center">
-                                    <div className="w-16 h-16 bg-cyan-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
+                                    <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
                                         <Eye className="h-8 w-8 text-white" />
                                     </div>
                                     <CardTitle className="text-xl">Ophthalmology</CardTitle>
@@ -795,7 +795,7 @@ export default function Welcome() {
                         </FloatingCard>
 
                         <FloatingCard delay={0.4}>
-                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950/50 dark:to-pink-900/50 group cursor-pointer">
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-pink-50 to-pink-100   group cursor-pointer">
                                 <CardHeader className="text-center">
                                     <div className="w-16 h-16 bg-pink-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
                                         <Baby className="h-8 w-8 text-white" />
@@ -809,7 +809,7 @@ export default function Welcome() {
                         </FloatingCard>
 
                         <FloatingCard delay={0.5}>
-                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/50 group cursor-pointer">
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-orange-50 to-orange-100   group cursor-pointer">
                                 <CardHeader className="text-center">
                                     <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
                                         <Bone className="h-8 w-8 text-white" />
@@ -823,7 +823,7 @@ export default function Welcome() {
                         </FloatingCard>
 
                         <FloatingCard delay={0.6}>
-                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/50 dark:to-green-900/50 group cursor-pointer">
+                            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-green-100   group cursor-pointer">
                                 <CardHeader className="text-center">
                                     <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
                                         <Stethoscope className="h-8 w-8 text-white" />
@@ -864,7 +864,7 @@ export default function Welcome() {
                                         <img 
                                             src="/images/Doctor.jpg" 
                                             alt="Dr. Michael Rodriguez"
-                                            className="w-12 h-12 rounded-full object-cover border-2 border-teal-200"
+                                            className="w-12 h-12 rounded-full object-cover border-2 border-indigo-200"
                                         />
                                         <div className="ml-3">
                                             <div className="font-semibold">Dr. Michael Rodriguez</div>
@@ -930,7 +930,7 @@ export default function Welcome() {
                 </div>
             </section>
 
-            <section className="py-20 px-4 bg-gradient-to-br from-teal-400 via-teal-500 to-teal-600 relative overflow-hidden">
+            <section className="py-20 px-4 bg-gradient-to-br from-indigo-400 via-indigo-500 to-indigo-600 relative overflow-hidden">
                 {/* Medical Background Elements for CTA */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute top-10 left-10 text-white/10 animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}>
@@ -970,13 +970,13 @@ export default function Welcome() {
                 
                 <div className="max-w-4xl mx-auto text-center relative z-10">
                     <div className="bg-white/95 backdrop-blur-md border border-white/30 rounded-3xl p-12 text-gray-800 shadow-2xl animate-on-scroll">
-                        <h3 className="text-4xl font-bold mb-4 text-teal-700">Ready to Transform Your Healthcare Practice?</h3>
+                        <h3 className="text-4xl font-bold mb-4 text-indigo-700">Ready to Transform Your Healthcare Practice?</h3>
                         <p className="text-xl text-gray-600 mb-8">
                             Join thousands of healthcare providers who trust Clinified Hub for their appointment management needs.
                         </p>
                         <div className="flex justify-center">
                             <Link href="/register">
-                                <Button size="lg" className="bg-teal-600 text-white hover:bg-teal-700 font-bold px-8 py-4 text-lg group shadow-xl hover:shadow-2xl transition-all duration-300">
+                                <Button size="lg" className="bg-indigo-600 text-white hover:bg-indigo-700 font-bold px-8 py-4 text-lg group shadow-xl hover:shadow-2xl transition-all duration-300">
                                     Discover Now
                                     <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
                                 </Button>
@@ -1051,16 +1051,16 @@ export default function Welcome() {
                             <div className="flex items-center justify-center">
                                 <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent w-32"></div>
                                 <div className="mx-4 relative group cursor-pointer">
-                                    <div className="bg-gradient-to-r from-primary/10 to-teal-500/10 px-6 py-3 rounded-full border border-primary/20 backdrop-blur-sm hover:border-primary/40 transition-all duration-500 hover:scale-105">
+                                    <div className="bg-gradient-to-r from-primary/10 to-indigo-500/10 px-6 py-3 rounded-full border border-primary/20 backdrop-blur-sm hover:border-primary/40 transition-all duration-500 hover:scale-105">
                                         <div className="flex items-center space-x-2">
-                                            <div className="w-2 h-2 bg-gradient-to-r from-primary to-teal-500 rounded-full animate-pulse"></div>
-                                            <span className="text-xs font-medium bg-gradient-to-r from-primary to-teal-600 bg-clip-text text-transparent group-hover:from-primary/80 group-hover:to-teal-600/80 transition-all duration-300">
+                                            <div className="w-2 h-2 bg-gradient-to-r from-primary to-indigo-500 rounded-full animate-pulse"></div>
+                                            <span className="text-xs font-medium bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent group-hover:from-primary/80 group-hover:to-indigo-600/80 transition-all duration-300">
                                                 Made by Aymane Bouljam
                                             </span>
-                                            <div className="w-2 h-2 bg-gradient-to-r from-teal-500 to-primary rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                                            <div className="w-2 h-2 bg-gradient-to-r from-indigo-500 to-primary rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
                                         </div>
                                     </div>
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-teal-500/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-indigo-500/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                 </div>
                                 <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent w-32"></div>
                             </div>
@@ -1072,7 +1072,7 @@ export default function Welcome() {
             {showBackToTop && (
                 <button
                     onClick={scrollToTop}
-                    className={`fixed bottom-8 right-8 z-50 bg-gradient-to-r from-primary to-teal-600 text-white p-4 rounded-full shadow-2xl hover:shadow-teal-500/25 transition-all duration-300 hover:scale-110 back-to-top-btn group`}
+                    className={`fixed bottom-8 right-8 z-50 bg-gradient-to-r from-primary to-indigo-600 text-white p-4 rounded-full shadow-2xl hover:shadow-indigo-500/25 transition-all duration-300 hover:scale-110 back-to-top-btn group`}
                     aria-label="Back to top"
                 >
                     <ChevronUp className="h-6 w-6 group-hover:-translate-y-1 transition-transform duration-300" />

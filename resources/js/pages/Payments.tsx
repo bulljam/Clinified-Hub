@@ -175,7 +175,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
         <Card elevation={0} sx={{ mb: 4, border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ p: 3 }}>
             <Box display="flex" alignItems="center" gap={3} mb={2}>
-              <Avatar sx={{ bgcolor: '#20a09f', width: 56, height: 56 }}>
+              <Avatar sx={{ bgcolor: '#5c6bc0', width: 56, height: 56 }}>
                 <PaymentIcon fontSize="large" />
               </Avatar>
               <Box>
@@ -194,8 +194,8 @@ export default function Payments({ transactions, users = [], providers = [] }: P
         <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr 1fr' }} gap={3} mb={4}>
           <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
             <CardContent sx={{ p: 3, textAlign: 'center' }}>
-              <WalletIcon sx={{ fontSize: 40, color: '#20a09f', mb: 1 }} />
-              <Typography variant="h5" fontWeight="600" color="#20a09f">
+              <WalletIcon sx={{ fontSize: 40, color: '#5c6bc0', mb: 1 }} />
+              <Typography variant="h5" fontWeight="600" color="#5c6bc0">
                 ${totalAmount.toFixed(2)}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -233,7 +233,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
         {isAdmin && (
           <Card elevation={0} sx={{ mb: 4, border: '1px solid #e0e0e0' }}>
             <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+              <Typography variant="h6" fontWeight="600" mb={3} color="#5c6bc0">
                 Filters
               </Typography>
               <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr 1fr 1fr 1fr' }} gap={2}>
@@ -394,7 +394,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                         )}
                         
                         <TableCell>
-                          <Typography variant="body1" fontWeight="600" color="#20a09f">
+                          <Typography variant="body1" fontWeight="600" color="#5c6bc0">
                             ${parseFloat(transaction.amount).toFixed(2)}
                           </Typography>
                         </TableCell>
@@ -451,17 +451,17 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                         height: 40,
                         border: '1px solid #e0e0e0',
                         '&:hover': {
-                          bgcolor: '#20a09f',
+                          bgcolor: '#5c6bc0',
                           color: 'white',
                           transform: 'scale(1.05)',
-                          boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
+                          boxShadow: '0 4px 8px rgba(92, 107, 192, 0.3)',
                         },
                         '&.Mui-selected': {
-                          bgcolor: '#20a09f',
+                          bgcolor: '#5c6bc0',
                           color: 'white',
-                          boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
+                          boxShadow: '0 4px 12px rgba(92, 107, 192, 0.4)',
                           '&:hover': {
-                            bgcolor: '#178f8e',
+                            bgcolor: '#26418f',
                           },
                         },
                         transition: 'all 0.2s ease',

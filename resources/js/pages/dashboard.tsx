@@ -62,7 +62,7 @@ interface RoleConfig {
 function StatCard({ title, value, description, icon: Icon, trend }: StatCardProps & { roleConfig?: RoleConfig }) {
     return (
         <div className="bg-card rounded-xl border border-border overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="bg-gradient-to-r from-[#20a09f] to-[#178f8e] px-4 py-3 md:px-6 md:py-4 text-white">
+            <div className="bg-gradient-to-r from-[#5c6bc0] to-[#26418f] px-4 py-3 md:px-6 md:py-4 text-white">
                 <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-xs md:text-sm">{title}</h3>
                     <div className="p-1.5 md:p-2 bg-white/20 rounded-lg">
@@ -74,9 +74,9 @@ function StatCard({ title, value, description, icon: Icon, trend }: StatCardProp
                 <div className="text-2xl md:text-3xl font-bold text-foreground">{value}</div>
                 <p className="text-xs md:text-sm text-muted-foreground mt-1">{description}</p>
                 {trend && (
-                    <div className="flex items-center mt-2 md:mt-3 p-1.5 md:p-2 bg-accent/10 rounded-lg">
-                        <TrendingUp className="size-3 md:size-4 text-accent mr-1.5 md:mr-2" />
-                        <span className="text-xs md:text-sm text-accent font-semibold">{trend}</span>
+                    <div className="flex items-center mt-2 md:mt-3 p-1.5 md:p-2 bg-primary/10 rounded-lg">
+                        <TrendingUp className="size-3 md:size-4 text-primary mr-1.5 md:mr-2" />
+                        <span className="text-xs md:text-sm text-primary font-semibold">{trend}</span>
                     </div>
                 )}
             </div>
@@ -89,14 +89,14 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
         switch (role) {
             case 'client':
                 return {
-                    primaryColor: '#20a09f',
-                    secondaryColor: '#e6fbfb',
-                    gradientFrom: '#20a09f',
+                    primaryColor: '#5c6bc0',
+                    secondaryColor: '#e0e3ff',
+                    gradientFrom: '#5c6bc0',
                     gradientTo: '#17c3b2',
                     icon: Heart,
                     title: 'Patient Portal',
                     subtitle: 'Your healthcare journey, simplified and secure',
-                    accentColor: '#20a09f'
+                    accentColor: '#5c6bc0'
                 };
             case 'provider':
                 return {
@@ -133,14 +133,14 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                 };
             default:
                 return {
-                    primaryColor: '#20a09f',
-                    secondaryColor: '#e6fbfb',
-                    gradientFrom: '#20a09f',
-                    gradientTo: '#178f8e',
+                    primaryColor: '#5c6bc0',
+                    secondaryColor: '#e0e3ff',
+                    gradientFrom: '#5c6bc0',
+                    gradientTo: '#26418f',
                     icon: Activity,
                     title: 'Dashboard',
                     subtitle: 'Welcome to ClinifiedHub',
-                    accentColor: '#20a09f'
+                    accentColor: '#5c6bc0'
                 };
         }
     };
