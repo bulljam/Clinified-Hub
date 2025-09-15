@@ -62,7 +62,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                 '&:hover': onClick ? {
                     transform: 'translateY(-2px)',
                     boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    borderColor: '#20a09f',
+                    borderColor: '#5c6bc0',
                 } : {},
             }}
         >
@@ -73,7 +73,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                         sx={{ 
                             width: 64,
                             height: 64,
-                            bgcolor: '#20a09f',
+                            bgcolor: '#5c6bc0',
                             fontSize: '1.5rem',
                             fontWeight: 'bold',
                             mb: 1,
@@ -96,7 +96,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                             label={provider.specialty}
                             size="small"
                             sx={{
-                                bgcolor: '#20a09f',
+                                bgcolor: '#5c6bc0',
                                 color: 'white',
                                 fontSize: '0.75rem',
                             }}
@@ -107,7 +107,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                 <Stack spacing={1.5} sx={{ flexGrow: 1 }}>
                     {provider.years_of_experience && (
                         <Box display="flex" alignItems="center" gap={1}>
-                            <WorkIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                            <WorkIcon fontSize="small" sx={{ color: '#5c6bc0' }} />
                             <Typography variant="body2" color="text.secondary">
                                 {provider.years_of_experience} years experience
                             </Typography>
@@ -116,7 +116,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                     
                     {provider.city && (
                         <Box display="flex" alignItems="center" gap={1}>
-                            <LocationIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                            <LocationIcon fontSize="small" sx={{ color: '#5c6bc0' }} />
                             <Typography variant="body2" color="text.secondary">
                                 {provider.city}
                             </Typography>
@@ -125,7 +125,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                     
                     {provider.gender && (
                         <Box display="flex" alignItems="center" gap={1}>
-                            <PersonIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                            <PersonIcon fontSize="small" sx={{ color: '#5c6bc0' }} />
                             <Typography variant="body2" color="text.secondary">
                                 {getGenderIcon(provider.gender)} {provider.gender.charAt(0).toUpperCase() + provider.gender.slice(1)}
                             </Typography>
@@ -133,7 +133,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                     )}
 
                     <Box display="flex" alignItems="center" gap={1}>
-                        <EmailIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                        <EmailIcon fontSize="small" sx={{ color: '#5c6bc0' }} />
                         <Typography 
                             variant="body2" 
                             color="text.secondary" 
@@ -149,7 +149,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
 
                     {provider.phone && (
                         <Box display="flex" alignItems="center" gap={1}>
-                            <PhoneIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                            <PhoneIcon fontSize="small" sx={{ color: '#5c6bc0' }} />
                             <Typography variant="body2" color="text.secondary">
                                 {provider.phone}
                             </Typography>
@@ -184,7 +184,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                     }}
                 >
                     <Box display="flex" alignItems="center" gap={0.5}>
-                        <StarIcon fontSize="small" sx={{ color: '#20a09f' }} />
+                        <StarIcon fontSize="small" sx={{ color: '#5c6bc0' }} />
                         <Typography variant="caption" color="text.secondary">
                             {provider.appointments_count} appointments
                         </Typography>

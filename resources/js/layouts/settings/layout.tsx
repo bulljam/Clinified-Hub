@@ -44,10 +44,10 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                     variant="ghost"
                                     asChild
                                     className={cn(
-                                        'w-full justify-start transition-colors duration-200 hover:bg-[#20a09f]/10 hover:text-[#20a09f]',
+                                        'w-full justify-start transition-colors duration-200 hover:bg-[#5c6bc0]/10 hover:text-[#5c6bc0]',
                                         {
-                                            'bg-[#20a09f]/15 text-[#20a09f] font-medium': isActive,
-                                            'text-gray-700 hover:text-[#20a09f]': !isActive,
+                                            'bg-[#5c6bc0]/15 text-[#5c6bc0] font-medium': isActive,
+                                            'text-gray-700 hover:text-[#5c6bc0]': !isActive,
                                         }
                                     )}
                                 >
