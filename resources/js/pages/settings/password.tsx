@@ -3,8 +3,8 @@ import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
-import { useRef } from 'react';
-import { Lock, Save, CheckCircle, LockOpen, Security } from '@mui/icons-material';
+import { useRef, useState, useEffect } from 'react';
+import { Lock, Save, CheckCircle, LockOpen, Security, Warning } from '@mui/icons-material';
 import {
     Box,
     Card,
@@ -14,7 +14,12 @@ import {
     Typography,
     Fade,
     Divider,
-    Stack
+    Stack,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Alert
 } from '@mui/material';
 import { edit } from '@/routes/password';
 
@@ -25,9 +30,22 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Password() {
+interface PasswordProps {
+    flash?: {
+        passwordChanged?: boolean;
+    };
+}
+
+export default function Password({ flash }: PasswordProps) {
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
+    const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+
+    useEffect(() => {
+        if (flash?.passwordChanged) {
+            setShowLogoutDialog(true);
+        }
+    }, [flash?.passwordChanged]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -189,6 +207,53 @@ export default function Password() {
                         </Form>
                     </CardContent>
                 </Card>
+
+                <Dialog
+                    open={showLogoutDialog}
+                    onClose={() => setShowLogoutDialog(false)}
+                    maxWidth="sm"
+                    fullWidth
+                >
+                    <DialogTitle sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 2,
+                        pb: 2
+                    }}>
+                        <Warning color="warning" />
+                        Password Updated Successfully
+                    </DialogTitle>
+                    <DialogContent>
+                        <Alert
+                            severity="info"
+                            sx={{ mb: 2 }}
+                            icon={<Security />}
+                        >
+                            <Typography variant="body2">
+                                For your security, you have been logged out of all other devices and sessions.
+                                Your current session will remain active.
+                            </Typography>
+                        </Alert>
+                        <Typography variant="body2" color="text.secondary">
+                            This helps protect your account by ensuring that only you have access with your new password.
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions sx={{ p: 3 }}>
+                        <MuiButton
+                            onClick={() => setShowLogoutDialog(false)}
+                            variant="contained"
+                            size="large"
+                            sx={{
+                                borderRadius: 2,
+                                px: 4,
+                                textTransform: 'none',
+                                fontWeight: 600
+                            }}
+                        >
+                            Got it
+                        </MuiButton>
+                    </DialogActions>
+                </Dialog>
             </SettingsLayout>
         </AppLayout>
     );
