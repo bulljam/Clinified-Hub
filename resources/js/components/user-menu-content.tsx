@@ -30,7 +30,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuGroup>
                 <DropdownMenuItem 
                     asChild 
-                    className="focus:bg-[#20a09f]/10 focus:text-[#20a09f] hover:bg-[#20a09f]/10 hover:text-[#20a09f] data-[highlighted]:bg-[#20a09f]/10 data-[highlighted]:text-[#20a09f] transition-colors duration-200"
+                    className="focus:bg-[#5c6bc0]/10 focus:text-[#5c6bc0] hover:bg-[#5c6bc0]/10 hover:text-[#5c6bc0] data-[highlighted]:bg-[#5c6bc0]/10 data-[highlighted]:text-[#5c6bc0] transition-colors duration-200"
                 >
                     <Link 
                         className="block w-full" 
@@ -47,7 +47,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem 
                 asChild 
-                className="focus:bg-[#20a09f]/10 focus:text-[#20a09f] hover:bg-[#20a09f]/10 hover:text-[#20a09f] data-[highlighted]:bg-[#20a09f]/10 data-[highlighted]:text-[#20a09f] transition-colors duration-200"
+                className="focus:bg-[#5c6bc0]/10 focus:text-[#5c6bc0] hover:bg-[#5c6bc0]/10 hover:text-[#5c6bc0] data-[highlighted]:bg-[#5c6bc0]/10 data-[highlighted]:text-[#5c6bc0] transition-colors duration-200"
             >
                 <Link 
                     className="block w-full" 
