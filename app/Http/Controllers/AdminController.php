@@ -168,7 +168,7 @@ class AdminController extends Controller
         }
 
         $temporaryPassword = $this->generateTemporaryPassword();
-        
+
         $admin->update([
             'password' => Hash::make($temporaryPassword),
         ]);
@@ -177,9 +177,7 @@ class AdminController extends Controller
             new AdminWelcome($admin, $temporaryPassword)
         );
 
-        return response()->json([
-            'message' => 'Password reset successfully! New temporary credentials sent via email.',
-        ]);
+        return redirect()->back()->with('success', 'Password reset successfully! New temporary credentials sent via email.');
     }
 
     private function generateTemporaryPassword(): string
