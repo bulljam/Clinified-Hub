@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Appointment;
 use App\Models\DoctorApplication;
+use App\Models\Transaction;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->seedUsers();
         $this->seedAppointments();
+        $this->seedTransactions();
         $this->seedDoctorApplications();
     }
 
@@ -258,7 +260,7 @@ class DatabaseSeeder extends Seeder
             'date' => now()->addDays(3)->format('Y-m-d'),
             'time' => '14:30:00',
             'status' => 'pending',
-            'payment_status' => 'pending',
+            'payment_status' => 'on_hold',
             'notes' => 'Skin examination for mole check.',
         ]);
 
@@ -267,7 +269,7 @@ class DatabaseSeeder extends Seeder
             'provider_id' => $providers->where('email', 'doctor3@example.com')->first()->id,
             'date' => now()->addDays(7)->format('Y-m-d'),
             'time' => '10:15:00',
-            'status' => 'confirmed',
+            'status' => 'pending',
             'payment_status' => 'pending',
             'notes' => 'Child wellness visit and vaccinations.',
         ]);
@@ -288,7 +290,7 @@ class DatabaseSeeder extends Seeder
             'date' => now()->subDays(2)->format('Y-m-d'),
             'time' => '11:30:00',
             'status' => 'cancelled',
-            'payment_status' => 'pending',
+            'payment_status' => 'cancelled',
             'notes' => 'Headache evaluation - cancelled by patient.',
         ]);
 
@@ -323,6 +325,47 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->command->info('Appointments seeded successfully!');
+    }
+
+    private function seedTransactions(): void
+    {
+        $paidAppointments = Appointment::where('payment_status', 'paid')->get();
+
+        foreach ($paidAppointments as $appointment) {
+            Transaction::create([
+                'user_id' => $appointment->user_id,
+                'doctor_id' => $appointment->provider_id,
+                'amount' => 30.00,
+                'card_last4' => fake()->numerify('####'),
+                'status' => 'paid',
+            ]);
+        }
+
+        $onHoldAppointments = Appointment::where('payment_status', 'on_hold')->get();
+
+        foreach ($onHoldAppointments as $appointment) {
+            Transaction::create([
+                'user_id' => $appointment->user_id,
+                'doctor_id' => $appointment->provider_id,
+                'amount' => 30.00,
+                'card_last4' => fake()->numerify('####'),
+                'status' => 'on_hold',
+            ]);
+        }
+
+        $cancelledAppointments = Appointment::where('payment_status', 'cancelled')->get();
+
+        foreach ($cancelledAppointments as $appointment) {
+            Transaction::create([
+                'user_id' => $appointment->user_id,
+                'doctor_id' => $appointment->provider_id,
+                'amount' => 30.00,
+                'card_last4' => fake()->numerify('####'),
+                'status' => 'cancelled',
+            ]);
+        }
+
+        $this->command->info('Transactions seeded successfully!');
     }
 
     private function seedDoctorApplications(): void
