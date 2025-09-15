@@ -266,7 +266,7 @@ export default function CreatePayment({
                     <Box sx={{
                         p: 4, 
                         pb: 2,
-                        background: 'linear-gradient(135deg, #20a09f 0%, #17a2b8 100%)',
+                        background: 'linear-gradient(135deg, #5c6bc0 0%, #26418f 100%)',
                         color: 'white',
                         textAlign: 'center'
                     }}>
@@ -294,24 +294,24 @@ export default function CreatePayment({
                                     <Card variant="outlined" sx={{ 
                                         border: '2px solid #e0f7fa',
                                         bgcolor: '#fafbfc',
-                                        '&:hover': { borderColor: '#20a09f' }
+                                        '&:hover': { borderColor: '#5c6bc0' }
                                     }}>
                                         <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                                <CreditCard sx={{ color: '#20a09f', mr: 1 }} />
+                                                <CreditCard sx={{ color: '#5c6bc0', mr: 1 }} />
                                                 <Typography variant="body2" fontWeight="500">
                                                     Credit or Debit Card
                                                 </Typography>
                                                 <Box sx={{ ml: 'auto', display: 'flex', gap: 0.5 }}>
                                                     <Box sx={{ 
-                                                        width: 32, height: 20, bgcolor: '#20a09f', 
+                                                        width: 32, height: 20, bgcolor: '#5c6bc0', 
                                                         borderRadius: 0.5, display: 'flex', alignItems: 'center', 
                                                         justifyContent: 'center', fontSize: '8px', color: 'white', fontWeight: 'bold'
                                                     }}>
                                                         VISA
                                                     </Box>
                                                     <Box sx={{ 
-                                                        width: 32, height: 20, bgcolor: '#17a2b8', 
+                                                        width: 32, height: 20, bgcolor: '#26418f', 
                                                         borderRadius: 0.5, display: 'flex', alignItems: 'center', 
                                                         justifyContent: 'center', fontSize: '8px', color: 'white', fontWeight: 'bold'
                                                     }}>
@@ -358,10 +358,10 @@ export default function CreatePayment({
                                                 '& .MuiOutlinedInput-root': {
                                                     borderRadius: 2,
                                                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                        borderColor: '#20a09f',
+                                                        borderColor: '#5c6bc0',
                                                     },
                                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                        borderColor: '#20a09f',
+                                                        borderColor: '#5c6bc0',
                                                     },
                                                 }
                                             }}
@@ -383,10 +383,10 @@ export default function CreatePayment({
                                                     '& .MuiOutlinedInput-root': {
                                                         borderRadius: 2,
                                                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                            borderColor: '#20a09f',
+                                                            borderColor: '#5c6bc0',
                                                         },
                                                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                            borderColor: '#20a09f',
+                                                            borderColor: '#5c6bc0',
                                                         },
                                                     }
                                                 }}
@@ -415,10 +415,10 @@ export default function CreatePayment({
                                                     '& .MuiOutlinedInput-root': {
                                                         borderRadius: 2,
                                                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                            borderColor: '#20a09f',
+                                                            borderColor: '#5c6bc0',
                                                         },
                                                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                            borderColor: '#20a09f',
+                                                            borderColor: '#5c6bc0',
                                                         },
                                                     }
                                                 }}
@@ -437,7 +437,7 @@ export default function CreatePayment({
                                     }}
                                 >
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <Lock sx={{ color: '#20a09f', mr: 1, fontSize: 20 }} />
+                                        <Lock sx={{ color: '#5c6bc0', mr: 1, fontSize: 20 }} />
                                         <Typography variant="body2" color="text.secondary">
                                             Your payment information is encrypted and secure
                                         </Typography>
@@ -471,11 +471,11 @@ export default function CreatePayment({
                                     px: 4,
                                     py: 1.5,
                                     minWidth: 140,
-                                    background: 'linear-gradient(135deg, #20a09f 0%, #17a2b8 100%)',
+                                    background: 'linear-gradient(135deg, #5c6bc0 0%, #26418f 100%)',
                                     '&:hover': {
-                                        background: 'linear-gradient(135deg, #178f8e 0%, #148a99 100%)',
+                                        background: 'linear-gradient(135deg, #26418f 0%, #1f3167 100%)',
                                         transform: 'translateY(-1px)',
-                                        boxShadow: '0 8px 25px rgba(32, 160, 159, 0.4)',
+                                        boxShadow: '0 8px 25px rgba(92, 107, 192, 0.4)',
                                     },
                                     transition: 'all 0.3s ease',
                                 }}
