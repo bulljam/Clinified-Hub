@@ -199,7 +199,7 @@ export default function AdminsIndex({ admins, filters, flash }: Props) {
         size="small" 
         sx={{ 
           backgroundColor: '#f0fdfa', 
-          color: '#14b8a6',
+          color: '#5c6bc0',
           border: '1px solid #ccfbf1',
           fontWeight: 600 
         }} 
@@ -318,7 +318,7 @@ export default function AdminsIndex({ admins, filters, flash }: Props) {
                   >
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar sx={{ bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#14b8a6', color: 'white', fontWeight: 600 }}>
+                        <Avatar sx={{ bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#5c6bc0', color: 'white', fontWeight: 600 }}>
                           {admin.name.charAt(0).toUpperCase()}
                         </Avatar>
                         <Box>

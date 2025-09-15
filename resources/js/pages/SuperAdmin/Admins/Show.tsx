@@ -52,7 +52,7 @@ export default function ShowAdmin({ admin }: Props) {
     return role === 'super_admin' ? (
       <CrownIcon sx={{ fontSize: 24, color: '#dc2626' }} />
     ) : (
-      <ShieldIcon sx={{ fontSize: 24, color: '#14b8a6' }} />
+      <ShieldIcon sx={{ fontSize: 24, color: '#5c6bc0' }} />
     );
   };
 
@@ -75,7 +75,7 @@ export default function ShowAdmin({ admin }: Props) {
         label="Admin" 
         sx={{ 
           backgroundColor: '#f0fdfa', 
-          color: '#14b8a6',
+          color: '#5c6bc0',
           border: '1px solid #ccfbf1',
           fontWeight: 600,
           fontSize: '0.875rem'
@@ -144,7 +144,7 @@ export default function ShowAdmin({ admin }: Props) {
                     sx={{ 
                       width: 80, 
                       height: 80, 
-                      bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#14b8a6',
+                      bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#5c6bc0',
                       color: 'white', 
                       fontWeight: 600,
                       fontSize: '2rem'
@@ -215,7 +215,7 @@ export default function ShowAdmin({ admin }: Props) {
                     <ListItemIcon>
                       {admin.role === 'super_admin' ? 
                         <CrownIcon sx={{ color: '#dc2626' }} /> : 
-                        <ShieldIcon sx={{ color: '#14b8a6' }} />
+                        <ShieldIcon sx={{ color: '#5c6bc0' }} />
                       }
                     </ListItemIcon>
                     <ListItemText 
@@ -370,7 +370,7 @@ export default function ShowAdmin({ admin }: Props) {
                       height: 60, 
                       mx: 'auto', 
                       mb: 2,
-                      bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#14b8a6',
+                      bgcolor: admin.role === 'super_admin' ? '#dc2626' : '#5c6bc0',
                       color: 'white',
                       fontWeight: 600,
                       fontSize: '1.5rem'

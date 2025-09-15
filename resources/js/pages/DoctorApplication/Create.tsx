@@ -135,7 +135,7 @@ export default function DoctorApplicationCreate() {
         <Box 
             sx={{ 
                 minHeight: '100vh', 
-                background: 'linear-gradient(135deg, #d9dcd7ff 0%, #b2dfdb 25%, #80cbc4 50%, #4db6ac 75%, #26a69a 100%)',
+                background: 'linear-gradient(135deg, #e8eaf6 0%, #c5cae9 25%, #9fa8da 50%, #7986cb 75%, #5c6bc0 100%)',
                 position: 'relative',
                 overflow: 'hidden',
                 '&::before': {
@@ -225,10 +225,10 @@ export default function DoctorApplicationCreate() {
                     href="/"
                     sx={{
                         bgcolor: 'rgba(255, 255, 255, 0.9)',
-                        color: '#20a09f',
+                        color: '#5c6bc0',
                         '&:hover': {
                             bgcolor: 'rgba(255, 255, 255, 1)',
-                            color: '#178f8e',
+                            color: '#26418f',
                         },
                     }}
                     title="Go to Home"
@@ -250,8 +250,8 @@ export default function DoctorApplicationCreate() {
                         }}>
                             <CardContent sx={{ p: 4 }}>
                                 <Box display="flex" alignItems="center" gap={2} mb={3}>
-                                    <PersonIcon sx={{ color: '#20a09f' }} />
-                                    <Typography variant="h6" fontWeight="600" color="#20a09f">
+                                    <PersonIcon sx={{ color: '#5c6bc0' }} />
+                                    <Typography variant="h6" fontWeight="600" color="#5c6bc0">
                                         Personal Information
                                     </Typography>
                                 </Box>
@@ -269,7 +269,7 @@ export default function DoctorApplicationCreate() {
                                             slotProps={{
                                                 input: {
                                                     startAdornment: (
-                                                        <PersonIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                        <PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                     ),
                                                 },
                                             }}
@@ -287,7 +287,7 @@ export default function DoctorApplicationCreate() {
                                             slotProps={{
                                                 input: {
                                                     startAdornment: (
-                                                        <EmailIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                        <EmailIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                     ),
                                                 },
                                             }}
@@ -306,7 +306,7 @@ export default function DoctorApplicationCreate() {
                                             slotProps={{
                                                 input: {
                                                     startAdornment: (
-                                                        <PhoneIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                        <PhoneIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                     ),
                                                 },
                                             }}
@@ -319,7 +319,7 @@ export default function DoctorApplicationCreate() {
                                                 label="Gender"
                                                 onChange={(e) => setData('gender', e.target.value)}
                                                 startAdornment={
-                                                    <PersonIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    <PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                 }
                                             >
                                                 <MenuItem value="">Select Gender</MenuItem>
@@ -349,7 +349,7 @@ export default function DoctorApplicationCreate() {
                                             input: {
                                                 startAdornment: (
                                                     <Box sx={{ alignSelf: 'flex-start', pt: 1 }}>
-                                                        <PersonIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                        <PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                     </Box>
                                                 ),
                                             },
@@ -359,7 +359,7 @@ export default function DoctorApplicationCreate() {
                                     {/* Photo Upload Section */}
                                     <Box>
                                         <Box display="flex" alignItems="center" gap={1} mb={2}>
-                                            <PhotoIcon sx={{ color: '#20a09f' }} />
+                                            <PhotoIcon sx={{ color: '#5c6bc0' }} />
                                             <Typography variant="subtitle1" fontWeight="600">
                                                 Profile Photo <span style={{ color: '#d32f2f' }}>*</span>
                                             </Typography>
@@ -405,11 +405,11 @@ export default function DoctorApplicationCreate() {
                                                 variant="outlined"
                                                 startIcon={<UploadIcon />}
                                                 sx={{
-                                                    borderColor: '#20a09f',
-                                                    color: '#20a09f',
+                                                    borderColor: '#5c6bc0',
+                                                    color: '#5c6bc0',
                                                     '&:hover': {
-                                                        borderColor: '#178f8e',
-                                                        bgcolor: 'rgba(32, 160, 159, 0.04)',
+                                                        borderColor: '#26418f',
+                                                        bgcolor: 'rgba(92, 107, 192, 0.04)',
                                                     },
                                                 }}
                                             >
@@ -437,8 +437,8 @@ export default function DoctorApplicationCreate() {
                         }}>
                             <CardContent sx={{ p: 4 }}>
                                 <Box display="flex" alignItems="center" gap={2} mb={3}>
-                                    <WorkIcon sx={{ color: '#20a09f' }} />
-                                    <Typography variant="h6" fontWeight="600" color="#20a09f">
+                                    <WorkIcon sx={{ color: '#5c6bc0' }} />
+                                    <Typography variant="h6" fontWeight="600" color="#5c6bc0">
                                         Professional Information
                                     </Typography>
                                 </Box>
@@ -452,7 +452,7 @@ export default function DoctorApplicationCreate() {
                                                 label="Medical Specialty"
                                                 onChange={(e) => setData('specialty', e.target.value)}
                                                 startAdornment={
-                                                    <SchoolIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    <SchoolIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                 }
                                             >
                                                 {specialties.map((specialty) => (
@@ -479,7 +479,7 @@ export default function DoctorApplicationCreate() {
                                             slotProps={{
                                                 input: {
                                                     startAdornment: (
-                                                        <BadgeIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                        <BadgeIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                     ),
                                                 },
                                             }}
@@ -497,7 +497,7 @@ export default function DoctorApplicationCreate() {
                                             htmlInput: { min: 0, max: 50 },
                                             input: {
                                                 startAdornment: (
-                                                    <ExperienceIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                    <ExperienceIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                 ),
                                             },
                                         }}
@@ -520,7 +520,7 @@ export default function DoctorApplicationCreate() {
                                             input: {
                                                 startAdornment: (
                                                     <Box sx={{ alignSelf: 'flex-start', pt: 1 }}>
-                                                        <LocationIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                        <LocationIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                     </Box>
                                                 ),
                                             },
@@ -539,8 +539,8 @@ export default function DoctorApplicationCreate() {
                         }}>
                             <CardContent sx={{ p: 4 }}>
                                 <Box display="flex" alignItems="center" gap={2} mb={3}>
-                                    <FileIcon sx={{ color: '#20a09f' }} />
-                                    <Typography variant="h6" fontWeight="600" color="#20a09f">
+                                    <FileIcon sx={{ color: '#5c6bc0' }} />
+                                    <Typography variant="h6" fontWeight="600" color="#5c6bc0">
                                         Documents & Credentials
                                     </Typography>
                                 </Box>
@@ -559,11 +559,11 @@ export default function DoctorApplicationCreate() {
                                         disabled={data.credentials.length >= 5}
                                         sx={{
                                             mb: 3,
-                                            borderColor: '#20a09f',
-                                            color: '#20a09f',
+                                            borderColor: '#5c6bc0',
+                                            color: '#5c6bc0',
                                             '&:hover': {
-                                                borderColor: '#178f8e',
-                                                bgcolor: 'rgba(32, 160, 159, 0.04)',
+                                                borderColor: '#26418f',
+                                                bgcolor: 'rgba(92, 107, 192, 0.04)',
                                             },
                                         }}
                                     >
@@ -625,8 +625,8 @@ export default function DoctorApplicationCreate() {
                                         size="large"
                                         disabled={processing}
                                         sx={{
-                                            bgcolor: '#20a09f',
-                                            '&:hover': { bgcolor: '#178f8e' },
+                                            bgcolor: '#5c6bc0',
+                                            '&:hover': { bgcolor: '#26418f' },
                                             px: 8,
                                             py: 1.5,
                                             fontSize: '1.1rem',

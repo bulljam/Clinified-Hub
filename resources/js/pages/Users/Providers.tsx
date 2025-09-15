@@ -165,11 +165,11 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                     <CardContent sx={{ p: 4 }}>
                         <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
                             <Box display="flex" alignItems="center" gap={2}>
-                                <Avatar sx={{ bgcolor: '#20a09f', width: 56, height: 56 }}>
+                                <Avatar sx={{ bgcolor: '#5c6bc0', width: 56, height: 56 }}>
                                     <MedicalIcon sx={{ fontSize: 28 }} />
                                 </Avatar>
                                 <Box>
-                                    <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f">
+                                    <Typography variant="h4" component="h1" fontWeight="bold" color="#5c6bc0">
                                         Healthcare Providers
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
@@ -202,7 +202,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <SearchIcon sx={{ color: '#20a09f' }} />
+                                            <SearchIcon sx={{ color: '#5c6bc0' }} />
                                         </InputAdornment>
                                     ),
                                     endAdornment: searchQuery && (
@@ -212,8 +212,8 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 variant="contained"
                                                 size="small"
                                                 sx={{
-                                                    bgcolor: '#20a09f',
-                                                    '&:hover': { bgcolor: '#178f8e' },
+                                                    bgcolor: '#5c6bc0',
+                                                    '&:hover': { bgcolor: '#26418f' },
                                                     minWidth: 'auto',
                                                     px: 2,
                                                 }}
@@ -226,10 +226,10 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         '&:hover fieldset': {
-                                            borderColor: '#20a09f',
+                                            borderColor: '#5c6bc0',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: '#20a09f',
+                                            borderColor: '#5c6bc0',
                                         },
                                     },
                                 }}
@@ -243,11 +243,11 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                     onClick={() => setShowFilters(!showFilters)}
                                     variant="outlined"
                                     sx={{
-                                        borderColor: '#20a09f',
-                                        color: '#20a09f',
+                                        borderColor: '#5c6bc0',
+                                        color: '#5c6bc0',
                                         '&:hover': {
-                                            borderColor: '#178f8e',
-                                            bgcolor: 'rgba(32, 160, 159, 0.04)',
+                                            borderColor: '#26418f',
+                                            bgcolor: 'rgba(92, 107, 192, 0.04)',
                                         },
                                     }}
                                 >
@@ -272,7 +272,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                     borderRadius: 2, 
                                     p: 3, 
                                     mt: 2,
-                                    bgcolor: 'rgba(32, 160, 159, 0.02)' 
+                                    bgcolor: 'rgba(92, 107, 192, 0.02)' 
                                 }}>
                                     <Grid container spacing={3} alignItems="flex-end">
                                         <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
@@ -285,10 +285,10 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
                                                             '&:hover fieldset': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                             '&.Mui-focused fieldset': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                         },
                                                     }}
@@ -312,10 +312,10 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
                                                             '&:hover fieldset': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                             '&.Mui-focused fieldset': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                         },
                                                     }}
@@ -339,10 +339,10 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
                                                             '&:hover fieldset': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                             '&.Mui-focused fieldset': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                         },
                                                     }}
@@ -364,10 +364,10 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
                                                             '&:hover fieldset': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                             '&.Mui-focused fieldset': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                         },
                                                     }}
@@ -398,9 +398,9 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 borderColor: '#e0e0e0',
                                                 color: 'text.secondary',
                                                 '&:hover': {
-                                                    borderColor: '#20a09f',
-                                                    bgcolor: 'rgba(32, 160, 159, 0.04)',
-                                                    color: '#20a09f',
+                                                    borderColor: '#5c6bc0',
+                                                    bgcolor: 'rgba(92, 107, 192, 0.04)',
+                                                    color: '#5c6bc0',
                                                 },
                                             }}
                                         >
@@ -410,15 +410,15 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                             onClick={applyFilters}
                                             variant="contained"
                                             sx={{
-                                                bgcolor: '#20a09f',
+                                                bgcolor: '#5c6bc0',
                                                 color: 'white',
                                                 px: 3,
                                                 py: 1,
                                                 fontWeight: 600,
                                                 '&:hover': { 
-                                                    bgcolor: '#178f8e',
+                                                    bgcolor: '#26418f',
                                                     transform: 'translateY(-1px)',
-                                                    boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                                                    boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                                                 },
                                             }}
                                         >
@@ -436,7 +436,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                     <Grid size={{ xs: 12, sm: 4 }}>
                         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                             <CardContent sx={{ p: 3, textAlign: 'center' }}>
-                                <Typography variant="h3" fontWeight="bold" color="#20a09f" mb={1}>
+                                <Typography variant="h3" fontWeight="bold" color="#5c6bc0" mb={1}>
                                     {providers.total}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
@@ -506,7 +506,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                     showFirstButton
                                     showLastButton
                                     sx={{
-                                        color: '#20a09f',
+                                        color: '#5c6bc0',
                                         '& .MuiPaginationItem-root': {
                                             borderRadius: 2,
                                             fontWeight: 600,
@@ -514,17 +514,17 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                             height: 40,
                                             border: '1px solid #e0e0e0',
                                             '&:hover': {
-                                                bgcolor: '#20a09f',
+                                                bgcolor: '#5c6bc0',
                                                 color: 'white',
                                                 transform: 'scale(1.05)',
-                                                boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
+                                                boxShadow: '0 4px 8px rgba(92, 107, 192, 0.3)',
                                             },
                                             '&.Mui-selected': {
-                                                bgcolor: '#20a09f',
+                                                bgcolor: '#5c6bc0',
                                                 color: 'white',
-                                                boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
+                                                boxShadow: '0 4px 12px rgba(92, 107, 192, 0.4)',
                                                 '&:hover': {
-                                                    bgcolor: '#178f8e',
+                                                    bgcolor: '#26418f',
                                                 },
                                             },
                                             transition: 'all 0.2s ease',

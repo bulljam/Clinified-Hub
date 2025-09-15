@@ -216,11 +216,11 @@ export default function DoctorApplications({ applications }: Props) {
       <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
         <CardContent sx={{ p: 4 }}>
           <Box display="flex" alignItems="center" gap={2}>
-            <Avatar sx={{ bgcolor: '#20a09f', width: 56, height: 56 }}>
+            <Avatar sx={{ bgcolor: '#5c6bc0', width: 56, height: 56 }}>
               <MedicalIcon sx={{ fontSize: 28 }} />
             </Avatar>
             <Box>
-              <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f">
+              <Typography variant="h4" component="h1" fontWeight="bold" color="#5c6bc0">
                 Doctor Applications
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -280,16 +280,16 @@ export default function DoctorApplications({ applications }: Props) {
             borderRadius: 4,
           },
           '&::-webkit-scrollbar-thumb': {
-            backgroundColor: '#20a09f',
+            backgroundColor: '#5c6bc0',
             borderRadius: 4,
             '&:hover': {
-              backgroundColor: '#178f8e',
+              backgroundColor: '#26418f',
             },
           }
         }}>
           <Table sx={{ minWidth: 1200 }}>
             <TableHead>
-              <TableRow sx={{ bgcolor: '#20a09f' }}>
+              <TableRow sx={{ bgcolor: '#5c6bc0' }}>
                 <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 200 }}>
                   Doctor Details
                 </TableCell>
@@ -317,7 +317,7 @@ export default function DoctorApplications({ applications }: Props) {
                     hover
                     sx={{
                       '&:hover': {
-                        bgcolor: 'rgba(32, 160, 159, 0.08)',
+                        bgcolor: 'rgba(92, 107, 192, 0.08)',
                         transition: 'background-color 0.2s ease',
                       },
                       '&:nth-of-type(even)': {
@@ -337,7 +337,7 @@ export default function DoctorApplications({ applications }: Props) {
                             sx={{ 
                               width: 40, 
                               height: 40,
-                              border: '1px solid #20a09f',
+                              border: '1px solid #5c6bc0',
                               cursor: 'pointer',
                               '&:hover': {
                                 opacity: 0.8,
@@ -349,7 +349,7 @@ export default function DoctorApplications({ applications }: Props) {
                           />
                         ) : (
                           <Avatar sx={{ 
-                            bgcolor: '#20a09f', 
+                            bgcolor: '#5c6bc0', 
                             width: 40, 
                             height: 40,
                             fontSize: '1.1rem',
@@ -407,9 +407,9 @@ export default function DoctorApplications({ applications }: Props) {
                             size="small"
                             onClick={() => setViewingApplication(application)}
                             sx={{
-                              bgcolor: '#20a09f',
+                              bgcolor: '#5c6bc0',
                               color: 'white',
-                              '&:hover': { bgcolor: '#178f8e' },
+                              '&:hover': { bgcolor: '#26418f' },
                             }}
                           >
                             <ViewIcon fontSize="small" />
@@ -478,7 +478,7 @@ export default function DoctorApplications({ applications }: Props) {
               showFirstButton
               showLastButton
               sx={{
-                color: '#20a09f',
+                color: '#5c6bc0',
                 '& .MuiPaginationItem-root': {
                   borderRadius: 2,
                   fontWeight: 600,
@@ -486,17 +486,17 @@ export default function DoctorApplications({ applications }: Props) {
                   height: 40,
                   border: '1px solid #e0e0e0',
                   '&:hover': {
-                    bgcolor: '#20a09f',
+                    bgcolor: '#5c6bc0',
                     color: 'white',
                     transform: 'scale(1.05)',
-                    boxShadow: '0 4px 8px rgba(32, 160, 159, 0.3)',
+                    boxShadow: '0 4px 8px rgba(92, 107, 192, 0.3)',
                   },
                   '&.Mui-selected': {
-                    bgcolor: '#20a09f',
+                    bgcolor: '#5c6bc0',
                     color: 'white',
-                    boxShadow: '0 4px 12px rgba(32, 160, 159, 0.4)',
+                    boxShadow: '0 4px 12px rgba(92, 107, 192, 0.4)',
                     '&:hover': {
-                      bgcolor: '#178f8e',
+                      bgcolor: '#26418f',
                     },
                   },
                   transition: 'all 0.2s ease',
@@ -541,7 +541,7 @@ export default function DoctorApplications({ applications }: Props) {
                         sx={{ 
                           width: 64, 
                           height: 64,
-                          border: '2px solid #20a09f',
+                          border: '2px solid #5c6bc0',
                           cursor: 'pointer',
                           '&:hover': {
                             opacity: 0.8,
@@ -554,7 +554,7 @@ export default function DoctorApplications({ applications }: Props) {
                     ) : (
                       <Avatar 
                         sx={{ 
-                          bgcolor: '#20a09f', 
+                          bgcolor: '#5c6bc0', 
                           width: 64, 
                           height: 64, 
                           fontSize: '1.5rem',
@@ -565,7 +565,7 @@ export default function DoctorApplications({ applications }: Props) {
                       </Avatar>
                     )}
                     <Box>
-                      <Typography variant="h5" fontWeight="bold" color="#20a09f">
+                      <Typography variant="h5" fontWeight="bold" color="#5c6bc0">
                         Dr. {viewingApplication.full_name}
                       </Typography>
                       <Typography variant="subtitle1" color="text.secondary">
@@ -615,7 +615,7 @@ export default function DoctorApplications({ applications }: Props) {
               {/* Contact Information */}
               <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+                  <Typography variant="h6" fontWeight="600" mb={3} color="#5c6bc0">
                     Contact Information
                   </Typography>
                   <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr 1fr' }} gap={3}>
@@ -652,7 +652,7 @@ export default function DoctorApplications({ applications }: Props) {
               {/* Professional Information */}
               <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+                  <Typography variant="h6" fontWeight="600" mb={3} color="#5c6bc0">
                     Professional Details
                   </Typography>
                   <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
@@ -702,7 +702,7 @@ export default function DoctorApplications({ applications }: Props) {
               {parsedCredentials.length > 0 && (
                 <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
                   <CardContent sx={{ p: 3 }}>
-                    <Typography variant="h6" fontWeight="600" mb={3} color="#20a09f">
+                    <Typography variant="h6" fontWeight="600" mb={3} color="#5c6bc0">
                       Professional Credentials ({parsedCredentials.length})
                     </Typography>
                     <Stack spacing={2}>
@@ -714,16 +714,16 @@ export default function DoctorApplications({ applications }: Props) {
                             startIcon={<PreviewIcon />}
                             onClick={() => previewFile(credential)}
                             sx={{ 
-                              borderColor: '#20a09f',
-                              color: '#20a09f',
+                              borderColor: '#5c6bc0',
+                              color: '#5c6bc0',
                               fontWeight: 500,
                               justifyContent: 'flex-start',
                               px: 3,
                               py: 2,
                               textTransform: 'none',
                               '&:hover': {
-                                borderColor: '#178f8e',
-                                bgcolor: 'rgba(32, 160, 159, 0.04)',
+                                borderColor: '#26418f',
+                                bgcolor: 'rgba(92, 107, 192, 0.04)',
                               }
                             }}
                           >
@@ -789,7 +789,7 @@ export default function DoctorApplications({ applications }: Props) {
           </Typography>
           {approvingApplication && (
             <Box sx={{ mt: 2, p: 2, bgcolor: '#f8f9fa', borderRadius: 2, border: '1px solid #e0e0e0' }}>
-              <Typography variant="subtitle2" fontWeight="600" color="#20a09f">
+              <Typography variant="subtitle2" fontWeight="600" color="#5c6bc0">
                 Dr. {approvingApplication.full_name}
               </Typography>
               <Typography variant="body2" color="text.secondary">

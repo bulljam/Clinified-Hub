@@ -194,11 +194,11 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     <CardContent sx={{ p: 4 }}>
                         <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
                             <Box display="flex" alignItems="center" gap={2}>
-                                <Avatar sx={{ bgcolor: '#20a09f', width: 56, height: 56 }}>
+                                <Avatar sx={{ bgcolor: '#5c6bc0', width: 56, height: 56 }}>
                                     <PeopleIcon sx={{ fontSize: 28 }} />
                                 </Avatar>
                                 <Box>
-                                    <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f">
+                                    <Typography variant="h4" component="h1" fontWeight="bold" color="#5c6bc0">
                                         {userRole === 'provider' ? 'My Patients' : 'Patients'}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
@@ -223,17 +223,17 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <SearchIcon sx={{ color: '#20a09f' }} />
+                                            <SearchIcon sx={{ color: '#5c6bc0' }} />
                                         </InputAdornment>
                                     ),
                                 }}
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         '&:hover fieldset': {
-                                            borderColor: '#20a09f',
+                                            borderColor: '#5c6bc0',
                                         },
                                         '&.Mui-focused fieldset': {
-                                            borderColor: '#20a09f',
+                                            borderColor: '#5c6bc0',
                                         },
                                     },
                                 }}
@@ -247,11 +247,11 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                     onClick={() => setShowFilters(!showFilters)}
                                     variant="outlined"
                                     sx={{
-                                        borderColor: '#20a09f',
-                                        color: '#20a09f',
+                                        borderColor: '#5c6bc0',
+                                        color: '#5c6bc0',
                                         '&:hover': {
-                                            borderColor: '#178f8e',
-                                            bgcolor: 'rgba(32, 160, 159, 0.04)',
+                                            borderColor: '#26418f',
+                                            bgcolor: 'rgba(92, 107, 192, 0.04)',
                                         },
                                     }}
                                 >
@@ -351,8 +351,8 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                             onClick={applyFilters}
                                             variant="contained"
                                             sx={{
-                                                bgcolor: '#20a09f',
-                                                '&:hover': { bgcolor: '#178f8e' },
+                                                bgcolor: '#5c6bc0',
+                                                '&:hover': { bgcolor: '#26418f' },
                                             }}
                                         >
                                             Apply Filters
@@ -368,7 +368,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                 <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(3, 1fr)' }} gap={3} mb={4}>
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="h3" fontWeight="bold" color="#20a09f" mb={1}>
+                            <Typography variant="h3" fontWeight="bold" color="#5c6bc0" mb={1}>
                                 {searchFilteredPatients.length}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
@@ -415,16 +415,16 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                     borderRadius: 4,
                                 },
                                 '&::-webkit-scrollbar-thumb': {
-                                    backgroundColor: '#20a09f',
+                                    backgroundColor: '#5c6bc0',
                                     borderRadius: 4,
                                     '&:hover': {
-                                        backgroundColor: '#178f8e',
+                                        backgroundColor: '#26418f',
                                     },
                                 }
                             }}>
                                 <Table sx={{ minWidth: 1000 }}>
                                     <TableHead>
-                                        <TableRow sx={{ bgcolor: '#20a09f' }}>
+                                        <TableRow sx={{ bgcolor: '#5c6bc0' }}>
                                             <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 250 }}>
                                                 <Box display="flex" alignItems="center" gap={1}>
                                                     <PersonIcon fontSize="small" />
@@ -479,7 +479,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                     hover
                                                     sx={{
                                                         '&:hover': {
-                                                            bgcolor: 'rgba(32, 160, 159, 0.08)',
+                                                            bgcolor: 'rgba(92, 107, 192, 0.08)',
                                                             transition: 'background-color 0.2s ease',
                                                         },
                                                         '&:nth-of-type(even)': {
@@ -499,7 +499,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                                     sx={{ 
                                                                         width: 50, 
                                                                         height: 50,
-                                                                        border: '2px solid #20a09f',
+                                                                        border: '2px solid #5c6bc0',
                                                                     }}
                                                                 />
                                                             ) : (
@@ -529,8 +529,8 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                                             sx={{
                                                                                 height: 20,
                                                                                 fontSize: '0.7rem',
-                                                                                borderColor: '#20a09f',
-                                                                                color: '#20a09f',
+                                                                                borderColor: '#5c6bc0',
+                                                                                color: '#5c6bc0',
                                                                             }}
                                                                         />
                                                                     )}
@@ -569,7 +569,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                                 label={patient.appointments_count}
                                                                 size="small"
                                                                 sx={{
-                                                                    bgcolor: patient.appointments_count > 0 ? '#20a09f' : 'grey.300',
+                                                                    bgcolor: patient.appointments_count > 0 ? '#5c6bc0' : 'grey.300',
                                                                     color: patient.appointments_count > 0 ? 'white' : 'grey.600',
                                                                     fontWeight: 600,
                                                                     minWidth: 40,
@@ -605,9 +605,9 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                                 size="small"
                                                                 onClick={() => handleViewPatient(patient)}
                                                                 sx={{
-                                                                    color: '#20a09f',
+                                                                    color: '#5c6bc0',
                                                                     '&:hover': {
-                                                                        bgcolor: 'rgba(32, 160, 159, 0.1)',
+                                                                        bgcolor: 'rgba(92, 107, 192, 0.1)',
                                                                     },
                                                                 }}
                                                             >
@@ -665,7 +665,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     maxWidth="md"
                     fullWidth
                 >
-                    <DialogTitle sx={{ bgcolor: '#20a09f', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <DialogTitle sx={{ bgcolor: '#5c6bc0', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box display="flex" alignItems="center" gap={2}>
                             <PersonIcon />
                             Patient Information
@@ -678,11 +678,11 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                         {selectedPatient && (
                             <Box>
                                 {/* Header Section with Avatar and Status */}
-                                <Box sx={{ bgcolor: 'rgba(32, 160, 159, 0.05)', p: 4, textAlign: 'center' }}>
+                                <Box sx={{ bgcolor: 'rgba(92, 107, 192, 0.05)', p: 4, textAlign: 'center' }}>
                                     {selectedPatient.photo ? (
                                         <Avatar 
                                             src={`/storage/${selectedPatient.photo}`}
-                                            sx={{ width: 100, height: 100, mx: 'auto', mb: 2, border: '3px solid #20a09f' }}
+                                            sx={{ width: 100, height: 100, mx: 'auto', mb: 2, border: '3px solid #5c6bc0' }}
                                         />
                                     ) : (
                                         <Avatar sx={{ 
@@ -721,7 +721,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                     }}>
                                         {/* Contact Information */}
                                         <Box>
-                                            <Typography variant="h6" fontWeight="bold" mb={2} color="#20a09f">
+                                            <Typography variant="h6" fontWeight="bold" mb={2} color="#5c6bc0">
                                                 Contact Information
                                             </Typography>
                                             <Stack spacing={2}>
@@ -757,7 +757,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
 
                                         {/* Personal Information */}
                                         <Box>
-                                            <Typography variant="h6" fontWeight="bold" mb={2} color="#20a09f">
+                                            <Typography variant="h6" fontWeight="bold" mb={2} color="#5c6bc0">
                                                 Personal Information
                                             </Typography>
                                             <Stack spacing={2}>
@@ -794,7 +794,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                     {/* Medical Summary */}
                                     <Box>
                                         <Divider sx={{ my: 2 }} />
-                                        <Typography variant="h6" fontWeight="bold" mb={2} color="#20a09f">
+                                        <Typography variant="h6" fontWeight="bold" mb={2} color="#5c6bc0">
                                             Medical Summary
                                         </Typography>
                                         <Box sx={{
@@ -802,9 +802,9 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                             gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
                                             gap: 3
                                         }}>
-                                            <Card sx={{ p: 2, textAlign: 'center', bgcolor: 'rgba(32, 160, 159, 0.05)' }}>
-                                                <EventIcon sx={{ fontSize: 40, color: '#20a09f', mb: 1 }} />
-                                                <Typography variant="h4" fontWeight="bold" color="#20a09f">
+                                            <Card sx={{ p: 2, textAlign: 'center', bgcolor: 'rgba(92, 107, 192, 0.05)' }}>
+                                                <EventIcon sx={{ fontSize: 40, color: '#5c6bc0', mb: 1 }} />
+                                                <Typography variant="h4" fontWeight="bold" color="#5c6bc0">
                                                     {selectedPatient.appointments_count}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
@@ -840,8 +840,8 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                             onClick={() => setOpenViewModal(false)}
                             variant="contained"
                             sx={{
-                                bgcolor: '#20a09f',
-                                '&:hover': { bgcolor: '#178f8e' },
+                                bgcolor: '#5c6bc0',
+                                '&:hover': { bgcolor: '#26418f' },
                             }}
                         >
                             Close
