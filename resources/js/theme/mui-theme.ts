@@ -3,9 +3,9 @@ import { createTheme } from '@mui/material/styles';
 const clinifiedHubTheme = createTheme({
   palette: {
     primary: {
-      main: '#20a09f',
-      light: '#4fc3c2',
-      dark: '#177170',
+      main: '#5c6bc0',
+      light: '#8e99f3',
+      dark: '#26418f',
       contrastText: '#ffffff',
     },
     secondary: {
@@ -20,7 +20,7 @@ const clinifiedHubTheme = createTheme({
       dark: '#22c55e',
     },
     warning: {
-      main: '#fbbf24',
+      main: '#facc15',
       light: '#fcd34d',
       dark: '#f59e0b',
     },
@@ -30,7 +30,7 @@ const clinifiedHubTheme = createTheme({
       dark: '#dc2626',
     },
     background: {
-      default: '#fafafa',
+      default: '#f5f6fa',
       paper: '#ffffff',
     },
     text: {
