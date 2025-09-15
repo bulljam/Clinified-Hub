@@ -32,8 +32,8 @@ import {
 } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
 import { Crown as CrownIcon } from 'lucide-react';
-import { useState } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import { dashboard } from '@/routes';
 import superAdmin from '@/routes/super-admin';
 import AppLayout from '@/layouts/app-layout';
@@ -55,9 +55,13 @@ interface FormData {
 
 interface Props {
   admin: Admin;
+  flash?: {
+    success?: string;
+    error?: string;
+  };
 }
 
-export default function EditAdmin({ admin }: Props) {
+export default function EditAdmin({ admin, flash }: Props) {
   const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
@@ -70,6 +74,16 @@ export default function EditAdmin({ admin }: Props) {
     role: admin.role,
   });
 
+  useEffect(() => {
+    if (flash?.success) {
+      setShowSuccessSnackbar(true);
+    }
+    if (flash?.error) {
+      setErrorMessage(flash.error);
+      setShowErrorSnackbar(true);
+    }
+  }, [flash]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     put(superAdmin.admins.update(admin.id).url);
@@ -81,31 +95,20 @@ export default function EditAdmin({ admin }: Props) {
 
   const handlePasswordResetConfirm = () => {
     setIsResettingPassword(true);
-    
-    const resetPasswordUrl = `/super-admin/admins/${admin.id}/reset-password`;
-    
-    fetch(resetPasswordUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-      },
-    })
-    .then(response => response.json())
-    .then((data) => {
-      setIsResettingPassword(false);
-      setShowConfirmDialog(false);
-      if (data.message) {
+
+    router.post(`/super-admin/admins/${admin.id}/reset-password`, {}, {
+      onSuccess: () => {
+        setIsResettingPassword(false);
+        setShowConfirmDialog(false);
         setShowSuccessSnackbar(true);
-      }
-    })
-    .catch((error) => {
-      setIsResettingPassword(false);
-      setShowConfirmDialog(false);
-      console.error('Password reset error:', error);
-      setErrorMessage('Failed to reset password. Please try again.');
-      setShowErrorSnackbar(true);
+      },
+      onError: (errors) => {
+        setIsResettingPassword(false);
+        setShowConfirmDialog(false);
+        console.error('Password reset error:', errors);
+        setErrorMessage('Failed to reset password. Please try again.');
+        setShowErrorSnackbar(true);
+      },
     });
   };
 
@@ -459,7 +462,7 @@ export default function EditAdmin({ admin }: Props) {
               Password Reset Successful!
             </Typography>
             <Typography variant="body2">
-              New temporary credentials have been sent to {admin.email}
+              {flash?.success || `New temporary credentials have been sent to ${admin.email}`}
             </Typography>
           </Alert>
         </Snackbar>

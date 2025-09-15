@@ -192,7 +192,7 @@ export default function Welcome() {
                                         <Button variant="ghost" className="flex items-center space-x-2 hover:bg-indigo-500/10 hover:text-indigo-600">
                                             <Avatar className="h-8 w-8">
                                                 <AvatarImage src={auth.user.avatar || auth.user.photo} alt={auth.user.name} />
-                                                <AvatarFallback>
+                                                <AvatarFallback className="!bg-slate-600 text-white">
                                                     {auth.user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                                                 </AvatarFallback>
                                             </Avatar>
@@ -208,7 +208,7 @@ export default function Welcome() {
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem asChild>
-                                            <Link href="/logout" method="post" className="flex items-center text-red-600 hover:bg-indigo-500/10 hover:text-red-700 focus:bg-indigo-500/10 focus:text-red-700">
+                                            <Link href="/logout" method="post" className="flex items-center w-full text-red-600 hover:bg-red-500/10 hover:text-red-700 focus:bg-red-500/10 focus:text-red-700">
                                                 <LogOut className="h-4 w-4 mr-2" />
                                                 Log Out
                                             </Link>
@@ -252,7 +252,7 @@ export default function Welcome() {
                                         <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg mb-2">
                                             <Avatar className="h-10 w-10">
                                                 <AvatarImage src={auth.user.avatar || auth.user.photo} alt={auth.user.name} />
-                                                <AvatarFallback>
+                                                <AvatarFallback className="!bg-slate-600 text-white">
                                                     {auth.user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                                                 </AvatarFallback>
                                             </Avatar>
