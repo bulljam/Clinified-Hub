@@ -191,7 +191,7 @@ export default function NewAppointmentModal({
     >
       <DialogTitle 
         sx={{ 
-          bgcolor: '#20a09f',
+          bgcolor: '#5c6bc0',
           color: 'white',
           p: 3,
           display: 'flex',
@@ -218,7 +218,7 @@ export default function NewAppointmentModal({
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 
                 <Box>
-                  <Typography variant="h6" color="#20a09f" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="h6" color="#5c6bc0" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                     <MedicalIcon fontSize="small" />
                     Healthcare Provider
                   </Typography>
@@ -240,16 +240,16 @@ export default function NewAppointmentModal({
                             borderColor: '#e0e0e0',
                           },
                           '&:hover fieldset': {
-                            borderColor: '#20a09f',
+                            borderColor: '#5c6bc0',
                           },
                           '&.Mui-focused fieldset': {
-                            borderColor: '#20a09f',
+                            borderColor: '#5c6bc0',
                           },
                         },
                       }}
                       startAdornment={
                         <InputAdornment position="start">
-                          <PersonIcon sx={{ color: '#20a09f' }} />
+                          <PersonIcon sx={{ color: '#5c6bc0' }} />
                         </InputAdornment>
                       }
                     >
@@ -259,7 +259,7 @@ export default function NewAppointmentModal({
                       {providers && providers.length > 0 && providers.map((provider) => (
                         <MenuItem key={provider.id} value={provider.id}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Avatar sx={{ bgcolor: '#20a09f', width: 32, height: 32 }}>
+                            <Avatar sx={{ bgcolor: '#5c6bc0', width: 32, height: 32 }}>
                               <MedicalIcon fontSize="small" />
                             </Avatar>
                             Dr. {provider.name}
@@ -276,7 +276,7 @@ export default function NewAppointmentModal({
                 </Box>
 
                 <Box>
-                  <Typography variant="h6" color="#20a09f" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="h6" color="#5c6bc0" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                     <CalendarIcon fontSize="small" />
                     Appointment Date
                   </Typography>
@@ -302,10 +302,10 @@ export default function NewAppointmentModal({
                               borderColor: '#e0e0e0',
                             },
                             '&:hover fieldset': {
-                              borderColor: '#20a09f',
+                              borderColor: '#5c6bc0',
                             },
                             '&.Mui-focused fieldset': {
-                              borderColor: '#20a09f',
+                              borderColor: '#5c6bc0',
                             },
                           },
                         },
@@ -313,7 +313,7 @@ export default function NewAppointmentModal({
                           input: {
                             startAdornment: (
                               <InputAdornment position="start">
-                                <CalendarIcon sx={{ color: '#20a09f' }} />
+                                <CalendarIcon sx={{ color: '#5c6bc0' }} />
                               </InputAdornment>
                             ),
                           },
@@ -330,7 +330,7 @@ export default function NewAppointmentModal({
               )}
 
                 <Box>
-                  <Typography variant="h6" color="#20a09f" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="h6" color="#5c6bc0" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                     <TimeIcon fontSize="small" />
                     Appointment Time
                   </Typography>
@@ -348,16 +348,16 @@ export default function NewAppointmentModal({
                             borderColor: '#e0e0e0',
                           },
                           '&:hover fieldset': {
-                            borderColor: '#20a09f',
+                            borderColor: '#5c6bc0',
                           },
                           '&.Mui-focused fieldset': {
-                            borderColor: '#20a09f',
+                            borderColor: '#5c6bc0',
                           },
                         },
                       }}
                       startAdornment={
                         <InputAdornment position="start">
-                          <TimeIcon sx={{ color: '#20a09f' }} />
+                          <TimeIcon sx={{ color: '#5c6bc0' }} />
                         </InputAdornment>
                       }
                       MenuProps={{
@@ -412,7 +412,7 @@ export default function NewAppointmentModal({
                 </Box>
 
                 <Box>
-                  <Typography variant="h6" color="#20a09f" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="h6" color="#5c6bc0" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                     <NotesIcon fontSize="small" />
                     Notes & Symptoms
                   </Typography>
@@ -433,10 +433,10 @@ export default function NewAppointmentModal({
                           borderColor: '#e0e0e0',
                         },
                         '&:hover fieldset': {
-                          borderColor: '#20a09f',
+                          borderColor: '#5c6bc0',
                         },
                         '&.Mui-focused fieldset': {
-                          borderColor: '#20a09f',
+                          borderColor: '#5c6bc0',
                         },
                       },
                     }}
@@ -444,7 +444,7 @@ export default function NewAppointmentModal({
                       input: {
                         startAdornment: (
                           <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 2 }}>
-                            <NotesIcon sx={{ color: '#20a09f' }} />
+                            <NotesIcon sx={{ color: '#5c6bc0' }} />
                           </InputAdornment>
                         ),
                       },
@@ -470,11 +470,11 @@ export default function NewAppointmentModal({
             py: 1.5,
             textTransform: 'none',
             fontWeight: 600,
-            borderColor: '#20a09f',
-            color: '#20a09f',
+            borderColor: '#5c6bc0',
+            color: '#5c6bc0',
             '&:hover': {
-              borderColor: '#178f8e',
-              bgcolor: 'rgba(32, 160, 159, 0.08)'
+              borderColor: '#26418f',
+              bgcolor: 'rgba(92, 107, 192, 0.08)'
             }
           }}
         >
@@ -487,16 +487,16 @@ export default function NewAppointmentModal({
           onClick={handleSubmit}
           size="large"
           sx={{ 
-            bgcolor: '#20a09f',
+            bgcolor: '#5c6bc0',
             borderRadius: 2,
             px: 4,
             py: 1.5,
             textTransform: 'none',
             fontWeight: 600,
-            boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+            boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
             '&:hover': {
-              bgcolor: '#178f8e',
-              boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+              bgcolor: '#26418f',
+              boxShadow: '0 6px 16px rgba(92, 107, 192, 0.4)',
               transform: 'translateY(-1px)',
             },
             '&:disabled': {

@@ -241,11 +241,11 @@ export default function AdminAppointments({ appointments, providers = [], filter
         <CardContent sx={{ p: 4 }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
             <Box display="flex" alignItems="center" gap={2}>
-              <Avatar sx={{ bgcolor: '#20a09f', width: 56, height: 56 }}>
+              <Avatar sx={{ bgcolor: '#5c6bc0', width: 56, height: 56 }}>
                 <MedicalIcon sx={{ fontSize: 28 }} />
               </Avatar>
               <Box>
-                <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f">
+                <Typography variant="h4" component="h1" fontWeight="bold" color="#5c6bc0">
                   Patient Appointments
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -259,16 +259,16 @@ export default function AdminAppointments({ appointments, providers = [], filter
                 size="large"
                 onClick={() => router.visit('/appointments/create')}
                 sx={{ 
-                  bgcolor: '#20a09f',
+                  bgcolor: '#5c6bc0',
                   borderRadius: 3,
                   px: 4,
                   py: 1.5,
                   textTransform: 'none',
                   fontWeight: 600,
-                  boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                  boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                   '&:hover': {
-                    bgcolor: '#178f8e',
-                    boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+                    bgcolor: '#26418f',
+                    boxShadow: '0 6px 16px rgba(92, 107, 192, 0.4)',
                     transform: 'translateY(-1px)',
                   }
                 }}
@@ -286,14 +286,14 @@ export default function AdminAppointments({ appointments, providers = [], filter
             <CardContent sx={{ p: 3, position: 'relative', overflow: 'hidden' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="#20a09f">
+                  <Typography variant="h4" fontWeight="bold" color="#5c6bc0">
                     {appointmentStats.total}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Total Appointments
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: '#20a09f', width: 48, height: 48 }}>
+                <Avatar sx={{ bgcolor: '#5c6bc0', width: 48, height: 48 }}>
                   <StatsIcon />
                 </Avatar>
               </Box>
@@ -379,11 +379,11 @@ export default function AdminAppointments({ appointments, providers = [], filter
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outlined"
                   sx={{
-                    borderColor: '#20a09f',
-                    color: '#20a09f',
+                    borderColor: '#5c6bc0',
+                    color: '#5c6bc0',
                     '&:hover': {
-                      borderColor: '#178f8e',
-                      bgcolor: 'rgba(32, 160, 159, 0.04)',
+                      borderColor: '#26418f',
+                      bgcolor: 'rgba(92, 107, 192, 0.04)',
                     },
                   }}
                 >
@@ -407,7 +407,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
                   borderRadius: 2, 
                   p: 3, 
                   mt: 2,
-                  bgcolor: 'rgba(32, 160, 159, 0.02)' 
+                  bgcolor: 'rgba(92, 107, 192, 0.02)' 
                 }}>
                   <Grid container spacing={3} alignItems="flex-end">
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -420,10 +420,10 @@ export default function AdminAppointments({ appointments, providers = [], filter
                           sx={{
                             '& .MuiOutlinedInput-root': {
                               '&:hover fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                               '&.Mui-focused fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                             },
                           }}
@@ -445,10 +445,10 @@ export default function AdminAppointments({ appointments, providers = [], filter
                           sx={{
                             '& .MuiOutlinedInput-root': {
                               '&:hover fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                               '&.Mui-focused fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                             },
                           }}
@@ -471,10 +471,10 @@ export default function AdminAppointments({ appointments, providers = [], filter
                           sx={{
                             '& .MuiOutlinedInput-root': {
                               '&:hover fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                               '&.Mui-focused fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                             },
                           }}
@@ -501,10 +501,10 @@ export default function AdminAppointments({ appointments, providers = [], filter
                         sx={{
                           '& .MuiOutlinedInput-root': {
                             '&:hover fieldset': {
-                              borderColor: '#20a09f',
+                              borderColor: '#5c6bc0',
                             },
                             '&.Mui-focused fieldset': {
-                              borderColor: '#20a09f',
+                              borderColor: '#5c6bc0',
                             },
                           },
                         }}
@@ -526,9 +526,9 @@ export default function AdminAppointments({ appointments, providers = [], filter
                         borderColor: '#e0e0e0',
                         color: 'text.secondary',
                         '&:hover': {
-                          borderColor: '#20a09f',
-                          bgcolor: 'rgba(32, 160, 159, 0.04)',
-                          color: '#20a09f',
+                          borderColor: '#5c6bc0',
+                          bgcolor: 'rgba(92, 107, 192, 0.04)',
+                          color: '#5c6bc0',
                         },
                       }}
                     >
@@ -538,15 +538,15 @@ export default function AdminAppointments({ appointments, providers = [], filter
                       onClick={() => applyFilters()}
                       variant="contained"
                       sx={{
-                        bgcolor: '#20a09f',
+                        bgcolor: '#5c6bc0',
                         color: 'white',
                         px: 3,
                         py: 1,
                         fontWeight: 600,
                         '&:hover': { 
-                          bgcolor: '#178f8e',
+                          bgcolor: '#26418f',
                           transform: 'translateY(-1px)',
-                          boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                          boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                         },
                       }}
                     >
@@ -573,7 +573,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
                 fontSize: '1rem',
                 py: 2,
                 '&.Mui-selected': {
-                  bgcolor: '#20a09f',
+                  bgcolor: '#5c6bc0',
                   color: 'white',
                   borderRadius: '8px 8px 0 0',
                 }
@@ -633,16 +633,16 @@ export default function AdminAppointments({ appointments, providers = [], filter
                   borderRadius: 4,
                 },
                 '&::-webkit-scrollbar-thumb': {
-                  backgroundColor: '#20a09f',
+                  backgroundColor: '#5c6bc0',
                   borderRadius: 4,
                   '&:hover': {
-                    backgroundColor: '#178f8e',
+                    backgroundColor: '#26418f',
                   },
                 }
               }}>
                 <Table sx={{ minWidth: 1200 }}>
                   <TableHead>
-                    <TableRow sx={{ bgcolor: '#20a09f' }}>
+                    <TableRow sx={{ bgcolor: '#5c6bc0' }}>
                       <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 180 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <MedicalIcon fontSize="small" />
@@ -684,7 +684,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
                           hover
                           sx={{
                             '&:hover': {
-                              bgcolor: 'rgba(32, 160, 159, 0.08)',
+                              bgcolor: 'rgba(92, 107, 192, 0.08)',
                               transition: 'background-color 0.2s ease',
                             },
                             '&:nth-of-type(even)': {
@@ -700,17 +700,17 @@ export default function AdminAppointments({ appointments, providers = [], filter
                           <TableCell sx={{ py: 3, minWidth: 180 }}>
                             <Box display="flex" alignItems="center" gap={2}>
                               <Avatar sx={{ 
-                                bgcolor: '#20a09f', 
+                                bgcolor: '#5c6bc0', 
                                 width: 32, 
                                 height: 32, 
                                 fontSize: '0.8rem',
-                                boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
+                                boxShadow: '0 2px 4px rgba(92, 107, 192, 0.3)',
                                 border: '2px solid white'
                               }}>
                                 <MedicalIcon fontSize="small" />
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" fontFamily="monospace" fontWeight="600" color="#20a09f">
+                                <Typography variant="body2" fontFamily="monospace" fontWeight="600" color="#5c6bc0">
                                   APT-{appointment.id}
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary">
@@ -761,16 +761,16 @@ export default function AdminAppointments({ appointments, providers = [], filter
                           <TableCell sx={{ py: 3, minWidth: 200 }}>
                             <Box display="flex" alignItems="center" gap={2}>
                               <Avatar sx={{ 
-                                bgcolor: '#20a09f', 
+                                bgcolor: '#5c6bc0', 
                                 width: 40, 
                                 height: 40,
-                                boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
+                                boxShadow: '0 2px 4px rgba(92, 107, 192, 0.3)',
                                 border: '2px solid white'
                               }}>
                                 <MedicalIcon fontSize="small" />
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" fontWeight="600" color="#20a09f">
+                                <Typography variant="body2" fontWeight="600" color="#5c6bc0">
                                   Dr. {appointment.provider.name}
                                 </Typography>
                                 <Stack direction="row" alignItems="center" spacing={0.5}>
@@ -886,16 +886,16 @@ export default function AdminAppointments({ appointments, providers = [], filter
                                   size="medium"
                                   onClick={() => router.visit(`/appointments/${appointment.id}`)}
                                   sx={{
-                                    bgcolor: '#20a09f',
+                                    bgcolor: '#5c6bc0',
                                     color: 'white',
                                     width: 36,
                                     height: 36,
                                     borderRadius: 2,
-                                    boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
+                                    boxShadow: '0 2px 4px rgba(92, 107, 192, 0.3)',
                                     '&:hover': {
-                                      bgcolor: '#178f8e',
+                                      bgcolor: '#26418f',
                                       transform: 'scale(1.1) rotate(5deg)',
-                                      boxShadow: '0 4px 8px rgba(32, 160, 159, 0.4)',
+                                      boxShadow: '0 4px 8px rgba(92, 107, 192, 0.4)',
                                     },
                                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                                   }}
@@ -963,7 +963,7 @@ export default function AdminAppointments({ appointments, providers = [], filter
               <Card elevation={0} sx={{ mb: 3, borderRadius: 3, border: '1px solid #e0e0e0' }}>
                 <CardContent sx={{ p: 3 }}>
                   <Stack direction="row" alignItems="center" spacing={3}>
-                    <Typography variant="h6" fontWeight="600" color="#20a09f">
+                    <Typography variant="h6" fontWeight="600" color="#5c6bc0">
                       Calendar Filters
                     </Typography>
                     <FormControl sx={{ minWidth: 250 }}>
@@ -975,10 +975,10 @@ export default function AdminAppointments({ appointments, providers = [], filter
                         sx={{
                           '& .MuiOutlinedInput-root': {
                             '&:hover fieldset': {
-                              borderColor: '#20a09f',
+                              borderColor: '#5c6bc0',
                             },
                             '&.Mui-focused fieldset': {
-                              borderColor: '#20a09f',
+                              borderColor: '#5c6bc0',
                             },
                           },
                         }}
@@ -1041,14 +1041,14 @@ export default function AdminAppointments({ appointments, providers = [], filter
                       borderRadius: 2,
                       fontWeight: 600,
                       '&.Mui-selected': {
-                        bgcolor: '#20a09f',
+                        bgcolor: '#5c6bc0',
                         color: 'white',
                         '&:hover': {
-                          bgcolor: '#178f8e',
+                          bgcolor: '#26418f',
                         },
                       },
                       '&:hover': {
-                        bgcolor: 'rgba(32, 160, 159, 0.1)',
+                        bgcolor: 'rgba(92, 107, 192, 0.1)',
                       },
                     },
                   }}

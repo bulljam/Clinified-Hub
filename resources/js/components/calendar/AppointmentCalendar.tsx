@@ -80,11 +80,11 @@ const CustomToolbar = ({ label, onNavigate, onView, view, selectedProvider }: Cu
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} p={2}>
       <Stack direction="row" spacing={2} alignItems="center">
-        <Avatar sx={{ bgcolor: '#20a09f', width: 48, height: 48 }}>
+        <Avatar sx={{ bgcolor: '#5c6bc0', width: 48, height: 48 }}>
           <CalendarIcon />
         </Avatar>
         <Box>
-          <Typography variant="h5" fontWeight="bold" color="#20a09f">
+          <Typography variant="h5" fontWeight="bold" color="#5c6bc0">
             {label}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -103,9 +103,9 @@ const CustomToolbar = ({ label, onNavigate, onView, view, selectedProvider }: Cu
               onClick={() => onNavigate('PREV')}
               sx={{ 
                 borderRadius: '8px 0 0 8px',
-                bgcolor: '#20a09f',
+                bgcolor: '#5c6bc0',
                 color: 'white',
-                '&:hover': { bgcolor: '#178f8e' }
+                '&:hover': { bgcolor: '#26418f' }
               }}
             >
               <PrevIcon />
@@ -115,9 +115,9 @@ const CustomToolbar = ({ label, onNavigate, onView, view, selectedProvider }: Cu
             onClick={() => onNavigate('TODAY')}
             sx={{ 
               bgcolor: 'white',
-              color: '#20a09f',
+              color: '#5c6bc0',
               fontWeight: 600,
-              '&:hover': { bgcolor: '#20a09f', color: 'white' }
+              '&:hover': { bgcolor: '#5c6bc0', color: 'white' }
             }}
           >
             Today
@@ -127,9 +127,9 @@ const CustomToolbar = ({ label, onNavigate, onView, view, selectedProvider }: Cu
               onClick={() => onNavigate('NEXT')}
               sx={{ 
                 borderRadius: '0 8px 8px 0',
-                bgcolor: '#20a09f',
+                bgcolor: '#5c6bc0',
                 color: 'white',
-                '&:hover': { bgcolor: '#178f8e' }
+                '&:hover': { bgcolor: '#26418f' }
               }}
             >
               <NextIcon />
@@ -146,13 +146,13 @@ const CustomToolbar = ({ label, onNavigate, onView, view, selectedProvider }: Cu
               textTransform: 'none', 
               fontWeight: 600,
               ...(view === 'month' ? {
-                bgcolor: '#20a09f',
+                bgcolor: '#5c6bc0',
                 color: 'white',
-                '&:hover': { bgcolor: '#178f8e' }
+                '&:hover': { bgcolor: '#26418f' }
               } : {
-                borderColor: '#20a09f',
-                color: '#20a09f',
-                '&:hover': { borderColor: '#178f8e', bgcolor: 'rgba(32, 160, 159, 0.08)' }
+                borderColor: '#5c6bc0',
+                color: '#5c6bc0',
+                '&:hover': { borderColor: '#26418f', bgcolor: 'rgba(92, 107, 192, 0.08)' }
               })
             }}
           >
@@ -166,13 +166,13 @@ const CustomToolbar = ({ label, onNavigate, onView, view, selectedProvider }: Cu
               textTransform: 'none', 
               fontWeight: 600,
               ...(view === 'week' ? {
-                bgcolor: '#20a09f',
+                bgcolor: '#5c6bc0',
                 color: 'white',
-                '&:hover': { bgcolor: '#178f8e' }
+                '&:hover': { bgcolor: '#26418f' }
               } : {
-                borderColor: '#20a09f',
-                color: '#20a09f',
-                '&:hover': { borderColor: '#178f8e', bgcolor: 'rgba(32, 160, 159, 0.08)' }
+                borderColor: '#5c6bc0',
+                color: '#5c6bc0',
+                '&:hover': { borderColor: '#26418f', bgcolor: 'rgba(92, 107, 192, 0.08)' }
               })
             }}
           >
@@ -186,13 +186,13 @@ const CustomToolbar = ({ label, onNavigate, onView, view, selectedProvider }: Cu
               textTransform: 'none', 
               fontWeight: 600,
               ...(view === 'day' ? {
-                bgcolor: '#20a09f',
+                bgcolor: '#5c6bc0',
                 color: 'white',
-                '&:hover': { bgcolor: '#178f8e' }
+                '&:hover': { bgcolor: '#26418f' }
               } : {
-                borderColor: '#20a09f',
-                color: '#20a09f',
-                '&:hover': { borderColor: '#178f8e', bgcolor: 'rgba(32, 160, 159, 0.08)' }
+                borderColor: '#5c6bc0',
+                color: '#5c6bc0',
+                '&:hover': { borderColor: '#26418f', bgcolor: 'rgba(92, 107, 192, 0.08)' }
               })
             }}
           >
@@ -400,7 +400,7 @@ export default function AppointmentCalendar({
 
   const eventStyleGetter = (event: CalendarEvent) => {
     const appointment = event.resource;
-    let backgroundColor = '#20a09f';
+    let backgroundColor = '#5c6bc0';
     
     if (appointment.status === 'confirmed') {
       backgroundColor = '#2ECC71';
@@ -443,7 +443,7 @@ export default function AppointmentCalendar({
         }
         
         .rbc-header {
-          background: linear-gradient(135deg, #20a09f 0%, #178f8e 100%);
+          background: linear-gradient(135deg, #5c6bc0 0%, #26418f 100%);
           color: white !important;
           font-weight: 600 !important;
           padding: 12px 8px !important;
@@ -467,9 +467,9 @@ export default function AppointmentCalendar({
         }
         
         .rbc-today {
-          background: linear-gradient(135deg, #e6fbfb 0%, #ccf7f7 100%) !important;
-          border: 2px solid #20a09f !important;
-          box-shadow: 0 2px 8px rgba(32, 160, 159, 0.2) !important;
+          background: linear-gradient(135deg, #e0e3ff 0%, #ccf7f7 100%) !important;
+          border: 2px solid #5c6bc0 !important;
+          box-shadow: 0 2px 8px rgba(92, 107, 192, 0.2) !important;
         }
         
         .rbc-time-slot:has(.rbc-label) {
@@ -489,10 +489,10 @@ export default function AppointmentCalendar({
         }
         
         .rbc-time-gutter .rbc-time-slot {
-          border-right: 2px solid #20a09f !important;
+          border-right: 2px solid #5c6bc0 !important;
           background: linear-gradient(90deg, #f8f9fa 0%, #ffffff 100%) !important;
           font-weight: 500 !important;
-          color: #20a09f !important;
+          color: #5c6bc0 !important;
         }
         
         .appointment-slot-with-content:not(:has(.rbc-label))::before {
@@ -574,14 +574,14 @@ export default function AppointmentCalendar({
           position: absolute;
           top: 2px;
           left: 2px;
-          background: linear-gradient(135deg, #20a09f 0%, #178f8e 100%);
+          background: linear-gradient(135deg, #5c6bc0 0%, #26418f 100%);
           color: white;
           font-weight: bold;
           font-size: 8px;
           border-radius: 8px;
           padding: 2px 6px;
           line-height: 1;
-          box-shadow: 0 2px 4px rgba(32, 160, 159, 0.3);
+          box-shadow: 0 2px 4px rgba(92, 107, 192, 0.3);
           border: 1px solid white;
           z-index: 10;
           font-family: 'Roboto', sans-serif;
@@ -617,14 +617,14 @@ export default function AppointmentCalendar({
           position: absolute;
           top: 2px;
           left: 2px;
-          background: linear-gradient(135deg, #20a09f 0%, #178f8e 100%);
+          background: linear-gradient(135deg, #5c6bc0 0%, #26418f 100%);
           color: white;
           font-weight: bold;
           font-size: 8px;
           border-radius: 8px;
           padding: 2px 6px;
           line-height: 1;
-          box-shadow: 0 2px 4px rgba(32, 160, 159, 0.3);
+          box-shadow: 0 2px 4px rgba(92, 107, 192, 0.3);
           border: 1px solid white;
           z-index: 10;
           font-family: 'Roboto', sans-serif;
@@ -663,13 +663,13 @@ export default function AppointmentCalendar({
         .today-with-appointments:hover,
         .today-without-appointments:hover {
           transform: scale(1.03);
-          box-shadow: 0 4px 12px rgba(32, 160, 159, 0.3);
+          box-shadow: 0 4px 12px rgba(92, 107, 192, 0.3);
         }
 
         .today-with-appointments:hover::before,
         .today-without-appointments:hover::before {
           transform: scale(1.1);
-          box-shadow: 0 3px 6px rgba(32, 160, 159, 0.5);
+          box-shadow: 0 3px 6px rgba(92, 107, 192, 0.5);
         }
 
         .today-with-appointments:hover::after {
