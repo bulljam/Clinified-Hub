@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\ValidationException;
+use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -31,6 +33,14 @@ class PasswordResetLinkController extends Controller
         $request->validate([
             'email' => 'required|email',
         ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user?->isAdmin()) {
+            throw ValidationException::withMessages([
+                'email' => __('Password reset is not available for admin accounts. Please contact your supervisor for assistance.'),
+            ]);
+        }
 
         Password::sendResetLink(
             $request->only('email')
