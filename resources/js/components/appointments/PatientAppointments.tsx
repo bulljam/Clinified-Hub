@@ -240,11 +240,11 @@ export default function PatientAppointments({ appointments, allAppointments, pro
         <CardContent sx={{ p: { xs: 2, md: 4 } }}>
           <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} gap={2}>
             <Box display="flex" alignItems="center" gap={{ xs: 1.5, md: 2 }}>
-              <Avatar sx={{ bgcolor: '#20a09f', width: { xs: 40, md: 56 }, height: { xs: 40, md: 56 } }}>
+              <Avatar sx={{ bgcolor: '#5c6bc0', width: { xs: 40, md: 56 }, height: { xs: 40, md: 56 } }}>
                 <PersonIcon sx={{ fontSize: { xs: 20, md: 28 } }} />
               </Avatar>
               <Box>
-                <Typography variant="h4" component="h1" fontWeight="bold" color="#20a09f">
+                <Typography variant="h4" component="h1" fontWeight="bold" color="#5c6bc0">
                   My Appointments
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -257,17 +257,17 @@ export default function PatientAppointments({ appointments, allAppointments, pro
               size="large"
               onClick={() => setShowNewAppointmentModal(true)}
               sx={{
-                bgcolor: '#20a09f',
+                bgcolor: '#5c6bc0',
                 borderRadius: 3,
                 px: { xs: 2, md: 4 },
                 py: { xs: 1, md: 1.5 },
                 textTransform: 'none',
                 fontWeight: 600,
-                boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                 alignSelf: { xs: 'stretch', sm: 'auto' },
                 '&:hover': {
-                  bgcolor: '#178f8e',
-                  boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+                  bgcolor: '#26418f',
+                  boxShadow: '0 6px 16px rgba(92, 107, 192, 0.4)',
                   transform: 'translateY(-1px)',
                 }
               }}
@@ -285,14 +285,14 @@ export default function PatientAppointments({ appointments, allAppointments, pro
             <CardContent sx={{ p: { xs: 2, md: 3 }, position: 'relative', overflow: 'hidden' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="#20a09f">
+                  <Typography variant="h4" fontWeight="bold" color="#5c6bc0">
                     {appointmentStats.total}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
                     Total Appointments
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: '#20a09f', width: { xs: 36, md: 48 }, height: { xs: 36, md: 48 } }}>
+                <Avatar sx={{ bgcolor: '#5c6bc0', width: { xs: 36, md: 48 }, height: { xs: 36, md: 48 } }}>
                   <StatsIcon sx={{ fontSize: { xs: 18, md: 24 } }} />
                 </Avatar>
               </Box>
@@ -381,11 +381,11 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   variant="outlined"
                   size="medium"
                   sx={{
-                    borderColor: '#20a09f',
-                    color: '#20a09f',
+                    borderColor: '#5c6bc0',
+                    color: '#5c6bc0',
                     '&:hover': {
-                      borderColor: '#178f8e',
-                      bgcolor: 'rgba(32, 160, 159, 0.04)',
+                      borderColor: '#26418f',
+                      bgcolor: 'rgba(92, 107, 192, 0.04)',
                     },
                   }}
                 >
@@ -411,7 +411,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   borderRadius: 2,
                   p: { xs: 2, md: 3 },
                   mt: 2,
-                  bgcolor: 'rgba(32, 160, 159, 0.02)'
+                  bgcolor: 'rgba(92, 107, 192, 0.02)'
                 }}>
                   <Grid container spacing={3} alignItems="flex-end">
                     <Grid size={{ xs: 12, sm: 6, md: 4 }}>
@@ -424,10 +424,10 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                           sx={{
                             '& .MuiOutlinedInput-root': {
                               '&:hover fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                               '&.Mui-focused fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                             },
                           }}
@@ -449,10 +449,10 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                           sx={{
                             '& .MuiOutlinedInput-root': {
                               '&:hover fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                               '&.Mui-focused fieldset': {
-                                borderColor: '#20a09f',
+                                borderColor: '#5c6bc0',
                               },
                             },
                           }}
@@ -478,10 +478,10 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                         sx={{
                           '& .MuiOutlinedInput-root': {
                             '&:hover fieldset': {
-                              borderColor: '#20a09f',
+                              borderColor: '#5c6bc0',
                             },
                             '&.Mui-focused fieldset': {
-                              borderColor: '#20a09f',
+                              borderColor: '#5c6bc0',
                             },
                           },
                         }}
@@ -503,9 +503,9 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                         borderColor: '#e0e0e0',
                         color: 'text.secondary',
                         '&:hover': {
-                          borderColor: '#20a09f',
-                          bgcolor: 'rgba(32, 160, 159, 0.04)',
-                          color: '#20a09f',
+                          borderColor: '#5c6bc0',
+                          bgcolor: 'rgba(92, 107, 192, 0.04)',
+                          color: '#5c6bc0',
                         },
                       }}
                     >
@@ -515,15 +515,15 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                       onClick={() => applyFilters()}
                       variant="contained"
                       sx={{
-                        bgcolor: '#20a09f',
+                        bgcolor: '#5c6bc0',
                         color: 'white',
                         px: 3,
                         py: 1,
                         fontWeight: 600,
                         '&:hover': { 
-                          bgcolor: '#178f8e',
+                          bgcolor: '#26418f',
                           transform: 'translateY(-1px)',
-                          boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                          boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                         },
                       }}
                     >
@@ -552,7 +552,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                 py: { xs: 1.5, md: 2 },
                 minHeight: { xs: 56, md: 72 },
                 '&.Mui-selected': {
-                  bgcolor: '#20a09f',
+                  bgcolor: '#5c6bc0',
                   color: 'white',
                   borderRadius: '8px 8px 0 0',
                 }
@@ -630,16 +630,16 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   borderRadius: 4,
                 },
                 '&::-webkit-scrollbar-thumb': {
-                  backgroundColor: '#20a09f',
+                  backgroundColor: '#5c6bc0',
                   borderRadius: 4,
                   '&:hover': {
-                    backgroundColor: '#178f8e',
+                    backgroundColor: '#26418f',
                   },
                 }
               }}>
                 <Table sx={{ minWidth: 1200 }}>
                   <TableHead>
-                    <TableRow sx={{ bgcolor: '#20a09f' }}>
+                    <TableRow sx={{ bgcolor: '#5c6bc0' }}>
                       <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 180 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <MedicalIcon fontSize="small" />
@@ -686,7 +686,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                           onClick={() => setViewingAppointment(appointment)}
                           sx={{
                             '&:hover': {
-                              bgcolor: 'rgba(32, 160, 159, 0.08)',
+                              bgcolor: 'rgba(92, 107, 192, 0.08)',
                               transition: 'background-color 0.2s ease',
                               transform: 'scale(1.002)',
                             },
@@ -704,17 +704,17 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                           <TableCell sx={{ py: 3, minWidth: 180 }}>
                             <Box display="flex" alignItems="center" gap={2}>
                               <Avatar sx={{ 
-                                bgcolor: '#20a09f', 
+                                bgcolor: '#5c6bc0', 
                                 width: 32, 
                                 height: 32, 
                                 fontSize: '0.8rem',
-                                boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
+                                boxShadow: '0 2px 4px rgba(92, 107, 192, 0.3)',
                                 border: '2px solid white'
                               }}>
                                 <MedicalIcon fontSize="small" />
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" fontFamily="monospace" fontWeight="600" color="#20a09f">
+                                <Typography variant="body2" fontFamily="monospace" fontWeight="600" color="#5c6bc0">
                                   APT-{appointment.id}
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary">
@@ -739,16 +739,16 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                           <TableCell sx={{ py: 3, minWidth: 200 }}>
                             <Box display="flex" alignItems="center" gap={2}>
                               <Avatar sx={{ 
-                                bgcolor: '#20a09f', 
+                                bgcolor: '#5c6bc0', 
                                 width: 40, 
                                 height: 40,
-                                boxShadow: '0 2px 4px rgba(32, 160, 159, 0.3)',
+                                boxShadow: '0 2px 4px rgba(92, 107, 192, 0.3)',
                                 border: '2px solid white'
                               }}>
                                 <MedicalIcon fontSize="small" />
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" fontWeight="600" color="#20a09f">
+                                <Typography variant="body2" fontWeight="600" color="#5c6bc0">
                                   Dr. {appointment.provider.name}
                                 </Typography>
                                 <Stack direction="row" alignItems="center" spacing={0.5}>
@@ -965,14 +965,14 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                       borderRadius: 2,
                       fontWeight: 600,
                       '&.Mui-selected': {
-                        bgcolor: '#20a09f',
+                        bgcolor: '#5c6bc0',
                         color: 'white',
                         '&:hover': {
-                          bgcolor: '#178f8e',
+                          bgcolor: '#26418f',
                         },
                       },
                       '&:hover': {
-                        bgcolor: 'rgba(32, 160, 159, 0.1)',
+                        bgcolor: 'rgba(92, 107, 192, 0.1)',
                       },
                     },
                   }}
@@ -993,7 +993,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
 
       {viewingAppointment && (
         <Dialog open={!!viewingAppointment} onClose={() => setViewingAppointment(null)} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ bgcolor: '#20a09f', color: 'white', display: 'flex', alignItems: 'center', gap: 2 }}>
+          <DialogTitle sx={{ bgcolor: '#5c6bc0', color: 'white', display: 'flex', alignItems: 'center', gap: 2 }}>
             <MedicalIcon />
             Appointment Details
           </DialogTitle>
@@ -1082,7 +1082,7 @@ export default function PatientAppointments({ appointments, allAppointments, pro
                   setEditingAppointment(viewingAppointment);
                   setViewingAppointment(null);
                 }}
-                sx={{ bgcolor: '#20a09f' }}
+                sx={{ bgcolor: '#5c6bc0' }}
               >
                 Edit Appointment
               </Button>

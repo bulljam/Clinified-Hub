@@ -57,7 +57,7 @@ export default function Show({ auth, appointment }) {
       <AppLayout
         user={auth.user}
         header={
-          <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+          <h2 className="text-xl font-semibold leading-tight text-gray-800">
             Appointment Details
           </h2>
         }

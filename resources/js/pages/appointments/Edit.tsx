@@ -13,7 +13,7 @@ export default function Edit({ auth, appointment, providers }) {
       <AppLayout
         user={auth.user}
         header={
-          <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+          <h2 className="text-xl font-semibold leading-tight text-gray-800">
             Edit Appointment
           </h2>
         }
