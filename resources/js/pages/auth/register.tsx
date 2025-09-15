@@ -56,7 +56,7 @@ export default function Register() {
         <Box
             sx={{
                 minHeight: '100vh',
-                background: 'linear-gradient(135deg, #20a09f 0%, #26d0ce 50%, #1dd1a1 100%)',
+                background: 'linear-gradient(135deg, #5c6bc0 0%, #7986cb 50%, #8e99f3 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -243,10 +243,10 @@ export default function Register() {
                     top: 24,
                     left: 24,
                     bgcolor: 'rgba(255, 255, 255, 0.9)',
-                    color: '#20a09f',
+                    color: '#5c6bc0',
                     '&:hover': {
                         bgcolor: 'rgba(255, 255, 255, 1)',
-                        color: '#178f8e',
+                        color: '#26418f',
                     },
                     zIndex: 1000,
                 }}
@@ -287,21 +287,21 @@ export default function Register() {
                                             width: 80,
                                             height: 80,
                                             borderRadius: '20px',
-                                            background: 'linear-gradient(135deg, #20a09f 0%, #26d0ce 100%)',
+                                            background: 'linear-gradient(135deg, #5c6bc0 0%, #7986cb 100%)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             margin: '0 auto',
                                             mb: 3,
-                                            boxShadow: '0 12px 32px rgba(32, 160, 159, 0.3)',
+                                            boxShadow: '0 12px 32px rgba(92, 107, 192, 0.3)',
                                             animation: 'logoGlow 3s ease-in-out infinite',
                                             '@keyframes logoGlow': {
                                                 '0%, 100%': {
-                                                    boxShadow: '0 12px 32px rgba(32, 160, 159, 0.3)',
+                                                    boxShadow: '0 12px 32px rgba(92, 107, 192, 0.3)',
                                                     transform: 'scale(1)',
                                                 },
                                                 '50%': {
-                                                    boxShadow: '0 16px 48px rgba(32, 160, 159, 0.4)',
+                                                    boxShadow: '0 16px 48px rgba(92, 107, 192, 0.4)',
                                                     transform: 'scale(1.05)',
                                                 },
                                             },
@@ -315,7 +315,7 @@ export default function Register() {
                                         sx={{
                                             fontWeight: 800,
                                             mb: 2,
-                                            background: 'linear-gradient(45deg, #20a09f 30%, #26d0ce 90%)',
+                                            background: 'linear-gradient(45deg, #5c6bc0 30%, #7986cb 90%)',
                                             backgroundClip: 'text',
                                             WebkitBackgroundClip: 'text',
                                             WebkitTextFillColor: 'transparent',
@@ -324,7 +324,7 @@ export default function Register() {
                                         Clinified Hub
                                     </Typography>
 
-                                    <Typography variant="h5" fontWeight="bold" color="#20a09f" gutterBottom>
+                                    <Typography variant="h5" fontWeight="bold" color="#5c6bc0" gutterBottom>
                                         Create Your Account
                                     </Typography>
 
@@ -342,7 +342,7 @@ export default function Register() {
                                         <Stack spacing={3}>
                                             <Typography
                                                 variant="h6"
-                                                color="#20a09f"
+                                                color="#5c6bc0"
                                                 sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                                             >
                                                 <PersonIcon /> Personal Information
@@ -371,17 +371,17 @@ export default function Register() {
                                                         input: {
                                                             startAdornment: (
                                                                 <InputAdornment position="start">
-                                                                    <PersonIcon sx={{ color: '#20a09f' }} />
+                                                                    <PersonIcon sx={{ color: '#5c6bc0' }} />
                                                                 </InputAdornment>
                                                             ),
                                                         },
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
-                                                            '&:hover fieldset': { borderColor: '#20a09f' },
-                                                            '&.Mui-focused fieldset': { borderColor: '#20a09f' },
+                                                            '&:hover fieldset': { borderColor: '#5c6bc0' },
+                                                            '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
-                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#20a09f' },
+                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
                                                 <TextField
@@ -399,17 +399,17 @@ export default function Register() {
                                                         input: {
                                                             startAdornment: (
                                                                 <InputAdornment position="start">
-                                                                    <EmailIcon sx={{ color: '#20a09f' }} />
+                                                                    <EmailIcon sx={{ color: '#5c6bc0' }} />
                                                                 </InputAdornment>
                                                             ),
                                                         },
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
-                                                            '&:hover fieldset': { borderColor: '#20a09f' },
-                                                            '&.Mui-focused fieldset': { borderColor: '#20a09f' },
+                                                            '&:hover fieldset': { borderColor: '#5c6bc0' },
+                                                            '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
-                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#20a09f' },
+                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
                                             </Box>
@@ -435,17 +435,17 @@ export default function Register() {
                                                         input: {
                                                             startAdornment: (
                                                                 <InputAdornment position="start">
-                                                                    <PhoneIcon sx={{ color: '#20a09f' }} />
+                                                                    <PhoneIcon sx={{ color: '#5c6bc0' }} />
                                                                 </InputAdornment>
                                                             ),
                                                         },
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
-                                                            '&:hover fieldset': { borderColor: '#20a09f' },
-                                                            '&.Mui-focused fieldset': { borderColor: '#20a09f' },
+                                                            '&:hover fieldset': { borderColor: '#5c6bc0' },
+                                                            '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
-                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#20a09f' },
+                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
                                                 <FormControl fullWidth error={!!errors.gender}>
@@ -455,14 +455,14 @@ export default function Register() {
                                                         label="Gender"
                                                         tabIndex={4}
                                                         startAdornment={
-                                                            <PersonIcon sx={{ color: '#20a09f', mr: 1 }} />
+                                                            <PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />
                                                         }
                                                         sx={{
                                                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                                borderColor: '#20a09f',
+                                                                borderColor: '#5c6bc0',
                                                             },
                                                         }}
                                                     >
@@ -500,17 +500,17 @@ export default function Register() {
                                                         input: {
                                                             startAdornment: (
                                                                 <InputAdornment position="start">
-                                                                    <CalendarIcon sx={{ color: '#20a09f' }} />
+                                                                    <CalendarIcon sx={{ color: '#5c6bc0' }} />
                                                                 </InputAdornment>
                                                             ),
                                                         },
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
-                                                            '&:hover fieldset': { borderColor: '#20a09f' },
-                                                            '&.Mui-focused fieldset': { borderColor: '#20a09f' },
+                                                            '&:hover fieldset': { borderColor: '#5c6bc0' },
+                                                            '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
-                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#20a09f' },
+                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
                                                 <TextField
@@ -528,17 +528,17 @@ export default function Register() {
                                                         input: {
                                                             startAdornment: (
                                                                 <InputAdornment position="start">
-                                                                    <CityIcon sx={{ color: '#20a09f' }} />
+                                                                    <CityIcon sx={{ color: '#5c6bc0' }} />
                                                                 </InputAdornment>
                                                             ),
                                                         },
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
-                                                            '&:hover fieldset': { borderColor: '#20a09f' },
-                                                            '&.Mui-focused fieldset': { borderColor: '#20a09f' },
+                                                            '&:hover fieldset': { borderColor: '#5c6bc0' },
+                                                            '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
-                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#20a09f' },
+                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
                                             </Box>
@@ -547,7 +547,7 @@ export default function Register() {
 
                                             <Typography
                                                 variant="h6"
-                                                color="#20a09f"
+                                                color="#5c6bc0"
                                                 sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                                             >
                                                 <LockIcon /> Security
@@ -575,7 +575,7 @@ export default function Register() {
                                                         input: {
                                                             startAdornment: (
                                                                 <InputAdornment position="start">
-                                                                    <LockIcon sx={{ color: '#20a09f' }} />
+                                                                    <LockIcon sx={{ color: '#5c6bc0' }} />
                                                                 </InputAdornment>
                                                             ),
                                                             endAdornment: (
@@ -583,7 +583,7 @@ export default function Register() {
                                                                     <IconButton
                                                                         onClick={() => setShowPassword(!showPassword)}
                                                                         edge="end"
-                                                                        sx={{ color: '#20a09f' }}
+                                                                        sx={{ color: '#5c6bc0' }}
                                                                     >
                                                                         {showPassword ? <VisibilityOff /> : <Visibility />}
                                                                     </IconButton>
@@ -593,10 +593,10 @@ export default function Register() {
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
-                                                            '&:hover fieldset': { borderColor: '#20a09f' },
-                                                            '&.Mui-focused fieldset': { borderColor: '#20a09f' },
+                                                            '&:hover fieldset': { borderColor: '#5c6bc0' },
+                                                            '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
-                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#20a09f' },
+                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
                                                 <TextField
@@ -614,7 +614,7 @@ export default function Register() {
                                                         input: {
                                                             startAdornment: (
                                                                 <InputAdornment position="start">
-                                                                    <LockIcon sx={{ color: '#20a09f' }} />
+                                                                    <LockIcon sx={{ color: '#5c6bc0' }} />
                                                                 </InputAdornment>
                                                             ),
                                                             endAdornment: (
@@ -622,7 +622,7 @@ export default function Register() {
                                                                     <IconButton
                                                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                                         edge="end"
-                                                                        sx={{ color: '#20a09f' }}
+                                                                        sx={{ color: '#5c6bc0' }}
                                                                     >
                                                                         {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                                                                     </IconButton>
@@ -632,10 +632,10 @@ export default function Register() {
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
-                                                            '&:hover fieldset': { borderColor: '#20a09f' },
-                                                            '&.Mui-focused fieldset': { borderColor: '#20a09f' },
+                                                            '&:hover fieldset': { borderColor: '#5c6bc0' },
+                                                            '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
-                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#20a09f' },
+                                                        '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
                                             </Box>
@@ -649,21 +649,21 @@ export default function Register() {
                                                 disabled={processing}
                                                 startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <RegisterIcon />}
                                                 sx={{
-                                                    bgcolor: '#20a09f',
+                                                    bgcolor: '#5c6bc0',
                                                     py: 1.5,
                                                     mt: 3,
                                                     textTransform: 'none',
                                                     fontWeight: 600,
                                                     fontSize: '1.1rem',
                                                     borderRadius: 2,
-                                                    boxShadow: '0 8px 32px rgba(32, 160, 159, 0.3)',
+                                                    boxShadow: '0 8px 32px rgba(92, 107, 192, 0.3)',
                                                     '&:hover': {
-                                                        bgcolor: '#178f8e',
-                                                        boxShadow: '0 12px 48px rgba(32, 160, 159, 0.4)',
+                                                        bgcolor: '#26418f',
+                                                        boxShadow: '0 12px 48px rgba(92, 107, 192, 0.4)',
                                                         transform: 'translateY(-2px)',
                                                     },
                                                     '&:disabled': {
-                                                        bgcolor: 'rgba(32, 160, 159, 0.6)',
+                                                        bgcolor: 'rgba(92, 107, 192, 0.6)',
                                                     },
                                                     transition: 'all 0.3s ease',
                                                 }}
@@ -677,7 +677,7 @@ export default function Register() {
                                                     <Link
                                                         href={login()}
                                                         style={{
-                                                            color: '#20a09f',
+                                                            color: '#5c6bc0',
                                                             textDecoration: 'none',
                                                             fontWeight: 600,
                                                         }}
@@ -714,7 +714,7 @@ export default function Register() {
                 }}
             >
                 <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
-                    <DoctorIcon sx={{ fontSize: 48, color: '#20a09f', mb: 2 }} />
+                    <DoctorIcon sx={{ fontSize: 48, color: '#5c6bc0', mb: 2 }} />
                     <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
                         Are you a healthcare provider?
                     </Typography>
@@ -742,8 +742,8 @@ export default function Register() {
                             fontWeight: 500,
                             borderRadius: 2,
                             '&:hover': {
-                                borderColor: '#20a09f',
-                                color: '#20a09f',
+                                borderColor: '#5c6bc0',
+                                color: '#5c6bc0',
                             },
                         }}
                     >
@@ -755,16 +755,16 @@ export default function Register() {
                         onClick={() => (window.location.href = 'http://localhost:8000/doctor-application')}
                         startIcon={<MedicalServices />}
                         sx={{
-                            bgcolor: '#20a09f',
+                            bgcolor: '#5c6bc0',
                             px: 3,
                             py: 1,
                             textTransform: 'none',
                             fontWeight: 600,
                             borderRadius: 2,
-                            boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                            boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                             '&:hover': {
-                                bgcolor: '#178f8e',
-                                boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+                                bgcolor: '#26418f',
+                                boxShadow: '0 6px 16px rgba(92, 107, 192, 0.4)',
                                 transform: 'translateY(-2px)',
                             },
                             transition: 'all 0.3s ease',

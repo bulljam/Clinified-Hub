@@ -36,10 +36,10 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     size="medium"
                     sx={{
                         bgcolor: 'rgba(255, 255, 255, 0.9)',
-                        color: '#20a09f',
+                        color: '#5c6bc0',
                         '&:hover': {
                             bgcolor: 'rgba(255, 255, 255, 1)',
-                            color: '#178f8e',
+                            color: '#26418f',
                         },
                     }}
                     title="Go to Home"
@@ -56,7 +56,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                         borderRadius: 2,
                         fontSize: { xs: '0.875rem', md: '1rem' },
                         '& .MuiAlert-icon': {
-                            color: '#20a09f',
+                            color: '#5c6bc0',
                         },
                     }}
                 >
@@ -83,7 +83,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                 input: {
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <EmailIcon sx={{ color: '#20a09f' }} />
+                                            <EmailIcon sx={{ color: '#5c6bc0' }} />
                                         </InputAdornment>
                                     ),
                                 },
@@ -91,15 +91,15 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             sx={{
                                 '& .MuiOutlinedInput-root': {
                                     '&:hover fieldset': {
-                                        borderColor: '#20a09f',
+                                        borderColor: '#5c6bc0',
                                     },
                                     '&.Mui-focused fieldset': {
-                                        borderColor: '#20a09f',
+                                        borderColor: '#5c6bc0',
                                     },
                                 },
                                 '& .MuiInputLabel-root': {
                                     '&.Mui-focused': {
-                                        color: '#20a09f',
+                                        color: '#5c6bc0',
                                     },
                                 },
                             }}
@@ -113,18 +113,18 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             disabled={processing}
                             startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <SendIcon sx={{ fontSize: { xs: 20, md: 24 } }} />}
                             sx={{
-                                bgcolor: '#20a09f',
+                                bgcolor: '#5c6bc0',
                                 py: { xs: 1.2, md: 1.5 },
                                 textTransform: 'none',
                                 fontWeight: 600,
                                 fontSize: { xs: '0.875rem', md: '1rem' },
-                                boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                                boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                                 '&:hover': {
-                                    bgcolor: '#178f8e',
-                                    boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+                                    bgcolor: '#26418f',
+                                    boxShadow: '0 6px 16px rgba(92, 107, 192, 0.4)',
                                 },
                                 '&:disabled': {
-                                    bgcolor: 'rgba(32, 160, 159, 0.6)',
+                                    bgcolor: 'rgba(92, 107, 192, 0.6)',
                                 },
                             }}
                         >
@@ -142,7 +142,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                 <Link
                                     href={login()}
                                     style={{
-                                        color: '#20a09f',
+                                        color: '#5c6bc0',
                                         textDecoration: 'none',
                                         fontWeight: 600,
                                     }}

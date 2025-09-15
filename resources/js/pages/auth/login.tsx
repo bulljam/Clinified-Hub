@@ -50,10 +50,10 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     size="medium"
                     sx={{
                         bgcolor: 'rgba(255, 255, 255, 0.9)',
-                        color: '#20a09f',
+                        color: '#5c6bc0',
                         '&:hover': {
                             bgcolor: 'rgba(255, 255, 255, 1)',
-                            color: '#178f8e',
+                            color: '#26418f',
                         },
                     }}
                     title="Go to Home"
@@ -70,7 +70,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         borderRadius: 2,
                         fontSize: { xs: '0.875rem', md: '1rem' },
                         '& .MuiAlert-icon': {
-                            color: '#20a09f',
+                            color: '#5c6bc0',
                         },
                     }}
                 >
@@ -98,22 +98,22 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <EmailIcon sx={{ color: '#20a09f' }} />
+                                        <EmailIcon sx={{ color: '#5c6bc0' }} />
                                     </InputAdornment>
                                 ),
                             }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
                                     '&:hover fieldset': {
-                                        borderColor: '#20a09f',
+                                        borderColor: '#5c6bc0',
                                     },
                                     '&.Mui-focused fieldset': {
-                                        borderColor: '#20a09f',
+                                        borderColor: '#5c6bc0',
                                     },
                                 },
                                 '& .MuiInputLabel-root': {
                                     '&.Mui-focused': {
-                                        color: '#20a09f',
+                                        color: '#5c6bc0',
                                     },
                                 },
                             }}
@@ -135,7 +135,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <LockIcon sx={{ color: '#20a09f' }} />
+                                        <LockIcon sx={{ color: '#5c6bc0' }} />
                                     </InputAdornment>
                                 ),
                                 endAdornment: (
@@ -146,7 +146,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                                 minWidth: 'auto', 
                                                 p: 1, 
                                                 color: 'text.secondary',
-                                                '&:hover': { color: '#20a09f' } 
+                                                '&:hover': { color: '#5c6bc0' } 
                                             }}
                                         >
                                             {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -157,15 +157,15 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             sx={{
                                 '& .MuiOutlinedInput-root': {
                                     '&:hover fieldset': {
-                                        borderColor: '#20a09f',
+                                        borderColor: '#5c6bc0',
                                     },
                                     '&.Mui-focused fieldset': {
-                                        borderColor: '#20a09f',
+                                        borderColor: '#5c6bc0',
                                     },
                                 },
                                 '& .MuiInputLabel-root': {
                                     '&.Mui-focused': {
-                                        color: '#20a09f',
+                                        color: '#5c6bc0',
                                     },
                                 },
                             }}
@@ -180,9 +180,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                         tabIndex={3}
                                         size="small"
                                         sx={{
-                                            color: '#20a09f',
+                                            color: '#5c6bc0',
                                             '&.Mui-checked': {
-                                                color: '#20a09f',
+                                                color: '#5c6bc0',
                                             },
                                         }}
                                     />
@@ -197,7 +197,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 <Link
                                     href={request()}
                                     style={{
-                                        color: '#20a09f',
+                                        color: '#5c6bc0',
                                         textDecoration: 'none',
                                         fontSize: '0.875rem',
                                         fontWeight: 500,
@@ -221,18 +221,18 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             disabled={processing}
                             startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <LoginIcon sx={{ fontSize: { xs: 20, md: 24 } }} />}
                             sx={{
-                                bgcolor: '#20a09f',
+                                bgcolor: '#5c6bc0',
                                 py: { xs: 1.2, md: 1.5 },
                                 textTransform: 'none',
                                 fontWeight: 600,
                                 fontSize: { xs: '0.875rem', md: '1rem' },
-                                boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                                boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                                 '&:hover': {
-                                    bgcolor: '#178f8e',
-                                    boxShadow: '0 6px 16px rgba(32, 160, 159, 0.4)',
+                                    bgcolor: '#26418f',
+                                    boxShadow: '0 6px 16px rgba(92, 107, 192, 0.4)',
                                 },
                                 '&:disabled': {
-                                    bgcolor: 'rgba(32, 160, 159, 0.6)',
+                                    bgcolor: 'rgba(92, 107, 192, 0.6)',
                                 },
                             }}
                         >
@@ -253,7 +253,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 <Link
                                     href={register()}
                                     style={{
-                                        color: '#20a09f',
+                                        color: '#5c6bc0',
                                         textDecoration: 'none',
                                         fontWeight: 600,
                                     }}
