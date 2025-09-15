@@ -36,7 +36,7 @@ export default function AnimatedAuthLayout({
                 width: '100%',
                 height: '100%',
                 position: 'relative',
-                background: 'linear-gradient(135deg, rgba(32, 160, 159, 0.1) 0%, rgba(20, 184, 166, 0.15) 100%)',
+                background: 'linear-gradient(135deg, rgba(92, 107, 192, 0.1) 0%, rgba(122, 134, 203, 0.15) 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -50,8 +50,8 @@ export default function AnimatedAuthLayout({
                     right: 0,
                     bottom: 0,
                     background: `
-                        radial-gradient(circle at 30% 30%, rgba(32, 160, 159, 0.2) 0%, transparent 60%),
-                        radial-gradient(circle at 70% 70%, rgba(20, 184, 166, 0.15) 0%, transparent 60%)
+                        radial-gradient(circle at 30% 30%, rgba(92, 107, 192, 0.2) 0%, transparent 60%),
+                        radial-gradient(circle at 70% 70%, rgba(122, 134, 203, 0.15) 0%, transparent 60%)
                     `,
                     zIndex: 1,
                 },
@@ -71,14 +71,14 @@ export default function AnimatedAuthLayout({
                         width: 120,
                         height: 120,
                         borderRadius: '50%',
-                        bgcolor: 'rgba(32, 160, 159, 0.2)',
+                        bgcolor: 'rgba(92, 107, 192, 0.2)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         mx: 'auto',
                         mb: 4,
                         backdropFilter: 'blur(10px)',
-                        border: '2px solid rgba(32, 160, 159, 0.3)',
+                        border: '2px solid rgba(92, 107, 192, 0.3)',
                         animation: 'float 3s ease-in-out infinite',
                         '@keyframes float': {
                             '0%, 100%': { transform: 'translateY(0px)' },
@@ -86,13 +86,13 @@ export default function AnimatedAuthLayout({
                         },
                     }}
                 >
-                    <StethoscopeIcon sx={{ fontSize: 60, color: '#20a09f' }} />
+                    <StethoscopeIcon sx={{ fontSize: 60, color: '#5c6bc0' }} />
                 </Box>
                 <Typography
                     variant="h4"
                     sx={{
                         fontWeight: 700,
-                        color: '#20a09f',
+                        color: '#5c6bc0',
                         mb: 2,
                         letterSpacing: '-0.5px',
                     }}
@@ -130,7 +130,7 @@ export default function AnimatedAuthLayout({
                                 width: 60,
                                 height: 4,
                                 borderRadius: 2,
-                                bgcolor: 'rgba(32, 160, 159, 0.3)',
+                                bgcolor: 'rgba(92, 107, 192, 0.3)',
                                 animation: `pulse-${i} 2s ease-in-out infinite ${i * 0.3}s`,
                                 '@keyframes pulse-1': {
                                     '0%, 100%': { opacity: 0.3 },
@@ -236,7 +236,7 @@ export default function AnimatedAuthLayout({
                     >
                         <Box
                             sx={{
-                                background: 'linear-gradient(135deg, rgba(32, 160, 159, 0.1) 0%, rgba(20, 184, 166, 0.15) 100%)',
+                                background: 'linear-gradient(135deg, rgba(92, 107, 192, 0.1) 0%, rgba(122, 134, 203, 0.15) 100%)',
                                 p: 4,
                                 textAlign: 'center',
                             }}
@@ -246,7 +246,7 @@ export default function AnimatedAuthLayout({
                                     width: 80,
                                     height: 80,
                                     borderRadius: '50%',
-                                    bgcolor: 'rgba(32, 160, 159, 0.2)',
+                                    bgcolor: 'rgba(92, 107, 192, 0.2)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -254,13 +254,13 @@ export default function AnimatedAuthLayout({
                                     mb: 2,
                                 }}
                             >
-                                <StethoscopeIcon sx={{ fontSize: 40, color: '#20a09f' }} />
+                                <StethoscopeIcon sx={{ fontSize: 40, color: '#5c6bc0' }} />
                             </Box>
                             <Typography
                                 variant="h5"
                                 sx={{
                                     fontWeight: 700,
-                                    color: '#20a09f',
+                                    color: '#5c6bc0',
                                     mb: 1,
                                 }}
                             >
@@ -316,8 +316,8 @@ export default function AnimatedAuthLayout({
                     width: '200%',
                     height: '200%',
                     background: `
-                        radial-gradient(circle at 25% 25%, rgba(32, 160, 159, 0.05) 0%, transparent 50%),
-                        radial-gradient(circle at 75% 75%, rgba(20, 184, 166, 0.05) 0%, transparent 50%)
+                        radial-gradient(circle at 25% 25%, rgba(92, 107, 192, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 75% 75%, rgba(122, 134, 203, 0.05) 0%, transparent 50%)
                     `,
                     animation: 'float-bg 20s ease-in-out infinite',
                     '@keyframes float-bg': {

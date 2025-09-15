@@ -28,8 +28,8 @@ export default function AuthProfessionalLayout({ children, title, description }:
                     right: 0,
                     bottom: 0,
                     background: `
-                        radial-gradient(circle at 20% 20%, rgba(32, 160, 159, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(32, 160, 159, 0.08) 0%, transparent 50%)
+                        radial-gradient(circle at 20% 20%, rgba(92, 107, 192, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(92, 107, 192, 0.08) 0%, transparent 50%)
                     `,
                     zIndex: 1,
                 },
@@ -52,9 +52,9 @@ export default function AuthProfessionalLayout({ children, title, description }:
                                     sx={{
                                         p: 1.5,
                                         borderRadius: 2,
-                                        bgcolor: '#20a09f',
+                                        bgcolor: '#5c6bc0',
                                         color: 'white',
-                                        boxShadow: '0 4px 12px rgba(32, 160, 159, 0.3)',
+                                        boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                                     }}
                                 >
                                     <StethoscopeIcon sx={{ fontSize: 32 }} />
@@ -63,7 +63,7 @@ export default function AuthProfessionalLayout({ children, title, description }:
                                     variant="h4"
                                     sx={{
                                         fontWeight: 700,
-                                        color: '#20a09f',
+                                        color: '#5c6bc0',
                                         letterSpacing: '-0.5px',
                                     }}
                                 >

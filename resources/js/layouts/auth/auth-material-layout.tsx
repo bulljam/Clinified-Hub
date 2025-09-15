@@ -132,7 +132,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
         left: -2,
         right: -2,
         bottom: -2,
-        background: 'linear-gradient(45deg, #20a09f, #667eea, #764ba2, #20a09f)',
+        background: 'linear-gradient(45deg, #5c6bc0, #667eea, #764ba2, #5c6bc0)',
         borderRadius: 26,
         zIndex: -1,
         opacity: 0.3,
@@ -150,7 +150,7 @@ const LogoContainer = styled(Box)({
 
 const StyledStethoscopeIcon = styled(StethoscopeIcon)({
     fontSize: 48,
-    color: '#20a09f',
+    color: '#5c6bc0',
     animation: `${pulse} 2s ease-in-out infinite`,
 });
 
@@ -213,8 +213,8 @@ export default function AuthMaterialLayout({ children, title, description }: Pro
                                             borderRadius: '50%',
                                             background: 'rgba(255, 255, 255, 0.9)',
                                             backdropFilter: 'blur(10px)',
-                                            border: '1px solid rgba(32, 160, 159, 0.3)',
-                                            boxShadow: '0 8px 32px rgba(32, 160, 159, 0.3)',
+                                            border: '1px solid rgba(92, 107, 192, 0.3)',
+                                            boxShadow: '0 8px 32px rgba(92, 107, 192, 0.3)',
                                         }}
                                     >
                                         <StyledStethoscopeIcon />
@@ -244,7 +244,7 @@ export default function AuthMaterialLayout({ children, title, description }: Pro
                                                 fontWeight: 700,
                                                 color: '#333',
                                                 mb: 1,
-                                                background: 'linear-gradient(45deg, #20a09f, #667eea)',
+                                                background: 'linear-gradient(45deg, #5c6bc0, #667eea)',
                                                 backgroundClip: 'text',
                                                 WebkitBackgroundClip: 'text',
                                                 WebkitTextFillColor: 'transparent',
