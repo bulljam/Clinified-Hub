@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import clinifiedHubTheme from './theme/mui-theme';
+import { initializeTheme } from './hooks/use-appearance';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -15,6 +16,9 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
+        // Initialize light mode only
+        initializeTheme();
+
         root.render(
             <ThemeProvider theme={clinifiedHubTheme}>
                 <CssBaseline />
@@ -23,7 +27,7 @@ createInertiaApp({
         );
     },
     progress: {
-        color: '#20a09f',
+        color: '#5c6bc0',
     },
 });
 
