@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react';
 import { CalendarToday as DateIcon, Payment as PaymentIcon, Person as PersonIcon, AccessTime as TimeIcon } from '@mui/icons-material';
-import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Typography } from '@mui/material';
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 
 interface Appointment {
@@ -72,8 +72,8 @@ export default function AppointmentModal({ open, onClose, appointment }: Appoint
             </DialogTitle>
 
             <DialogContent>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
+                <Box display="grid" gap={3}>
+                    <Box>
                         <Box display="flex" alignItems="center" gap={1} mb={1}>
                             <DateIcon color="action" />
                             <Typography variant="body1" fontWeight="medium">
@@ -86,99 +86,99 @@ export default function AppointmentModal({ open, onClose, appointment }: Appoint
                                 {appointment.time ? dayjs(`1970-01-01 ${appointment.time}`).format('h:mm A') : 'N/A'}
                             </Typography>
                         </Box>
-                    </Grid>
+                    </Box>
 
-                    <Grid item xs={12}>
-                        <Divider />
-                    </Grid>
+                    <Divider />
 
-                    <Grid item xs={6}>
-                        <Box display="flex" alignItems="center" gap={1} mb={1}>
-                            <PersonIcon color="action" />
-                            <Typography variant="subtitle2">Patient</Typography>
+                    <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={3}>
+                        <Box>
+                            <Box display="flex" alignItems="center" gap={1} mb={1}>
+                                <PersonIcon color="action" />
+                                <Typography variant="subtitle2">Patient</Typography>
+                            </Box>
+                            <Typography variant="body1" fontWeight="medium">
+                                {appointment.user.name}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                {appointment.user.email}
+                            </Typography>
                         </Box>
-                        <Typography variant="body1" fontWeight="medium">
-                            {appointment.user.name}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            {appointment.user.email}
-                        </Typography>
-                    </Grid>
 
-                    <Grid item xs={6}>
-                        <Box display="flex" alignItems="center" gap={1} mb={1}>
-                            <PersonIcon color="action" />
-                            <Typography variant="subtitle2">Provider</Typography>
+                        <Box>
+                            <Box display="flex" alignItems="center" gap={1} mb={1}>
+                                <PersonIcon color="action" />
+                                <Typography variant="subtitle2">Provider</Typography>
+                            </Box>
+                            <Typography variant="body1" fontWeight="medium">
+                                Dr. {appointment.provider.name}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                {appointment.provider.email}
+                            </Typography>
                         </Box>
-                        <Typography variant="body1" fontWeight="medium">
-                            Dr. {appointment.provider.name}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            {appointment.provider.email}
-                        </Typography>
-                    </Grid>
+                    </Box>
 
-                    <Grid item xs={12}>
-                        <Divider />
-                    </Grid>
+                    <Divider />
 
-                    <Grid item xs={6}>
-                        <Typography variant="subtitle2" gutterBottom>
-                            Appointment Status
-                        </Typography>
-                        <Box display="flex" gap={1} flexWrap="wrap">
-                            <Chip
-                                label="Pending"
-                                color={appointment.status === 'pending' ? 'warning' : 'default'}
-                                variant={appointment.status === 'pending' ? 'filled' : 'outlined'}
-                                size="small"
-                                onClick={() => handleStatusUpdate('pending')}
-                                sx={{ cursor: 'pointer' }}
-                            />
-                            <Chip
-                                label="Confirmed"
-                                color={appointment.status === 'confirmed' ? 'success' : 'default'}
-                                variant={appointment.status === 'confirmed' ? 'filled' : 'outlined'}
-                                size="small"
-                                onClick={() => handleStatusUpdate('confirmed')}
-                                sx={{ cursor: 'pointer' }}
-                            />
-                            <Chip
-                                label="Cancelled"
-                                color={appointment.status === 'cancelled' ? 'error' : 'default'}
-                                variant={appointment.status === 'cancelled' ? 'filled' : 'outlined'}
-                                size="small"
-                                onClick={() => handleStatusUpdate('cancelled')}
-                                sx={{ cursor: 'pointer' }}
-                            />
+                    <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={3}>
+                        <Box>
+                            <Typography variant="subtitle2" gutterBottom>
+                                Appointment Status
+                            </Typography>
+                            <Box display="flex" gap={1} flexWrap="wrap">
+                                <Chip
+                                    label="Pending"
+                                    color={appointment.status === 'pending' ? 'warning' : 'default'}
+                                    variant={appointment.status === 'pending' ? 'filled' : 'outlined'}
+                                    size="small"
+                                    onClick={() => handleStatusUpdate('pending')}
+                                    sx={{ cursor: 'pointer' }}
+                                />
+                                <Chip
+                                    label="Confirmed"
+                                    color={appointment.status === 'confirmed' ? 'success' : 'default'}
+                                    variant={appointment.status === 'confirmed' ? 'filled' : 'outlined'}
+                                    size="small"
+                                    onClick={() => handleStatusUpdate('confirmed')}
+                                    sx={{ cursor: 'pointer' }}
+                                />
+                                <Chip
+                                    label="Cancelled"
+                                    color={appointment.status === 'cancelled' ? 'error' : 'default'}
+                                    variant={appointment.status === 'cancelled' ? 'filled' : 'outlined'}
+                                    size="small"
+                                    onClick={() => handleStatusUpdate('cancelled')}
+                                    sx={{ cursor: 'pointer' }}
+                                />
+                            </Box>
                         </Box>
-                    </Grid>
 
-                    <Grid item xs={6}>
-                        <Box display="flex" alignItems="center" gap={1} mb={1}>
-                            <PaymentIcon color="action" />
-                            <Typography variant="subtitle2">Payment Status</Typography>
+                        <Box>
+                            <Box display="flex" alignItems="center" gap={1} mb={1}>
+                                <PaymentIcon color="action" />
+                                <Typography variant="subtitle2">Payment Status</Typography>
+                            </Box>
+                            <Box display="flex" gap={1}>
+                                <Chip
+                                    label="Pending"
+                                    color={appointment.payment_status === 'pending' ? 'warning' : 'default'}
+                                    variant={appointment.payment_status === 'pending' ? 'filled' : 'outlined'}
+                                    size="small"
+                                    onClick={() => handlePaymentStatusUpdate('pending')}
+                                    sx={{ cursor: 'pointer' }}
+                                />
+                                <Chip
+                                    label="Paid"
+                                    color={appointment.payment_status === 'paid' ? 'success' : 'default'}
+                                    variant={appointment.payment_status === 'paid' ? 'filled' : 'outlined'}
+                                    size="small"
+                                    onClick={() => handlePaymentStatusUpdate('paid')}
+                                    sx={{ cursor: 'pointer' }}
+                                />
+                            </Box>
                         </Box>
-                        <Box display="flex" gap={1}>
-                            <Chip
-                                label="Pending"
-                                color={appointment.payment_status === 'pending' ? 'warning' : 'default'}
-                                variant={appointment.payment_status === 'pending' ? 'filled' : 'outlined'}
-                                size="small"
-                                onClick={() => handlePaymentStatusUpdate('pending')}
-                                sx={{ cursor: 'pointer' }}
-                            />
-                            <Chip
-                                label="Paid"
-                                color={appointment.payment_status === 'paid' ? 'success' : 'default'}
-                                variant={appointment.payment_status === 'paid' ? 'filled' : 'outlined'}
-                                size="small"
-                                onClick={() => handlePaymentStatusUpdate('paid')}
-                                sx={{ cursor: 'pointer' }}
-                            />
-                        </Box>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </DialogContent>
 
             <DialogActions>
