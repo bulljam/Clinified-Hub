@@ -3,7 +3,7 @@ import { Alert, Box, Button, Card, CardContent, FormControl, InputLabel, MenuIte
 import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 
@@ -36,28 +36,31 @@ interface AppointmentFormProps {
     isEdit?: boolean;
 }
 
+interface AppointmentFormData {
+    provider_id: number | '';
+    date: string;
+    time: string;
+    status: string;
+    payment_status: string;
+}
+
 export default function AppointmentForm({ appointment = null, providers = [], isEdit = false }: AppointmentFormProps) {
-    const { data, setData, post, patch, processing, errors, transform } = useForm({
+    const { data, setData, post, patch, processing, errors } = useForm<AppointmentFormData>({
         provider_id: appointment?.provider_id || '',
-        date: appointment?.date ? dayjs(appointment.date) : null,
-        time: appointment?.time ? dayjs(appointment.time, 'HH:mm:ss') : null,
+        date: appointment?.date || '',
+        time: appointment?.time ? dayjs(appointment.time, 'HH:mm:ss').format('HH:mm') : '',
         status: appointment?.status || 'pending',
         payment_status: appointment?.payment_status || 'pending',
     });
 
-    transform((data) => ({
-        ...data,
-        date: data.date ? data.date.format('YYYY-MM-DD') : '',
-        time: data.time ? data.time.format('HH:mm') : '',
-    }));
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        console.log('Raw form data:', data);
-        console.log('Time object:', data.time);
-
         if (isEdit) {
+            if (!appointment) {
+                return;
+            }
+
             patch(`/appointments/${appointment.id}`, {
                 onSuccess: () => {
                     router.visit('/appointments');
@@ -83,7 +86,8 @@ export default function AppointmentForm({ appointment = null, providers = [], is
     };
 
     const today = dayjs();
-    const minDate = isEdit ? null : today.add(1, 'day');
+    const minDate = isEdit ? undefined : today.add(1, 'day');
+    const selectedDate = data.date ? dayjs(data.date) : null;
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -109,7 +113,7 @@ export default function AppointmentForm({ appointment = null, providers = [], is
                                     labelId="provider-select-label"
                                     value={data.provider_id}
                                     label="Select Provider"
-                                    onChange={(e) => setData('provider_id', e.target.value)}
+                                    onChange={(e) => setData('provider_id', Number(e.target.value))}
                                     disabled={isEdit}
                                 >
                                     <MenuItem value="">
@@ -130,8 +134,8 @@ export default function AppointmentForm({ appointment = null, providers = [], is
 
                             <DatePicker
                                 label="Appointment Date"
-                                value={data.date}
-                                onChange={(newValue) => setData('date', newValue)}
+                                value={selectedDate}
+                                onChange={(newValue: Dayjs | null) => setData('date', newValue ? newValue.format('YYYY-MM-DD') : '')}
                                 minDate={minDate}
                                 slotProps={{
                                     textField: {
@@ -145,17 +149,11 @@ export default function AppointmentForm({ appointment = null, providers = [], is
                             <FormControl fullWidth error={!!errors.time}>
                                 <InputLabel>Appointment Time</InputLabel>
                                 <Select
-                                    value={data.time ? data.time.format('HH:mm') : ''}
+                                    value={data.time}
                                     label="Appointment Time"
                                     onChange={(e) => {
                                         const timeStr = e.target.value;
-                                        if (timeStr) {
-                                            const [hours, minutes] = timeStr.split(':');
-                                            const timeObj = dayjs().hour(parseInt(hours)).minute(parseInt(minutes));
-                                            setData('time', timeObj);
-                                        } else {
-                                            setData('time', null);
-                                        }
+                                        setData('time', timeStr);
                                     }}
                                 >
                                     <MenuItem value="">

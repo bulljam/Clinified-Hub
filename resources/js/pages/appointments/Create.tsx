@@ -1,16 +1,33 @@
 import AppointmentForm from '@/components/appointments/AppointmentForm';
 import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head } from '@inertiajs/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const theme = createTheme();
 
-export default function Create({ auth, providers }) {
+interface Provider {
+    id: number;
+    name: string;
+    email: string;
+}
+
+interface CreateAppointmentProps {
+    auth: SharedData['auth'];
+    providers: Provider[];
+}
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Appointments', href: '/appointments' },
+    { title: 'Book New Appointment', href: '/appointments/create' },
+];
+
+export default function Create({ providers }: CreateAppointmentProps) {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <AppLayout user={auth.user} header={<h2 className="text-xl leading-tight font-semibold text-gray-800">Book New Appointment</h2>}>
+            <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Book Appointment" />
 
                 <div className="py-12">

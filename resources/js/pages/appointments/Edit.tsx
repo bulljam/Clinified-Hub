@@ -1,16 +1,48 @@
 import AppointmentForm from '@/components/appointments/AppointmentForm';
 import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head } from '@inertiajs/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const theme = createTheme();
 
-export default function Edit({ auth, appointment, providers }) {
+interface Provider {
+    id: number;
+    name: string;
+    email: string;
+}
+
+interface Appointment {
+    id: number;
+    provider_id: number;
+    date: string;
+    time: string;
+    status: string;
+    payment_status: string;
+    user?: {
+        id: number;
+        name: string;
+        email: string;
+    };
+}
+
+interface EditAppointmentProps {
+    auth: SharedData['auth'];
+    appointment: Appointment;
+    providers: Provider[];
+}
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Appointments', href: '/appointments' },
+    { title: 'Edit Appointment', href: '#' },
+];
+
+export default function Edit({ appointment, providers }: EditAppointmentProps) {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <AppLayout user={auth.user} header={<h2 className="text-xl leading-tight font-semibold text-gray-800">Edit Appointment</h2>}>
+            <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Edit Appointment" />
 
                 <div className="py-12">
