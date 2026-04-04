@@ -153,8 +153,10 @@ class UserController extends Controller
         ]);
     }
 
-    public function deletePatient(Request $request, User $patient)
+    public function deletePatient(Request $request, int $patient)
     {
+        $patient = User::findOrFail($patient);
+
         if ($patient->role !== 'client') {
             abort(404, 'Patient not found');
         }
