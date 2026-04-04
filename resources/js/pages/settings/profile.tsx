@@ -1,25 +1,13 @@
 import DeleteUser from '@/components/delete-user';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { send } from '@/routes/verification';
 import { edit, update as updateProfile } from '@/routes/profile';
+import { send } from '@/routes/verification';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { getImageUrl } from '@/utils/imageHelpers';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { CameraAlt, CheckCircle, DeleteOutline, Email, Person, Save } from '@mui/icons-material';
-import {
-    Alert,
-    Avatar,
-    Box,
-    Card,
-    CardContent,
-    Divider,
-    Fade,
-    Button as MuiButton,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Alert, Avatar, Box, Card, CardContent, Divider, Fade, Button as MuiButton, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useMemo, useRef } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -142,13 +130,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             <Box component="form" onSubmit={handleSubmit}>
                                 <Stack spacing={3}>
                                     <Box>
-                                        <input
-                                            ref={fileInputRef}
-                                            type="file"
-                                            accept=".jpg,.jpeg,.png"
-                                            hidden
-                                            onChange={handlePhotoSelect}
-                                        />
+                                        <input ref={fileInputRef} type="file" accept=".jpg,.jpeg,.png" hidden onChange={handlePhotoSelect} />
 
                                         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
                                             <MuiButton

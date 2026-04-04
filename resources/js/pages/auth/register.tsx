@@ -334,11 +334,21 @@ export default function Register() {
                                         Clinified Hub
                                     </Typography>
 
-                                    <Typography variant="h5" fontWeight="bold" color="#5c6bc0" gutterBottom sx={{ fontSize: { xs: '1.2rem', md: isLaptop ? '1.25rem' : '1.5rem' } }}>
+                                    <Typography
+                                        variant="h5"
+                                        fontWeight="bold"
+                                        color="#5c6bc0"
+                                        gutterBottom
+                                        sx={{ fontSize: { xs: '1.2rem', md: isLaptop ? '1.25rem' : '1.5rem' } }}
+                                    >
                                         Create Your Account
                                     </Typography>
 
-                                    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 500, mx: 'auto', fontSize: isLaptop ? '0.92rem' : '1rem' }}>
+                                    <Typography
+                                        variant="body1"
+                                        color="text.secondary"
+                                        sx={{ maxWidth: 500, mx: 'auto', fontSize: isLaptop ? '0.92rem' : '1rem' }}
+                                    >
                                         Join our healthcare platform and start your wellness journey with expert doctors and modern medical services
                                     </Typography>
                                 </Box>
@@ -346,7 +356,11 @@ export default function Register() {
                                 <Form {...registerRoute.store.form()} resetOnSuccess={['password', 'password_confirmation']} disableWhileProcessing>
                                     {({ processing, errors }) => (
                                         <Stack spacing={isLaptop ? 2 : 3}>
-                                            <Typography variant="h6" color="#5c6bc0" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: isLaptop ? '1rem' : undefined }}>
+                                            <Typography
+                                                variant="h6"
+                                                color="#5c6bc0"
+                                                sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: isLaptop ? '1rem' : undefined }}
+                                            >
                                                 <PersonIcon /> Personal Information
                                             </Typography>
 
@@ -559,7 +573,11 @@ export default function Register() {
 
                                             <Divider sx={{ my: isLaptop ? 1 : 2 }} />
 
-                                            <Typography variant="h6" color="#5c6bc0" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: isLaptop ? '1rem' : undefined }}>
+                                            <Typography
+                                                variant="h6"
+                                                color="#5c6bc0"
+                                                sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: isLaptop ? '1rem' : undefined }}
+                                            >
                                                 <LockIcon /> Security
                                             </Typography>
 
