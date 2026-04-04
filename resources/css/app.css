@@ -107,7 +107,6 @@
 
     * {
         @apply border-border;
-        cursor: pointer !important;
     }
 
     body {
@@ -150,7 +149,6 @@
     }
 
     svg[data-lucide] {
-        cursor: pointer;
         transition: opacity 0.15s ease-in-out;
     }
 

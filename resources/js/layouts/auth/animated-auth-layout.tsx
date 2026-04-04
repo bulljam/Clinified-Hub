@@ -169,7 +169,7 @@ export default function AnimatedAuthLayout({ children, title, description, mode,
                 height: '100%',
                 pt: isLaptop ? 0.25 : 1,
                 px: isLaptop ? 4.5 : 6,
-                pb: isLaptop ? 4.5 : 6,
+                pb: isLaptop ? 2 : 6,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -179,7 +179,7 @@ export default function AnimatedAuthLayout({ children, title, description, mode,
             }}
         >
             <Box sx={{ maxWidth: isLaptop ? 360 : 400, width: '100%' }}>
-                <Box sx={{ mb: isLaptop ? 1.5 : 2, mt: 0 }}>
+                <Box sx={{ mb: isLaptop ? 2.25 : 2.5, mt: 0 }}>
                     <Typography
                         variant="h4"
                         sx={{
@@ -303,7 +303,7 @@ export default function AnimatedAuthLayout({ children, title, description, mode,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                py: 4,
+                py: isLaptop ? 1 : 4,
                 position: 'relative',
                 overflow: 'hidden',
                 '&::before': {
@@ -337,6 +337,8 @@ export default function AnimatedAuthLayout({ children, title, description, mode,
                         backdropFilter: 'blur(20px)',
                         overflow: 'hidden',
                         maxWidth: isLaptop ? 1080 : 1200,
+                        minHeight: isLaptop ? 540 : undefined,
+                        maxHeight: isLaptop ? 'calc(100dvh - 16px)' : undefined,
                         mx: 'auto',
                         transition: 'all 0.3s ease-in-out',
                     }}
@@ -344,7 +346,8 @@ export default function AnimatedAuthLayout({ children, title, description, mode,
                     <Box
                         sx={{
                             display: 'flex',
-                            minHeight: isLaptop ? 700 : 800,
+                            minHeight: isLaptop ? 540 : 800,
+                            maxHeight: isLaptop ? 'calc(100dvh - 16px)' : undefined,
                             position: 'relative',
                         }}
                     >

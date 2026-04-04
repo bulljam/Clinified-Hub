@@ -26,7 +26,7 @@ export function UserInfo({ user, showEmail = false }: { user: User; showEmail?: 
         <>
             <Avatar className="h-8 w-8 overflow-hidden rounded-full">
                 <AvatarImage src={getAvatarSrc()} alt={user.name} className="object-cover object-top" />
-                <AvatarFallback className="rounded-lg bg-neutral-200 text-black">{getInitials(user.name)}</AvatarFallback>
+                <AvatarFallback className="rounded-lg bg-slate-900 text-slate-100">{getInitials(user.name)}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
