@@ -139,8 +139,9 @@ class AppointmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Appointment $appointment): Response
+    public function show(int $appointment): Response
     {
+        $appointment = Appointment::findOrFail($appointment);
         $this->authorize('view', $appointment);
 
         $appointment->load(['user', 'provider']);
@@ -153,8 +154,9 @@ class AppointmentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Appointment $appointment): Response
+    public function edit(int $appointment): Response
     {
+        $appointment = Appointment::findOrFail($appointment);
         $this->authorize('update', $appointment);
 
         $appointment->load(['user', 'provider']);
@@ -172,8 +174,9 @@ class AppointmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Appointment $appointment): RedirectResponse
+    public function update(Request $request, int $appointment): RedirectResponse
     {
+        $appointment = Appointment::findOrFail($appointment);
         $this->authorize('update', $appointment);
 
         $validated = $request->validate([
@@ -243,8 +246,9 @@ class AppointmentController extends Controller
     /**
      * Update appointment fields that patients are allowed to modify.
      */
-    public function updatePatient(Request $request, Appointment $appointment): RedirectResponse
+    public function updatePatient(Request $request, int $appointment): RedirectResponse
     {
+        $appointment = Appointment::findOrFail($appointment);
         $this->authorize('update', $appointment);
 
         if ($appointment->status !== 'pending') {
@@ -313,8 +317,9 @@ class AppointmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Appointment $appointment): RedirectResponse
+    public function destroy(int $appointment): RedirectResponse
     {
+        $appointment = Appointment::findOrFail($appointment);
         $this->authorize('delete', $appointment);
 
         $appointment->delete();
@@ -326,8 +331,9 @@ class AppointmentController extends Controller
     /**
      * Approve payment for an appointment and automatically confirm the appointment.
      */
-    public function approvePayment(Request $request, Appointment $appointment)
+    public function approvePayment(Request $request, int $appointment)
     {
+        $appointment = Appointment::findOrFail($appointment);
         $this->authorize('update', $appointment);
 
         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
@@ -366,8 +372,9 @@ class AppointmentController extends Controller
     /**
      * Reject payment for an appointment.
      */
-    public function rejectPayment(Request $request, Appointment $appointment)
+    public function rejectPayment(Request $request, int $appointment)
     {
+        $appointment = Appointment::findOrFail($appointment);
         $this->authorize('update', $appointment);
 
         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)

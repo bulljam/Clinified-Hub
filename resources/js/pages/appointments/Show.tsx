@@ -1,14 +1,15 @@
 import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { ArrowBack as BackIcon, Edit as EditIcon } from '@mui/icons-material';
-import { Box, Button, Card, CardContent, Chip, Divider, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Chip, Divider, Typography } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
 
 const theme = createTheme();
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: 'pending' | 'confirmed' | 'cancelled') => {
     switch (status) {
         case 'pending':
             return 'warning';
@@ -21,7 +22,7 @@ const getStatusColor = (status) => {
     }
 };
 
-const getPaymentStatusColor = (paymentStatus) => {
+const getPaymentStatusColor = (paymentStatus: 'pending' | 'paid' | 'on_hold' | 'cancelled') => {
     switch (paymentStatus) {
         case 'pending':
             return 'warning';
@@ -32,7 +33,34 @@ const getPaymentStatusColor = (paymentStatus) => {
     }
 };
 
-export default function Show({ auth, appointment }) {
+interface Appointment {
+    id: number;
+    user_id: number;
+    provider_id: number;
+    date: string;
+    time: string;
+    status: 'pending' | 'confirmed' | 'cancelled';
+    payment_status: 'pending' | 'paid' | 'on_hold' | 'cancelled';
+    created_at: string;
+    updated_at: string;
+    user: {
+        id: number;
+        name: string;
+        email: string;
+    };
+    provider: {
+        id: number;
+        name: string;
+        email: string;
+    };
+}
+
+interface AppointmentShowProps {
+    auth: SharedData['auth'];
+    appointment: Appointment;
+}
+
+export default function Show({ auth, appointment }: AppointmentShowProps) {
     const canEdit = () => {
         const userRole = auth.user.role;
         if (userRole === 'admin') return true;
@@ -41,10 +69,15 @@ export default function Show({ auth, appointment }) {
         return false;
     };
 
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: 'Appointments', href: '/appointments' },
+        { title: `Appointment #${appointment.id}`, href: `/appointments/${appointment.id}` },
+    ];
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <AppLayout user={auth.user} header={<h2 className="text-xl leading-tight font-semibold text-gray-800">Appointment Details</h2>}>
+            <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Appointment Details" />
 
                 <div className="py-12">
@@ -87,8 +120,8 @@ export default function Show({ auth, appointment }) {
 
                                 <Divider sx={{ mb: 3 }} />
 
-                                <Grid container spacing={3}>
-                                    <Grid item xs={12} md={6}>
+                                <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+                                    <Box>
                                         <Card variant="outlined">
                                             <CardContent>
                                                 <Typography variant="h6" gutterBottom color="primary">
@@ -130,11 +163,11 @@ export default function Show({ auth, appointment }) {
                                                 </Box>
                                             </CardContent>
                                         </Card>
-                                    </Grid>
+                                    </Box>
 
-                                    <Grid item xs={12} md={6}>
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={12}>
+                                    <Box>
+                                        <Box display="grid" gap={2}>
+                                            <Box>
                                                 <Card variant="outlined">
                                                     <CardContent>
                                                         <Typography variant="h6" gutterBottom color="primary">
@@ -156,9 +189,9 @@ export default function Show({ auth, appointment }) {
                                                         </Box>
                                                     </CardContent>
                                                 </Card>
-                                            </Grid>
+                                            </Box>
 
-                                            <Grid item xs={12}>
+                                            <Box>
                                                 <Card variant="outlined">
                                                     <CardContent>
                                                         <Typography variant="h6" gutterBottom color="primary">
@@ -180,10 +213,10 @@ export default function Show({ auth, appointment }) {
                                                         </Box>
                                                     </CardContent>
                                                 </Card>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                </Box>
 
                                 <Box mt={3}>
                                     <Card variant="outlined">
