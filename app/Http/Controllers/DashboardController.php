@@ -5,26 +5,28 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         
         $dashboardData = match ($user->role) {
-            'super_admin' => $this->getSuperAdminDashboardData(),
-            'admin' => $this->getAdminDashboardData(),
-            'provider' => $this->getProviderDashboardData($user),
-            default => $this->getClientDashboardData($user),
+            'super_admin' => $this->getSuperAdminDashboardData($request),
+            'admin' => $this->getAdminDashboardData($request),
+            'provider' => $this->getProviderDashboardData($user, $request),
+            default => $this->getClientDashboardData($user, $request),
         };
         
         return Inertia::render('dashboard', $dashboardData);
     }
     
-    private function getAdminDashboardData(): array
+    private function getAdminDashboardData(Request $request): array
     {
         $today = Carbon::today();
         $thisMonth = Carbon::now()->startOfMonth();
@@ -40,13 +42,22 @@ class DashboardController extends Controller
             ->whereBetween('created_at', [$lastMonth, $thisMonth])
             ->count();
         
-        $upcomingAppointments = Appointment::with(['client', 'provider'])
+        $upcomingAppointmentsQuery = Appointment::with(['client', 'provider'])
             ->where('date', '>=', $today)
             ->where('status', '!=', 'cancelled')
             ->orderBy('date')
-            ->orderBy('time')
-            ->limit(10)
-            ->get();
+            ->orderBy('time');
+
+        $upcomingAppointments = $this->paginateUpcomingAppointments(
+            $upcomingAppointmentsQuery,
+            fn (Appointment $appointment) => [
+                'time' => $appointment->time->format('g:i A'),
+                'date' => $appointment->date->format('M j'),
+                'patient' => $appointment->client->name,
+                'provider' => $appointment->provider->name,
+                'status' => $appointment->status,
+            ],
+        );
         
         $pendingPayments = Appointment::where('payment_status', 'pending')
             ->where('status', 'confirmed')
@@ -82,20 +93,12 @@ class DashboardController extends Controller
                     'trend' => null,
                 ],
             ],
-            'upcomingAppointments' => $upcomingAppointments->map(function ($appointment) {
-                return [
-                    'time' => $appointment->time->format('g:i A'),
-                    'date' => $appointment->date->format('M j'),
-                    'patient' => $appointment->client->name,
-                    'provider' => $appointment->provider->name,
-                    'status' => $appointment->status,
-                ];
-            }),
+            'upcomingAppointments' => $upcomingAppointments,
             'userRole' => 'admin'
         ];
     }
     
-    private function getSuperAdminDashboardData(): array
+    private function getSuperAdminDashboardData(Request $request): array
     {
         $today = Carbon::today();
         $thisMonth = Carbon::now()->startOfMonth();
@@ -109,13 +112,22 @@ class DashboardController extends Controller
         $newUsersThisMonth = User::where('created_at', '>=', $thisMonth)->count();
         $newUsersLastMonth = User::whereBetween('created_at', [$lastMonth, $thisMonth])->count();
         
-        $upcomingAppointments = Appointment::with(['client', 'provider'])
+        $upcomingAppointmentsQuery = Appointment::with(['client', 'provider'])
             ->where('date', '>=', $today)
             ->where('status', '!=', 'cancelled')
             ->orderBy('date')
-            ->orderBy('time')
-            ->limit(10)
-            ->get();
+            ->orderBy('time');
+
+        $upcomingAppointments = $this->paginateUpcomingAppointments(
+            $upcomingAppointmentsQuery,
+            fn (Appointment $appointment) => [
+                'time' => $appointment->time->format('g:i A'),
+                'date' => $appointment->date->format('M j'),
+                'patient' => $appointment->client->name,
+                'provider' => $appointment->provider->name,
+                'status' => $appointment->status,
+            ],
+        );
         
         $systemHealth = [
             'total_appointments' => Appointment::count(),
@@ -152,20 +164,12 @@ class DashboardController extends Controller
                     'trend' => 'Platform-wide earnings',
                 ],
             ],
-            'upcomingAppointments' => $upcomingAppointments->map(function ($appointment) {
-                return [
-                    'time' => $appointment->time->format('g:i A'),
-                    'date' => $appointment->date->format('M j'),
-                    'patient' => $appointment->client->name,
-                    'provider' => $appointment->provider->name,
-                    'status' => $appointment->status,
-                ];
-            }),
+            'upcomingAppointments' => $upcomingAppointments,
             'userRole' => 'super_admin'
         ];
     }
     
-    private function getProviderDashboardData(User $provider): array
+    private function getProviderDashboardData(User $provider, Request $request): array
     {
         $today = Carbon::today();
         $thisMonth = Carbon::now()->startOfMonth();
@@ -192,14 +196,22 @@ class DashboardController extends Controller
             ->whereBetween('created_at', [$lastMonth, $thisMonth])
             ->count();
         
-        $upcomingAppointments = $provider->providedAppointments()
+        $upcomingAppointmentsQuery = $provider->providedAppointments()
             ->with('client')
             ->where('date', '>=', $today)
             ->where('status', '!=', 'cancelled')
             ->orderBy('date')
-            ->orderBy('time')
-            ->limit(10)
-            ->get();
+            ->orderBy('time');
+
+        $upcomingAppointments = $this->paginateUpcomingAppointments(
+            $upcomingAppointmentsQuery,
+            fn (Appointment $appointment) => [
+                'time' => $appointment->time->format('g:i A'),
+                'date' => $appointment->date->format('M j'),
+                'patient' => $appointment->client->name,
+                'status' => $appointment->status,
+            ],
+        );
         
         $completedAppointments = $provider->providedAppointments()
             ->where('status', 'confirmed')
@@ -232,32 +244,34 @@ class DashboardController extends Controller
                     'trend' => $appointmentsGrowth != 0 ? ($appointmentsGrowth > 0 ? '+' : '') . $appointmentsGrowth . '% from last month' : null,
                 ],
             ],
-            'upcomingAppointments' => $upcomingAppointments->map(function ($appointment) {
-                return [
-                    'time' => $appointment->time->format('g:i A'),
-                    'date' => $appointment->date->format('M j'),
-                    'patient' => $appointment->client->name,
-                    'status' => $appointment->status,
-                ];
-            }),
+            'upcomingAppointments' => $upcomingAppointments,
             'userRole' => 'provider'
         ];
     }
     
-    private function getClientDashboardData(User $client): array
+    private function getClientDashboardData(User $client, Request $request): array
     {
         $today = Carbon::today();
         $thisMonth = Carbon::now()->startOfMonth();
         $lastMonth = Carbon::now()->subMonth()->startOfMonth();
         
-        $upcomingAppointments = $client->appointments()
+        $upcomingAppointmentsQuery = $client->appointments()
             ->with('provider')
             ->where('date', '>=', $today)
             ->where('status', '!=', 'cancelled')
             ->orderBy('date')
-            ->orderBy('time')
-            ->limit(10)
-            ->get();
+            ->orderBy('time');
+
+        $upcomingAppointmentsSummary = $this->getUpcomingAppointmentsSummary($upcomingAppointmentsQuery);
+        $upcomingAppointments = $this->paginateUpcomingAppointments(
+            $upcomingAppointmentsQuery,
+            fn (Appointment $appointment) => [
+                'time' => $appointment->time->format('g:i A'),
+                'date' => $appointment->date->format('M j'),
+                'provider' => $appointment->provider->name,
+                'status' => $appointment->status,
+            ],
+        );
         
         $totalAppointments = $client->appointments()->count();
         $thisMonthAppointments = $client->appointments()
@@ -286,9 +300,9 @@ class DashboardController extends Controller
             'stats' => [
                 [
                     'title' => 'Upcoming Appointments',
-                    'value' => (string) $upcomingAppointments->count(),
-                    'description' => $upcomingAppointments->where('status', 'pending')->count() . ' pending, ' . 
-                                   $upcomingAppointments->where('status', 'confirmed')->count() . ' confirmed',
+                    'value' => (string) $upcomingAppointmentsSummary['total'],
+                    'description' => $upcomingAppointmentsSummary['pending'] . ' pending, ' .
+                                   $upcomingAppointmentsSummary['confirmed'] . ' confirmed',
                     'trend' => null,
                 ],
                 [
@@ -304,15 +318,25 @@ class DashboardController extends Controller
                     'trend' => null,
                 ],
             ],
-            'upcomingAppointments' => $upcomingAppointments->map(function ($appointment) {
-                return [
-                    'time' => $appointment->time->format('g:i A'),
-                    'date' => $appointment->date->format('M j'),
-                    'provider' => $appointment->provider->name,
-                    'status' => $appointment->status,
-                ];
-            }),
+            'upcomingAppointments' => $upcomingAppointments,
             'userRole' => 'client'
         ];
+    }
+
+    private function getUpcomingAppointmentsSummary(Builder|Relation $query): array
+    {
+        return [
+            'total' => (clone $query)->count(),
+            'pending' => (clone $query)->where('status', 'pending')->count(),
+            'confirmed' => (clone $query)->where('status', 'confirmed')->count(),
+        ];
+    }
+
+    private function paginateUpcomingAppointments(Builder|Relation $query, callable $transform)
+    {
+        return (clone $query)
+            ->paginate(4, ['*'], 'upcoming_page')
+            ->withQueryString()
+            ->through($transform);
     }
 }

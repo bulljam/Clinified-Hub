@@ -1,7 +1,8 @@
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { Pagination } from '@mui/material';
 import type { LucideIcon } from 'lucide-react';
 import {
     Activity,
@@ -44,7 +45,15 @@ interface AppointmentData {
 
 interface DashboardProps {
     stats: StatCardProps[];
-    upcomingAppointments: AppointmentData[];
+    upcomingAppointments: {
+        data: AppointmentData[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        from: number | null;
+        to: number | null;
+    };
     userRole: 'admin' | 'provider' | 'client' | 'super_admin';
 }
 
@@ -85,6 +94,19 @@ function StatCard({ title, value, description, icon: Icon, trend }: StatCardProp
 }
 
 export default function Dashboard({ stats, upcomingAppointments, userRole }: DashboardProps) {
+    const handleUpcomingPageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+        router.get(
+            dashboard().url,
+            { upcoming_page: page },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                replace: true,
+                only: ['upcomingAppointments'],
+            },
+        );
+    };
+
     const getRoleConfig = (role: string): RoleConfig => {
         switch (role) {
             case 'client':
@@ -254,9 +276,9 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                         </div>
                     </div>
                     <div className="p-4 md:p-6">
-                        {upcomingAppointments.length > 0 ? (
+                        {upcomingAppointments.data.length > 0 ? (
                             <div className="space-y-3 md:space-y-4">
-                                {upcomingAppointments.map((appointment, index) => (
+                                {upcomingAppointments.data.map((appointment, index) => (
                                     <div
                                         key={index}
                                         className="flex flex-col justify-between gap-3 rounded-lg border border-border p-3 transition-all duration-200 hover:border-accent/50 hover:shadow-md sm:flex-row sm:items-center md:p-4"
@@ -295,6 +317,42 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                                         </span>
                                     </div>
                                 ))}
+
+                                {upcomingAppointments.last_page > 1 && (
+                                    <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
+                                        <p className="text-sm text-muted-foreground">
+                                            Showing{' '}
+                                            <strong>
+                                                {upcomingAppointments.from || 0}-{upcomingAppointments.to || 0}
+                                            </strong>{' '}
+                                            of <strong>{upcomingAppointments.total || 0}</strong> upcoming appointments
+                                        </p>
+                                        <Pagination
+                                            count={upcomingAppointments.last_page}
+                                            page={upcomingAppointments.current_page}
+                                            onChange={handleUpcomingPageChange}
+                                            color="primary"
+                                            showFirstButton
+                                            showLastButton
+                                            sx={{
+                                                '& .MuiPagination-ul': {
+                                                    justifyContent: 'center',
+                                                },
+                                                '& .MuiPaginationItem-root': {
+                                                    borderRadius: 2,
+                                                    fontWeight: 600,
+                                                    '&.Mui-selected': {
+                                                        bgcolor: roleConfig.primaryColor,
+                                                        color: 'white',
+                                                        '&:hover': {
+                                                            bgcolor: roleConfig.gradientTo,
+                                                        },
+                                                    },
+                                                },
+                                            }}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="py-8 text-center md:py-12">
