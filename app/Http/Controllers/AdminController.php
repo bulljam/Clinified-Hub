@@ -96,9 +96,10 @@ class AdminController extends Controller
             ->with('success', 'Admin created successfully! Welcome email sent with temporary credentials.');
     }
 
-    public function show(User $admin): Response
+    public function show(int $admin): Response
     {
         $this->checkSuperAdminAccess();
+        $admin = User::findOrFail($admin);
         if (!in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }
@@ -108,9 +109,10 @@ class AdminController extends Controller
         ]);
     }
 
-    public function edit(User $admin): Response
+    public function edit(int $admin): Response
     {
         $this->checkSuperAdminAccess();
+        $admin = User::findOrFail($admin);
         if (!in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }
@@ -120,9 +122,10 @@ class AdminController extends Controller
         ]);
     }
 
-    public function update(Request $request, User $admin)
+    public function update(Request $request, int $admin)
     {
         $this->checkSuperAdminAccess();
+        $admin = User::findOrFail($admin);
         if (!in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }
@@ -140,9 +143,10 @@ class AdminController extends Controller
             ->with('success', 'Admin updated successfully!');
     }
 
-    public function destroy(User $admin)
+    public function destroy(int $admin)
     {
         $this->checkSuperAdminAccess();
+        $admin = User::findOrFail($admin);
         if (!in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }
@@ -160,9 +164,10 @@ class AdminController extends Controller
             ->with('success', 'Admin deleted successfully!');
     }
 
-    public function resetPassword(User $admin)
+    public function resetPassword(int $admin)
     {
         $this->checkSuperAdminAccess();
+        $admin = User::findOrFail($admin);
         if (!in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }

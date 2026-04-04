@@ -13,22 +13,7 @@ import {
     Schedule as ScheduleIcon,
     Shield as ShieldIcon,
 } from '@mui/icons-material';
-import {
-    Avatar,
-    Box,
-    Button,
-    CardContent,
-    Chip,
-    Divider,
-    Grid,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Paper,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Avatar, Box, Button, CardContent, Chip, Divider, List, ListItem, ListItemIcon, ListItemText, Paper, Stack, Typography } from '@mui/material';
 import { Crown as CrownIcon } from 'lucide-react';
 
 interface Admin {
@@ -116,8 +101,8 @@ export default function ShowAdmin({ admin }: Props) {
                     </Typography>
                 </Box>
 
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={8}>
+                <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '2fr 1fr' }} gap={3}>
+                    <Box>
                         <Paper sx={{ borderRadius: 3, overflow: 'hidden' }}>
                             <Box
                                 sx={{
@@ -203,11 +188,7 @@ export default function ShowAdmin({ admin }: Props) {
 
                                     <ListItem sx={{ px: 0, py: 2 }}>
                                         <ListItemIcon>
-                                            {admin.role === 'super_admin' ? (
-                                                <CrownIcon sx={{ color: '#dc2626' }} />
-                                            ) : (
-                                                <ShieldIcon sx={{ color: '#5c6bc0' }} />
-                                            )}
+                                            {admin.role === 'super_admin' ? <CrownIcon color="#dc2626" /> : <ShieldIcon sx={{ color: '#5c6bc0' }} />}
                                         </ListItemIcon>
                                         <ListItemText
                                             primary="Role & Permissions"
@@ -255,9 +236,9 @@ export default function ShowAdmin({ admin }: Props) {
                                 </List>
                             </CardContent>
                         </Paper>
-                    </Grid>
+                    </Box>
 
-                    <Grid item xs={12} md={4}>
+                    <Box>
                         <Stack spacing={3}>
                             <Paper sx={{ borderRadius: 3, p: 3 }}>
                                 <Typography variant="h6" fontWeight={600} sx={{ mb: 3, color: '#374151' }}>
@@ -374,8 +355,8 @@ export default function ShowAdmin({ admin }: Props) {
                                 </Typography>
                             </Paper>
                         </Stack>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Box>
         </AppLayout>
     );

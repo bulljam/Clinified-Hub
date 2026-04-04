@@ -171,7 +171,7 @@ export default function CreateAdmin() {
                                             </MenuItem>
                                             <MenuItem value="super_admin">
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                    <CrownIcon sx={{ color: '#dc2626' }} />
+                                                    <CrownIcon color="#dc2626" />
                                                     <Box>
                                                         <Typography fontWeight={600}>Super Admin</Typography>
                                                         <Typography variant="caption" color="text.secondary">
