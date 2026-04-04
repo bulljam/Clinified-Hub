@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { FilterList as FilterIcon, CreditCard as PaymentIcon, AccountBalanceWallet as WalletIcon } from '@mui/icons-material';
 import {
     Alert,
@@ -21,7 +21,6 @@ import {
     Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { useState } from 'react';
 
 interface Transaction {
     id: number;
@@ -59,6 +58,11 @@ interface PaginatedTransactions {
 
 interface Props {
     transactions: PaginatedTransactions;
+    summary: {
+        totalAmount: number;
+        paidAmount: number;
+        totalTransactions: number;
+    };
     users?: Array<{
         id: number;
         name: string;
@@ -71,6 +75,13 @@ interface Props {
         email: string;
         specialty: string | null;
     }>;
+    filters?: {
+        patient?: string;
+        provider?: string;
+        status?: string;
+        date_from?: string;
+        date_to?: string;
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -110,32 +121,25 @@ const getStatusLabel = (status: string) => {
     }
 };
 
-export default function Payments({ transactions, users = [], providers = [] }: Props) {
+export default function Payments({ transactions, summary, users = [], providers = [], filters = {} }: Props) {
     const { auth } = usePage<SharedData>().props;
-    const [filterPatient, setFilterPatient] = useState('');
-    const [filterProvider, setFilterProvider] = useState('');
-    const [filterStatus, setFilterStatus] = useState('');
-    const [filterDateFrom, setFilterDateFrom] = useState('');
-    const [filterDateTo, setFilterDateTo] = useState('');
 
     const isAdmin = auth.user?.role === 'admin' || auth.user?.role === 'super_admin';
     const isProvider = auth.user?.role === 'provider';
     const isPatient = auth.user?.role === 'client';
 
-    const filteredTransactions = transactions.data.filter((transaction) => {
-        if (filterPatient && transaction.user_id !== parseInt(filterPatient)) return false;
-        if (filterProvider && transaction.doctor_id !== parseInt(filterProvider)) return false;
-        if (filterStatus && transaction.status !== filterStatus) return false;
+    const updateFilters = (nextFilters: Record<string, string | number | undefined>) => {
+        const params = Object.fromEntries(
+            Object.entries(nextFilters).filter(([, value]) => value !== undefined && value !== ''),
+        );
 
-        const transactionDate = dayjs(transaction.created_at);
-        if (filterDateFrom && transactionDate.isBefore(dayjs(filterDateFrom))) return false;
-        if (filterDateTo && transactionDate.isAfter(dayjs(filterDateTo))) return false;
-
-        return true;
-    });
-
-    const totalAmount = filteredTransactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
-    const paidAmount = filteredTransactions.filter((t) => t.status === 'paid').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+        router.get('/payments', params, {
+            preserveScroll: true,
+            preserveState: true,
+            replace: true,
+            only: ['transactions', 'summary', 'filters'],
+        });
+    };
 
     const getRoleTitle = () => {
         if (isAdmin) return 'All Payments Management';
@@ -187,7 +191,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <WalletIcon sx={{ fontSize: 40, color: '#5c6bc0', mb: 1 }} />
                             <Typography variant="h5" fontWeight="600" color="#5c6bc0">
-                                ${totalAmount.toFixed(2)}
+                                ${summary.totalAmount.toFixed(2)}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 Total Amount
@@ -199,7 +203,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <PaymentIcon sx={{ fontSize: 40, color: '#4caf50', mb: 1 }} />
                             <Typography variant="h5" fontWeight="600" color="#4caf50">
-                                ${paidAmount.toFixed(2)}
+                                ${summary.paidAmount.toFixed(2)}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 Approved Amount
@@ -211,7 +215,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <FilterIcon sx={{ fontSize: 40, color: '#ff9800', mb: 1 }} />
                             <Typography variant="h5" fontWeight="600" color="#ff9800">
-                                {filteredTransactions.length}
+                                {summary.totalTransactions}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 Total Transactions
@@ -231,8 +235,14 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                                     select
                                     fullWidth
                                     label="Patient"
-                                    value={filterPatient}
-                                    onChange={(e) => setFilterPatient(e.target.value)}
+                                    value={filters.patient || ''}
+                                    onChange={(e) =>
+                                        updateFilters({
+                                            ...filters,
+                                            patient: e.target.value || undefined,
+                                            page: 1,
+                                        })
+                                    }
                                     size="small"
                                 >
                                     <MenuItem value="">All Patients</MenuItem>
@@ -249,8 +259,14 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                                     select
                                     fullWidth
                                     label="Provider"
-                                    value={filterProvider}
-                                    onChange={(e) => setFilterProvider(e.target.value)}
+                                    value={filters.provider || ''}
+                                    onChange={(e) =>
+                                        updateFilters({
+                                            ...filters,
+                                            provider: e.target.value || undefined,
+                                            page: 1,
+                                        })
+                                    }
                                     size="small"
                                 >
                                     <MenuItem value="">All Providers</MenuItem>
@@ -265,8 +281,14 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                                     select
                                     fullWidth
                                     label="Status"
-                                    value={filterStatus}
-                                    onChange={(e) => setFilterStatus(e.target.value)}
+                                    value={filters.status || ''}
+                                    onChange={(e) =>
+                                        updateFilters({
+                                            ...filters,
+                                            status: e.target.value || undefined,
+                                            page: 1,
+                                        })
+                                    }
                                     size="small"
                                 >
                                     <MenuItem value="">All Status</MenuItem>
@@ -280,8 +302,14 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                                     type="date"
                                     fullWidth
                                     label="From Date"
-                                    value={filterDateFrom}
-                                    onChange={(e) => setFilterDateFrom(e.target.value)}
+                                    value={filters.date_from || ''}
+                                    onChange={(e) =>
+                                        updateFilters({
+                                            ...filters,
+                                            date_from: e.target.value || undefined,
+                                            page: 1,
+                                        })
+                                    }
                                     size="small"
                                     InputLabelProps={{ shrink: true }}
                                 />
@@ -290,8 +318,14 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                                     type="date"
                                     fullWidth
                                     label="To Date"
-                                    value={filterDateTo}
-                                    onChange={(e) => setFilterDateTo(e.target.value)}
+                                    value={filters.date_to || ''}
+                                    onChange={(e) =>
+                                        updateFilters({
+                                            ...filters,
+                                            date_to: e.target.value || undefined,
+                                            page: 1,
+                                        })
+                                    }
                                     size="small"
                                     InputLabelProps={{ shrink: true }}
                                 />
@@ -301,7 +335,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                 )}
 
                 <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
-                    {filteredTransactions.length === 0 ? (
+                    {transactions.data.length === 0 ? (
                         <Box p={4} textAlign="center">
                             <Alert severity="info">
                                 <Typography variant="h6" gutterBottom>
@@ -329,7 +363,7 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {filteredTransactions.map((transaction, index) => (
+                                        {transactions.data.map((transaction, index) => (
                                             <TableRow
                                                 key={transaction.id}
                                                 sx={{
@@ -415,11 +449,12 @@ export default function Payments({ transactions, users = [], providers = [] }: P
                                     <Pagination
                                         count={transactions.last_page}
                                         page={transactions.current_page}
-                                        onChange={(_, page) => {
-                                            const url = new URL(window.location.href);
-                                            url.searchParams.set('page', page.toString());
-                                            window.location.href = url.toString();
-                                        }}
+                                        onChange={(_, page) =>
+                                            updateFilters({
+                                                ...filters,
+                                                page,
+                                            })
+                                        }
                                         color="primary"
                                         sx={{
                                             '& .MuiPaginationItem-root': {

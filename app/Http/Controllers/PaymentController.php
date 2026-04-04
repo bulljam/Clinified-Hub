@@ -10,7 +10,7 @@ use Inertia\Response;
 
 class PaymentController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $user = auth()->user();
         
@@ -21,8 +21,41 @@ class PaymentController extends Controller
         } elseif ($user->role === 'client') {
             $transactionsQuery->where('user_id', $user->id);
         }
+
+        if (in_array($user->role, ['admin', 'super_admin'])) {
+            if ($request->filled('patient')) {
+                $transactionsQuery->where('user_id', $request->integer('patient'));
+            }
+
+            if ($request->filled('provider')) {
+                $transactionsQuery->where('doctor_id', $request->integer('provider'));
+            }
+
+            if ($request->filled('status')) {
+                $transactionsQuery->where('status', $request->string('status'));
+            }
+
+            if ($request->filled('date_from')) {
+                $transactionsQuery->whereDate('created_at', '>=', $request->date('date_from'));
+            }
+
+            if ($request->filled('date_to')) {
+                $transactionsQuery->whereDate('created_at', '<=', $request->date('date_to'));
+            }
+        }
         
-        $transactions = $transactionsQuery->latest()->paginate(10);
+        $summaryQuery = clone $transactionsQuery;
+
+        $transactions = $transactionsQuery
+            ->latest()
+            ->paginate(4)
+            ->withQueryString();
+
+        $summary = [
+            'totalAmount' => (float) (clone $summaryQuery)->sum('amount'),
+            'paidAmount' => (float) (clone $summaryQuery)->where('status', 'paid')->sum('amount'),
+            'totalTransactions' => (clone $summaryQuery)->count(),
+        ];
 
         $users = [];
         $providers = [];
@@ -39,8 +72,10 @@ class PaymentController extends Controller
 
         return Inertia::render('Payments', [
             'transactions' => $transactions,
+            'summary' => $summary,
             'users' => $users,
             'providers' => $providers,
+            'filters' => $request->only(['patient', 'provider', 'status', 'date_from', 'date_to']),
         ]);
     }
 
