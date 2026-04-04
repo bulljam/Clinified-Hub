@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SharedData } from '@/types';
+import { getImageUrl } from '@/utils/imageHelpers';
 import { Link, usePage } from '@inertiajs/react';
 import { Login, PersonAdd } from '@mui/icons-material';
 import {
@@ -157,6 +158,8 @@ export default function Welcome() {
         return () => clearInterval(interval);
     }, []);
 
+    const authAvatarSrc = auth?.user ? auth.user.avatar || getImageUrl(auth.user.photo) : undefined;
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-muted/20">
             <nav className="fixed top-0 right-0 left-0 z-50 bg-background/80 pt-3 backdrop-blur-md">
@@ -177,7 +180,7 @@ export default function Welcome() {
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" className="flex items-center space-x-2 hover:bg-indigo-500/10 hover:text-indigo-600">
                                             <Avatar className="h-8 w-8">
-                                                <AvatarImage src={auth.user.avatar || auth.user.photo} alt={auth.user.name} />
+                                                <AvatarImage src={authAvatarSrc} alt={auth.user.name} />
                                                 <AvatarFallback className="!bg-slate-600 text-white">
                                                     {auth.user.name
                                                         .split(' ')
@@ -245,7 +248,7 @@ export default function Welcome() {
                                     <>
                                         <div className="mb-2 flex items-center space-x-3 rounded-lg bg-muted/50 p-3">
                                             <Avatar className="h-10 w-10">
-                                                <AvatarImage src={auth.user.avatar || auth.user.photo} alt={auth.user.name} />
+                                                <AvatarImage src={authAvatarSrc} alt={auth.user.name} />
                                                 <AvatarFallback className="!bg-slate-600 text-white">
                                                     {auth.user.name
                                                         .split(' ')

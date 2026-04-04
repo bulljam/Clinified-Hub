@@ -34,16 +34,18 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     const user = auth.user;
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const { data, setData, patch, processing, recentlySuccessful, errors } = useForm<{
+    const { data, setData, post, processing, recentlySuccessful, errors } = useForm<{
         name: string;
         email: string;
         photo: File | null;
         remove_photo: boolean;
+        _method: 'patch';
     }>({
         name: user.name,
         email: user.email,
         photo: null,
         remove_photo: false,
+        _method: 'patch',
     });
 
     const currentPhotoUrl = useMemo(() => getImageUrl(user.photo), [user.photo]);
@@ -77,7 +79,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        patch(updateProfile().url, {
+        post(updateProfile().url, {
             preserveScroll: true,
             forceFormData: true,
             onSuccess: () => {
@@ -106,7 +108,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         }}
                     >
                         <CardContent sx={{ p: 4 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
                                 <Box sx={{ mr: 3 }}>
                                     <Avatar
                                         src={avatarSrc}
@@ -115,6 +117,10 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                             height: 72,
                                             bgcolor: 'primary.main',
                                             fontSize: '1.75rem',
+                                            '& img': {
+                                                objectFit: 'cover',
+                                                objectPosition: 'center 20%',
+                                            },
                                         }}
                                     >
                                         {user.name.charAt(0).toUpperCase()}
