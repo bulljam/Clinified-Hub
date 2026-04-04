@@ -7,7 +7,7 @@ export default function AppLogo() {
                 <Stethoscope className="size-5 text-white" />
             </div>
             <div className="ml-1 grid flex-1 text-left text-sm">
-                <span className="mb-0.5 truncate leading-tight font-semibold text-white">ClinifiedHub</span>
+                <span className="mb-0.5 truncate leading-tight font-semibold text-white">Clinified Hub</span>
                 <span className="text-xs text-white/80">Healthcare Management</span>
             </div>
         </div>

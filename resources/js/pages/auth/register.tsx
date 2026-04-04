@@ -44,10 +44,14 @@ import {
     Stack,
     TextField,
     Typography,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import { useState } from 'react';
 
 export default function Register() {
+    const theme = useTheme();
+    const isLaptop = useMediaQuery(theme.breakpoints.down('xl'));
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isDoctorDialogOpen, setIsDoctorDialogOpen] = useState(true);
@@ -260,37 +264,44 @@ export default function Register() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: '90vh',
-                        py: 4,
+                        minHeight: isLaptop ? 'calc(100dvh - 32px)' : '90vh',
+                        py: isLaptop ? 1.5 : 4,
                     }}
                 >
-                    <Box sx={{ width: '100%', maxWidth: '1200px' }}>
+                    <Box sx={{ width: '100%', maxWidth: isLaptop ? '980px' : '1200px' }}>
                         <Card
                             elevation={24}
                             sx={{
                                 borderRadius: 4,
-                                overflow: 'visible',
+                                overflow: 'hidden',
                                 background: 'rgba(255, 255, 255, 0.98)',
                                 backdropFilter: 'blur(20px)',
                                 border: '1px solid rgba(255, 255, 255, 0.3)',
                                 boxShadow: '0 32px 64px rgba(0, 0, 0, 0.15)',
                                 position: 'relative',
                                 zIndex: 2,
+                                maxHeight: isLaptop ? 'calc(100dvh - 32px)' : 'none',
                             }}
                         >
-                            <CardContent sx={{ p: { xs: 4, sm: 6, md: 8 } }}>
-                                <Box sx={{ textAlign: 'center', mb: 6 }}>
+                            <CardContent
+                                sx={{
+                                    p: { xs: 3, sm: 4, md: isLaptop ? 4.5 : 8 },
+                                    maxHeight: isLaptop ? 'calc(100dvh - 32px)' : 'none',
+                                    overflowY: isLaptop ? 'auto' : 'visible',
+                                }}
+                            >
+                                <Box sx={{ textAlign: 'center', mb: isLaptop ? 3.5 : 6 }}>
                                     <Box
                                         sx={{
-                                            width: 80,
-                                            height: 80,
+                                            width: isLaptop ? 64 : 80,
+                                            height: isLaptop ? 64 : 80,
                                             borderRadius: '20px',
                                             background: 'linear-gradient(135deg, #5c6bc0 0%, #7986cb 100%)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             margin: '0 auto',
-                                            mb: 3,
+                                            mb: isLaptop ? 2 : 3,
                                             boxShadow: '0 12px 32px rgba(92, 107, 192, 0.3)',
                                             animation: 'logoGlow 3s ease-in-out infinite',
                                             '@keyframes logoGlow': {
@@ -305,14 +316,15 @@ export default function Register() {
                                             },
                                         }}
                                     >
-                                        <DoctorIcon sx={{ fontSize: 45, color: 'white' }} />
+                                        <DoctorIcon sx={{ fontSize: isLaptop ? 34 : 45, color: 'white' }} />
                                     </Box>
 
                                     <Typography
                                         variant="h3"
                                         sx={{
                                             fontWeight: 800,
-                                            mb: 2,
+                                            mb: 1,
+                                            fontSize: { xs: '2rem', md: isLaptop ? '2.2rem' : '3rem' },
                                             background: 'linear-gradient(45deg, #5c6bc0 30%, #7986cb 90%)',
                                             backgroundClip: 'text',
                                             WebkitBackgroundClip: 'text',
@@ -322,19 +334,19 @@ export default function Register() {
                                         Clinified Hub
                                     </Typography>
 
-                                    <Typography variant="h5" fontWeight="bold" color="#5c6bc0" gutterBottom>
+                                    <Typography variant="h5" fontWeight="bold" color="#5c6bc0" gutterBottom sx={{ fontSize: { xs: '1.2rem', md: isLaptop ? '1.25rem' : '1.5rem' } }}>
                                         Create Your Account
                                     </Typography>
 
-                                    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 500, mx: 'auto' }}>
+                                    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 500, mx: 'auto', fontSize: isLaptop ? '0.92rem' : '1rem' }}>
                                         Join our healthcare platform and start your wellness journey with expert doctors and modern medical services
                                     </Typography>
                                 </Box>
 
                                 <Form {...registerRoute.store.form()} resetOnSuccess={['password', 'password_confirmation']} disableWhileProcessing>
                                     {({ processing, errors }) => (
-                                        <Stack spacing={3}>
-                                            <Typography variant="h6" color="#5c6bc0" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Stack spacing={isLaptop ? 2 : 3}>
+                                            <Typography variant="h6" color="#5c6bc0" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: isLaptop ? '1rem' : undefined }}>
                                                 <PersonIcon /> Personal Information
                                             </Typography>
 
@@ -368,9 +380,12 @@ export default function Register() {
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
+                                                            minHeight: isLaptop ? 46 : 56,
+                                                            fontSize: isLaptop ? '0.92rem' : '1rem',
                                                             '&:hover fieldset': { borderColor: '#5c6bc0' },
                                                             '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
+                                                        '& .MuiInputLabel-root': { fontSize: isLaptop ? '0.92rem' : '1rem' },
                                                         '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
@@ -396,9 +411,12 @@ export default function Register() {
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
+                                                            minHeight: isLaptop ? 46 : 56,
+                                                            fontSize: isLaptop ? '0.92rem' : '1rem',
                                                             '&:hover fieldset': { borderColor: '#5c6bc0' },
                                                             '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
+                                                        '& .MuiInputLabel-root': { fontSize: isLaptop ? '0.92rem' : '1rem' },
                                                         '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
@@ -446,6 +464,8 @@ export default function Register() {
                                                         tabIndex={4}
                                                         startAdornment={<PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />}
                                                         sx={{
+                                                            minHeight: isLaptop ? 46 : 56,
+                                                            fontSize: isLaptop ? '0.92rem' : '1rem',
                                                             '&:hover .MuiOutlinedInput-notchedOutline': {
                                                                 borderColor: '#5c6bc0',
                                                             },
@@ -495,9 +515,12 @@ export default function Register() {
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
+                                                            minHeight: isLaptop ? 46 : 56,
+                                                            fontSize: isLaptop ? '0.92rem' : '1rem',
                                                             '&:hover fieldset': { borderColor: '#5c6bc0' },
                                                             '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
+                                                        '& .MuiInputLabel-root': { fontSize: isLaptop ? '0.92rem' : '1rem' },
                                                         '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
@@ -523,17 +546,20 @@ export default function Register() {
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
+                                                            minHeight: isLaptop ? 46 : 56,
+                                                            fontSize: isLaptop ? '0.92rem' : '1rem',
                                                             '&:hover fieldset': { borderColor: '#5c6bc0' },
                                                             '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
+                                                        '& .MuiInputLabel-root': { fontSize: isLaptop ? '0.92rem' : '1rem' },
                                                         '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
                                             </Box>
 
-                                            <Divider sx={{ my: 2 }} />
+                                            <Divider sx={{ my: isLaptop ? 1 : 2 }} />
 
-                                            <Typography variant="h6" color="#5c6bc0" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Typography variant="h6" color="#5c6bc0" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: isLaptop ? '1rem' : undefined }}>
                                                 <LockIcon /> Security
                                             </Typography>
 
@@ -577,9 +603,12 @@ export default function Register() {
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
+                                                            minHeight: isLaptop ? 46 : 56,
+                                                            fontSize: isLaptop ? '0.92rem' : '1rem',
                                                             '&:hover fieldset': { borderColor: '#5c6bc0' },
                                                             '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
+                                                        '& .MuiInputLabel-root': { fontSize: isLaptop ? '0.92rem' : '1rem' },
                                                         '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
@@ -616,9 +645,12 @@ export default function Register() {
                                                     }}
                                                     sx={{
                                                         '& .MuiOutlinedInput-root': {
+                                                            minHeight: isLaptop ? 46 : 56,
+                                                            fontSize: isLaptop ? '0.92rem' : '1rem',
                                                             '&:hover fieldset': { borderColor: '#5c6bc0' },
                                                             '&.Mui-focused fieldset': { borderColor: '#5c6bc0' },
                                                         },
+                                                        '& .MuiInputLabel-root': { fontSize: isLaptop ? '0.92rem' : '1rem' },
                                                         '& .MuiInputLabel-root.Mui-focused': { color: '#5c6bc0' },
                                                     }}
                                                 />
@@ -634,11 +666,11 @@ export default function Register() {
                                                 startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <RegisterIcon />}
                                                 sx={{
                                                     bgcolor: '#5c6bc0',
-                                                    py: 1.5,
-                                                    mt: 3,
+                                                    py: isLaptop ? 1.1 : 1.5,
+                                                    mt: isLaptop ? 1 : 3,
                                                     textTransform: 'none',
                                                     fontWeight: 600,
-                                                    fontSize: '1.1rem',
+                                                    fontSize: isLaptop ? '0.98rem' : '1.1rem',
                                                     borderRadius: 2,
                                                     boxShadow: '0 8px 32px rgba(92, 107, 192, 0.3)',
                                                     '&:hover': {
@@ -655,8 +687,8 @@ export default function Register() {
                                                 {processing ? 'Creating Account...' : 'Create Account'}
                                             </Button>
 
-                                            <Box sx={{ textAlign: 'center', mt: 2 }}>
-                                                <Typography variant="body2" color="text.secondary">
+                                            <Box sx={{ textAlign: 'center', mt: 1.5 }}>
+                                                <Typography variant="body2" color="text.secondary" sx={{ fontSize: isLaptop ? '0.88rem' : '1rem' }}>
                                                     Already have an account?{' '}
                                                     <Link
                                                         href={login()}
