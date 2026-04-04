@@ -1,5 +1,5 @@
-import RegisteredUserController from '@/actions/App/Http/Controllers/Auth/RegisteredUserController';
 import { login } from '@/routes';
+import registerRoute from '@/routes/register';
 import { Form, Head, Link } from '@inertiajs/react';
 import {
     Box,
@@ -334,7 +334,7 @@ export default function Register() {
                                 </Box>
 
                                 <Form
-                                    {...RegisteredUserController.store.form()}
+                                    {...registerRoute.store.form()}
                                     resetOnSuccess={['password', 'password_confirmation']}
                                     disableWhileProcessing
                                 >
