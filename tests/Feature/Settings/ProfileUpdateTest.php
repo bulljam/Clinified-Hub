@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
@@ -50,6 +52,54 @@ test('email verification status is unchanged when the email address is unchanged
         ->assertRedirect(route('profile.edit'));
 
     expect($user->refresh()->email_verified_at)->not->toBeNull();
+});
+
+test('profile photo can be uploaded', function () {
+    Storage::fake('public');
+
+    $user = User::factory()->create();
+    $photo = UploadedFile::fake()->image('avatar.png');
+
+    $response = $this
+        ->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'photo' => $photo,
+        ]);
+
+    $response
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    $user->refresh();
+
+    expect($user->photo)->not->toBeNull();
+    Storage::disk('public')->assertExists($user->photo);
+});
+
+test('profile photo can be removed', function () {
+    Storage::fake('public');
+
+    $existingPhoto = UploadedFile::fake()->image('existing.png')->store('profile-photos', 'public');
+    $user = User::factory()->create([
+        'photo' => $existingPhoto,
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'remove_photo' => true,
+        ]);
+
+    $response
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    expect($user->fresh()->photo)->toBeNull();
+    Storage::disk('public')->assertMissing($existingPhoto);
 });
 
 test('user can delete their account', function () {
