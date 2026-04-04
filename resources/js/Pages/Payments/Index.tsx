@@ -1,20 +1,7 @@
-import React from 'react';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Chip,
-    Typography,
-    Box,
-    Card,
-    CardContent,
-} from '@mui/material';
-import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
+import { Head } from '@inertiajs/react';
+import { Box, Card, CardContent, Chip, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, type ChipProps } from '@mui/material';
+import React from 'react';
 
 interface User {
     id: number;
@@ -37,7 +24,7 @@ interface PaymentsIndexProps {
 }
 
 export default function PaymentsIndex({ transactions }: PaymentsIndexProps) {
-    const getStatusColor = (status: string) => {
+    const getStatusColor = (status: string): ChipProps['color'] => {
         switch (status) {
             case 'paid':
                 return 'success';
@@ -81,7 +68,7 @@ export default function PaymentsIndex({ transactions }: PaymentsIndexProps) {
     return (
         <>
             <Head title="Payments" />
-            
+
             <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
                 <Typography variant="h4" component="h1" gutterBottom>
                     Payment Transactions
@@ -104,20 +91,16 @@ export default function PaymentsIndex({ transactions }: PaymentsIndexProps) {
                                 <TableBody>
                                     {transactions.length === 0 ? (
                                         <TableRow>
-                                            <TableCell 
-                                                colSpan={6} 
-                                                align="center"
-                                                sx={{ py: 4, color: 'text.secondary' }}
-                                            >
+                                            <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>
                                                 No transactions found
                                             </TableCell>
                                         </TableRow>
                                     ) : (
                                         transactions.map((transaction) => (
-                                            <TableRow 
+                                            <TableRow
                                                 key={transaction.id}
                                                 hover
-                                                sx={{ 
+                                                sx={{
                                                     '&:last-child td, &:last-child th': { border: 0 },
                                                 }}
                                             >
@@ -126,61 +109,49 @@ export default function PaymentsIndex({ transactions }: PaymentsIndexProps) {
                                                         <Typography variant="body2" fontWeight="medium">
                                                             {transaction.user.name}
                                                         </Typography>
-                                                        <Typography 
-                                                            variant="caption" 
-                                                            color="text.secondary"
-                                                        >
+                                                        <Typography variant="caption" color="text.secondary">
                                                             {transaction.user.email}
                                                         </Typography>
                                                     </Box>
                                                 </TableCell>
-                                                
+
                                                 <TableCell>
                                                     <Box>
                                                         <Typography variant="body2" fontWeight="medium">
                                                             {transaction.doctor.name}
                                                         </Typography>
-                                                        <Typography 
-                                                            variant="caption" 
-                                                            color="text.secondary"
-                                                        >
+                                                        <Typography variant="caption" color="text.secondary">
                                                             {transaction.doctor.email}
                                                         </Typography>
                                                     </Box>
                                                 </TableCell>
-                                                
+
                                                 <TableCell align="right">
                                                     <Typography variant="body2" fontWeight="medium">
                                                         {formatCurrency(transaction.amount)}
                                                     </Typography>
                                                 </TableCell>
-                                                
+
                                                 <TableCell>
-                                                    <Typography 
-                                                        variant="body2" 
-                                                        fontFamily="monospace"
-                                                        color="text.secondary"
-                                                    >
+                                                    <Typography variant="body2" fontFamily="monospace" color="text.secondary">
                                                         •••• {transaction.card_last4}
                                                     </Typography>
                                                 </TableCell>
-                                                
+
                                                 <TableCell>
                                                     <Chip
                                                         label={
                                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                                                 <span>{getStatusIcon(transaction.status)}</span>
-                                                                <span style={{ textTransform: 'capitalize' }}>
-                                                                    {transaction.status}
-                                                                </span>
+                                                                <span style={{ textTransform: 'capitalize' }}>{transaction.status}</span>
                                                             </Box>
                                                         }
-                                                        color={getStatusColor(transaction.status) as any}
+                                                        color={getStatusColor(transaction.status)}
                                                         variant="outlined"
                                                         size="small"
                                                     />
                                                 </TableCell>
-                                                
+
                                                 <TableCell>
                                                     <Typography variant="body2" color="text.secondary">
                                                         {formatDate(transaction.created_at)}
@@ -199,6 +170,4 @@ export default function PaymentsIndex({ transactions }: PaymentsIndexProps) {
     );
 }
 
-PaymentsIndex.layout = (page: React.ReactElement) => (
-    <AppLayout children={page} />
-);
+PaymentsIndex.layout = (page: React.ReactElement) => <AppLayout children={page} />;

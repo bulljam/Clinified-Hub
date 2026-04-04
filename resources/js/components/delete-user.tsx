@@ -1,23 +1,23 @@
+import { destroy as destroyProfile } from '@/routes/profile';
 import { Form } from '@inertiajs/react';
-import { useRef, useState } from 'react';
-import { Warning, DeleteForever } from '@mui/icons-material';
+import { DeleteForever, Warning } from '@mui/icons-material';
 import {
-    Card,
-    CardContent,
-    Typography,
-    Button as MuiButton,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    TextField,
     Alert,
     Box,
+    Card,
+    CardContent,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Divider,
-    Stack
+    Button as MuiButton,
+    Stack,
+    TextField,
+    Typography,
 } from '@mui/material';
-import { destroy as destroyProfile } from '@/routes/profile';
+import { useRef, useState } from 'react';
 
 export default function DeleteUser() {
     const passwordInput = useRef<HTMLInputElement>(null);
@@ -51,9 +51,7 @@ export default function DeleteUser() {
                             <Typography variant="body2" fontWeight="600">
                                 Warning
                             </Typography>
-                            <Typography variant="body2">
-                                Please proceed with caution, this cannot be undone.
-                            </Typography>
+                            <Typography variant="body2">Please proceed with caution, this cannot be undone.</Typography>
                         </Box>
                     </Box>
                 </Alert>
@@ -69,7 +67,7 @@ export default function DeleteUser() {
                         px: 3,
                         py: 1.5,
                         textTransform: 'none',
-                        fontWeight: 600
+                        fontWeight: 600,
                     }}
                 >
                     Delete Account
@@ -82,8 +80,8 @@ export default function DeleteUser() {
                     fullWidth
                     slotProps={{
                         paper: {
-                            sx: { borderRadius: 3 }
-                        }
+                            sx: { borderRadius: 3 },
+                        },
                     }}
                 >
                     <DialogTitle sx={{ pb: 2 }}>
@@ -93,8 +91,8 @@ export default function DeleteUser() {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText sx={{ mb: 3 }}>
-                            Once your account is deleted, all of its resources and data will also be permanently deleted. 
-                            Please enter your password to confirm you would like to permanently delete your account.
+                            Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password
+                            to confirm you would like to permanently delete your account.
                         </DialogContentText>
 
                         <Form
@@ -121,8 +119,8 @@ export default function DeleteUser() {
                                                 borderRadius: 2,
                                                 '&.Mui-focused fieldset': {
                                                     borderColor: 'error.main',
-                                                }
-                                            }
+                                                },
+                                            },
                                         }}
                                     />
 
@@ -137,7 +135,7 @@ export default function DeleteUser() {
                                                 borderRadius: 2,
                                                 textTransform: 'none',
                                                 fontWeight: 500,
-                                                px: 3
+                                                px: 3,
                                             }}
                                         >
                                             Cancel
@@ -152,7 +150,7 @@ export default function DeleteUser() {
                                                 borderRadius: 2,
                                                 textTransform: 'none',
                                                 fontWeight: 600,
-                                                px: 3
+                                                px: 3,
                                             }}
                                         >
                                             {processing ? 'Deleting...' : 'Delete Account'}

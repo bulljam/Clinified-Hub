@@ -1,7 +1,14 @@
-import { Head, router } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
 import ProviderCard from '@/components/ProviderCard';
+import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import { Head, router } from '@inertiajs/react';
+import {
+    ExpandLess as ExpandLessIcon,
+    ExpandMore as ExpandMoreIcon,
+    FilterAlt as FilterIcon,
+    LocalHospital as MedicalIcon,
+    Search as SearchIcon,
+} from '@mui/icons-material';
 import {
     Avatar,
     Box,
@@ -16,17 +23,10 @@ import {
     MenuItem,
     Pagination,
     Select,
+    Stack,
     TextField,
     Typography,
-    Stack,
 } from '@mui/material';
-import {
-    LocalHospital as MedicalIcon,
-    Search as SearchIcon,
-    FilterAlt as FilterIcon,
-    ExpandMore as ExpandMoreIcon,
-    ExpandLess as ExpandLessIcon,
-} from '@mui/icons-material';
 import { useState } from 'react';
 
 interface Provider {
@@ -78,40 +78,32 @@ export default function Providers({ providers, userRole, specialties, cities, fi
     const [showFilters, setShowFilters] = useState(true);
     const [localFilters, setLocalFilters] = useState(filters);
 
-    const filteredSpecialties = Array.from(new Set(
-        providers.data
-            .map(provider => provider.specialty)
-            .filter(specialty => specialty)
-    )).length;
+    const filteredSpecialties = Array.from(new Set(providers.data.map((provider) => provider.specialty).filter((specialty) => specialty))).length;
 
-    const filteredCities = Array.from(new Set(
-        providers.data
-            .map(provider => provider.city)
-            .filter(city => city)
-    )).length;
+    const filteredCities = Array.from(new Set(providers.data.map((provider) => provider.city).filter((city) => city))).length;
 
     const handlePageChange = (page: number) => {
         const params = new URLSearchParams();
         params.append('page', page.toString());
-        
+
         Object.entries(localFilters).forEach(([key, value]) => {
             if (value) params.append(key, value.toString());
         });
-        
+
         if (searchQuery) params.append('search', searchQuery);
-        
+
         router.get(`/providers?${params.toString()}`);
     };
 
     const handleSearch = () => {
         const params = new URLSearchParams();
-        
+
         Object.entries(localFilters).forEach(([key, value]) => {
             if (value) params.append(key, value.toString());
         });
-        
+
         if (searchQuery) params.append('search', searchQuery);
-        
+
         router.get(`/providers?${params.toString()}`);
     };
 
@@ -124,17 +116,17 @@ export default function Providers({ providers, userRole, specialties, cities, fi
     const handleFilterChange = (key: string, value: string | number) => {
         const newFilters = {
             ...localFilters,
-            [key]: value || undefined
+            [key]: value || undefined,
         };
         setLocalFilters(newFilters);
-        
+
         const params = new URLSearchParams();
         Object.entries(newFilters).forEach(([filterKey, filterValue]) => {
             if (filterValue) params.append(filterKey, filterValue.toString());
         });
-        
+
         if (searchQuery) params.append('search', searchQuery);
-        
+
         router.get(`/providers?${params.toString()}`);
     };
 
@@ -143,9 +135,9 @@ export default function Providers({ providers, userRole, specialties, cities, fi
         Object.entries(localFilters).forEach(([key, value]) => {
             if (value) params.append(key, value.toString());
         });
-        
+
         if (searchQuery) params.append('search', searchQuery);
-        
+
         router.get(`/providers?${params.toString()}`);
     };
 
@@ -155,12 +147,10 @@ export default function Providers({ providers, userRole, specialties, cities, fi
         router.get('/providers');
     };
 
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Healthcare Providers" />
             <Box sx={{ p: { xs: 2, md: 3 }, minHeight: '100vh', bgcolor: '#fafafa' }}>
-                {/* Header Section */}
                 <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
                     <CardContent sx={{ p: 4 }}>
                         <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
@@ -173,12 +163,11 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                         Healthcare Providers
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        {userRole === 'admin' || userRole === 'super_admin' 
+                                        {userRole === 'admin' || userRole === 'super_admin'
                                             ? 'Manage and view all healthcare providers in the system'
                                             : userRole === 'provider'
-                                            ? 'Connect with fellow healthcare providers'
-                                            : 'Find and connect with qualified healthcare providers'
-                                        }
+                                              ? 'Connect with fellow healthcare providers'
+                                              : 'Find and connect with qualified healthcare providers'}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -186,11 +175,9 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                     </CardContent>
                 </Card>
 
-                {/* Search and Filter Section */}
                 <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
                     <CardContent sx={{ p: 3 }}>
                         <Stack spacing={3}>
-                            {/* Search Bar */}
                             <TextField
                                 fullWidth
                                 placeholder="Search providers by name, specialty, or location..."
@@ -234,8 +221,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                     },
                                 }}
                             />
-                            
-                            {/* Filter Toggle */}
+
                             <Box display="flex" alignItems="center" gap={2}>
                                 <Button
                                     startIcon={<FilterIcon />}
@@ -253,27 +239,23 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                 >
                                     {showFilters ? 'Hide Filters' : 'Show Filters'}
                                 </Button>
-                                {(Object.values(localFilters).some(v => v) || searchQuery) && (
-                                    <Button
-                                        variant="text"
-                                        color="error"
-                                        onClick={clearFilters}
-                                        size="small"
-                                    >
+                                {(Object.values(localFilters).some((v) => v) || searchQuery) && (
+                                    <Button variant="text" color="error" onClick={clearFilters} size="small">
                                         Clear All
                                     </Button>
                                 )}
                             </Box>
 
-                            {/* Filters */}
                             <Collapse in={showFilters}>
-                                <Box sx={{ 
-                                    border: '1px solid #e0e0e0', 
-                                    borderRadius: 2, 
-                                    p: 3, 
-                                    mt: 2,
-                                    bgcolor: 'rgba(92, 107, 192, 0.02)' 
-                                }}>
+                                <Box
+                                    sx={{
+                                        border: '1px solid #e0e0e0',
+                                        borderRadius: 2,
+                                        p: 3,
+                                        mt: 2,
+                                        bgcolor: 'rgba(92, 107, 192, 0.02)',
+                                    }}
+                                >
                                     <Grid container spacing={3} alignItems="flex-end">
                                         <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                                             <FormControl fullWidth>
@@ -383,16 +365,18 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                             </FormControl>
                                         </Grid>
                                     </Grid>
-                                    <Box sx={{ 
-                                        mt: 3, 
-                                        display: 'flex', 
-                                        gap: 2, 
-                                        justifyContent: 'flex-end',
-                                        flexWrap: 'wrap',
-                                        alignItems: 'center'
-                                    }}>
-                                        <Button 
-                                            onClick={clearFilters} 
+                                    <Box
+                                        sx={{
+                                            mt: 3,
+                                            display: 'flex',
+                                            gap: 2,
+                                            justifyContent: 'flex-end',
+                                            flexWrap: 'wrap',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <Button
+                                            onClick={clearFilters}
                                             variant="outlined"
                                             sx={{
                                                 borderColor: '#e0e0e0',
@@ -415,7 +399,7 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                                 px: 3,
                                                 py: 1,
                                                 fontWeight: 600,
-                                                '&:hover': { 
+                                                '&:hover': {
                                                     bgcolor: '#26418f',
                                                     transform: 'translateY(-1px)',
                                                     boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
@@ -431,7 +415,6 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                     </CardContent>
                 </Card>
 
-                {/* Statistics */}
                 <Grid container spacing={3} sx={{ mb: 4 }}>
                     <Grid size={{ xs: 12, sm: 4 }}>
                         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
@@ -473,7 +456,6 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                     </Grid>
                 </Grid>
 
-                {/* Providers Grid */}
                 {providers.data.length > 0 ? (
                     <>
                         <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -484,16 +466,17 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                             ))}
                         </Grid>
 
-                        {/* Pagination */}
                         {providers.last_page > 1 && (
-                            <Box sx={{ 
-                                display: 'flex', 
-                                justifyContent: 'center', 
-                                alignItems: 'center', 
-                                mt: 4, 
-                                mb: 2,
-                                gap: 2
-                            }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    mt: 4,
+                                    mb: 2,
+                                    gap: 2,
+                                }}
+                            >
                                 <Typography variant="body2" color="text.secondary">
                                     Showing {providers.from || 0}-{providers.to || 0} of {providers.total} providers
                                 </Typography>
@@ -547,10 +530,9 @@ export default function Providers({ providers, userRole, specialties, cities, fi
                                 No Providers Found
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {search || Object.values(localFilters).some(v => v) 
-                                    ? 'Try adjusting your search criteria or filters.' 
-                                    : 'No healthcare providers are currently available.'
-                                }
+                                {search || Object.values(localFilters).some((v) => v)
+                                    ? 'Try adjusting your search criteria or filters.'
+                                    : 'No healthcare providers are currently available.'}
                             </Typography>
                         </CardContent>
                     </Card>

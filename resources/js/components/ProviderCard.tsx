@@ -1,22 +1,14 @@
-import {
-    Avatar,
-    Box,
-    Card,
-    CardContent,
-    Chip,
-    Stack,
-    Typography,
-} from '@mui/material';
-import {
-    Person as PersonIcon,
-    Email as EmailIcon,
-    Phone as PhoneIcon,
-    LocationOn as LocationIcon,
-    Work as WorkIcon,
-    Star as StarIcon,
-} from '@mui/icons-material';
-import dayjs from 'dayjs';
 import { getImageUrl } from '@/utils/imageHelpers';
+import {
+    Email as EmailIcon,
+    LocationOn as LocationIcon,
+    Person as PersonIcon,
+    Phone as PhoneIcon,
+    Star as StarIcon,
+    Work as WorkIcon,
+} from '@mui/icons-material';
+import { Avatar, Box, Card, CardContent, Chip, Stack, Typography } from '@mui/material';
+import dayjs from 'dayjs';
 
 interface Provider {
     id: number;
@@ -40,13 +32,16 @@ interface ProviderCardProps {
 
 const getGenderIcon = (gender?: string) => {
     switch (gender) {
-        case 'male': return '👨';
-        case 'female': return '👩';
-        case 'other': return '';
-        default: return '👤';
+        case 'male':
+            return '👨';
+        case 'female':
+            return '👩';
+        case 'other':
+            return '';
+        default:
+            return '👤';
     }
 };
-
 
 export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
     return (
@@ -59,18 +54,20 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                 cursor: onClick ? 'pointer' : 'default',
                 transition: 'all 0.2s ease',
                 border: '1px solid #e0e0e0',
-                '&:hover': onClick ? {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    borderColor: '#5c6bc0',
-                } : {},
+                '&:hover': onClick
+                    ? {
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                          borderColor: '#5c6bc0',
+                      }
+                    : {},
             }}
         >
             <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
                     <Avatar
                         src={getImageUrl(provider.photo)}
-                        sx={{ 
+                        sx={{
                             width: 64,
                             height: 64,
                             bgcolor: '#5c6bc0',
@@ -86,13 +83,13 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                     >
                         {!provider.photo && provider.name.charAt(0)}
                     </Avatar>
-                    
+
                     <Typography variant="h6" fontWeight="600" textAlign="center" mb={0.5}>
                         {provider.name}
                     </Typography>
-                    
+
                     {provider.specialty && (
-                        <Chip 
+                        <Chip
                             label={provider.specialty}
                             size="small"
                             sx={{
@@ -113,7 +110,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                             </Typography>
                         </Box>
                     )}
-                    
+
                     {provider.city && (
                         <Box display="flex" alignItems="center" gap={1}>
                             <LocationIcon fontSize="small" sx={{ color: '#5c6bc0' }} />
@@ -122,7 +119,7 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                             </Typography>
                         </Box>
                     )}
-                    
+
                     {provider.gender && (
                         <Box display="flex" alignItems="center" gap={1}>
                             <PersonIcon fontSize="small" sx={{ color: '#5c6bc0' }} />
@@ -134,9 +131,9 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
 
                     <Box display="flex" alignItems="center" gap={1}>
                         <EmailIcon fontSize="small" sx={{ color: '#5c6bc0' }} />
-                        <Typography 
-                            variant="body2" 
-                            color="text.secondary" 
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
                             sx={{
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
@@ -157,9 +154,9 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                     )}
 
                     {provider.bio && (
-                        <Typography 
-                            variant="body2" 
-                            color="text.secondary" 
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
                             sx={{
                                 display: '-webkit-box',
                                 WebkitLineClamp: 2,
@@ -173,10 +170,10 @@ export default function ProviderCard({ provider, onClick }: ProviderCardProps) {
                     )}
                 </Stack>
 
-                <Box 
-                    sx={{ 
+                <Box
+                    sx={{
                         mt: 2,
-                        pt: 2, 
+                        pt: 2,
                         borderTop: '1px solid #f0f0f0',
                         display: 'flex',
                         justifyContent: 'space-between',

@@ -1,30 +1,24 @@
-import React, { useState } from 'react';
+import { router } from '@inertiajs/react';
+import { CheckCircle, CreditCard, Lock, Security } from '@mui/icons-material';
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    TextField,
-    Button,
-    CircularProgress,
     Alert,
-    Snackbar,
-    Typography,
     Box,
-    Stack,
-    Paper,
-    Divider,
-    InputAdornment,
+    Button,
     Card,
     CardContent,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    Divider,
+    InputAdornment,
+    Paper,
+    Snackbar,
+    Stack,
+    TextField,
+    Typography,
 } from '@mui/material';
-import {
-    CreditCard,
-    Lock,
-    CheckCircle,
-    Security,
-} from '@mui/icons-material';
-import { router } from '@inertiajs/react';
+import React, { useState } from 'react';
 
 interface CreatePaymentProps {
     open: boolean;
@@ -46,15 +40,7 @@ interface FormData {
     appointment_id?: number;
 }
 
-export default function CreatePayment({
-    open,
-    onClose,
-    amount = 30,
-    doctorId = 1,
-    userId = 1,
-    appointmentId,
-    onSuccess,
-}: CreatePaymentProps) {
+export default function CreatePayment({ open, onClose, amount = 30, doctorId = 1, userId = 1, appointmentId, onSuccess }: CreatePaymentProps) {
     const [loading, setLoading] = useState(false);
     const [snackbar, setSnackbar] = useState<{
         open: boolean;
@@ -78,17 +64,15 @@ export default function CreatePayment({
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const handleChange = (field: keyof FormData) => (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleChange = (field: keyof FormData) => (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = field === 'amount' ? parseFloat(event.target.value) || 0 : event.target.value;
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
             [field]: value,
         }));
 
         if (errors[field]) {
-            setErrors(prev => ({
+            setErrors((prev) => ({
                 ...prev,
                 [field]: '',
             }));
@@ -117,8 +101,8 @@ export default function CreatePayment({
     const handleCardNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const formatted = formatCardNumber(event.target.value);
         const cleanedForStorage = getCardNumberForStorage(formatted);
-        
-        setFormData(prev => ({
+
+        setFormData((prev) => ({
             ...prev,
             card_number: cleanedForStorage,
         }));
@@ -126,7 +110,7 @@ export default function CreatePayment({
         event.target.value = formatted;
 
         if (errors.card_number) {
-            setErrors(prev => ({
+            setErrors((prev) => ({
                 ...prev,
                 card_number: '',
             }));
@@ -135,13 +119,13 @@ export default function CreatePayment({
 
     const handleExpirationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const formatted = formatExpiration(event.target.value);
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
             expiration: formatted,
         }));
 
         if (errors.expiration) {
-            setErrors(prev => ({
+            setErrors((prev) => ({
                 ...prev,
                 expiration: '',
             }));
@@ -173,7 +157,7 @@ export default function CreatePayment({
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
@@ -181,54 +165,59 @@ export default function CreatePayment({
         setLoading(true);
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 2500));
+            await new Promise((resolve) => setTimeout(resolve, 2500));
 
-            router.post('/payments', {
-                card_number: formData.card_number,
-                expiration: formData.expiration,
-                cvv: formData.cvv,
-                amount: formData.amount,
-                doctor_id: formData.doctor_id,
-                user_id: formData.user_id,
-                appointment_id: formData.appointment_id,
-            }, {
-                onSuccess: () => {
-                    setSnackbar({
-                        open: true,
-                        message: 'Payment submitted successfully! Awaiting doctor approval.',
-                        severity: 'success',
-                    });
-                    
-                    onSuccess?.();
-                    setTimeout(() => {
-                        onClose();
-                        setFormData({
-                            card_number: '',
-                            expiration: '',
-                            cvv: '',
-                            amount: amount,
-                            doctor_id: doctorId,
-                            user_id: userId,
-                            appointment_id: appointmentId,
+            router.post(
+                '/payments',
+                {
+                    card_number: formData.card_number,
+                    expiration: formData.expiration,
+                    cvv: formData.cvv,
+                    amount: formData.amount,
+                    doctor_id: formData.doctor_id,
+                    user_id: formData.user_id,
+                    appointment_id: formData.appointment_id,
+                },
+                {
+                    onSuccess: () => {
+                        setSnackbar({
+                            open: true,
+                            message: 'Payment submitted successfully! Awaiting doctor approval.',
+                            severity: 'success',
                         });
-                    }, 1500);
+
+                        onSuccess?.();
+                        setTimeout(() => {
+                            onClose();
+                            setFormData({
+                                card_number: '',
+                                expiration: '',
+                                cvv: '',
+                                amount: amount,
+                                doctor_id: doctorId,
+                                user_id: userId,
+                                appointment_id: appointmentId,
+                            });
+                        }, 1500);
+                    },
+                    onError: (errors) => {
+                        const errorMessage =
+                            typeof errors === 'object' && errors
+                                ? (Object.values(errors)[0] as string)
+                                : 'An error occurred while processing payment';
+
+                        setSnackbar({
+                            open: true,
+                            message: errorMessage,
+                            severity: 'error',
+                        });
+                    },
+                    onFinish: () => {
+                        setLoading(false);
+                    },
                 },
-                onError: (errors) => {
-                    const errorMessage = typeof errors === 'object' && errors 
-                        ? Object.values(errors)[0] as string
-                        : 'An error occurred while processing payment';
-                    
-                    setSnackbar({
-                        open: true,
-                        message: errorMessage,
-                        severity: 'error',
-                    });
-                },
-                onFinish: () => {
-                    setLoading(false);
-                },
-            });
-        } catch (error) {
+            );
+        } catch {
             setSnackbar({
                 open: true,
                 message: 'An error occurred while processing payment',
@@ -245,31 +234,33 @@ export default function CreatePayment({
     };
 
     const handleSnackbarClose = () => {
-        setSnackbar(prev => ({ ...prev, open: false }));
+        setSnackbar((prev) => ({ ...prev, open: false }));
     };
 
     return (
         <>
-            <Dialog 
-                open={open} 
-                onClose={handleClose} 
-                maxWidth="sm" 
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                maxWidth="sm"
                 fullWidth
                 PaperProps={{
                     sx: {
                         borderRadius: 3,
                         boxShadow: '0 24px 48px rgba(0,0,0,0.15)',
-                    }
+                    },
                 }}
             >
                 <Box sx={{ p: 0 }}>
-                    <Box sx={{
-                        p: 4, 
-                        pb: 2,
-                        background: 'linear-gradient(135deg, #5c6bc0 0%, #26418f 100%)',
-                        color: 'white',
-                        textAlign: 'center'
-                    }}>
+                    <Box
+                        sx={{
+                            p: 4,
+                            pb: 2,
+                            background: 'linear-gradient(135deg, #5c6bc0 0%, #26418f 100%)',
+                            color: 'white',
+                            textAlign: 'center',
+                        }}
+                    >
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
                             <Security sx={{ fontSize: 32, mr: 1 }} />
                             <Typography variant="h5" fontWeight="600">
@@ -291,11 +282,14 @@ export default function CreatePayment({
                                     <Typography variant="subtitle1" fontWeight="600" gutterBottom>
                                         Payment Method
                                     </Typography>
-                                    <Card variant="outlined" sx={{ 
-                                        border: '2px solid #e0f7fa',
-                                        bgcolor: '#fafbfc',
-                                        '&:hover': { borderColor: '#5c6bc0' }
-                                    }}>
+                                    <Card
+                                        variant="outlined"
+                                        sx={{
+                                            border: '2px solid #e0f7fa',
+                                            bgcolor: '#fafbfc',
+                                            '&:hover': { borderColor: '#5c6bc0' },
+                                        }}
+                                    >
                                         <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                                 <CreditCard sx={{ color: '#5c6bc0', mr: 1 }} />
@@ -303,25 +297,52 @@ export default function CreatePayment({
                                                     Credit or Debit Card
                                                 </Typography>
                                                 <Box sx={{ ml: 'auto', display: 'flex', gap: 0.5 }}>
-                                                    <Box sx={{ 
-                                                        width: 32, height: 20, bgcolor: '#5c6bc0', 
-                                                        borderRadius: 0.5, display: 'flex', alignItems: 'center', 
-                                                        justifyContent: 'center', fontSize: '8px', color: 'white', fontWeight: 'bold'
-                                                    }}>
+                                                    <Box
+                                                        sx={{
+                                                            width: 32,
+                                                            height: 20,
+                                                            bgcolor: '#5c6bc0',
+                                                            borderRadius: 0.5,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            fontSize: '8px',
+                                                            color: 'white',
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
                                                         VISA
                                                     </Box>
-                                                    <Box sx={{ 
-                                                        width: 32, height: 20, bgcolor: '#26418f', 
-                                                        borderRadius: 0.5, display: 'flex', alignItems: 'center', 
-                                                        justifyContent: 'center', fontSize: '8px', color: 'white', fontWeight: 'bold'
-                                                    }}>
+                                                    <Box
+                                                        sx={{
+                                                            width: 32,
+                                                            height: 20,
+                                                            bgcolor: '#26418f',
+                                                            borderRadius: 0.5,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            fontSize: '8px',
+                                                            color: 'white',
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
                                                         MC
                                                     </Box>
-                                                    <Box sx={{ 
-                                                        width: 32, height: 20, bgcolor: '#00bcd4', 
-                                                        borderRadius: 0.5, display: 'flex', alignItems: 'center', 
-                                                        justifyContent: 'center', fontSize: '8px', color: 'white', fontWeight: 'bold'
-                                                    }}>
+                                                    <Box
+                                                        sx={{
+                                                            width: 32,
+                                                            height: 20,
+                                                            bgcolor: '#00bcd4',
+                                                            borderRadius: 0.5,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            fontSize: '8px',
+                                                            color: 'white',
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
                                                         AMEX
                                                     </Box>
                                                 </Box>
@@ -363,7 +384,7 @@ export default function CreatePayment({
                                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                                         borderColor: '#5c6bc0',
                                                     },
-                                                }
+                                                },
                                             }}
                                         />
 
@@ -388,7 +409,7 @@ export default function CreatePayment({
                                                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                                             borderColor: '#5c6bc0',
                                                         },
-                                                    }
+                                                    },
                                                 }}
                                             />
 
@@ -420,7 +441,7 @@ export default function CreatePayment({
                                                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                                             borderColor: '#5c6bc0',
                                                         },
-                                                    }
+                                                    },
                                                 }}
                                             />
                                         </Stack>
@@ -428,12 +449,12 @@ export default function CreatePayment({
                                 </Box>
 
                                 <Paper
-                                    elevation={0} 
-                                    sx={{ 
-                                        p: 2, 
+                                    elevation={0}
+                                    sx={{
+                                        p: 2,
                                         bgcolor: '#f8f9fa',
                                         border: '1px solid #e9ecef',
-                                        borderRadius: 2
+                                        borderRadius: 2,
                                     }}
                                 >
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -449,14 +470,14 @@ export default function CreatePayment({
                         <Divider />
 
                         <DialogActions sx={{ p: 4, pt: 3 }}>
-                            <Button 
-                                onClick={handleClose} 
+                            <Button
+                                onClick={handleClose}
                                 disabled={loading}
-                                sx={{ 
-                                    borderRadius: 2, 
-                                    px: 4, 
+                                sx={{
+                                    borderRadius: 2,
+                                    px: 4,
                                     py: 1.5,
-                                    color: 'text.secondary'
+                                    color: 'text.secondary',
                                 }}
                             >
                                 Cancel
@@ -466,7 +487,7 @@ export default function CreatePayment({
                                 variant="contained"
                                 disabled={loading}
                                 startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <CheckCircle />}
-                                sx={{ 
+                                sx={{
                                     borderRadius: 2,
                                     px: 4,
                                     py: 1.5,
@@ -496,7 +517,7 @@ export default function CreatePayment({
                 <Alert
                     onClose={handleSnackbarClose}
                     severity={snackbar.severity}
-                    sx={{ 
+                    sx={{
                         width: '100%',
                         borderRadius: 2,
                         boxShadow: '0 8px 32px rgba(0,0,0,0.12)',

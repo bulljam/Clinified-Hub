@@ -2,6 +2,28 @@ import { login } from '@/routes';
 import registerRoute from '@/routes/register';
 import { Form, Head, Link } from '@inertiajs/react';
 import {
+    Biotech as BiotechIcon,
+    Psychology as BrainIcon,
+    CalendarToday as CalendarIcon,
+    LocationCity as CityIcon,
+    MonitorHeart as DoctorIcon,
+    Email as EmailIcon,
+    Emergency as EmergencyIcon,
+    Healing as HealingIcon,
+    HealthAndSafety as HealthIcon,
+    Favorite as HeartIcon,
+    Home as HomeIcon,
+    LocalHospital as HospitalIcon,
+    Lock as LockIcon,
+    MedicalServices,
+    Person as PersonIcon,
+    Phone as PhoneIcon,
+    PersonAdd as RegisterIcon,
+    Vaccines as VaccineIcon,
+    Visibility,
+    VisibilityOff,
+} from '@mui/icons-material';
+import {
     Box,
     Button,
     Card,
@@ -23,28 +45,6 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import {
-    Email as EmailIcon,
-    Home as HomeIcon,
-    Lock as LockIcon,
-    MonitorHeart as DoctorIcon,
-    Person as PersonIcon,
-    PersonAdd as RegisterIcon,
-    MedicalServices,
-    Visibility,
-    VisibilityOff,
-    LocationCity as CityIcon,
-    CalendarToday as CalendarIcon,
-    Phone as PhoneIcon,
-    LocalHospital as HospitalIcon,
-    Favorite as HeartIcon,
-    HealthAndSafety as HealthIcon,
-    Vaccines as VaccineIcon,
-    Psychology as BrainIcon,
-    Emergency as EmergencyIcon,
-    Healing as HealingIcon,
-    Biotech as BiotechIcon,
-} from '@mui/icons-material';
 import { useState } from 'react';
 
 export default function Register() {
@@ -181,8 +181,7 @@ export default function Register() {
                         '50%': { transform: 'translateY(-14px) rotate(-5deg)' },
                     },
                 }}
-            >
-            </Box>
+            ></Box>
 
             <Box
                 sx={{
@@ -254,7 +253,6 @@ export default function Register() {
             >
                 <HomeIcon />
             </IconButton>
-
 
             <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
                 <Box
@@ -333,18 +331,10 @@ export default function Register() {
                                     </Typography>
                                 </Box>
 
-                                <Form
-                                    {...registerRoute.store.form()}
-                                    resetOnSuccess={['password', 'password_confirmation']}
-                                    disableWhileProcessing
-                                >
+                                <Form {...registerRoute.store.form()} resetOnSuccess={['password', 'password_confirmation']} disableWhileProcessing>
                                     {({ processing, errors }) => (
                                         <Stack spacing={3}>
-                                            <Typography
-                                                variant="h6"
-                                                color="#5c6bc0"
-                                                sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-                                            >
+                                            <Typography variant="h6" color="#5c6bc0" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                 <PersonIcon /> Personal Information
                                             </Typography>
 
@@ -454,9 +444,7 @@ export default function Register() {
                                                         name="gender"
                                                         label="Gender"
                                                         tabIndex={4}
-                                                        startAdornment={
-                                                            <PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />
-                                                        }
+                                                        startAdornment={<PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />}
                                                         sx={{
                                                             '&:hover .MuiOutlinedInput-notchedOutline': {
                                                                 borderColor: '#5c6bc0',
@@ -545,11 +533,7 @@ export default function Register() {
 
                                             <Divider sx={{ my: 2 }} />
 
-                                            <Typography
-                                                variant="h6"
-                                                color="#5c6bc0"
-                                                sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-                                            >
+                                            <Typography variant="h6" color="#5c6bc0" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                 <LockIcon /> Security
                                             </Typography>
 

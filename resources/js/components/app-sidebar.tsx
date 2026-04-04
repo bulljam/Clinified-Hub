@@ -6,7 +6,7 @@ import { dashboard } from '@/routes';
 import superAdmin from '@/routes/super-admin';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Calendar, CreditCard, Home, Settings, Stethoscope, Users, UserCheck, Shield } from 'lucide-react';
+import { Calendar, CreditCard, Home, Shield, Stethoscope, UserCheck, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const baseNavItems: NavItem[] = [
@@ -88,10 +88,10 @@ const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
-    
+
     const getRoleBasedNavItems = () => {
         if (!auth.user) return baseNavItems;
-        
+
         switch (auth.user.role) {
             case 'super_admin':
                 return [...baseNavItems, ...adminNavItems, ...superAdminNavItems];
@@ -113,14 +113,10 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton 
-                            size="lg" 
-                            asChild
-                            className="hover:bg-transparent group relative overflow-hidden"
-                        >
+                        <SidebarMenuButton size="lg" asChild className="group relative overflow-hidden hover:bg-transparent">
                             <Link href="/" prefetch className="relative">
                                 <AppLogo />
-                                <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out origin-left"></span>
+                                <span className="absolute right-2 bottom-0 left-2 h-0.5 origin-left scale-x-0 transform bg-white transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

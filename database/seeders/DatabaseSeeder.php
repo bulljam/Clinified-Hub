@@ -16,25 +16,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->seedUsers();
+        $this->seedSuperAdmin();
+        $this->seedAdmins();
+        $this->seedDoctors();
+        $this->seedPatients();
         $this->seedAppointments();
         $this->seedTransactions();
         $this->seedDoctorApplications();
     }
 
-    private function seedUsers(): void
+    private function seedSuperAdmin(): void
     {
-        User::create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@example.com',
-            'password' => Hash::make('123'),
-            'role' => 'super_admin',
-            'gender' => 'male',
-            'date_of_birth' => '1980-01-15',
-            'city' => 'New York',
-            'phone' => '+1 (555) 000-0001',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'super@example.com'],
+            [
+                'name' => 'Super Administrator',
+                'email' => 'super@example.com',
+                'password' => Hash::make('123'),
+                'role' => 'super_admin',
+                'email_verified_at' => now(),
+            ]
+        );
+    }
 
+    private function seedAdmins(): void
+    {
         User::create([
             'name' => 'Admin One',
             'email' => 'admin1@example.com',
@@ -67,7 +73,10 @@ class DatabaseSeeder extends Seeder
             'city' => 'Houston',
             'phone' => '+1 (555) 000-0004',
         ]);
+    }
 
+    private function seedDoctors(): void
+    {
         User::create([
             'name' => 'Sarah Johnson',
             'email' => 'doctor1@example.com',
@@ -163,7 +172,10 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
             'photo' => '/images/doctors/Psychiatry.jpg',
         ]);
+    }
 
+    private function seedPatients(): void
+    {
         User::create([
             'name' => 'Alice Brown',
             'email' => 'patient1@example.com',
@@ -236,7 +248,7 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        $this->command->info('Users seeded successfully!');
+        $this->command->info('Patients seeded successfully!');
     }
 
     private function seedAppointments(): void

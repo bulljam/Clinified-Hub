@@ -1,26 +1,26 @@
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import { edit, update as updatePassword } from '@/routes/password';
 import { type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
-import { useRef, useState, useEffect } from 'react';
-import { Lock, Save, CheckCircle, LockOpen, Security, Warning } from '@mui/icons-material';
+import { CheckCircle, Lock, LockOpen, Save, Security, Warning } from '@mui/icons-material';
 import {
+    Alert,
     Box,
     Card,
     CardContent,
-    TextField,
-    Button as MuiButton,
-    Typography,
-    Fade,
-    Divider,
-    Stack,
     Dialog,
-    DialogTitle,
-    DialogContent,
     DialogActions,
-    Alert
+    DialogContent,
+    DialogTitle,
+    Divider,
+    Fade,
+    Button as MuiButton,
+    Stack,
+    TextField,
+    Typography,
 } from '@mui/material';
-import { edit, update as updatePassword } from '@/routes/password';
+import { useEffect, useRef, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -51,25 +51,25 @@ export default function Password({ flash }: PasswordProps) {
             <Head title="Password settings" />
 
             <SettingsLayout>
-                <Card 
-                    elevation={2} 
-                    sx={{ 
+                <Card
+                    elevation={2}
+                    sx={{
                         borderRadius: 3,
                         border: '1px solid',
-                        borderColor: 'primary.main'
+                        borderColor: 'primary.main',
                     }}
                 >
                     <CardContent sx={{ p: 4 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                             <Security
-                                sx={{ 
-                                    width: 56, 
-                                    height: 56, 
-                                    mr: 3, 
+                                sx={{
+                                    width: 56,
+                                    height: 56,
+                                    mr: 3,
                                     p: 1.5,
                                     bgcolor: 'primary.main',
                                     color: 'white',
-                                    borderRadius: 2
+                                    borderRadius: 2,
                                 }}
                             />
                             <Box>
@@ -114,16 +114,16 @@ export default function Password({ flash }: PasswordProps) {
                                         helperText={errors.current_password}
                                         slotProps={{
                                             input: {
-                                                startAdornment: <LockOpen sx={{ color: 'action.active', mr: 1 }} />
-                                            }
+                                                startAdornment: <LockOpen sx={{ color: 'action.active', mr: 1 }} />,
+                                            },
                                         }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 borderRadius: 2,
                                                 '&.Mui-focused fieldset': {
                                                     borderColor: 'primary.main',
-                                                }
-                                            }
+                                                },
+                                            },
                                         }}
                                     />
 
@@ -138,16 +138,16 @@ export default function Password({ flash }: PasswordProps) {
                                         helperText={errors.password}
                                         slotProps={{
                                             input: {
-                                                startAdornment: <Lock sx={{ color: 'action.active', mr: 1 }} />
-                                            }
+                                                startAdornment: <Lock sx={{ color: 'action.active', mr: 1 }} />,
+                                            },
                                         }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 borderRadius: 2,
                                                 '&.Mui-focused fieldset': {
                                                     borderColor: 'primary.main',
-                                                }
-                                            }
+                                                },
+                                            },
                                         }}
                                     />
 
@@ -161,16 +161,16 @@ export default function Password({ flash }: PasswordProps) {
                                         helperText={errors.password_confirmation}
                                         slotProps={{
                                             input: {
-                                                startAdornment: <Lock sx={{ color: 'action.active', mr: 1 }} />
-                                            }
+                                                startAdornment: <Lock sx={{ color: 'action.active', mr: 1 }} />,
+                                            },
                                         }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 borderRadius: 2,
                                                 '&.Mui-focused fieldset': {
                                                     borderColor: 'primary.main',
-                                                }
-                                            }
+                                                },
+                                            },
                                         }}
                                     />
 
@@ -181,12 +181,12 @@ export default function Password({ flash }: PasswordProps) {
                                             size="large"
                                             disabled={processing}
                                             startIcon={<Save />}
-                                            sx={{ 
+                                            sx={{
                                                 borderRadius: 2,
                                                 px: 4,
                                                 py: 1.5,
                                                 textTransform: 'none',
-                                                fontWeight: 600
+                                                fontWeight: 600,
                                             }}
                                         >
                                             {processing ? 'Updating Password...' : 'Update Password'}
@@ -207,30 +207,23 @@ export default function Password({ flash }: PasswordProps) {
                     </CardContent>
                 </Card>
 
-                <Dialog
-                    open={showLogoutDialog}
-                    onClose={() => setShowLogoutDialog(false)}
-                    maxWidth="sm"
-                    fullWidth
-                >
-                    <DialogTitle sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 2,
-                        pb: 2
-                    }}>
+                <Dialog open={showLogoutDialog} onClose={() => setShowLogoutDialog(false)} maxWidth="sm" fullWidth>
+                    <DialogTitle
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            pb: 2,
+                        }}
+                    >
                         <Warning color="warning" />
                         Password Updated Successfully
                     </DialogTitle>
                     <DialogContent>
-                        <Alert
-                            severity="info"
-                            sx={{ mb: 2 }}
-                            icon={<Security />}
-                        >
+                        <Alert severity="info" sx={{ mb: 2 }} icon={<Security />}>
                             <Typography variant="body2">
-                                For your security, you have been logged out of all other devices and sessions.
-                                Your current session will remain active.
+                                For your security, you have been logged out of all other devices and sessions. Your current session will remain
+                                active.
                             </Typography>
                         </Alert>
                         <Typography variant="body2" color="text.secondary">
@@ -246,7 +239,7 @@ export default function Password({ flash }: PasswordProps) {
                                 borderRadius: 2,
                                 px: 4,
                                 textTransform: 'none',
-                                fontWeight: 600
+                                fontWeight: 600,
                             }}
                         >
                             Got it

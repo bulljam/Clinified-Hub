@@ -1,19 +1,19 @@
 import { Link, router, useForm } from '@inertiajs/react';
 import {
+    Badge as BadgeIcon,
     Delete as DeleteIcon,
+    Email as EmailIcon,
+    AccessTime as ExperienceIcon,
     UploadFile as FileIcon,
+    Home as HomeIcon,
+    LocationOn as LocationIcon,
     Person as PersonIcon,
+    Phone as PhoneIcon,
+    CameraAlt as PhotoIcon,
+    School as SchoolIcon,
+    LocalHospital as StethoscopeIcon,
     CloudUpload as UploadIcon,
     Work as WorkIcon,
-    LocalHospital as StethoscopeIcon,
-    Email as EmailIcon,
-    Phone as PhoneIcon,
-    Badge as BadgeIcon,
-    School as SchoolIcon,
-    AccessTime as ExperienceIcon,
-    LocationOn as LocationIcon,
-    CameraAlt as PhotoIcon,
-    Home as HomeIcon,
 } from '@mui/icons-material';
 import {
     Alert,
@@ -122,7 +122,7 @@ export default function DoctorApplicationCreate() {
                 setShowSuccessToast(true);
                 reset();
                 setFileInputKey((prev) => prev + 1);
-                
+
                 setTimeout(() => {
                     router.visit('/');
                 }, 3000);
@@ -130,11 +130,10 @@ export default function DoctorApplicationCreate() {
         });
     };
 
-
     return (
-        <Box 
-            sx={{ 
-                minHeight: '100vh', 
+        <Box
+            sx={{
+                minHeight: '100vh',
                 background: 'linear-gradient(135deg, #e8eaf6 0%, #c5cae9 25%, #9fa8da 50%, #7986cb 75%, #5c6bc0 100%)',
                 position: 'relative',
                 overflow: 'hidden',
@@ -172,7 +171,6 @@ export default function DoctorApplicationCreate() {
                 },
             }}
         >
-            {/* Animated Medical Shapes */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -218,7 +216,6 @@ export default function DoctorApplicationCreate() {
                 <SchoolIcon sx={{ fontSize: 45, color: 'rgba(255,255,255,0.15)', transform: 'rotate(-15deg)' }} />
             </Box>
 
-            {/* Home Icon Link */}
             <Box sx={{ position: 'absolute', top: 24, right: 24, zIndex: 10 }}>
                 <IconButton
                     component={Link}
@@ -237,17 +234,18 @@ export default function DoctorApplicationCreate() {
                 </IconButton>
             </Box>
 
-            {/* Form Container */}
             <Box sx={{ maxWidth: 900, mx: 'auto', p: 4, position: 'relative', zIndex: 1 }}>
                 <form onSubmit={handleSubmit}>
                     <Stack spacing={4}>
-                        {/* Personal Information Section */}
-                        <Card elevation={0} sx={{ 
-                            border: '1px solid rgba(255,255,255,0.3)', 
-                            bgcolor: 'rgba(255,255,255,0.95)',
-                            backdropFilter: 'blur(10px)',
-                            borderRadius: 3,
-                        }}>
+                        <Card
+                            elevation={0}
+                            sx={{
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                bgcolor: 'rgba(255,255,255,0.95)',
+                                backdropFilter: 'blur(10px)',
+                                borderRadius: 3,
+                            }}
+                        >
                             <CardContent sx={{ p: 4 }}>
                                 <Box display="flex" alignItems="center" gap={2} mb={3}>
                                     <PersonIcon sx={{ color: '#5c6bc0' }} />
@@ -268,9 +266,7 @@ export default function DoctorApplicationCreate() {
                                             helperText={errors.full_name}
                                             slotProps={{
                                                 input: {
-                                                    startAdornment: (
-                                                        <PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />
-                                                    ),
+                                                    startAdornment: <PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />,
                                                 },
                                             }}
                                         />
@@ -286,9 +282,7 @@ export default function DoctorApplicationCreate() {
                                             helperText={errors.email}
                                             slotProps={{
                                                 input: {
-                                                    startAdornment: (
-                                                        <EmailIcon sx={{ color: '#5c6bc0', mr: 1 }} />
-                                                    ),
+                                                    startAdornment: <EmailIcon sx={{ color: '#5c6bc0', mr: 1 }} />,
                                                 },
                                             }}
                                         />
@@ -305,9 +299,7 @@ export default function DoctorApplicationCreate() {
                                             helperText={errors.phone}
                                             slotProps={{
                                                 input: {
-                                                    startAdornment: (
-                                                        <PhoneIcon sx={{ color: '#5c6bc0', mr: 1 }} />
-                                                    ),
+                                                    startAdornment: <PhoneIcon sx={{ color: '#5c6bc0', mr: 1 }} />,
                                                 },
                                             }}
                                         />
@@ -318,9 +310,7 @@ export default function DoctorApplicationCreate() {
                                                 value={data.gender}
                                                 label="Gender"
                                                 onChange={(e) => setData('gender', e.target.value)}
-                                                startAdornment={
-                                                    <PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />
-                                                }
+                                                startAdornment={<PersonIcon sx={{ color: '#5c6bc0', mr: 1 }} />}
                                             >
                                                 <MenuItem value="">Select Gender</MenuItem>
                                                 <MenuItem value="male">👨 Male</MenuItem>
@@ -343,7 +333,7 @@ export default function DoctorApplicationCreate() {
                                         multiline
                                         rows={4}
                                         error={!!errors.bio}
-                                        helperText={errors.bio || "Brief description of your medical background and expertise"}
+                                        helperText={errors.bio || 'Brief description of your medical background and expertise'}
                                         placeholder="Describe your medical background, areas of expertise, and approach to patient care..."
                                         slotProps={{
                                             input: {
@@ -356,7 +346,6 @@ export default function DoctorApplicationCreate() {
                                         }}
                                     />
 
-                                    {/* Photo Upload Section */}
                                     <Box>
                                         <Box display="flex" alignItems="center" gap={1} mb={2}>
                                             <PhotoIcon sx={{ color: '#5c6bc0' }} />
@@ -428,13 +417,15 @@ export default function DoctorApplicationCreate() {
                             </CardContent>
                         </Card>
 
-                        {/* Professional Information Section */}
-                        <Card elevation={0} sx={{ 
-                            border: '1px solid rgba(255,255,255,0.3)', 
-                            bgcolor: 'rgba(255,255,255,0.95)',
-                            backdropFilter: 'blur(10px)',
-                            borderRadius: 3,
-                        }}>
+                        <Card
+                            elevation={0}
+                            sx={{
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                bgcolor: 'rgba(255,255,255,0.95)',
+                                backdropFilter: 'blur(10px)',
+                                borderRadius: 3,
+                            }}
+                        >
                             <CardContent sx={{ p: 4 }}>
                                 <Box display="flex" alignItems="center" gap={2} mb={3}>
                                     <WorkIcon sx={{ color: '#5c6bc0' }} />
@@ -451,9 +442,7 @@ export default function DoctorApplicationCreate() {
                                                 value={data.specialty}
                                                 label="Medical Specialty"
                                                 onChange={(e) => setData('specialty', e.target.value)}
-                                                startAdornment={
-                                                    <SchoolIcon sx={{ color: '#5c6bc0', mr: 1 }} />
-                                                }
+                                                startAdornment={<SchoolIcon sx={{ color: '#5c6bc0', mr: 1 }} />}
                                             >
                                                 {specialties.map((specialty) => (
                                                     <MenuItem key={specialty} value={specialty}>
@@ -478,9 +467,7 @@ export default function DoctorApplicationCreate() {
                                             helperText={errors.license_number}
                                             slotProps={{
                                                 input: {
-                                                    startAdornment: (
-                                                        <BadgeIcon sx={{ color: '#5c6bc0', mr: 1 }} />
-                                                    ),
+                                                    startAdornment: <BadgeIcon sx={{ color: '#5c6bc0', mr: 1 }} />,
                                                 },
                                             }}
                                         />
@@ -493,12 +480,10 @@ export default function DoctorApplicationCreate() {
                                         onChange={(e) => setData('years_of_experience', parseInt(e.target.value) || 0)}
                                         fullWidth
                                         required
-                                        slotProps={{ 
+                                        slotProps={{
                                             htmlInput: { min: 0, max: 50 },
                                             input: {
-                                                startAdornment: (
-                                                    <ExperienceIcon sx={{ color: '#5c6bc0', mr: 1 }} />
-                                                ),
+                                                startAdornment: <ExperienceIcon sx={{ color: '#5c6bc0', mr: 1 }} />,
                                             },
                                         }}
                                         error={!!errors.years_of_experience}
@@ -530,13 +515,15 @@ export default function DoctorApplicationCreate() {
                             </CardContent>
                         </Card>
 
-                        {/* Documents & Credentials Section */}
-                        <Card elevation={0} sx={{ 
-                            border: '1px solid rgba(255,255,255,0.3)', 
-                            bgcolor: 'rgba(255,255,255,0.95)',
-                            backdropFilter: 'blur(10px)',
-                            borderRadius: 3,
-                        }}>
+                        <Card
+                            elevation={0}
+                            sx={{
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                bgcolor: 'rgba(255,255,255,0.95)',
+                                backdropFilter: 'blur(10px)',
+                                borderRadius: 3,
+                            }}
+                        >
                             <CardContent sx={{ p: 4 }}>
                                 <Box display="flex" alignItems="center" gap={2} mb={3}>
                                     <FileIcon sx={{ color: '#5c6bc0' }} />
@@ -602,13 +589,15 @@ export default function DoctorApplicationCreate() {
                             </CardContent>
                         </Card>
 
-                        {/* Submit Section */}
-                        <Card elevation={0} sx={{ 
-                            border: '1px solid rgba(255,255,255,0.3)', 
-                            bgcolor: 'rgba(255,255,255,0.95)',
-                            backdropFilter: 'blur(10px)',
-                            borderRadius: 3,
-                        }}>
+                        <Card
+                            elevation={0}
+                            sx={{
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                bgcolor: 'rgba(255,255,255,0.95)',
+                                backdropFilter: 'blur(10px)',
+                                borderRadius: 3,
+                            }}
+                        >
                             <CardContent sx={{ p: 4 }}>
                                 <Alert severity="info" sx={{ mb: 3 }}>
                                     <Typography variant="body2">
@@ -642,13 +631,12 @@ export default function DoctorApplicationCreate() {
                 </form>
             </Box>
 
-            {/* Success Toast */}
             <Snackbar
                 open={showSuccessToast}
                 autoHideDuration={3000}
                 onClose={() => setShowSuccessToast(false)}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                sx={{ 
+                sx={{
                     '& .MuiSnackbarContent-root': {
                         backgroundColor: 'transparent',
                         boxShadow: 'none',
@@ -693,7 +681,6 @@ export default function DoctorApplicationCreate() {
                     </Box>
                 </Alert>
             </Snackbar>
-
         </Box>
     );
 }

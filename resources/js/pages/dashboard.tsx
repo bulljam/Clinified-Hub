@@ -2,21 +2,21 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { 
-    Calendar, 
-    CreditCard, 
-    TrendingUp, 
-    Users, 
-    Heart,
-    Stethoscope,
-    Shield,
-    Crown,
+import type { LucideIcon } from 'lucide-react';
+import {
     Activity,
-    UserCheck,
-    Settings,
-    Globe,
     Building2,
-    ClipboardList
+    Calendar,
+    ClipboardList,
+    CreditCard,
+    Globe,
+    Heart,
+    Settings,
+    Shield,
+    Stethoscope,
+    TrendingUp,
+    UserCheck,
+    Users,
 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -30,7 +30,7 @@ interface StatCardProps {
     title: string;
     value: string;
     description: string;
-    icon: React.ComponentType<any>;
+    icon: LucideIcon;
     trend?: string | null;
 }
 
@@ -53,7 +53,7 @@ interface RoleConfig {
     secondaryColor: string;
     gradientFrom: string;
     gradientTo: string;
-    icon: React.ComponentType<any>;
+    icon: LucideIcon;
     title: string;
     subtitle: string;
     accentColor: string;
@@ -61,22 +61,22 @@ interface RoleConfig {
 
 function StatCard({ title, value, description, icon: Icon, trend }: StatCardProps & { roleConfig?: RoleConfig }) {
     return (
-        <div className="bg-card rounded-xl border border-border overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="bg-gradient-to-r from-[#5c6bc0] to-[#26418f] px-4 py-3 md:px-6 md:py-4 text-white">
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <div className="bg-gradient-to-r from-[#5c6bc0] to-[#26418f] px-4 py-3 text-white md:px-6 md:py-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-xs md:text-sm">{title}</h3>
-                    <div className="p-1.5 md:p-2 bg-white/20 rounded-lg">
+                    <h3 className="text-xs font-semibold md:text-sm">{title}</h3>
+                    <div className="rounded-lg bg-white/20 p-1.5 md:p-2">
                         <Icon className="size-4 md:size-5" />
                     </div>
                 </div>
             </div>
             <div className="px-4 py-3 md:px-6 md:py-4">
-                <div className="text-2xl md:text-3xl font-bold text-foreground">{value}</div>
-                <p className="text-xs md:text-sm text-muted-foreground mt-1">{description}</p>
+                <div className="text-2xl font-bold text-foreground md:text-3xl">{value}</div>
+                <p className="mt-1 text-xs text-muted-foreground md:text-sm">{description}</p>
                 {trend && (
-                    <div className="flex items-center mt-2 md:mt-3 p-1.5 md:p-2 bg-primary/10 rounded-lg">
-                        <TrendingUp className="size-3 md:size-4 text-primary mr-1.5 md:mr-2" />
-                        <span className="text-xs md:text-sm text-primary font-semibold">{trend}</span>
+                    <div className="mt-2 flex items-center rounded-lg bg-primary/10 p-1.5 md:mt-3 md:p-2">
+                        <TrendingUp className="mr-1.5 size-3 text-primary md:mr-2 md:size-4" />
+                        <span className="text-xs font-semibold text-primary md:text-sm">{trend}</span>
                     </div>
                 )}
             </div>
@@ -96,7 +96,7 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                     icon: Heart,
                     title: 'Patient Portal',
                     subtitle: 'Your healthcare journey, simplified and secure',
-                    accentColor: '#5c6bc0'
+                    accentColor: '#5c6bc0',
                 };
             case 'provider':
                 return {
@@ -107,7 +107,7 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                     icon: Stethoscope,
                     title: 'Provider Dashboard',
                     subtitle: 'Manage your practice with precision and care',
-                    accentColor: '#2563eb'
+                    accentColor: '#2563eb',
                 };
             case 'admin':
                 return {
@@ -118,7 +118,7 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                     icon: Shield,
                     title: 'Admin Control Center',
                     subtitle: 'Comprehensive system management and oversight',
-                    accentColor: '#7c3aed'
+                    accentColor: '#7c3aed',
                 };
             case 'super_admin':
                 return {
@@ -129,7 +129,7 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                     icon: Settings,
                     title: 'System Control Panel',
                     subtitle: 'Advanced platform configuration and analytics',
-                    accentColor: '#0f172a'
+                    accentColor: '#0f172a',
                 };
             default:
                 return {
@@ -140,7 +140,7 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                     icon: Activity,
                     title: 'Dashboard',
                     subtitle: 'Welcome to ClinifiedHub',
-                    accentColor: '#5c6bc0'
+                    accentColor: '#5c6bc0',
                 };
         }
     };
@@ -164,7 +164,7 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
     };
 
     const roleConfig = getRoleConfig(userRole);
-    
+
     const statsWithIcons = stats.map((stat, index) => ({
         ...stat,
         icon: getIconForStat(stat.title, index, userRole),
@@ -173,52 +173,45 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 md:gap-6 overflow-x-auto p-4 md:p-6">
-                <div className={`relative mb-4 md:mb-6 overflow-hidden rounded-2xl shadow-lg ${userRole === 'super_admin' ? 'border border-slate-600' : ''}`}>
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4 md:gap-6 md:p-6">
+                <div
+                    className={`relative mb-4 overflow-hidden rounded-2xl shadow-lg md:mb-6 ${userRole === 'super_admin' ? 'border border-slate-600' : ''}`}
+                >
                     <div
-                        className="px-4 py-4 md:px-8 md:py-6 text-white relative"
+                        className="relative px-4 py-4 text-white md:px-8 md:py-6"
                         style={{
-                            background: userRole === 'super_admin' 
-                                ? `linear-gradient(135deg, ${roleConfig.gradientFrom} 0%, ${roleConfig.gradientTo} 100%), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-                                : `linear-gradient(135deg, ${roleConfig.gradientFrom} 0%, ${roleConfig.gradientTo} 100%)`
+                            background:
+                                userRole === 'super_admin'
+                                    ? `linear-gradient(135deg, ${roleConfig.gradientFrom} 0%, ${roleConfig.gradientTo} 100%), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+                                    : `linear-gradient(135deg, ${roleConfig.gradientFrom} 0%, ${roleConfig.gradientTo} 100%)`,
                         }}
                     >
                         <div className={`absolute inset-0 ${userRole === 'super_admin' ? 'bg-black/20' : 'bg-black/10'}`}></div>
-                        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                             <div className="flex items-center gap-3 md:gap-4">
-                                <div className={`p-2 md:p-3 rounded-xl backdrop-blur-sm ${
-                                    userRole === 'super_admin'
-                                        ? 'bg-slate-700/50 border border-slate-500/30'
-                                        : 'bg-white/20'
-                                }`}>
+                                <div
+                                    className={`rounded-xl p-2 backdrop-blur-sm md:p-3 ${
+                                        userRole === 'super_admin' ? 'border border-slate-500/30 bg-slate-700/50' : 'bg-white/20'
+                                    }`}
+                                >
                                     <roleConfig.icon className="size-6 md:size-8" />
                                 </div>
                                 <div>
-                                    <h1 className={`text-xl md:text-3xl font-bold ${
-                                        userRole === 'super_admin' ? 'text-slate-100' : ''
-                                    }`}>
+                                    <h1 className={`text-xl font-bold md:text-3xl ${userRole === 'super_admin' ? 'text-slate-100' : ''}`}>
                                         {roleConfig.title}
                                     </h1>
-                                    <p className={`text-sm md:text-base ${
-                                        userRole === 'super_admin' ? 'text-slate-300' : 'text-white/90'
-                                    }`}>
+                                    <p className={`text-sm md:text-base ${userRole === 'super_admin' ? 'text-slate-300' : 'text-white/90'}`}>
                                         {roleConfig.subtitle}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex md:block justify-end">
+                            <div className="flex justify-end md:block">
                                 <div className="text-right">
-                                    <div className={`text-sm ${
-                                        userRole === 'super_admin' ? 'text-slate-400' : 'text-white/70'
-                                    }`}>
-                                        Role
-                                    </div>
-                                    <div className="text-lg font-semibold capitalize">
-                                        {userRole.replace('_', ' ')}
-                                    </div>
+                                    <div className={`text-sm ${userRole === 'super_admin' ? 'text-slate-400' : 'text-white/70'}`}>Role</div>
+                                    <div className="text-lg font-semibold capitalize">{userRole.replace('_', ' ')}</div>
                                     {userRole === 'super_admin' && (
                                         <div className="mt-1 flex items-center justify-end gap-1">
-                                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                                            <div className="h-2 w-2 animate-pulse rounded-full bg-green-400"></div>
                                             <span className="text-xs text-green-300">System Online</span>
                                         </div>
                                     )}
@@ -228,36 +221,36 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
 
                         {userRole === 'super_admin' ? (
                             <>
-                                <div className="absolute top-4 right-4 w-1 h-8 bg-slate-400/30 rounded-full"></div>
-                                <div className="absolute top-4 right-8 w-1 h-6 bg-slate-400/20 rounded-full"></div>
-                                <div className="absolute top-4 right-12 w-1 h-4 bg-slate-400/10 rounded-full"></div>
-                                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-slate-400/20 to-transparent"></div>
+                                <div className="absolute top-4 right-4 h-8 w-1 rounded-full bg-slate-400/30"></div>
+                                <div className="absolute top-4 right-8 h-6 w-1 rounded-full bg-slate-400/20"></div>
+                                <div className="absolute top-4 right-12 h-4 w-1 rounded-full bg-slate-400/10"></div>
+                                <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-transparent via-slate-400/20 to-transparent"></div>
                             </>
                         ) : (
                             <>
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
-                                <div className="absolute bottom-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mb-12"></div>
+                                <div className="absolute top-0 right-0 -mt-16 -mr-16 h-32 w-32 rounded-full bg-white/5"></div>
+                                <div className="absolute right-0 bottom-0 -mr-12 -mb-12 h-24 w-24 rounded-full bg-white/5"></div>
                             </>
                         )}
                     </div>
                 </div>
 
-                <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
                     {statsWithIcons.map((stat, index) => (
                         <StatCard key={index} {...stat} />
                     ))}
                 </div>
 
-                <div className="bg-card rounded-xl border border-border shadow-lg">
+                <div className="rounded-xl border border-border bg-card shadow-lg">
                     <div
-                        className="px-4 py-3 md:px-6 md:py-4 text-white rounded-t-xl"
+                        className="rounded-t-xl px-4 py-3 text-white md:px-6 md:py-4"
                         style={{
-                            background: `linear-gradient(135deg, ${roleConfig.gradientFrom} 0%, ${roleConfig.gradientTo} 100%)`
+                            background: `linear-gradient(135deg, ${roleConfig.gradientFrom} 0%, ${roleConfig.gradientTo} 100%)`,
                         }}
                     >
                         <div className="flex items-center gap-2 md:gap-3">
                             <Calendar className="size-4 md:size-5" />
-                            <h3 className="font-semibold text-base md:text-lg">Upcoming Appointments</h3>
+                            <h3 className="text-base font-semibold md:text-lg">Upcoming Appointments</h3>
                         </div>
                     </div>
                     <div className="p-4 md:p-6">
@@ -266,58 +259,58 @@ export default function Dashboard({ stats, upcomingAppointments, userRole }: Das
                                 {upcomingAppointments.map((appointment, index) => (
                                     <div
                                         key={index}
-                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 md:p-4 border border-border rounded-lg hover:shadow-md transition-all duration-200 hover:border-accent/50"
+                                        className="flex flex-col justify-between gap-3 rounded-lg border border-border p-3 transition-all duration-200 hover:border-accent/50 hover:shadow-md sm:flex-row sm:items-center md:p-4"
                                     >
-                                        <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
+                                        <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-4">
                                             <div
-                                                className="p-1.5 md:p-2 rounded-lg flex-shrink-0"
+                                                className="flex-shrink-0 rounded-lg p-1.5 md:p-2"
                                                 style={{ backgroundColor: `${roleConfig.primaryColor}20` }}
                                             >
                                                 <Calendar className="size-3 md:size-4" style={{ color: roleConfig.primaryColor }} />
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <div className="text-xs md:text-sm font-medium text-muted-foreground">
+                                                <div className="text-xs font-medium text-muted-foreground md:text-sm">
                                                     {appointment.time}
                                                     {appointment.date && ` • ${appointment.date}`}
                                                 </div>
-                                                <div className="text-sm md:text-base font-semibold text-foreground mt-1 truncate">
+                                                <div className="mt-1 truncate text-sm font-semibold text-foreground md:text-base">
                                                     {userRole === 'admin' || userRole === 'super_admin'
                                                         ? `${appointment.patient} with Dr. ${appointment.provider}`
                                                         : userRole === 'provider'
-                                                        ? appointment.patient
-                                                        : `Dr. ${appointment.provider}`
-                                                    }
+                                                          ? appointment.patient
+                                                          : `Dr. ${appointment.provider}`}
                                                 </div>
                                             </div>
                                         </div>
-                                        <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-center ${
-                                            appointment.status === 'confirmed'
-                                                ? 'bg-green-100 text-green-700 border border-green-200'
-                                                : appointment.status === 'pending'
-                                                ? 'bg-yellow-100 text-yellow-700 border border-yellow-200'
-                                                : 'bg-red-100 text-red-700 border border-red-200'
-                                        }`}>
+                                        <span
+                                            className={`self-start rounded-full px-2 py-1 text-xs font-semibold sm:self-center md:px-3 ${
+                                                appointment.status === 'confirmed'
+                                                    ? 'border border-green-200 bg-green-100 text-green-700'
+                                                    : appointment.status === 'pending'
+                                                      ? 'border border-yellow-200 bg-yellow-100 text-yellow-700'
+                                                      : 'border border-red-200 bg-red-100 text-red-700'
+                                            }`}
+                                        >
                                             {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                                         </span>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-8 md:py-12">
+                            <div className="py-8 text-center md:py-12">
                                 <div
-                                    className="w-12 h-12 md:w-16 md:h-16 rounded-full mx-auto mb-3 md:mb-4 flex items-center justify-center"
+                                    className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full md:mb-4 md:h-16 md:w-16"
                                     style={{ backgroundColor: `${roleConfig.primaryColor}20` }}
                                 >
                                     <Calendar className="size-6 md:size-8" style={{ color: roleConfig.primaryColor }} />
                                 </div>
-                                <h3 className="text-base md:text-lg font-semibold text-foreground mb-2">No Upcoming Appointments</h3>
-                                <p className="text-sm md:text-base text-muted-foreground max-w-md mx-auto px-4">
+                                <h3 className="mb-2 text-base font-semibold text-foreground md:text-lg">No Upcoming Appointments</h3>
+                                <p className="mx-auto max-w-md px-4 text-sm text-muted-foreground md:text-base">
                                     {userRole === 'admin' || userRole === 'super_admin'
                                         ? 'No upcoming appointments in the system. New appointments will appear here once scheduled.'
                                         : userRole === 'provider'
-                                        ? 'No upcoming appointments with your patients. Your schedule is clear for now.'
-                                        : 'No upcoming appointments scheduled. Book your next appointment to see it here.'
-                                    }
+                                          ? 'No upcoming appointments with your patients. Your schedule is clear for now.'
+                                          : 'No upcoming appointments scheduled. Book your next appointment to see it here.'}
                                 </p>
                             </div>
                         )}

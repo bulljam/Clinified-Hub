@@ -1,6 +1,6 @@
-import { Box, Card, CardContent, Typography, Container, useTheme, useMediaQuery } from '@mui/material';
 import { MedicalServices as StethoscopeIcon } from '@mui/icons-material';
-import { type PropsWithChildren, useEffect, useState, useRef } from 'react';
+import { Box, Card, CardContent, Container, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { type PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 interface AnimatedAuthLayoutProps {
     title?: string;
@@ -9,13 +9,7 @@ interface AnimatedAuthLayoutProps {
     imagePosition: 'left' | 'right';
 }
 
-export default function AnimatedAuthLayout({ 
-    children, 
-    title, 
-    description, 
-    mode,
-    imagePosition 
-}: PropsWithChildren<AnimatedAuthLayoutProps>) {
+export default function AnimatedAuthLayout({ children, title, description, mode, imagePosition }: PropsWithChildren<AnimatedAuthLayoutProps>) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
     const isLaptop = useMediaQuery(theme.breakpoints.down('xl'));
@@ -29,7 +23,6 @@ export default function AnimatedAuthLayout({
             }, 400);
         }
     }, [imagePosition, currentImagePosition]);
-
 
     const medicalImage = (
         <Box
@@ -112,12 +105,11 @@ export default function AnimatedAuthLayout({
                         fontSize: isLaptop ? '0.95rem' : undefined,
                     }}
                 >
-                    {mode === 'login' 
-                        ? 'Access your healthcare dashboard and manage your appointments with ease.' 
-                        : 'Create your account and start connecting with healthcare professionals today.'
-                    }
+                    {mode === 'login'
+                        ? 'Access your healthcare dashboard and manage your appointments with ease.'
+                        : 'Create your account and start connecting with healthcare professionals today.'}
                 </Typography>
-                
+
                 <Box
                     sx={{
                         mt: isLaptop ? 4 : 6,
@@ -152,7 +144,7 @@ export default function AnimatedAuthLayout({
                     ))}
                 </Box>
             </Box>
-            
+
             <Box
                 sx={{
                     position: 'absolute',
@@ -201,13 +193,13 @@ export default function AnimatedAuthLayout({
                     </Typography>
                     <Typography
                         variant="body1"
-                    sx={{
-                        color: 'text.secondary',
-                        lineHeight: 1.6,
-                        fontSize: isLaptop ? '0.95rem' : '1rem',
-                    }}
-                >
-                    {description}
+                        sx={{
+                            color: 'text.secondary',
+                            lineHeight: 1.6,
+                            fontSize: isLaptop ? '0.95rem' : '1rem',
+                        }}
+                    >
+                        {description}
                     </Typography>
                 </Box>
                 {children}

@@ -1,20 +1,8 @@
 import { send } from '@/routes/verification';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
-import { Email, Person, Save, CheckCircle } from '@mui/icons-material';
-import { 
-    Box, 
-    Card, 
-    CardContent, 
-    TextField, 
-    Button as MuiButton, 
-    Typography, 
-    Alert, 
-    Fade, 
-    Divider,
-    Avatar,
-    Stack
-} from '@mui/material';
+import { CheckCircle, Email, Person, Save } from '@mui/icons-material';
+import { Alert, Avatar, Box, Card, CardContent, Divider, Fade, Button as MuiButton, Stack, TextField, Typography } from '@mui/material';
 
 import DeleteUser from '@/components/delete-user';
 import AppLayout from '@/layouts/app-layout';
@@ -38,23 +26,23 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
             <SettingsLayout>
                 <Stack spacing={4}>
-                    <Card 
-                        elevation={2} 
-                        sx={{ 
+                    <Card
+                        elevation={2}
+                        sx={{
                             borderRadius: 3,
                             border: '1px solid',
-                            borderColor: 'primary.main'
+                            borderColor: 'primary.main',
                         }}
                     >
                         <CardContent sx={{ p: 4 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                <Avatar 
-                                    sx={{ 
-                                        width: 64, 
-                                        height: 64, 
-                                        mr: 3, 
+                                <Avatar
+                                    sx={{
+                                        width: 64,
+                                        height: 64,
+                                        mr: 3,
                                         bgcolor: 'primary.main',
-                                        fontSize: '1.5rem'
+                                        fontSize: '1.5rem',
                                     }}
                                 >
                                     {user.name.charAt(0).toUpperCase()}
@@ -90,16 +78,16 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                             helperText={errors.name}
                                             slotProps={{
                                                 input: {
-                                                    startAdornment: <Person sx={{ color: 'action.active', mr: 1 }} />
-                                                }
+                                                    startAdornment: <Person sx={{ color: 'action.active', mr: 1 }} />,
+                                                },
                                             }}
                                             sx={{
                                                 '& .MuiOutlinedInput-root': {
                                                     borderRadius: 2,
                                                     '&.Mui-focused fieldset': {
                                                         borderColor: 'primary.main',
-                                                    }
-                                                }
+                                                    },
+                                                },
                                             }}
                                         />
 
@@ -115,16 +103,16 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                             helperText={errors.email}
                                             slotProps={{
                                                 input: {
-                                                    startAdornment: <Email sx={{ color: 'action.active', mr: 1 }} />
-                                                }
+                                                    startAdornment: <Email sx={{ color: 'action.active', mr: 1 }} />,
+                                                },
                                             }}
                                             sx={{
                                                 '& .MuiOutlinedInput-root': {
                                                     borderRadius: 2,
                                                     '&.Mui-focused fieldset': {
                                                         borderColor: 'primary.main',
-                                                    }
-                                                }
+                                                    },
+                                                },
                                             }}
                                         />
 
@@ -135,12 +123,12 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                                     <Link
                                                         href={send()}
                                                         as="button"
-                                                        style={{ 
-                                                            color: 'inherit', 
+                                                        style={{
+                                                            color: 'inherit',
                                                             textDecoration: 'underline',
                                                             background: 'none',
                                                             border: 'none',
-                                                            cursor: 'pointer'
+                                                            cursor: 'pointer',
                                                         }}
                                                     >
                                                         Click here to resend the verification email.
@@ -161,12 +149,12 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                                 size="large"
                                                 disabled={processing}
                                                 startIcon={<Save />}
-                                                sx={{ 
+                                                sx={{
                                                     borderRadius: 2,
                                                     px: 4,
                                                     py: 1.5,
                                                     textTransform: 'none',
-                                                    fontWeight: 600
+                                                    fontWeight: 600,
                                                 }}
                                             >
                                                 {processing ? 'Saving...' : 'Save Changes'}

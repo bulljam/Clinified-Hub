@@ -1,8 +1,8 @@
-import { Box, Card, CardContent, Typography, Container, Fade, Zoom } from '@mui/material';
-import { styled, keyframes } from '@mui/material/styles';
-import { Link } from '@inertiajs/react';
 import { home } from '@/routes';
+import { Link } from '@inertiajs/react';
 import { MedicalServices as StethoscopeIcon } from '@mui/icons-material';
+import { Box, Card, CardContent, Container, Fade, Typography, Zoom } from '@mui/material';
+import { keyframes, styled } from '@mui/material/styles';
 import { type PropsWithChildren } from 'react';
 
 interface AuthLayoutProps {
@@ -62,7 +62,7 @@ const fadeInUp = keyframes`
   }
 `;
 
-const AnimatedBackground = styled(Box)(({ theme }) => ({
+const AnimatedBackground = styled(Box)(() => ({
     position: 'fixed',
     top: 0,
     left: 0,
@@ -99,7 +99,7 @@ const FloatingShape = styled(Box)<{ delay?: number; size?: number; top?: string;
         animationDelay: `${delay}s`,
         backdropFilter: 'blur(10px)',
         border: '1px solid rgba(255, 255, 255, 0.2)',
-    })
+    }),
 );
 
 const FogLayer = styled(Box)<{ delay?: number }>(({ delay = 0 }) => ({
@@ -117,7 +117,7 @@ const FogLayer = styled(Box)<{ delay?: number }>(({ delay = 0 }) => ({
     animationDelay: `${delay}s`,
 }));
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card)(() => ({
     background: 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(20px)',
     border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -167,22 +167,15 @@ export default function AuthMaterialLayout({ children, title, description }: Pro
     return (
         <Box sx={{ position: 'relative', minHeight: '100vh' }}>
             <AnimatedBackground />
-            
+
             <FogLayer delay={0} />
             <FogLayer delay={8} />
             <FogLayer delay={16} />
-            
+
             {shapes.map((shape) => (
-                <FloatingShape
-                    key={shape.id}
-                    delay={shape.delay}
-                    size={shape.size}
-                    top={shape.top}
-                    left={shape.left}
-                    duration={shape.duration}
-                />
+                <FloatingShape key={shape.id} delay={shape.delay} size={shape.size} top={shape.top} left={shape.left} duration={shape.duration} />
             ))}
-            
+
             <Container
                 maxWidth="sm"
                 sx={{
@@ -233,7 +226,7 @@ export default function AuthMaterialLayout({ children, title, description }: Pro
                                 </Box>
                             </Link>
                         </LogoContainer>
-                        
+
                         <Zoom in={true} timeout={1200} style={{ transitionDelay: '300ms' }}>
                             <StyledCard>
                                 <CardContent sx={{ p: 4 }}>

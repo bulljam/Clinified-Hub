@@ -1,6 +1,24 @@
-import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import { Head, router } from '@inertiajs/react';
+import {
+    Cake as CakeIcon,
+    CheckCircle as CheckCircleIcon,
+    Close as CloseIcon,
+    Delete as DeleteIcon,
+    Email as EmailIcon,
+    Event as EventIcon,
+    ExpandLess as ExpandLessIcon,
+    ExpandMore as ExpandMoreIcon,
+    FilterAlt as FilterIcon,
+    LocationOn as LocationIcon,
+    People as PeopleIcon,
+    PersonAdd as PersonAddIcon,
+    Person as PersonIcon,
+    Phone as PhoneIcon,
+    Search as SearchIcon,
+    Visibility as VisibilityIcon,
+} from '@mui/icons-material';
 import {
     Avatar,
     Box,
@@ -9,12 +27,19 @@ import {
     CardContent,
     Chip,
     Collapse,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
     Fade,
     FormControl,
+    IconButton,
     InputAdornment,
     InputLabel,
     MenuItem,
     Select,
+    Stack,
     Table,
     TableBody,
     TableCell,
@@ -23,35 +48,10 @@ import {
     TableRow,
     TextField,
     Typography,
-    Stack,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    IconButton,
-    Divider,
 } from '@mui/material';
-import {
-    People as PeopleIcon,
-    Person as PersonIcon,
-    Search as SearchIcon,
-    Email as EmailIcon,
-    Phone as PhoneIcon,
-    LocationOn as LocationIcon,
-    FilterAlt as FilterIcon,
-    ExpandMore as ExpandMoreIcon,
-    ExpandLess as ExpandLessIcon,
-    Event as EventIcon,
-    Cake as CakeIcon,
-    PersonAdd as PersonAddIcon,
-    CheckCircle as CheckCircleIcon,
-    Visibility as VisibilityIcon,
-    Delete as DeleteIcon,
-    Close as CloseIcon,
-} from '@mui/icons-material';
-import { useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { useState } from 'react';
 
 dayjs.extend(relativeTime);
 
@@ -98,21 +98,24 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [deleteReason, setDeleteReason] = useState('');
 
-    const searchFilteredPatients = patients.filter(patient => {
-        if (searchQuery && !(
-            patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (patient.city && patient.city.toLowerCase().includes(searchQuery.toLowerCase()))
-        )) {
+    const searchFilteredPatients = patients.filter((patient) => {
+        if (
+            searchQuery &&
+            !(
+                patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (patient.city && patient.city.toLowerCase().includes(searchQuery.toLowerCase()))
+            )
+        ) {
             return false;
         }
         return true;
     });
 
     const handleFilterChange = (key: string, value: string | number) => {
-        setLocalFilters(prev => ({
+        setLocalFilters((prev) => ({
             ...prev,
-            [key]: value || undefined
+            [key]: value || undefined,
         }));
     };
 
@@ -121,21 +124,25 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
         Object.entries(localFilters).forEach(([key, value]) => {
             if (value) filterParams[key] = value.toString();
         });
-        
+
         router.get('/patients', filterParams, {
             preserveState: true,
             preserveScroll: true,
-            only: ['patients', 'filters']
+            only: ['patients', 'filters'],
         });
     };
 
     const clearFilters = () => {
         setLocalFilters({});
-        router.get('/patients', {}, {
-            preserveState: true,
-            preserveScroll: true,
-            only: ['patients', 'filters']
-        });
+        router.get(
+            '/patients',
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['patients', 'filters'],
+            },
+        );
     };
 
     const handleViewPatient = (patient: Patient) => {
@@ -178,10 +185,14 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
 
     const getGenderIcon = (gender?: string) => {
         switch (gender) {
-            case 'male': return '👨';
-            case 'female': return '👩';
-            case 'other': return '';
-            default: return '👤';
+            case 'male':
+                return '👨';
+            case 'female':
+                return '👩';
+            case 'other':
+                return '';
+            default:
+                return '👤';
         }
     };
 
@@ -189,7 +200,6 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Patients" />
             <Box sx={{ p: { xs: 2, md: 3 }, minHeight: '100vh', bgcolor: '#fafafa' }}>
-                {/* Header Section */}
                 <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
                     <CardContent sx={{ p: 4 }}>
                         <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
@@ -210,11 +220,9 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     </CardContent>
                 </Card>
 
-                {/* Search and Filter Section */}
                 <Card elevation={0} sx={{ mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
                     <CardContent sx={{ p: 3 }}>
                         <Stack spacing={3}>
-                            {/* Search Bar */}
                             <TextField
                                 fullWidth
                                 placeholder="Search patients by name, email, or city..."
@@ -238,8 +246,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                     },
                                 }}
                             />
-                            
-                            {/* Filter Toggle */}
+
                             <Box display="flex" alignItems="center" gap={2}>
                                 <Button
                                     startIcon={<FilterIcon />}
@@ -257,26 +264,22 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                 >
                                     {showFilters ? 'Hide Filters' : 'Advanced Filters'}
                                 </Button>
-                                {Object.values(localFilters).some(v => v) && (
-                                    <Button
-                                        variant="text"
-                                        color="error"
-                                        onClick={clearFilters}
-                                        size="small"
-                                    >
+                                {Object.values(localFilters).some((v) => v) && (
+                                    <Button variant="text" color="error" onClick={clearFilters} size="small">
                                         Clear All
                                     </Button>
                                 )}
                             </Box>
 
-                            {/* Filters */}
                             <Collapse in={showFilters}>
                                 <Box sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 3 }}>
-                                    <Box sx={{ 
-                                        display: 'grid',
-                                        gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-                                        gap: 3
-                                    }}>
+                                    <Box
+                                        sx={{
+                                            display: 'grid',
+                                            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+                                            gap: 3,
+                                        }}
+                                    >
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel shrink>Gender</InputLabel>
                                             <Select
@@ -364,7 +367,6 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     </CardContent>
                 </Card>
 
-                {/* Statistics */}
                 <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: 'repeat(3, 1fr)' }} gap={3} mb={4}>
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
@@ -372,7 +374,11 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                 {searchFilteredPatients.length}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {searchQuery || Object.values(localFilters).some(v => v) ? 'Matching Patients' : userRole === 'provider' ? 'My Patients' : 'Total Patients'}
+                                {searchQuery || Object.values(localFilters).some((v) => v)
+                                    ? 'Matching Patients'
+                                    : userRole === 'provider'
+                                      ? 'My Patients'
+                                      : 'Total Patients'}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -383,7 +389,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                 {searchFilteredPatients.reduce((sum, patient) => sum + patient.appointments_count, 0)}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {searchQuery || Object.values(localFilters).some(v => v) ? 'Filtered Appointments' : 'Total Appointments'}
+                                {searchQuery || Object.values(localFilters).some((v) => v) ? 'Filtered Appointments' : 'Total Appointments'}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -391,37 +397,38 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="h3" fontWeight="bold" color="info.main" mb={1}>
-                                {[...new Set(searchFilteredPatients.map(patient => patient.city).filter(city => city))].length}
+                                {[...new Set(searchFilteredPatients.map((patient) => patient.city).filter((city) => city))].length}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {searchQuery || Object.values(localFilters).some(v => v) ? 'Filtered Cities' : 'Cities'}
+                                {searchQuery || Object.values(localFilters).some((v) => v) ? 'Filtered Cities' : 'Cities'}
                             </Typography>
                         </CardContent>
                     </Card>
                 </Box>
 
-                {/* Patients Table */}
                 {searchFilteredPatients.length > 0 ? (
                     <>
                         <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
-                            <TableContainer sx={{ 
-                                overflowX: 'auto',
-                                width: '100%',
-                                '&::-webkit-scrollbar': {
-                                    height: 8,
-                                },
-                                '&::-webkit-scrollbar-track': {
-                                    backgroundColor: '#f1f1f1',
-                                    borderRadius: 4,
-                                },
-                                '&::-webkit-scrollbar-thumb': {
-                                    backgroundColor: '#5c6bc0',
-                                    borderRadius: 4,
-                                    '&:hover': {
-                                        backgroundColor: '#26418f',
+                            <TableContainer
+                                sx={{
+                                    overflowX: 'auto',
+                                    width: '100%',
+                                    '&::-webkit-scrollbar': {
+                                        height: 8,
                                     },
-                                }
-                            }}>
+                                    '&::-webkit-scrollbar-track': {
+                                        backgroundColor: '#f1f1f1',
+                                        borderRadius: 4,
+                                    },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        backgroundColor: '#5c6bc0',
+                                        borderRadius: 4,
+                                        '&:hover': {
+                                            backgroundColor: '#26418f',
+                                        },
+                                    },
+                                }}
+                            >
                                 <Table sx={{ minWidth: 1000 }}>
                                     <TableHead>
                                         <TableRow sx={{ bgcolor: '#5c6bc0' }}>
@@ -467,15 +474,13 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                     Status
                                                 </Box>
                                             </TableCell>
-                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 120 }}>
-                                                Actions
-                                            </TableCell>
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, py: 2, minWidth: 120 }}>Actions</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {searchFilteredPatients.map((patient, index) => (
                                             <Fade in={true} timeout={300 + index * 50} key={patient.id}>
-                                                <TableRow 
+                                                <TableRow
                                                     hover
                                                     sx={{
                                                         '&:hover': {
@@ -494,22 +499,24 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                     <TableCell sx={{ py: 3 }}>
                                                         <Box display="flex" alignItems="center" gap={2}>
                                                             {patient.photo ? (
-                                                                <Avatar 
+                                                                <Avatar
                                                                     src={`/storage/${patient.photo}`}
-                                                                    sx={{ 
-                                                                        width: 50, 
+                                                                    sx={{
+                                                                        width: 50,
                                                                         height: 50,
                                                                         border: '2px solid #5c6bc0',
                                                                     }}
                                                                 />
                                                             ) : (
-                                                                <Avatar sx={{ 
-                                                                    bgcolor: '#4caf50', 
-                                                                    width: 50, 
-                                                                    height: 50,
-                                                                    fontSize: '1.2rem',
-                                                                    fontWeight: 'bold'
-                                                                }}>
+                                                                <Avatar
+                                                                    sx={{
+                                                                        bgcolor: '#4caf50',
+                                                                        width: 50,
+                                                                        height: 50,
+                                                                        fontSize: '1.2rem',
+                                                                        fontWeight: 'bold',
+                                                                    }}
+                                                                >
                                                                     {patient.name.charAt(0)}
                                                                 </Avatar>
                                                             )}
@@ -549,9 +556,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                         )}
                                                     </TableCell>
                                                     <TableCell sx={{ py: 3 }}>
-                                                        <Typography variant="body2">
-                                                            {patient.city || 'Not specified'}
-                                                        </Typography>
+                                                        <Typography variant="body2">{patient.city || 'Not specified'}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ py: 3 }}>
                                                         <Typography variant="body2" fontWeight="500">
@@ -590,10 +595,10 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                     </TableCell>
                                                     <TableCell sx={{ py: 3 }}>
                                                         <Chip
-                                                            label={patient.appointments_count > 0 ? "Active" : "Idle"}
-                                                            color={patient.appointments_count > 0 ? "success" : "default"}
+                                                            label={patient.appointments_count > 0 ? 'Active' : 'Idle'}
+                                                            color={patient.appointments_count > 0 ? 'success' : 'default'}
                                                             size="small"
-                                                            sx={{ 
+                                                            sx={{
                                                                 fontWeight: 600,
                                                                 minWidth: 70,
                                                             }}
@@ -647,24 +652,17 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                 No Patients Found
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {searchQuery || Object.values(localFilters).some(v => v)
-                                    ? 'Try adjusting your search criteria or filters.' 
-                                    : userRole === 'provider' 
-                                    ? 'You haven\'t treated any patients yet.' 
-                                    : 'No patients are currently registered in the system.'
-                                }
+                                {searchQuery || Object.values(localFilters).some((v) => v)
+                                    ? 'Try adjusting your search criteria or filters.'
+                                    : userRole === 'provider'
+                                      ? "You haven't treated any patients yet."
+                                      : 'No patients are currently registered in the system.'}
                             </Typography>
                         </CardContent>
                     </Card>
                 )}
 
-                {/* Patient View Modal */}
-                <Dialog
-                    open={openViewModal}
-                    onClose={() => setOpenViewModal(false)}
-                    maxWidth="md"
-                    fullWidth
-                >
+                <Dialog open={openViewModal} onClose={() => setOpenViewModal(false)} maxWidth="md" fullWidth>
                     <DialogTitle sx={{ bgcolor: '#5c6bc0', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box display="flex" alignItems="center" gap={2}>
                             <PersonIcon />
@@ -677,23 +675,24 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     <DialogContent sx={{ p: 0 }}>
                         {selectedPatient && (
                             <Box>
-                                {/* Header Section with Avatar and Status */}
                                 <Box sx={{ bgcolor: 'rgba(92, 107, 192, 0.05)', p: 4, textAlign: 'center' }}>
                                     {selectedPatient.photo ? (
-                                        <Avatar 
+                                        <Avatar
                                             src={`/storage/${selectedPatient.photo}`}
                                             sx={{ width: 100, height: 100, mx: 'auto', mb: 2, border: '3px solid #5c6bc0' }}
                                         />
                                     ) : (
-                                        <Avatar sx={{ 
-                                            bgcolor: '#4caf50', 
-                                            width: 100, 
-                                            height: 100,
-                                            fontSize: '2rem',
-                                            fontWeight: 'bold',
-                                            mx: 'auto',
-                                            mb: 2
-                                        }}>
+                                        <Avatar
+                                            sx={{
+                                                bgcolor: '#4caf50',
+                                                width: 100,
+                                                height: 100,
+                                                fontSize: '2rem',
+                                                fontWeight: 'bold',
+                                                mx: 'auto',
+                                                mb: 2,
+                                            }}
+                                        >
                                             {selectedPatient.name.charAt(0)}
                                         </Avatar>
                                     )}
@@ -704,22 +703,22 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                         Patient ID: #{selectedPatient.id}
                                     </Typography>
                                     <Chip
-                                        label={selectedPatient.appointments_count > 0 ? "Active Patient" : "Idle Patient"}
-                                        color={selectedPatient.appointments_count > 0 ? "success" : "default"}
+                                        label={selectedPatient.appointments_count > 0 ? 'Active Patient' : 'Idle Patient'}
+                                        color={selectedPatient.appointments_count > 0 ? 'success' : 'default'}
                                         sx={{ fontWeight: 600, fontSize: '0.875rem' }}
                                         size="medium"
                                     />
                                 </Box>
 
-                                {/* Details Section */}
                                 <Box sx={{ p: 4 }}>
-                                    <Box sx={{ 
-                                        display: 'grid',
-                                        gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                                        gap: 4,
-                                        mb: 4
-                                    }}>
-                                        {/* Contact Information */}
+                                    <Box
+                                        sx={{
+                                            display: 'grid',
+                                            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                            gap: 4,
+                                            mb: 4,
+                                        }}
+                                    >
                                         <Box>
                                             <Typography variant="h6" fontWeight="bold" mb={2} color="#5c6bc0">
                                                 Contact Information
@@ -755,7 +754,6 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                             </Stack>
                                         </Box>
 
-                                        {/* Personal Information */}
                                         <Box>
                                             <Typography variant="h6" fontWeight="bold" mb={2} color="#5c6bc0">
                                                 Personal Information
@@ -767,7 +765,9 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                         Gender
                                                     </Typography>
                                                     <Typography variant="body1" fontWeight="500">
-                                                        {selectedPatient.gender ? `${getGenderIcon(selectedPatient.gender)} ${selectedPatient.gender.charAt(0).toUpperCase() + selectedPatient.gender.slice(1)}` : 'Not specified'}
+                                                        {selectedPatient.gender
+                                                            ? `${getGenderIcon(selectedPatient.gender)} ${selectedPatient.gender.charAt(0).toUpperCase() + selectedPatient.gender.slice(1)}`
+                                                            : 'Not specified'}
                                                     </Typography>
                                                 </Box>
                                                 <Box>
@@ -776,7 +776,9 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                         Age
                                                     </Typography>
                                                     <Typography variant="body1" fontWeight="500">
-                                                        {selectedPatient.age !== null && selectedPatient.age !== undefined ? `${selectedPatient.age} years old` : 'Not available'}
+                                                        {selectedPatient.age !== null && selectedPatient.age !== undefined
+                                                            ? `${selectedPatient.age} years old`
+                                                            : 'Not available'}
                                                     </Typography>
                                                 </Box>
                                                 <Box>
@@ -784,24 +786,27 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                         Date of Birth
                                                     </Typography>
                                                     <Typography variant="body1" fontWeight="500">
-                                                        {selectedPatient.date_of_birth ? dayjs(selectedPatient.date_of_birth).format('MMMM D, YYYY') : 'Not provided'}
+                                                        {selectedPatient.date_of_birth
+                                                            ? dayjs(selectedPatient.date_of_birth).format('MMMM D, YYYY')
+                                                            : 'Not provided'}
                                                     </Typography>
                                                 </Box>
                                             </Stack>
                                         </Box>
                                     </Box>
 
-                                    {/* Medical Summary */}
                                     <Box>
                                         <Divider sx={{ my: 2 }} />
                                         <Typography variant="h6" fontWeight="bold" mb={2} color="#5c6bc0">
                                             Medical Summary
                                         </Typography>
-                                        <Box sx={{
-                                            display: 'grid',
-                                            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-                                            gap: 3
-                                        }}>
+                                        <Box
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+                                                gap: 3,
+                                            }}
+                                        >
                                             <Card sx={{ p: 2, textAlign: 'center', bgcolor: 'rgba(92, 107, 192, 0.05)' }}>
                                                 <EventIcon sx={{ fontSize: 40, color: '#5c6bc0', mb: 1 }} />
                                                 <Typography variant="h4" fontWeight="bold" color="#5c6bc0">
@@ -820,9 +825,28 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                                     Member Since
                                                 </Typography>
                                             </Card>
-                                            <Card sx={{ p: 2, textAlign: 'center', bgcolor: selectedPatient.appointments_count > 0 ? 'rgba(76, 175, 80, 0.05)' : 'rgba(158, 158, 158, 0.05)' }}>
-                                                <CheckCircleIcon sx={{ fontSize: 40, color: selectedPatient.appointments_count > 0 ? 'success.main' : 'text.secondary', mb: 1 }} />
-                                                <Typography variant="h6" fontWeight="bold" color={selectedPatient.appointments_count > 0 ? 'success.main' : 'text.secondary'}>
+                                            <Card
+                                                sx={{
+                                                    p: 2,
+                                                    textAlign: 'center',
+                                                    bgcolor:
+                                                        selectedPatient.appointments_count > 0
+                                                            ? 'rgba(76, 175, 80, 0.05)'
+                                                            : 'rgba(158, 158, 158, 0.05)',
+                                                }}
+                                            >
+                                                <CheckCircleIcon
+                                                    sx={{
+                                                        fontSize: 40,
+                                                        color: selectedPatient.appointments_count > 0 ? 'success.main' : 'text.secondary',
+                                                        mb: 1,
+                                                    }}
+                                                />
+                                                <Typography
+                                                    variant="h6"
+                                                    fontWeight="bold"
+                                                    color={selectedPatient.appointments_count > 0 ? 'success.main' : 'text.secondary'}
+                                                >
                                                     {selectedPatient.appointments_count > 0 ? 'Active' : 'Idle'}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
@@ -849,13 +873,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                     </DialogActions>
                 </Dialog>
 
-                {/* Delete Confirmation Dialog */}
-                <Dialog
-                    open={openDeleteDialog}
-                    onClose={() => setOpenDeleteDialog(false)}
-                    maxWidth="sm"
-                    fullWidth
-                >
+                <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)} maxWidth="sm" fullWidth>
                     <DialogTitle sx={{ color: 'error.main', display: 'flex', alignItems: 'center', gap: 1 }}>
                         <DeleteIcon />
                         Delete Patient
@@ -880,8 +898,8 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                                         deleteReason.length > 0 && deleteReason.trim().length < 10
                                             ? `Minimum 10 characters required (${deleteReason.trim().length}/10)`
                                             : deleteReason.trim().length >= 10
-                                            ? `✓ Valid reason (${deleteReason.trim().length}/1000)`
-                                            : 'Minimum 10 characters required'
+                                              ? `✓ Valid reason (${deleteReason.trim().length}/1000)`
+                                              : 'Minimum 10 characters required'
                                     }
                                     sx={{ mb: 2 }}
                                 />
@@ -901,12 +919,7 @@ export default function Patients({ patients, userRole, cities, filters }: Patien
                         >
                             Cancel
                         </Button>
-                        <Button
-                            onClick={confirmDeletePatient}
-                            variant="contained"
-                            color="error"
-                            disabled={deleteReason.trim().length < 10}
-                        >
+                        <Button onClick={confirmDeletePatient} variant="contained" color="error" disabled={deleteReason.trim().length < 10}>
                             Delete Patient
                         </Button>
                     </DialogActions>

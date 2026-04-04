@@ -28,33 +28,22 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-                <DropdownMenuItem 
-                    asChild 
-                    className="focus:bg-[#5c6bc0]/10 focus:text-[#5c6bc0] hover:bg-[#5c6bc0]/10 hover:text-[#5c6bc0] data-[highlighted]:bg-[#5c6bc0]/10 data-[highlighted]:text-[#5c6bc0] transition-colors duration-200"
+                <DropdownMenuItem
+                    asChild
+                    className="transition-colors duration-200 hover:bg-[#5c6bc0]/10 hover:text-[#5c6bc0] focus:bg-[#5c6bc0]/10 focus:text-[#5c6bc0] data-[highlighted]:bg-[#5c6bc0]/10 data-[highlighted]:text-[#5c6bc0]"
                 >
-                    <Link 
-                        className="block w-full" 
-                        href={edit()} 
-                        as="button" 
-                        prefetch 
-                        onClick={cleanup}
-                    >
+                    <Link className="block w-full" href={edit()} as="button" prefetch onClick={cleanup}>
                         <Settings className="mr-2" />
                         Settings
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
-                asChild 
-                className="focus:bg-[#5c6bc0]/10 focus:text-[#5c6bc0] hover:bg-[#5c6bc0]/10 hover:text-[#5c6bc0] data-[highlighted]:bg-[#5c6bc0]/10 data-[highlighted]:text-[#5c6bc0] transition-colors duration-200"
+            <DropdownMenuItem
+                asChild
+                className="transition-colors duration-200 hover:bg-[#5c6bc0]/10 hover:text-[#5c6bc0] focus:bg-[#5c6bc0]/10 focus:text-[#5c6bc0] data-[highlighted]:bg-[#5c6bc0]/10 data-[highlighted]:text-[#5c6bc0]"
             >
-                <Link 
-                    className="block w-full" 
-                    href={logout()} 
-                    as="button" 
-                    onClick={handleLogout}
-                >
+                <Link className="block w-full" href={logout()} as="button" onClick={handleLogout}>
                     <LogOut className="mr-2" />
                     Log out
                 </Link>

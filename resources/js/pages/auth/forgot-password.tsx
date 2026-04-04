@@ -2,22 +2,8 @@ import AnimatedAuthLayout from '@/layouts/auth/animated-auth-layout';
 import { login } from '@/routes';
 import { email as passwordResetEmail } from '@/routes/password';
 import { Form, Head, Link } from '@inertiajs/react';
-import {
-    Alert,
-    Box,
-    Button,
-    CircularProgress,
-    Divider,
-    IconButton,
-    InputAdornment,
-    TextField,
-    Typography,
-} from '@mui/material';
-import {
-    Email as EmailIcon,
-    Home as HomeIcon,
-    Send as SendIcon,
-} from '@mui/icons-material';
+import { Email as EmailIcon, Home as HomeIcon, Send as SendIcon } from '@mui/icons-material';
+import { Alert, Box, Button, CircularProgress, Divider, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 
 export default function ForgotPassword({ status }: { status?: string }) {
     return (
@@ -111,7 +97,9 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             fullWidth
                             size="large"
                             disabled={processing}
-                            startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <SendIcon sx={{ fontSize: { xs: 20, md: 24 } }} />}
+                            startIcon={
+                                processing ? <CircularProgress size={18} color="inherit" /> : <SendIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
+                            }
                             sx={{
                                 bgcolor: '#5c6bc0',
                                 py: { xs: 1.2, md: 1.5 },
@@ -146,8 +134,8 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                         textDecoration: 'none',
                                         fontWeight: 600,
                                     }}
-                                    onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                    onMouseOver={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                                    onMouseOut={(e) => (e.currentTarget.style.textDecoration = 'none')}
                                 >
                                     Return to Sign In
                                 </Link>

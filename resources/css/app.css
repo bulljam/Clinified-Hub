@@ -5,7 +5,6 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-
 @theme {
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -101,7 +100,6 @@
     --clinifiedhub-text-dark: #1f2937;
 }
 
-
 @layer base {
     html {
         font-size: clamp(14px, 0.72vw + 5px, 16px);
@@ -116,31 +114,27 @@
         @apply bg-background text-foreground;
     }
 
-    /* Global interactive elements pointer cursor styling */
     button,
-    [role="button"],
-    [tabindex="0"]:not(input):not(textarea):not(select),
+    [role='button'],
+    [tabindex='0']:not(input):not(textarea):not(select),
     .cursor-pointer,
     svg[onclick],
     svg:hover,
-    /* All clickable/interactive elements */
     a,
     [onclick],
     label,
     select,
-    input[type="button"],
-    input[type="submit"],
-    input[type="reset"],
-    input[type="checkbox"],
-    input[type="radio"],
-    input[type="file"],
-    /* Cards and containers with hover effects */
+    input[type='button'],
+    input[type='submit'],
+    input[type='reset'],
+    input[type='checkbox'],
+    input[type='radio'],
+    input[type='file'],
     .hover\\:shadow-xl,
     .hover\\:shadow-lg,
     .hover\\:shadow-md,
     .hover\\:-translate-y-1,
     .hover\\:scale-105,
-    /* Material UI and common interactive classes */
     .MuiButton-root,
     .MuiIconButton-root,
     .MuiChip-root,
@@ -149,14 +143,12 @@
     .MuiMenuItem-root,
     .MuiTabs-root,
     .MuiTab-root,
-    /* Common interactive class patterns */
-    [class*="hover:"],
-    [class*="clickable"],
-    [class*="interactive"] {
+    [class*='hover:'],
+    [class*='clickable'],
+    [class*='interactive'] {
         cursor: pointer;
     }
 
-    /* Ensure all Lucide icons have pointer cursor and hover effects */
     svg[data-lucide] {
         cursor: pointer;
         transition: opacity 0.15s ease-in-out;
@@ -165,10 +157,8 @@
     svg[data-lucide]:hover {
         opacity: 0.75;
     }
-
 }
 
-/* React Big Calendar custom styles */
 .rbc-calendar {
     font-family: inherit !important;
 }
@@ -198,13 +188,11 @@
     z-index: 2 !important;
 }
 
-/* Month view - events should fit within their day cell */
 .rbc-month-view .rbc-event {
     margin: 1px !important;
     min-height: 18px !important;
 }
 
-/* Week/Day view - events should fit within their time slot */
 .rbc-time-view .rbc-event {
     margin: 1px 2px !important;
 }
@@ -218,7 +206,6 @@
     border: 1px solid #5c6bc0 !important;
 }
 
-/* Remove default RBC event styles completely */
 .rbc-event:focus,
 .rbc-event.rbc-selected,
 .rbc-selected.rbc-event,
@@ -228,4 +215,3 @@
     background-color: transparent !important;
     box-shadow: none !important;
 }
-

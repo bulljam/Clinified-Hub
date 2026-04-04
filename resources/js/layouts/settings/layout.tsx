@@ -43,13 +43,10 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                     size="sm"
                                     variant="ghost"
                                     asChild
-                                    className={cn(
-                                        'w-full justify-start transition-colors duration-200 hover:bg-[#5c6bc0]/10 hover:text-[#5c6bc0]',
-                                        {
-                                            'bg-[#5c6bc0]/15 text-[#5c6bc0] font-medium': isActive,
-                                            'text-gray-700 hover:text-[#5c6bc0]': !isActive,
-                                        }
-                                    )}
+                                    className={cn('w-full justify-start transition-colors duration-200 hover:bg-[#5c6bc0]/10 hover:text-[#5c6bc0]', {
+                                        'bg-[#5c6bc0]/15 font-medium text-[#5c6bc0]': isActive,
+                                        'text-gray-700 hover:text-[#5c6bc0]': !isActive,
+                                    })}
                                 >
                                     <Link href={item.href} prefetch>
                                         {item.icon && <item.icon className="h-4 w-4" />}

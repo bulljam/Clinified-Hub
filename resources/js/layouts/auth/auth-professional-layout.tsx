@@ -1,7 +1,7 @@
-import { Box, Card, CardContent, Typography, Container } from '@mui/material';
-import { Link } from '@inertiajs/react';
 import { home } from '@/routes';
+import { Link } from '@inertiajs/react';
 import { MedicalServices as StethoscopeIcon } from '@mui/icons-material';
+import { Box, Card, CardContent, Container, Typography } from '@mui/material';
 import { type PropsWithChildren } from 'react';
 
 interface AuthLayoutProps {
@@ -37,7 +37,6 @@ export default function AuthProfessionalLayout({ children, title, description }:
         >
             <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 2 }}>
                 <Box sx={{ width: '100%', maxWidth: 420, mx: 'auto' }}>
-                    {/* Logo Section */}
                     <Box sx={{ textAlign: 'center', mb: 4 }}>
                         <Link href={home()} style={{ textDecoration: 'none' }}>
                             <Box
@@ -73,7 +72,6 @@ export default function AuthProfessionalLayout({ children, title, description }:
                         </Link>
                     </Box>
 
-                    {/* Main Card */}
                     <Card
                         elevation={0}
                         sx={{
@@ -110,7 +108,6 @@ export default function AuthProfessionalLayout({ children, title, description }:
                         </CardContent>
                     </Card>
 
-                    {/* Footer */}
                     <Box sx={{ textAlign: 'center', mt: 3 }}>
                         <Typography
                             variant="caption"

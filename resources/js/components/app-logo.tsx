@@ -1,8 +1,8 @@
-import { Calendar, Stethoscope } from 'lucide-react';
+import { Stethoscope } from 'lucide-react';
 
 export default function AppLogo() {
     return (
-        <div className="flex items-center w-full pb-1">
+        <div className="flex w-full items-center pb-1">
             <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
                 <Stethoscope className="size-5 text-white" />
             </div>

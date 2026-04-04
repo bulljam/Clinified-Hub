@@ -1,8 +1,9 @@
 import AnimatedAuthLayout from '@/layouts/auth/animated-auth-layout';
-import login from '@/routes/login';
 import { register } from '@/routes';
+import login from '@/routes/login';
 import { request } from '@/routes/password';
 import { Form, Head, Link } from '@inertiajs/react';
+import { Email as EmailIcon, Home as HomeIcon, Lock as LockIcon, Login as LoginIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
     Alert,
     Box,
@@ -16,14 +17,6 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import {
-    Email as EmailIcon,
-    Home as HomeIcon,
-    Lock as LockIcon,
-    Login as LoginIcon,
-    Visibility,
-    VisibilityOff,
-} from '@mui/icons-material';
 import { useState } from 'react';
 
 interface LoginProps {
@@ -35,14 +28,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <AnimatedAuthLayout 
-            title="Welcome Back" 
-            description="Please sign in to your account to continue"
-            mode="login"
-            imagePosition="right"
-        >
+        <AnimatedAuthLayout title="Welcome Back" description="Please sign in to your account to continue" mode="login" imagePosition="right">
             <Head title="Log in" />
-            
+
             <Box sx={{ position: 'absolute', top: { xs: 16, md: 24 }, right: { xs: 16, md: 24 } }}>
                 <IconButton
                     component={Link}
@@ -81,7 +69,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
             <Form {...login.store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.75, md: 2.25, xl: 2.5 } }}>
-                        {/* Email Field */}
                         <TextField
                             fullWidth
                             label="Email Address"
@@ -125,7 +112,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             }}
                         />
 
-                        {/* Password Field */}
                         <TextField
                             fullWidth
                             label="Password"
@@ -148,11 +134,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                     <InputAdornment position="end">
                                         <Button
                                             onClick={() => setShowPassword(!showPassword)}
-                                            sx={{ 
-                                                minWidth: 'auto', 
-                                                p: 1, 
+                                            sx={{
+                                                minWidth: 'auto',
+                                                p: 1,
                                                 color: 'text.secondary',
-                                                '&:hover': { color: '#5c6bc0' } 
+                                                '&:hover': { color: '#5c6bc0' },
                                             }}
                                         >
                                             {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -183,12 +169,19 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             }}
                         />
 
-                        {/* Remember Me and Forgot Password */}
-                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, justifyContent: 'space-between', gap: { xs: 2, sm: 0 } }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: { xs: 'column', sm: 'row' },
+                                alignItems: { xs: 'stretch', sm: 'center' },
+                                justifyContent: 'space-between',
+                                gap: { xs: 2, sm: 0 },
+                            }}
+                        >
                             <FormControlLabel
                                 control={
-                                    <Checkbox 
-                                        name="remember" 
+                                    <Checkbox
+                                        name="remember"
                                         tabIndex={3}
                                         size="small"
                                         sx={{
@@ -215,15 +208,14 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                         fontWeight: 500,
                                     }}
                                     tabIndex={5}
-                                    onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                    onMouseOver={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                                    onMouseOut={(e) => (e.currentTarget.style.textDecoration = 'none')}
                                 >
                                     Forgot password?
                                 </Link>
                             )}
                         </Box>
 
-                        {/* Sign In Button */}
                         <Button
                             type="submit"
                             variant="contained"
@@ -231,7 +223,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             size="large"
                             tabIndex={4}
                             disabled={processing}
-                            startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <LoginIcon sx={{ fontSize: { xs: 20, md: 24 } }} />}
+                            startIcon={
+                                processing ? <CircularProgress size={18} color="inherit" /> : <LoginIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
+                            }
                             sx={{
                                 bgcolor: '#5c6bc0',
                                 py: { xs: 1.15, md: 1.2, xl: 1.4 },
@@ -251,14 +245,12 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             {processing ? 'Signing in...' : 'Sign In'}
                         </Button>
 
-                        {/* Divider */}
                         <Divider sx={{ my: { xs: 1, md: 2 } }}>
                             <Typography variant="body2" sx={{ color: 'text.secondary', px: 2, fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
                                 New to Clinified Hub?
                             </Typography>
                         </Divider>
 
-                        {/* Sign Up Link */}
                         <Box sx={{ textAlign: 'center' }}>
                             <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: { xs: '0.875rem', md: '1rem' } }}>
                                 Don't have an account?{' '}
@@ -270,8 +262,8 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                         fontWeight: 600,
                                     }}
                                     tabIndex={6}
-                                    onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                    onMouseOver={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                                    onMouseOut={(e) => (e.currentTarget.style.textDecoration = 'none')}
                                 >
                                     Create an account
                                 </Link>
