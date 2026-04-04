@@ -200,8 +200,8 @@ export default function DoctorApplications({ applications }: Props) {
         }
     };
 
-    const handlePhotoPreview = (photoPath: string) => {
-        window.open(`/storage/${photoPath}`, '_blank');
+    const handlePhotoPreview = (applicationId: number) => {
+        window.open(`/admin/doctor-applications/${applicationId}/photo`, '_blank');
     };
 
     const totalPages = Math.ceil(applications.length / itemsPerPage);
@@ -325,7 +325,7 @@ export default function DoctorApplications({ applications }: Props) {
                                                 <Box display="flex" alignItems="center" gap={2}>
                                                     {application.photo ? (
                                                         <Avatar
-                                                            src={`${window.location.origin}/storage/${application.photo}`}
+                                                            src={`/admin/doctor-applications/${application.id}/photo`}
                                                             sx={{
                                                                 width: 40,
                                                                 height: 40,
@@ -337,7 +337,7 @@ export default function DoctorApplications({ applications }: Props) {
                                                                 },
                                                                 transition: 'all 0.2s ease-in-out',
                                                             }}
-                                                            onClick={() => handlePhotoPreview(application.photo!)}
+                                                            onClick={() => handlePhotoPreview(application.id)}
                                                         />
                                                     ) : (
                                                         <Avatar
@@ -527,7 +527,7 @@ export default function DoctorApplications({ applications }: Props) {
                                                 <Box display="flex" alignItems="center" gap={3} mb={2}>
                                                     {viewingApplication.photo ? (
                                                         <Avatar
-                                                            src={`${window.location.origin}/storage/${viewingApplication.photo}`}
+                                                            src={`/admin/doctor-applications/${viewingApplication.id}/photo`}
                                                             sx={{
                                                                 width: 64,
                                                                 height: 64,
@@ -539,7 +539,7 @@ export default function DoctorApplications({ applications }: Props) {
                                                                 },
                                                                 transition: 'all 0.2s ease-in-out',
                                                             }}
-                                                            onClick={() => handlePhotoPreview(viewingApplication.photo!)}
+                                                            onClick={() => handlePhotoPreview(viewingApplication.id)}
                                                         />
                                                     ) : (
                                                         <Avatar

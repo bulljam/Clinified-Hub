@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -40,13 +41,13 @@ class DoctorApplicationController extends Controller
         $credentialsPaths = [];
         if ($request->hasFile('credentials')) {
             foreach ($request->file('credentials') as $file) {
-                $credentialsPaths[] = $file->store('doctor-credentials', 'public');
+                $credentialsPaths[] = $file->store('doctor-credentials', 'local');
             }
         }
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('doctor-photos', 'public');
+            $photoPath = $request->file('photo')->store('doctor-photos', 'local');
         }
 
         $user = User::create([
@@ -110,7 +111,7 @@ class DoctorApplicationController extends Controller
         ];
 
         if ($application->photo) {
-            $updateData['photo'] = $application->photo;
+            $updateData['photo'] = $this->copyApplicationPhotoToProviderProfile($application->photo);
         }
 
         if ($application->office_address) {
@@ -167,17 +168,83 @@ class DoctorApplicationController extends Controller
             }
         }
 
-        if (!$filePath || !file_exists(storage_path('app/public/' . $filePath))) {
+        if (!$filePath) {
             abort(404, 'File not found');
         }
 
-        $fullPath = storage_path('app/public/' . $filePath);
+        $disk = Storage::disk('local');
+        $legacyDisk = Storage::disk('public');
+
+        if (! $disk->exists($filePath) && $legacyDisk->exists($filePath)) {
+            $disk->put($filePath, $legacyDisk->get($filePath));
+            $legacyDisk->delete($filePath);
+        }
+
+        if (! $disk->exists($filePath)) {
+            abort(404, 'File not found');
+        }
+
+        $fullPath = $disk->path($filePath);
         $mimeType = mime_content_type($fullPath);
 
         return response()->file($fullPath, [
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="' . $filename . '"',
         ]);
+    }
+
+    public function viewPhoto(DoctorApplication $application)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized');
+        }
+
+        if (! $application->photo) {
+            abort(404, 'File not found');
+        }
+
+        $filePath = $application->photo;
+        $disk = Storage::disk('local');
+        $legacyDisk = Storage::disk('public');
+
+        if (! $disk->exists($filePath) && $legacyDisk->exists($filePath)) {
+            $disk->put($filePath, $legacyDisk->get($filePath));
+            $legacyDisk->delete($filePath);
+        }
+
+        if (! $disk->exists($filePath)) {
+            abort(404, 'File not found');
+        }
+
+        $fullPath = $disk->path($filePath);
+        $mimeType = mime_content_type($fullPath);
+
+        return response()->file($fullPath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"',
+        ]);
+    }
+
+    private function copyApplicationPhotoToProviderProfile(string $photoPath): ?string
+    {
+        $localDisk = Storage::disk('local');
+        $publicDisk = Storage::disk('public');
+
+        if (! $localDisk->exists($photoPath) && $publicDisk->exists($photoPath)) {
+            $localDisk->put($photoPath, $publicDisk->get($photoPath));
+            $publicDisk->delete($photoPath);
+        }
+
+        if (! $localDisk->exists($photoPath)) {
+            return null;
+        }
+
+        $extension = pathinfo($photoPath, PATHINFO_EXTENSION);
+        $profilePath = 'profile-photos/' . Str::random(40) . ($extension ? '.' . $extension : '');
+
+        $publicDisk->put($profilePath, $localDisk->get($photoPath));
+
+        return $profilePath;
     }
 
     private function generateTemporaryPassword(): string

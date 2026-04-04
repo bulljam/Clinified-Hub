@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('doctor-applications', [DoctorApplicationController::class, 'index'])->name('doctor-applications.index');
         Route::post('doctor-applications/{application}/approve', [DoctorApplicationController::class, 'approve'])->name('doctor-applications.approve');
         Route::post('doctor-applications/{application}/reject', [DoctorApplicationController::class, 'reject'])->name('doctor-applications.reject');
+        Route::get('doctor-applications/{application}/photo', [DoctorApplicationController::class, 'viewPhoto'])->name('doctor-applications.view-photo');
         Route::get('doctor-applications/{application}/credential/{filename}', [DoctorApplicationController::class, 'viewCredential'])->name('doctor-applications.view-credential');
     });
 
