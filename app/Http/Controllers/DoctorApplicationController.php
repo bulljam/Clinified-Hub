@@ -86,8 +86,10 @@ class DoctorApplicationController extends Controller
         ]);
     }
 
-    public function approve(DoctorApplication $application)
+    public function approve(int $application)
     {
+        $application = DoctorApplication::findOrFail($application);
+
         if ($application->status !== 'pending') {
             return redirect()->back()->withErrors(['error' => 'This application has already been reviewed.']);
         }
@@ -127,8 +129,10 @@ class DoctorApplicationController extends Controller
         return redirect()->back()->with('success', 'Doctor application approved successfully! Approval email sent.');
     }
 
-    public function reject(Request $request, DoctorApplication $application)
+    public function reject(Request $request, int $application)
     {
+        $application = DoctorApplication::findOrFail($application);
+
         $validated = $request->validate([
             'rejection_reason' => 'required|string|max:500',
         ]);
@@ -151,8 +155,10 @@ class DoctorApplicationController extends Controller
         return redirect()->back()->with('success', 'Doctor application rejected successfully! Rejection email sent.');
     }
 
-    public function viewCredential(DoctorApplication $application, $filename)
+    public function viewCredential(int $application, $filename)
     {
+        $application = DoctorApplication::findOrFail($application);
+
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
@@ -193,8 +199,10 @@ class DoctorApplicationController extends Controller
         ]);
     }
 
-    public function viewPhoto(DoctorApplication $application)
+    public function viewPhoto(int $application)
     {
+        $application = DoctorApplication::findOrFail($application);
+
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
