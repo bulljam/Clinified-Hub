@@ -16,7 +16,7 @@ export function UserInfo({ user, showEmail = false }: { user: User; showEmail?: 
     };
 
     const getAvatarSrc = () => {
-        if (user.role === 'provider' && user.photo) {
+        if (user.photo) {
             return getPhotoUrl(user.photo);
         }
         return user.avatar;

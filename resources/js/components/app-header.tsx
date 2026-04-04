@@ -47,6 +47,8 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
     const getInitials = useInitials();
+    const avatarSrc = auth.user.avatar || (typeof auth.user.photo === 'string' && auth.user.photo !== '' ? `/storage/${auth.user.photo}` : undefined);
+
     return (
         <>
             <div className="border-b border-sidebar-border/80">
@@ -155,7 +157,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="size-10 rounded-full p-1">
                                     <Avatar className="size-8 overflow-hidden rounded-full">
-                                        <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                        <AvatarImage src={avatarSrc} alt={auth.user.name} />
                                         <AvatarFallback className="rounded-lg bg-neutral-200 text-black">
                                             {getInitials(auth.user.name)}
                                         </AvatarFallback>
