@@ -1,6 +1,6 @@
-import PasswordResetLinkController from '@/actions/App/Http/Controllers/Auth/PasswordResetLinkController';
 import AnimatedAuthLayout from '@/layouts/auth/animated-auth-layout';
 import { login } from '@/routes';
+import { email as passwordResetEmail } from '@/routes/password';
 import { Form, Head, Link } from '@inertiajs/react';
 import {
     Alert,
@@ -64,7 +64,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                 </Alert>
             )}
 
-            <Form {...PasswordResetLinkController.store.form()}>
+            <Form {...passwordResetEmail.form()}>
                 {({ processing, errors }) => (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
                         <TextField
