@@ -103,6 +103,10 @@
 
 
 @layer base {
+    html {
+        font-size: clamp(14px, 0.72vw + 5px, 16px);
+    }
+
     * {
         @apply border-border;
         cursor: pointer !important;
@@ -224,5 +228,4 @@
     background-color: transparent !important;
     box-shadow: none !important;
 }
-
 

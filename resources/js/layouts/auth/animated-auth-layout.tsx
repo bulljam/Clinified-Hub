@@ -18,6 +18,7 @@ export default function AnimatedAuthLayout({
 }: PropsWithChildren<AnimatedAuthLayoutProps>) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+    const isLaptop = useMediaQuery(theme.breakpoints.down('xl'));
     const [currentImagePosition, setCurrentImagePosition] = useState(imagePosition);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,14 +63,14 @@ export default function AnimatedAuthLayout({
                     position: 'relative',
                     zIndex: 2,
                     textAlign: 'center',
-                    p: 6,
+                    p: isLaptop ? 4.5 : 6,
                     transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
             >
                 <Box
                     sx={{
-                        width: 120,
-                        height: 120,
+                        width: isLaptop ? 96 : 120,
+                        height: isLaptop ? 96 : 120,
                         borderRadius: '50%',
                         bgcolor: 'rgba(92, 107, 192, 0.2)',
                         display: 'flex',
@@ -86,7 +87,7 @@ export default function AnimatedAuthLayout({
                         },
                     }}
                 >
-                    <StethoscopeIcon sx={{ fontSize: 60, color: '#5c6bc0' }} />
+                    <StethoscopeIcon sx={{ fontSize: isLaptop ? 48 : 60, color: '#5c6bc0' }} />
                 </Box>
                 <Typography
                     variant="h4"
@@ -95,6 +96,7 @@ export default function AnimatedAuthLayout({
                         color: '#5c6bc0',
                         mb: 2,
                         letterSpacing: '-0.5px',
+                        fontSize: isLaptop ? '1.75rem' : undefined,
                     }}
                 >
                     {mode === 'login' ? 'Welcome Back!' : 'Join Clinified Hub'}
@@ -103,10 +105,11 @@ export default function AnimatedAuthLayout({
                     variant="body1"
                     sx={{
                         color: '#4a5568',
-                        maxWidth: 300,
+                        maxWidth: isLaptop ? 260 : 300,
                         mx: 'auto',
                         lineHeight: 1.6,
                         opacity: 0.8,
+                        fontSize: isLaptop ? '0.95rem' : undefined,
                     }}
                 >
                     {mode === 'login' 
@@ -117,7 +120,7 @@ export default function AnimatedAuthLayout({
                 
                 <Box
                     sx={{
-                        mt: 6,
+                        mt: isLaptop ? 4 : 6,
                         display: 'flex',
                         justifyContent: 'center',
                         gap: 3,
@@ -172,7 +175,9 @@ export default function AnimatedAuthLayout({
             sx={{
                 width: '100%',
                 height: '100%',
-                p: 6,
+                pt: isLaptop ? 0.25 : 1,
+                px: isLaptop ? 4.5 : 6,
+                pb: isLaptop ? 4.5 : 6,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -181,27 +186,28 @@ export default function AnimatedAuthLayout({
                 position: 'relative',
             }}
         >
-            <Box sx={{ maxWidth: 400, width: '100%' }}>
-                <Box sx={{ mb: 4 }}>
+            <Box sx={{ maxWidth: isLaptop ? 360 : 400, width: '100%' }}>
+                <Box sx={{ mb: isLaptop ? 1.5 : 2, mt: 0 }}>
                     <Typography
                         variant="h4"
                         sx={{
                             fontWeight: 600,
                             color: '#1a1a1a',
                             mb: 1,
-                            fontSize: { xs: '1.75rem', sm: '2rem' },
+                            fontSize: { xs: '1.65rem', sm: isLaptop ? '1.85rem' : '2rem' },
                         }}
                     >
                         {title}
                     </Typography>
                     <Typography
                         variant="body1"
-                        sx={{
-                            color: 'text.secondary',
-                            lineHeight: 1.6,
-                        }}
-                    >
-                        {description}
+                    sx={{
+                        color: 'text.secondary',
+                        lineHeight: 1.6,
+                        fontSize: isLaptop ? '0.95rem' : '1rem',
+                    }}
+                >
+                    {description}
                     </Typography>
                 </Box>
                 {children}
@@ -332,13 +338,13 @@ export default function AnimatedAuthLayout({
                     ref={containerRef}
                     elevation={0}
                     sx={{
-                        borderRadius: 6,
+                        borderRadius: isLaptop ? 5 : 6,
                         border: '1px solid rgba(0, 0, 0, 0.08)',
                         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
                         backgroundColor: 'rgba(255, 255, 255, 0.98)',
                         backdropFilter: 'blur(20px)',
                         overflow: 'hidden',
-                        maxWidth: 1200,
+                        maxWidth: isLaptop ? 1080 : 1200,
                         mx: 'auto',
                         transition: 'all 0.3s ease-in-out',
                     }}
@@ -346,7 +352,7 @@ export default function AnimatedAuthLayout({
                     <Box
                         sx={{
                             display: 'flex',
-                            minHeight: 800,
+                            minHeight: isLaptop ? 700 : 800,
                             position: 'relative',
                         }}
                     >

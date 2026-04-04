@@ -1,5 +1,5 @@
-import AuthenticatedSessionController from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController';
 import AnimatedAuthLayout from '@/layouts/auth/animated-auth-layout';
+import login from '@/routes/login';
 import { register } from '@/routes';
 import { request } from '@/routes/password';
 import { Form, Head, Link } from '@inertiajs/react';
@@ -78,9 +78,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                 </Alert>
             )}
 
-            <Form {...AuthenticatedSessionController.store.form()} resetOnSuccess={['password']}>
+            <Form {...login.store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.75, md: 2.25, xl: 2.5 } }}>
                         {/* Email Field */}
                         <TextField
                             fullWidth
@@ -104,6 +104,8 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
+                                    fontSize: { xs: '0.95rem', xl: '1rem' },
+                                    minHeight: { xs: 52, md: 50, xl: 56 },
                                     '&:hover fieldset': {
                                         borderColor: '#5c6bc0',
                                     },
@@ -112,9 +114,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                     },
                                 },
                                 '& .MuiInputLabel-root': {
+                                    fontSize: { xs: '0.95rem', xl: '1rem' },
                                     '&.Mui-focused': {
                                         color: '#5c6bc0',
                                     },
+                                },
+                                '& .MuiFormHelperText-root': {
+                                    fontSize: '0.8rem',
                                 },
                             }}
                         />
@@ -156,6 +162,8 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
+                                    fontSize: { xs: '0.95rem', xl: '1rem' },
+                                    minHeight: { xs: 52, md: 50, xl: 56 },
                                     '&:hover fieldset': {
                                         borderColor: '#5c6bc0',
                                     },
@@ -164,9 +172,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                     },
                                 },
                                 '& .MuiInputLabel-root': {
+                                    fontSize: { xs: '0.95rem', xl: '1rem' },
                                     '&.Mui-focused': {
                                         color: '#5c6bc0',
                                     },
+                                },
+                                '& .MuiFormHelperText-root': {
+                                    fontSize: '0.8rem',
                                 },
                             }}
                         />
@@ -222,10 +234,10 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <LoginIcon sx={{ fontSize: { xs: 20, md: 24 } }} />}
                             sx={{
                                 bgcolor: '#5c6bc0',
-                                py: { xs: 1.2, md: 1.5 },
+                                py: { xs: 1.15, md: 1.2, xl: 1.4 },
                                 textTransform: 'none',
                                 fontWeight: 600,
-                                fontSize: { xs: '0.875rem', md: '1rem' },
+                                fontSize: { xs: '0.9rem', md: '0.95rem', xl: '1rem' },
                                 boxShadow: '0 4px 12px rgba(92, 107, 192, 0.3)',
                                 '&:hover': {
                                     bgcolor: '#26418f',
