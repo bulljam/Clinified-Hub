@@ -129,9 +129,7 @@ export default function Payments({ transactions, summary, users = [], providers 
     const isPatient = auth.user?.role === 'client';
 
     const updateFilters = (nextFilters: Record<string, string | number | undefined>) => {
-        const params = Object.fromEntries(
-            Object.entries(nextFilters).filter(([, value]) => value !== undefined && value !== ''),
-        );
+        const params = Object.fromEntries(Object.entries(nextFilters).filter(([, value]) => value !== undefined && value !== ''));
 
         router.get('/payments', params, {
             preserveScroll: true,

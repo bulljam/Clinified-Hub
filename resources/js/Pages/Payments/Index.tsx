@@ -1,6 +1,20 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
-import { Box, Card, CardContent, Chip, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, type ChipProps } from '@mui/material';
+import {
+    Box,
+    Card,
+    CardContent,
+    Chip,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+    type ChipProps,
+} from '@mui/material';
 import React from 'react';
 
 interface User {

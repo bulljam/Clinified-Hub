@@ -126,8 +126,10 @@ class PaymentController extends Controller
         return back();
     }
 
-    public function approve(Request $request, Transaction $transaction)
+    public function approve(Request $request, int $transaction)
     {
+        $transaction = Transaction::findOrFail($transaction);
+
         $request->validate([
             'appointment_id' => 'required|exists:appointments,id',
         ]);
@@ -156,8 +158,10 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function reject(Request $request, Transaction $transaction)
+    public function reject(Request $request, int $transaction)
     {
+        $transaction = Transaction::findOrFail($transaction);
+
         $request->validate([
             'appointment_id' => 'required|exists:appointments,id',
             'reason' => 'sometimes|string|max:255',
