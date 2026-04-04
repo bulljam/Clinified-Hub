@@ -156,6 +156,7 @@ class DoctorApplicationController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $filename = basename(urldecode($filename));
         $credentials = $application->credentials ?? [];
         $filePath = null;
 

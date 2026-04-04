@@ -143,9 +143,14 @@ const getFileName = (filePath: string, index: number): string => {
     }
 };
 
-const previewFile = (filePath: string): void => {
-    const fullPath = `http://localhost:8000/storage/${filePath}`;
-    window.open(fullPath, '_blank');
+const previewFile = (applicationId: number, filePath: string): void => {
+    const filename = filePath.split('/').pop();
+
+    if (!filename) {
+        return;
+    }
+
+    window.open(`/admin/doctor-applications/${applicationId}/credential/${encodeURIComponent(filename)}`, '_blank');
 };
 
 export default function DoctorApplications({ applications }: Props) {
@@ -734,7 +739,7 @@ export default function DoctorApplications({ applications }: Props) {
                                                                     key={index}
                                                                     variant="outlined"
                                                                     startIcon={<PreviewIcon />}
-                                                                    onClick={() => previewFile(credential)}
+                                                                    onClick={() => previewFile(viewingApplication.id, credential)}
                                                                     sx={{
                                                                         borderColor: '#5c6bc0',
                                                                         color: '#5c6bc0',
