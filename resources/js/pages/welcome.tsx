@@ -898,6 +898,7 @@ export default function Welcome() {
                                             src="/images/Doctor.jpg"
                                             alt="Dr. Michael Rodriguez"
                                             className="h-12 w-12 rounded-full border-2 border-indigo-200 object-cover"
+                                            style={{ objectPosition: 'center top', transform: 'scale(1.08) translateY(3px)' }}
                                         />
                                         <div className="ml-3">
                                             <div className="font-semibold">Dr. Michael Rodriguez</div>
@@ -925,6 +926,7 @@ export default function Welcome() {
                                             src="/images/Patient.jpg"
                                             alt="James Thompson"
                                             className="h-12 w-12 rounded-full border-2 border-green-200 object-cover"
+                                            style={{ objectPosition: 'center top', transform: 'scale(1.08) translateY(3px)' }}
                                         />
                                         <div className="ml-3">
                                             <div className="font-semibold">James Thompson</div>
@@ -952,6 +954,7 @@ export default function Welcome() {
                                             src="/images/Manager.jpg"
                                             alt="Sarah Wilson"
                                             className="h-12 w-12 rounded-full border-2 border-purple-200 object-cover"
+                                            style={{ objectPosition: 'center top', transform: 'scale(1.08) translateY(3px)' }}
                                         />
                                         <div className="ml-3">
                                             <div className="font-semibold">Sarah Wilson</div>

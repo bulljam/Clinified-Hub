@@ -66,6 +66,14 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "qa": [
+            "./vendor/bin/pint",
+            "pnpm format",
+            "pnpm lint",
+            "pnpm types",
+            "@test",
+            "pnpm build"
         ]
     },
     "extra": {
