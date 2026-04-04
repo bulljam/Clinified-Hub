@@ -35,7 +35,7 @@ return new class extends Migration
                 'specialty',
                 'years_of_experience',
                 'bio',
-                'phone'
+                'phone',
             ]);
         });
     }

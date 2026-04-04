@@ -12,31 +12,31 @@ class UserController extends Controller
     public function providers(Request $request)
     {
         $userRole = $request->user()->role;
-        
+
         $query = User::where('role', 'provider')
             ->withCount(['providedAppointments as appointments_count']);
-            
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('specialty', 'like', '%' . $search . '%')
-                  ->orWhere('city', 'like', '%' . $search . '%');
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('specialty', 'like', '%'.$search.'%')
+                    ->orWhere('city', 'like', '%'.$search.'%');
             });
         }
 
         if ($request->filled('specialty')) {
-            $query->where('specialty', 'like', '%' . $request->specialty . '%');
+            $query->where('specialty', 'like', '%'.$request->specialty.'%');
         }
-        
+
         if ($request->filled('city')) {
-            $query->where('city', 'like', '%' . $request->city . '%');
+            $query->where('city', 'like', '%'.$request->city.'%');
         }
-        
+
         if ($request->filled('gender')) {
             $query->where('gender', $request->gender);
         }
-        
+
         if ($request->filled('experience')) {
             $experience = $request->experience;
             switch ($experience) {
@@ -60,7 +60,7 @@ class UserController extends Controller
                     break;
             }
         }
-        
+
         $providers = $query->orderBy('name')->paginate(6);
 
         $specialties = User::where('role', 'provider')
@@ -70,7 +70,7 @@ class UserController extends Controller
             ->filter()
             ->sort()
             ->values();
-            
+
         $cities = User::where('role', 'provider')
             ->whereNotNull('city')
             ->distinct()
@@ -78,7 +78,7 @@ class UserController extends Controller
             ->filter()
             ->sort()
             ->values();
-            
+
         return Inertia::render('Users/Providers', [
             'providers' => $providers,
             'userRole' => $userRole,
@@ -93,11 +93,11 @@ class UserController extends Controller
     {
         $userRole = $request->user()->role;
         $currentUserId = $request->user()->id;
-        
+
         $query = User::where('role', 'client')
             ->select('id', 'name', 'email', 'photo', 'gender', 'city', 'date_of_birth', 'phone', 'created_at')
             ->withCount(['appointments as appointments_count']);
-            
+
         if ($userRole === 'provider') {
             $query->whereHas('appointments', function ($q) use ($currentUserId) {
                 $q->where('provider_id', $currentUserId);
@@ -107,30 +107,30 @@ class UserController extends Controller
         if ($request->filled('gender')) {
             $query->where('gender', $request->gender);
         }
-        
+
         if ($request->filled('city')) {
-            $query->where('city', 'like', '%' . $request->city . '%');
+            $query->where('city', 'like', '%'.$request->city.'%');
         }
-        
+
         if ($request->filled('min_age') || $request->filled('max_age')) {
             $minAge = $request->min_age;
             $maxAge = $request->max_age;
-            
+
             if ($minAge) {
                 $maxBirthDate = now()->subYears($minAge)->format('Y-m-d');
                 $query->where('date_of_birth', '<=', $maxBirthDate);
             }
-            
+
             if ($maxAge) {
                 $minBirthDate = now()->subYears($maxAge + 1)->addDay()->format('Y-m-d');
                 $query->where('date_of_birth', '>=', $minBirthDate);
             }
         }
-        
+
         if ($request->filled('min_appointments')) {
             $query->has('appointments', '>=', $request->min_appointments);
         }
-        
+
         $patients = $query->orderBy('name')->get();
 
         $patients->each(function ($patient) {
@@ -144,7 +144,7 @@ class UserController extends Controller
             ->filter()
             ->sort()
             ->values();
-            
+
         return Inertia::render('Users/Patients', [
             'patients' => $patients,
             'userRole' => $userRole,
@@ -161,7 +161,7 @@ class UserController extends Controller
             abort(404, 'Patient not found');
         }
 
-        if (!in_array($request->user()->role, ['admin', 'super_admin'])) {
+        if (! in_array($request->user()->role, ['admin', 'super_admin'])) {
             abort(403, 'Unauthorized');
         }
 
@@ -192,6 +192,7 @@ class UserController extends Controller
             return redirect()->route('patients.index')->with('success', 'Patient deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()->withErrors(['error' => 'Failed to delete patient. Please try again.']);
         }
     }

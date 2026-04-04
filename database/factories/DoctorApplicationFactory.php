@@ -22,17 +22,17 @@ class DoctorApplicationFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->phoneNumber(),
             'specialty' => fake()->randomElement([
-                'Cardiology', 'Neurology', 'Oncology', 'Pediatrics', 
-                'Orthopedics', 'Dermatology', 'Psychiatry', 'Internal Medicine'
+                'Cardiology', 'Neurology', 'Oncology', 'Pediatrics',
+                'Orthopedics', 'Dermatology', 'Psychiatry', 'Internal Medicine',
             ]),
-            'license_number' => 'MD-' . fake()->unique()->numerify('######'),
+            'license_number' => 'MD-'.fake()->unique()->numerify('######'),
             'years_of_experience' => fake()->numberBetween(1, 30),
             'office_address' => fake()->address(),
             'credentials' => [
-                'doctor-credentials/' . fake()->uuid() . '.pdf',
-                'doctor-credentials/' . fake()->uuid() . '.pdf'
+                'doctor-credentials/'.fake()->uuid().'.pdf',
+                'doctor-credentials/'.fake()->uuid().'.pdf',
             ],
-            'photo' => 'doctor-photos/' . fake()->uuid() . '.jpg',
+            'photo' => 'doctor-photos/'.fake()->uuid().'.jpg',
             'status' => 'pending',
         ];
     }

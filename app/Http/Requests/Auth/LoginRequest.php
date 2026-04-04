@@ -50,7 +50,7 @@ class LoginRequest extends FormRequest
 
         if (Auth::user()->isDoctorPending()) {
             Auth::logout();
-            
+
             throw ValidationException::withMessages([
                 'email' => 'Your doctor application is pending review. You will receive an email notification once your account is approved.',
             ]);

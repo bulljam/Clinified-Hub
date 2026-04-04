@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class DoctorApplicationController extends Controller
@@ -53,7 +52,7 @@ class DoctorApplicationController extends Controller
         $user = User::create([
             'name' => $validated['full_name'],
             'email' => $validated['email'],
-            'password' => Hash::make('temporary-password-' . uniqid()),
+            'password' => Hash::make('temporary-password-'.uniqid()),
             'role' => 'doctor_pending',
         ]);
 
@@ -159,7 +158,7 @@ class DoctorApplicationController extends Controller
     {
         $application = DoctorApplication::findOrFail($application);
 
-        if (!auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
 
@@ -174,7 +173,7 @@ class DoctorApplicationController extends Controller
             }
         }
 
-        if (!$filePath) {
+        if (! $filePath) {
             abort(404, 'File not found');
         }
 
@@ -195,7 +194,7 @@ class DoctorApplicationController extends Controller
 
         return response()->file($fullPath, [
             'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"',
         ]);
     }
 
@@ -203,7 +202,7 @@ class DoctorApplicationController extends Controller
     {
         $application = DoctorApplication::findOrFail($application);
 
-        if (!auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
 
@@ -229,7 +228,7 @@ class DoctorApplicationController extends Controller
 
         return response()->file($fullPath, [
             'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"',
+            'Content-Disposition' => 'inline; filename="'.basename($filePath).'"',
         ]);
     }
 
@@ -248,7 +247,7 @@ class DoctorApplicationController extends Controller
         }
 
         $extension = pathinfo($photoPath, PATHINFO_EXTENSION);
-        $profilePath = 'profile-photos/' . Str::random(40) . ($extension ? '.' . $extension : '');
+        $profilePath = 'profile-photos/'.Str::random(40).($extension ? '.'.$extension : '');
 
         $publicDisk->put($profilePath, $localDisk->get($photoPath));
 
@@ -257,6 +256,6 @@ class DoctorApplicationController extends Controller
 
     private function generateTemporaryPassword(): string
     {
-        return 'Clinify-' . Str::random(8) . '-' . now()->format('md');
+        return 'Clinify-'.Str::random(8).'-'.now()->format('md');
     }
 }

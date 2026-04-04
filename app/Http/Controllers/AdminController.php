@@ -14,16 +14,14 @@ use Inertia\Response;
 
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     private function checkSuperAdminAccess(): void
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             abort(401, 'Authentication required');
         }
-        
+
         if (auth()->user()?->role !== 'super_admin') {
             abort(403, 'Super Admin access required');
         }
@@ -42,7 +40,7 @@ class AdminController extends Controller
             ->when($search, function ($query, $search) {
                 return $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%");
                 });
             })
             ->when($role, function ($query, $role) {
@@ -69,6 +67,7 @@ class AdminController extends Controller
     public function create(): Response
     {
         $this->checkSuperAdminAccess();
+
         return Inertia::render('SuperAdmin/Admins/Create');
     }
 
@@ -82,7 +81,7 @@ class AdminController extends Controller
         ]);
 
         $temporaryPassword = $this->generateTemporaryPassword();
-        
+
         $validated['password'] = Hash::make($temporaryPassword);
 
         $admin = User::create($validated);
@@ -100,7 +99,7 @@ class AdminController extends Controller
     {
         $this->checkSuperAdminAccess();
         $admin = User::findOrFail($admin);
-        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+        if (! in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }
 
@@ -113,7 +112,7 @@ class AdminController extends Controller
     {
         $this->checkSuperAdminAccess();
         $admin = User::findOrFail($admin);
-        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+        if (! in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }
 
@@ -126,7 +125,7 @@ class AdminController extends Controller
     {
         $this->checkSuperAdminAccess();
         $admin = User::findOrFail($admin);
-        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+        if (! in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }
 
@@ -147,7 +146,7 @@ class AdminController extends Controller
     {
         $this->checkSuperAdminAccess();
         $admin = User::findOrFail($admin);
-        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+        if (! in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }
 
@@ -168,7 +167,7 @@ class AdminController extends Controller
     {
         $this->checkSuperAdminAccess();
         $admin = User::findOrFail($admin);
-        if (!in_array($admin->role, ['admin', 'super_admin'])) {
+        if (! in_array($admin->role, ['admin', 'super_admin'])) {
             abort(404);
         }
 
@@ -187,6 +186,6 @@ class AdminController extends Controller
 
     private function generateTemporaryPassword(): string
     {
-        return 'Clinify-' . Str::random(8) . '-' . now()->format('md');
+        return 'Clinify-'.Str::random(8).'-'.now()->format('md');
     }
 }

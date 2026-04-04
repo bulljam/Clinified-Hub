@@ -21,7 +21,7 @@ return new class extends Migration
             $table->bigInteger('deleted_by');
             $table->json('user_data');
             $table->timestamps();
-            
+
             $table->index('user_id');
             $table->index('role');
             $table->index('deleted_by');

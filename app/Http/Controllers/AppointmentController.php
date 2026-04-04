@@ -105,7 +105,7 @@ class AppointmentController extends Controller
         ]);
 
         $existingAppointment = Appointment::where('provider_id', $validated['provider_id'])
-            ->where('date', $validated['date'])
+            ->whereDate('date', $validated['date'])
             ->where('time', $validated['time'])
             ->where('status', '!=', 'cancelled')
             ->first();
@@ -118,7 +118,7 @@ class AppointmentController extends Controller
 
         $patientExistingAppointment = Appointment::where('user_id', $request->user()->id)
             ->where('provider_id', $validated['provider_id'])
-            ->where('date', $validated['date'])
+            ->whereDate('date', $validated['date'])
             ->where('status', '!=', 'cancelled')
             ->first();
 
@@ -193,15 +193,15 @@ class AppointmentController extends Controller
                             ->where('status', 'on_hold')
                             ->latest()
                             ->first();
-                        
+
                         if ($transaction) {
                             $transaction->update(['status' => 'paid']);
                         }
-                        
+
                         $validated['payment_status'] = 'paid';
                     }
                     break;
-                    
+
                 case 'cancelled':
                     if ($appointment->payment_status === 'on_hold') {
                         $transaction = \App\Models\Transaction::where('user_id', $appointment->user_id)
@@ -209,11 +209,11 @@ class AppointmentController extends Controller
                             ->where('status', 'on_hold')
                             ->latest()
                             ->first();
-                        
+
                         if ($transaction) {
                             $transaction->update(['status' => 'cancelled']);
                         }
-                        
+
                         $validated['payment_status'] = 'cancelled';
                         $validated['requires_refund'] = true;
                     } elseif ($appointment->payment_status === 'paid') {
@@ -222,11 +222,11 @@ class AppointmentController extends Controller
                             ->where('status', 'paid')
                             ->latest()
                             ->first();
-                        
+
                         if ($transaction) {
                             $transaction->update(['status' => 'cancelled']);
                         }
-                        
+
                         $validated['payment_status'] = 'cancelled';
                         $validated['requires_refund'] = true;
                     } else {
@@ -342,7 +342,7 @@ class AppointmentController extends Controller
             ->latest()
             ->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'success' => false,
                 'message' => 'No pending payment found for this appointment.',
@@ -353,7 +353,7 @@ class AppointmentController extends Controller
 
         $appointment->update([
             'payment_status' => 'paid',
-            'status' => 'confirmed'
+            'status' => 'confirmed',
         ]);
 
         if ($request->wantsJson()) {
@@ -383,7 +383,7 @@ class AppointmentController extends Controller
             ->latest()
             ->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'success' => false,
                 'message' => 'No pending payment found for this appointment.',

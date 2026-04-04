@@ -55,13 +55,13 @@ class User extends Authenticatable
             'date_of_birth' => 'date',
         ];
     }
-    
+
     public function getAgeAttribute(): ?int
     {
-        if (!$this->date_of_birth) {
+        if (! $this->date_of_birth) {
             return null;
         }
-        
+
         return (int) $this->date_of_birth->diffInYears(now());
     }
 
@@ -70,7 +70,7 @@ class User extends Authenticatable
         if ($this->role === 'provider') {
             return $this->providedAppointments()->count();
         }
-        
+
         return $this->appointments()->count();
     }
 

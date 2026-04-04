@@ -23,7 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('appointments', AppointmentController::class);
     Route::patch('appointments/{appointment}/patient', [AppointmentController::class, 'updatePatient'])->name('appointments.update-patient');
     Route::get('api/appointments/availability', [AppointmentController::class, 'availability'])->name('appointments.availability');
-    
+
     Route::get('providers', [UserController::class, 'providers'])->name('providers.index');
     Route::get('patients', [UserController::class, 'patients'])->name('patients.index');
     Route::delete('patients/{patient}', [UserController::class, 'deletePatient'])->name('patients.delete');

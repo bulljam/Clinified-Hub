@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Appointment;
 use App\Models\DoctorApplication;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -398,7 +398,7 @@ class DatabaseSeeder extends Seeder
                 'medical_degree' => 'Harvard Medical School',
                 'residency' => 'Johns Hopkins Hospital',
                 'board_certification' => 'American Board of Internal Medicine',
-                'fellowships' => ['Interventional Cardiology Fellowship at Mayo Clinic']
+                'fellowships' => ['Interventional Cardiology Fellowship at Mayo Clinic'],
             ]),
             'photo' => 'applications/sam-johnson-photo.jpg',
             'status' => 'approved',
@@ -419,7 +419,7 @@ class DatabaseSeeder extends Seeder
                 'medical_degree' => 'UCLA Medical School',
                 'residency' => 'Stanford University Hospital',
                 'board_certification' => 'American Board of Dermatology',
-                'specializations' => ['Mohs Surgery', 'Cosmetic Dermatology']
+                'specializations' => ['Mohs Surgery', 'Cosmetic Dermatology'],
             ]),
             'photo' => 'applications/michael-chen-photo.jpg',
             'status' => 'approved',
@@ -463,7 +463,7 @@ class DatabaseSeeder extends Seeder
             'credentials' => json_encode([
                 'medical_degree' => 'University of Texas Medical School',
                 'residency' => 'Baylor College of Medicine',
-                'board_certification' => 'American Board of Surgery'
+                'board_certification' => 'American Board of Surgery',
             ]),
             'photo' => 'applications/robert-smith-photo.jpg',
             'status' => 'pending',
@@ -484,7 +484,7 @@ class DatabaseSeeder extends Seeder
                 'medical_degree' => 'University of Miami Miller School of Medicine',
                 'residency' => 'Jackson Memorial Hospital',
                 'board_certification' => 'American Board of Radiology',
-                'subspecialty' => 'Interventional Radiology'
+                'subspecialty' => 'Interventional Radiology',
             ]),
             'photo' => 'applications/jennifer-lee-photo.jpg',
             'status' => 'rejected',

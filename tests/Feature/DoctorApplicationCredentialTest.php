@@ -36,5 +36,5 @@ test('admin can view doctor application credential files', function () {
             'filename' => basename($credentialPath),
         ]))
         ->assertOk()
-        ->assertHeader('content-disposition', 'inline; filename="' . basename($credentialPath) . '"');
+        ->assertHeader('content-disposition', 'inline; filename="'.basename($credentialPath).'"');
 });

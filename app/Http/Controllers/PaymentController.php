@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
 use App\Models\Appointment;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,7 +13,7 @@ class PaymentController extends Controller
     public function index(Request $request): Response
     {
         $user = auth()->user();
-        
+
         $transactionsQuery = Transaction::with(['user', 'doctor']);
 
         if ($user->role === 'provider') {
@@ -43,7 +43,7 @@ class PaymentController extends Controller
                 $transactionsQuery->whereDate('created_at', '<=', $request->date('date_to'));
             }
         }
-        
+
         $summaryQuery = clone $transactionsQuery;
 
         $transactions = $transactionsQuery
@@ -59,12 +59,12 @@ class PaymentController extends Controller
 
         $users = [];
         $providers = [];
-        
+
         if (in_array($user->role, ['admin', 'super_admin'])) {
             $users = \App\Models\User::select('id', 'name', 'email', 'role')
                 ->where('role', 'client')
                 ->get();
-                
+
             $providers = \App\Models\User::select('id', 'name', 'email', 'specialty')
                 ->where('role', 'provider')
                 ->get();
@@ -92,7 +92,7 @@ class PaymentController extends Controller
         ]);
 
         $cardLast4 = substr($request->card_number, -4);
-        
+
         $status = match ($request->card_number) {
             '4242424242424242' => 'on_hold',
             '4000000000000002' => 'failed',
@@ -122,7 +122,7 @@ class PaymentController extends Controller
 
         session()->flash('message', $message);
         session()->flash('success', $status !== 'failed');
-        
+
         return back();
     }
 
@@ -147,7 +147,7 @@ class PaymentController extends Controller
         if ($appointment) {
             $appointment->update([
                 'payment_status' => 'paid',
-                'status' => 'confirmed'
+                'status' => 'confirmed',
             ]);
         }
 
@@ -191,22 +191,22 @@ class PaymentController extends Controller
     public function approveByAppointment(Request $request, $appointmentId)
     {
         $appointment = Appointment::findOrFail($appointmentId);
-        
+
         if ($appointment->payment_status === 'paid') {
             return redirect()->back()->withErrors([
-                'payment' => 'This payment has already been approved.'
+                'payment' => 'This payment has already been approved.',
             ]);
         }
-        
+
         $transaction = Transaction::where('user_id', $appointment->user_id)
             ->where('doctor_id', $appointment->provider_id)
             ->whereIn('status', ['on_hold', 'paid'])
             ->latest()
             ->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             return redirect()->back()->withErrors([
-                'payment' => 'No payment found for this appointment.'
+                'payment' => 'No payment found for this appointment.',
             ]);
         }
 
@@ -214,7 +214,7 @@ class PaymentController extends Controller
 
         $appointment->update([
             'payment_status' => 'paid',
-            'status' => 'confirmed'
+            'status' => 'confirmed',
         ]);
 
         return redirect()->back()->with('success', 'Payment approved and appointment confirmed!');
@@ -223,16 +223,16 @@ class PaymentController extends Controller
     public function rejectByAppointment(Request $request, $appointmentId)
     {
         $appointment = Appointment::findOrFail($appointmentId);
-        
+
         $transaction = Transaction::where('user_id', $appointment->user_id)
             ->where('doctor_id', $appointment->provider_id)
             ->where('status', 'on_hold')
             ->latest()
             ->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             return redirect()->back()->withErrors([
-                'payment' => 'No pending payment found for this appointment.'
+                'payment' => 'No pending payment found for this appointment.',
             ]);
         }
 

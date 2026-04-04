@@ -35,5 +35,5 @@ test('admin can view doctor application photo files', function () {
             'application' => $application->id,
         ]))
         ->assertOk()
-        ->assertHeader('content-disposition', 'inline; filename="' . basename($photoPath) . '"');
+        ->assertHeader('content-disposition', 'inline; filename="'.basename($photoPath).'"');
 });
