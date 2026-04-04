@@ -1,4 +1,3 @@
-import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import { send } from '@/routes/verification';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
@@ -20,7 +19,7 @@ import {
 import DeleteUser from '@/components/delete-user';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { edit } from '@/routes/profile';
+import { edit, update as updateProfile } from '@/routes/profile';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -73,7 +72,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             <Divider sx={{ mb: 3 }} />
 
                             <Form
-                                {...ProfileController.update.form()}
+                                {...updateProfile.form()}
                                 options={{
                                     preserveScroll: true,
                                 }}

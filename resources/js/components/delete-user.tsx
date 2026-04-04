@@ -1,4 +1,3 @@
-import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import { Form } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 import { Warning, DeleteForever } from '@mui/icons-material';
@@ -18,6 +17,7 @@ import {
     Divider,
     Stack
 } from '@mui/material';
+import { destroy as destroyProfile } from '@/routes/profile';
 
 export default function DeleteUser() {
     const passwordInput = useRef<HTMLInputElement>(null);
@@ -98,7 +98,7 @@ export default function DeleteUser() {
                         </DialogContentText>
 
                         <Form
-                            {...ProfileController.destroy.form()}
+                            {...destroyProfile.form()}
                             options={{
                                 preserveScroll: true,
                             }}

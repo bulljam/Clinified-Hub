@@ -1,4 +1,3 @@
-import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { type BreadcrumbItem } from '@/types';
@@ -21,7 +20,7 @@ import {
     DialogActions,
     Alert
 } from '@mui/material';
-import { edit } from '@/routes/password';
+import { edit, update as updatePassword } from '@/routes/password';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -86,7 +85,7 @@ export default function Password({ flash }: PasswordProps) {
                         <Divider sx={{ mb: 3 }} />
 
                         <Form
-                            {...PasswordController.update.form()}
+                            {...updatePassword.form()}
                             options={{
                                 preserveScroll: true,
                             }}
