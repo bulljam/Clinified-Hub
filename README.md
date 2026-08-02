@@ -4,7 +4,7 @@ Clinified Hub is a modern healthcare platform built with Laravel and React for p
 
 ## Project Demo
 
-[![Watch on YouTube](https://img.shields.io/badge/YouTube-Watch%20Demo-FF0000?logo=youtube&logoColor=white)](https://youtu.be/W4WmxTHukLo)
+[![Watch on YouTube](https://img.shields.io/badge/Watch%20on-YouTube-FF0000?logo=youtube&logoColor=white)](https://youtu.be/W4WmxTHukLo)
 
 ## Highlights
 
