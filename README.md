@@ -8,12 +8,12 @@ Clinified Hub is a modern healthcare platform built with Laravel and React for p
 
 ## Highlights
 
-- Role-based dashboards for clients, providers, admins, and super admins
-- Appointment booking, scheduling controls, and calendar management
-- Doctor application review flow with protected document and photo access
-- Patient, provider, and admin management
-- Payment review and approval workflows
-- Profile management, including avatar uploads
+* Role-based dashboards for clients, providers, admins, and super admins
+* Appointment booking, scheduling controls, and calendar management
+* Provider application review with protected access to documents and profile photos
+* Patient, provider, and administrator management
+* Payment review and approval workflows
+* Profile management with avatar upload support
 
 ## Tech Stack
 
